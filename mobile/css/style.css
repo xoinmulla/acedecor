@@ -1,0 +1,641 @@
+/*
+Author: W3layout
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+*/
+/* reset */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,dl,dt,dd,ol,nav ul,nav li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;}
+article, aside, details, figcaption, figure,footer, header, hgroup, menu, nav, section {display: block;}
+ol,ul{list-style:none;margin:0;padding:0;}
+blockquote,q{quotes:none;}
+blockquote:before,blockquote:after,q:before,q:after{content:'';content:none;}
+table{border-collapse:collapse;border-spacing:0;}
+/* start editing from here */
+a{text-decoration:none;}
+.txt-rt{text-align:right;}/* text align right */
+.txt-lt{text-align:left;}/* text align left */
+.txt-center{text-align:center;}/* text align center */
+.float-rt{float:right;}/* float right */
+.float-lt{float:left;}/* float left */
+.clear{clear:both;}/* clear float */
+.pos-relative{position:relative;}/* Position Relative */
+.pos-absolute{position:absolute;}/* Position Absolute */
+.vertical-base{	vertical-align:baseline;}/* vertical align baseline */
+.vertical-top{	vertical-align:top;}/* vertical align top */
+.underline{	padding-bottom:5px;	border-bottom: 1px solid #eee; margin:0 0 20px 0;}/* Add 5px bottom padding and a underline */
+nav.vertical ul li{	display:block;}/* vertical menu */
+nav.horizontal ul li{	display: inline-block;}/* horizontal menu */
+img{max-width:100%;}
+/*end reset*/
+body{
+	font-family:Arial, Helvetica, sans-serif;
+	font-weight:100%;
+}
+.wrap{
+	width:100%;
+	margin:0 auto;
+}
+.header-top{
+	background:#A4DE54;
+	padding:10px;
+}
+/*------start-top-nav------*/
+.drp-dwn select {
+	padding: 4px;
+	outline: none;
+	display: block!important;
+	margin-bottom: 2px;
+	width: 100%;
+	border: 1px solid #4C8102;
+	background: #84C728;
+	color: #FFF;
+	cursor: pointer;
+}
+.logo {
+	float: left;
+	padding-top:2px;	
+	width:58%;
+}
+.header-right{
+	float: right;
+	padding-top: 0.4em;
+}
+.follow_icon li {
+	float: left;
+}
+.follow_icon li a img {
+	vertical-align: middle;
+}
+.follow_icon li a:hover{
+	opacity: 0.7;
+}
+.search_box {
+	border: 1px solid #4C8102;
+	margin-top: 8px;
+}
+.search_box form input[type="text"] {
+	border: none;
+	outline: none;
+	background: none;
+	font-size: 0.8125em;
+	color:#fff;
+	width:82%;
+	padding:4px;
+	-webkit-apperance: none;
+}
+.search_box form input[type="submit"] {
+	border: none;
+	cursor: pointer;
+	background: url(../images/search.png) no-repeat 0px 0px;
+	position: absolute;
+	right: 0;
+	width:36px;
+	height:25px;
+	outline: none;
+	-webkit-appearance: none;
+}
+.header-bottom{
+	background:#fff;
+	padding:10px 10px 10px 5px;
+}
+.slider{
+	text-align:center;
+}
+/*--content--*/
+/*  GRID OF FOUR   ============================================================================= */
+.col_1_of_4{
+	display: block;
+}
+.span_1_of_4 {
+	margin-bottom: 20px;
+}
+p.desc{
+	text-align:center;
+	margin-bottom:10px;
+	font-size: 0.8125em;
+	line-height:1.6em;
+	display: block;
+	color:#707070;
+}
+.btn{
+	box-shadow: none;
+	position: relative;
+	text-decoration: underline;
+	padding: 0;
+	font-size:12px;
+	color:#7CCE09;
+	text-transform: uppercase;
+	text-decoration:underline;
+	border: none;
+	letter-spacing: 0;
+	text-shadow: none;
+}
+.btn:hover {
+	text-decoration:none;
+}
+.more{
+	text-align:center;
+}
+.tab-img{
+	margin-bottom:10px;
+}
+.chair p{
+	line-height:2em;
+	font-size:0.8125em;
+	color: #333;
+	text-transform:uppercase;
+}
+.chair img{
+	vertical-align: top;
+	margin-right: 6px;
+}
+.content-top{
+	border-bottom: 1px solid #F0F0F0;
+	margin-bottom: 3px;
+	padding: 20px 10px;
+}
+.content-middle {
+	background: #F6F6F6;
+	padding:20px 10px;
+	overflow: hidden;
+	border-bottom: 1px solid #F0F0F0;
+	margin-bottom: 3px;
+}
+.middle-content {
+	width: 100%;
+	text-align: center;
+	overflow: hidden;
+}
+h2 {
+	color: #444;
+	
+	margin: 0 0 5px 0;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-size:0.8125em;
+}
+hr.hr1 {
+	margin: 0;
+	border-bottom: none;
+	border-top: 1px solid #D1D1D1;
+	width:80%;
+	display: inline-block;
+}
+hr.hr2 {
+	margin: 0;
+	border-bottom: none;
+	border-top: 1px solid #D1D1D1;
+	width:60%;
+	display: inline-block;
+	position: relative;
+	top: -12px;
+}
+.middle-content p {
+	text-align: center;
+	margin-bottom:15px;
+	font-size: 0.8125em;
+	line-height: 1.6em;
+	display: block;
+	color: #707070;
+	
+}
+/*--image-effect--*/
+.homeBox {
+	position: relative;
+	display: block;
+}
+.homeBox .one_fourth {
+	text-align: center;
+	overflow: hidden;
+	background:#F3F3F3;
+	border: 1px solid #E1E1E1;
+}
+.homeBox .one_fourth div, .homeBox .last div {
+	padding: 10px;
+}
+
+/*  GRID OF TWO   ============================================================================= */
+.col_1_of_2{
+	display: block;
+}
+.span_1_of_2  h3{
+	line-height: 1.8em;
+	font-size:0.8125em;
+	color: #333;
+	text-transform: uppercase;
+}
+.span_1_of_2  p{
+	font-size:0.8125em;
+	padding:0.5em  0;
+	color: #707070;
+	line-height: 1.5em;
+}
+p.comment{
+	font-size:11px;
+	padding:0.5em  0;
+	color: #707070;
+	line-height: 1.5em;
+}
+.middle-bottom{
+	border-top: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+	margin-bottom: 3px;
+	padding:20px 10px;
+	background:#fff;
+}
+.comment a {
+	color:#82BE2E;
+	-webkit-transition: all 0.25s ease;
+	-moz-transition: all 0.25s ease;
+	-o-transition: all 0.25s ease;
+	transition: all 0.25s ease;
+}
+p > a {
+	color: #7CCE09;
+	-webkit-transition: all 0.35s ease;
+	-moz-transition: all 0.35s ease;
+	-o-transition: all 0.35s ease;
+	transition: all 0.35s ease;
+}
+p > a:hover{
+	color:#333;
+}
+.comment span {
+	margin: 0 5px;
+}
+p > em {
+	font-style: normal;
+	color:#7CCE09;
+}
+.list2 li {
+	margin-bottom:15px;
+}
+.list2 li figure {
+	margin: 0;
+	float: left;
+	width: 45%;
+	margin-right: 20px;
+}
+.extra-wrap h4{
+	line-height: 1.5em;
+	font-size:12px;
+	color: #333;
+	text-transform: uppercase;
+}
+.sidebar-nav{
+	padding-top:10px;
+}
+.sidebar-nav li {
+	list-style-image: url(../images/list-arrow.png);
+	margin: 0 20px 5px;
+}
+.sidebar-nav li a {
+	font-size:0.8125em;
+	color: #707070;
+	vertical-align: top;
+}
+.sidebar-nav li a:hover {
+	color:#7CCE09;
+}
+.middle-last{
+	background: #EAEAEA;
+	padding:20px 10px;
+	margin-bottom: 4px;
+}
+/*  GRID OF TWO   ============================================================================= */
+.col_1_of_last{
+	display: block;
+	float:left;
+	margin: 1% 0 1% 1.6%;
+}
+.span_1_of_last {
+	background: #FFF;
+	padding: 10px;
+	border-left: 2px solid #A4DE54;
+	margin-bottom: 20px;
+}
+.span_1_of_last1 {
+	background: #FFF;
+	padding: 10px;
+	border-left: 2px solid #A4DE54;
+	margin-bottom:0px;
+}
+.span_1_of_last  h3, .span_1_of_last1  h3{
+	line-height: 1.8em;
+	font-size:0.8215em;
+	color: #333;
+	text-transform: uppercase;
+}
+.span_1_of_last  p, .span_1_of_last1  p{
+	font-size:0.8125em;
+	padding:0.5em  0;
+	color: #707070;
+	line-height: 1.5em;
+}
+.content-bottom {
+	border-top: 1px solid #F0F0F0;
+	border-bottom: 1px solid #F0F0F0;
+	margin-bottom: 3px;
+	padding:20px 10px;
+	background: #FFF;
+}
+.list3 {
+	margin: 0;
+	list-style: none;
+	margin-top: -3px;
+}
+li.first {
+	font-size: 12px;
+	line-height: 18px;
+	padding: 36px 0 10px 0;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #E8E8E8;
+	border-top: 1px solid #E8E8E8;
+}
+li.last{
+	margin-bottom:0px;
+	padding-top: 10px;
+}
+.list3 li:first-child {
+	padding-top: 0;
+	border-top: none;
+}
+.list3 li figure {
+	margin: 0;
+	margin-right: 20px;
+	float: left;
+	width: 20%;
+}
+.list3 li:first-child + li {
+	border-bottom: none;
+}
+.extra-wrap1 p {
+	line-height: 1.5em;
+	font-size: 13px;
+	color: #707070;
+	padding: 0px;
+}
+.footer-bottom {
+	text-align: center;
+	background: #444;
+	padding:20px 10px;
+}
+.copy p {
+	color: #999;
+	font-size: 13px;
+	line-height: 1.5em;
+}
+.copy p a {
+	color:#A4DE54;
+}
+.copy p a:hover {
+	color:#999;
+}
+/*--about--*/
+/*  GRID OF Content and sidebar   ============================================================================= */
+.cont{
+	display: block;
+}
+.lsidebar{
+	display: block;
+} 	
+.span_1_of_3 {
+	margin-bottom: 20px;
+}
+.span_2_of_3  h3,
+.span_1_of_3  h3 {
+	line-height: 1.8em;
+	font-size: 1.1em;
+	color: #333;
+	text-transform: uppercase;
+	margin-bottom:5px;
+}
+.span_2_of_3 p,
+.span_1_of_3  p  {
+	font-size:13px;
+	padding:0.5em 0;
+	color: #707070;
+	line-height: 1.5em;
+}
+.header-about{
+	border-bottom:1px solid #999;
+}
+.about-list{
+	margin: 0;
+	list-style: none;
+	padding-top: 6px;
+}
+.about-list li {
+	font-size: 12px;
+	line-height: 18px;
+	margin-bottom:20px;
+}
+.about-list li h3 {
+	margin-bottom: 24px;
+	color: #000;
+	margin: 0 0 5px 0;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	font-size: 12px;
+}
+p > strong {
+	font-style: normal;
+	color: #444;
+	font-weight: 600;
+}
+.about-list1{
+	margin: 0;
+	list-style: none;
+}
+.about-list1 li {
+	font-size: 12px;
+	line-height: 18px;
+	margin-bottom:10px;
+}
+.about-list1 li p {
+	font-style: italic;
+	margin-bottom: 1px;
+}
+.about-list1 li a {
+	font-weight: 600;
+	color: #7CCE09;
+	-webkit-transition: all 0.25s ease;
+	-moz-transition: all 0.25s ease;
+	-o-transition: all 0.25s ease;
+	transition: all 0.25s ease;
+}
+.about-list1 li a:hover {
+	color:#333;
+}
+.photos li{
+	float:left;
+	width:46.9%;
+	margin-right: 5px;
+}
+.photos li.last{
+	margin-right:0px;
+}
+/*--services--*/
+.services-grid h4 {
+	line-height: 1.8em;
+	font-size: 1.1em;
+	color: #333;
+	text-transform: uppercase;
+	transition: 0.5s ease;
+	-o-transition: 0.5s ease;
+	-webkit-transition: 0.5s ease;
+}
+.services-grid p {
+	font-size: 13px;
+	padding: 0.5em 0;
+	color: #707070;
+	line-height: 1.5em;
+	}
+li.grid_1{
+	margin-bottom:20px;
+}
+.count {
+	background-color: #7CCE09;
+	width: 30px;
+	height: 15px;
+	text-align: center;
+	color: #FFF;
+	float: left;
+	margin-right: 22px;
+	padding-top: 17px;
+	line-height: 0px;
+}
+.count span {
+	display: block;
+}
+.extra_wrapper {
+	overflow: hidden;	
+}
+.text2 a {
+	margin-bottom: 7px;
+	color: #3D3D3D;
+	font-size: 12px;
+	text-transform: uppercase;
+}
+.text2 a:hover {
+	color:#7CCE09;
+}
+/*--gallery--*/
+.grid_img{
+	text-align:center;
+}
+.caption{
+	padding-top:10px;
+}
+.caption h3 {
+	margin: 0 0 24px 0;
+}
+.caption p {
+	margin: 0 0 7px 0;
+}
+.caption h4 {
+	line-height: 1.8em;
+	font-size: 0.8125em;
+	color: #333;
+	text-transform: uppercase;
+	margin-bottom:3px;
+	transition: 0.5s ease;
+	-o-transition: 0.5s ease;
+	-webkit-transition: 0.5s ease;
+}
+.caption p {
+	font-size: 13px;
+	padding: 0.5em 0;
+	color: #707070;
+	line-height: 1.5em;
+}
+/*--blog--*/
+.page-not-found h1 {
+	font-size:4em;
+	color: #F0F0F0;
+	text-align: center;
+}
+/*--contact--*/
+/*  Contact Form  ============================================================================= */
+.col{
+	display: block;
+}
+.span_2_of_contact  h3,
+.span_1_of_contact  h3 {
+	line-height: 1.8em;
+	font-size: 1.1em;
+	color: #333;
+	text-transform: uppercase;
+	margin-bottom:5px;
+}
+.contact-form{
+	position:relative;
+	padding-bottom:30px;
+}
+.contact-form div{
+	padding:5px 0;
+}
+.contact-form span{
+	display:block;
+	font-size:0.8125em;
+	color: #707070;
+	padding-bottom:5px;
+}
+.contact-form input[type="text"],.contact-form textarea{
+	padding:8px;
+	display:block;
+	width:92%;
+	background:#f0f0f0;
+	border: none;
+	outline:none;
+	color:#464646;
+	font-size:0.8125em;
+	font-family:Arial, Helvetica, sans-serif;
+	-webkit-appearance:none;
+}
+.contact-form textarea{
+	resize:none;
+	height:120px;		
+}
+.contact-form input[type="submit"]{
+	padding:7px 20px;
+	color:#FFF;
+	cursor:pointer;
+	background:#A4DE54 url(../images/large-button-overlay.png);
+	border: 1px solid #5C9E02;
+	font-family:Arial, Helvetica, sans-serif;
+    position:absolute;
+    right:0;
+    -webkit-appearance: none;
+    outline:none;
+}
+.contact-form input[type="submit"]:hover{
+	background-color:#333;
+}
+.contact-form input[type="submit"]:active{
+	background-color:#333;  
+}
+.company_address{
+	padding-top:10px;
+}
+.company_address p{
+	font-size:0.8125em;
+	color:#707070;
+	
+	line-height: 1.7em;
+}
+.company_address p span{
+	text-decoration:underline;
+	color:#333;
+	cursor:pointer;
+}
+.company_address p span:hover{
+	text-decoration:none;
+}
+.map{
+	border:1px solid #C7C7C7;
+	margin-bottom:15px;
+}
+
+
