@@ -4,14 +4,14 @@ include('itemcategoryNavigation.php');
 require_once("../DB Operations/item_subcategoryOps.php");
 require_once("../Model/item_subcategorymodel.php");
 ?>
-<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
+<h1 class="h3 mb-4 text-gray-800 ">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Item SubCategory</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Item SubCategory</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#itemsubcatModal>
@@ -61,14 +61,16 @@ require_once("../Model/item_subcategorymodel.php");
                             <i class='fas fa-user-edit'></i> 
                                 Edit SubCategory
                            </button>
-                           <button class='btn btn-danger dropdown-item'
-                            data-toggle='modal'
-                            data-target='#deleteSubCategoryModal'
-                            role='button'
-                            data-id='" . $itemsubcat->get_itemsubcatid() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                                Delete SubCategory
-                                </button>
+<button class='btn btn-danger dropdown-item'
+    data-toggle='modal'
+    data-target='#deleteSubCategoryModal'
+    role='button'
+    data-id='" . $itemsubcat->get_itemsubcatid() . "'"
+                            . (!$itemsubcat->get_canDelete() ? ' disabled title="SubCategory in use"' : '') . ">
+    <i class='fas fa-trash-alt'></i>
+    " . (!$itemsubcat->get_canDelete() ? 'Cannot Delete' : 'Delete SubCategory') . "
+</button>
+
                            
                         </div>
                     </div> 
@@ -401,6 +403,11 @@ require_once("../Model/item_subcategorymodel.php");
             });
 
         });
+        $(document).on('click', '.dropdown-item[disabled]', function (e) {
+            e.preventDefault();
+            alert('❌ This subcategory cannot be deleted because items are linked to it.');
+        });
+
 
     });
 </script>

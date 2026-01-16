@@ -27,7 +27,7 @@ require_once("../Model/material_CategoryModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Material Category</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material Category</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#materialcatModal>

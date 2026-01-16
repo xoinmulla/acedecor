@@ -11,6 +11,18 @@ class Item_Subcategory implements JsonSerializable
     private $item_subcatCreatedOn;
     private $item_subcatModifiedBy;
     private $table_name = "item_subcategory";
+    private $canDelete = true;
+
+    public function set_canDelete($val)
+    {
+        $this->canDelete = $val;
+    }
+
+    public function get_canDelete()
+    {
+        return $this->canDelete;
+    }
+
     function set_categoryName($categoryName)
     {
         $this->item_categoryName = $categoryName;
@@ -76,7 +88,7 @@ class Item_Subcategory implements JsonSerializable
 
     function set_itemsubcatmodifiedby($itemsubcatmodifiedby)
     {
-        $this->item_subcatModifiedBy    = $itemsubcatmodifiedby;
+        $this->item_subcatModifiedBy = $itemsubcatmodifiedby;
     }
     function get_itemsubcatmodifiedby()
     {
@@ -86,13 +98,13 @@ class Item_Subcategory implements JsonSerializable
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        return 
-             [
+        return
+            [
                 'itemcatid' => $this->item_catid,
                 'itemsubcatid' => $this->item_subcatid,
                 'itemsubcatname' => $this->item_subcatName,
                 'itemsubcatdescription' => $this->item_subcatDescription,
-             ];
-     
+            ];
+
     }
 }

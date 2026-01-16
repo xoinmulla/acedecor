@@ -85,7 +85,7 @@ $InwardedandAvailable = DBDashboard::InwardedandAvailable();
     <span id="message"></span>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">INVENTORY DASHBOARD</h6>
+        <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">INVENTORY DASHBOARD</h6>
             <div class="row">
                 <div class="col">
 

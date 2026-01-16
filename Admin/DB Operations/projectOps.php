@@ -10,33 +10,33 @@ class DBproject
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql="SELECT * from projects where quoteId='".$project->get_quoteid()."'";
+    $sql = "SELECT * from projects where quoteId='" . $project->get_quoteid() . "'";
     error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
-error_log($count);
+    error_log($count);
     if ($count < 1) {
-        $sql = "INSERT INTO projects (`projectCode`,`customerName`,`custId`, 
+      $sql = "INSERT INTO projects (`projectCode`,`customerName`,`custId`, 
     `quoteId`
     ) 
                 values ('" . $project->get_projectCode() .
-                   "','" . $project->get_custName() .
-                  "','" . $project->get_custid() .
-                "','" . $project->get_quoteid() .
-                
-                 "')";
+        "','" . $project->get_custName() .
+        "','" . $project->get_custid() .
+        "','" . $project->get_quotecode() .
+
+        "')";
+      error_log($sql);
+      if ($connectionObj->query($sql) === true) {
+        $projId = $connectionObj->insert_id;
+
+        $sql = "UPDATE projects SET projectCode='" . $project->get_projectCode() . $projId . "' WHERE projectId=" . $projId;
         error_log($sql);
-        if ($connectionObj->query($sql) === true) {
-            $projId=$connectionObj->insert_id;
-      
-            $sql="UPDATE projects SET projectCode='".$project->get_projectCode().$projId."' WHERE projectId=".$projId;
-            error_log($sql);
-            $connectionObj->query($sql);
-            return $projId;
-        } else {
-            echo "Error: " . $sql . "<br>" . $connectionObj->error;
-        }
-    }else{
+        $connectionObj->query($sql);
+        return $projId;
+      } else {
+        echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      }
+    } else {
       echo "Record already exists";
     }
   }
@@ -45,66 +45,77 @@ error_log($count);
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
+
     $sql = "SELECT 
-    C.customerName as customerName,
-    C.customerCode as customerCode,
-    P.projectId as projectId,
-    P.projectCode as projectCode,
-    P.project_status as projectStatus,
-    Q.quoteCode as quoteCode,
-    Q.quoid as quoid,
-    Q.quo_type as quo_type,
-    Q.quantity as quantity,
-    Q.quoteValue as quoteValue,
-    Q.quoteCode as quoteCode,
-    Q.enqCatId as enqCatId,
-    U.unitId as unitId,
-    U.unitName as unitName,
-    S.Quantity as AllocatedQty,
-    S.item_id as ItemId,
-    S.item_stockid as StockId,
-    QLI.itemId as Quotationlineitem,
-    EC.enq_cat_name as EnqCatname
-     FROM `projects` as P
-     JOIN `customer`  C on C.customerCode=P.custId
-     JOIN `quotation_details`  Q on Q.quoteCode=P.quoteId
-     JOIN `quotelineitem`  QLI on Q.quoid=QLI.quoteId
-     JOIN enquiry_category AS EC ON EC.enq_catid=Q.enqCatId
-     LEFT JOIN units AS U ON U.unitId=Q.unitId
-    Left JOIN `item_stock` AS S ON S.item_id=QLI.itemId
-     where P.projectId='".$id."'
-     group By customerCode ";
-     error_log($sql);
+        C.customerName as customerName,
+        C.customerCode as customerCode,
+        C.customerCity as customerCity,
+        P.projectId as projectId,
+        P.projectCode as projectCode,
+        P.project_status as projectStatus,
+
+        Q.quoteId as quoteId,
+        Q.quoteCode as quoteCode,
+        Q.quo_type as quo_type,
+        Q.quantity as quantity,
+        Q.quoteValue as quoteValue,
+        Q.enqCatId as enqCatId,
+
+        U.unitId as unitId,
+        U.unitName as unitName,
+
+        S.Quantity as AllocatedQty,
+        S.item_id as ItemId,
+        S.item_stockid as StockId,
+
+        EC.enq_cat_name as EnqCatname
+
+     FROM projects P
+     JOIN customer C ON C.customerCode = P.custId
+     JOIN quotation_details Q ON Q.quoteCode = P.quoteId
+     JOIN quotelineitem QLI ON Q.quoteId = QLI.quoteId
+     JOIN enquiry_category EC ON EC.enq_catid = Q.enqCatId
+     LEFT JOIN units U ON U.unitId = Q.unitId
+     LEFT JOIN item_stock S ON S.item_id = QLI.itemId
+
+     WHERE P.projectId = '$id'
+     GROUP BY C.customerCode";
+
+    error_log($sql);
+
     $result = $connectionObj->query($sql);
-    $count = mysqli_num_rows($result);
     $project = new Project();
-    if ($count > 0) {
-      while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        $project->set_projectId($row['projectId']);
-        $project->set_projectCode($row['projectCode']);
-        $project->set_custName($row['customerName']);
-        $project->set_custid($row['customerCode']);
-        $project->set_quoteid($row["quoid"]);
-        $project->set_quoteType($row["quo_type"]);
-        $project->set_quotecode($row['quoteCode']);
-        $project->set_quoteamt($row['quoteValue']);
-        $project->setQuantity($row['quantity']);
-        $project->setUnitId($row['unitId']);
-        $project->setUnitName($row['unitName']);
-        $project->setEnqCatName($row["EnqCatname"]);
-        $project->setCatId($row["enqCatId"]);
-        $project->set_projectstatus($row["projectStatus"]);
-        $project->setAllocatedQty($row["AllocatedQty"]);
-        $project->setItemId($row["ItemId"]);
-        $project->setStockId($row["StockId"]);
-        
-      }
-    
-    } else {
-      // echo "0 results";
+
+    if ($result && mysqli_num_rows($result) > 0) {
+      $row = mysqli_fetch_assoc($result);
+
+      $project->set_projectId($row['projectId']);
+      $project->set_projectCode($row['projectCode']);
+      $project->set_custName($row['customerName']);
+      $project->set_custid($row['customerCode']);
+      $project->set_customerCity($row['customerCity']);
+
+      $project->set_quoteid($row['quoteId']);   // ✅ FIXED
+      $project->set_quotecode($row['quoteCode']);
+      $project->set_quoteType($row['quo_type']);
+      $project->set_quoteamt($row['quoteValue']);
+
+      $project->setQuantity($row['quantity']);
+      $project->setUnitId($row['unitId']);
+      $project->setUnitName($row['unitName']);
+
+      $project->setEnqCatName($row['EnqCatname']);
+      $project->setCatId($row['enqCatId']);
+      $project->set_projectstatus($row['projectStatus']);
+
+      $project->setAllocatedQty($row['AllocatedQty']);
+      $project->setItemId($row['ItemId']);
+      $project->setStockId($row['StockId']);
     }
+
     return $project;
   }
+
 
   public static function getAllprojects()
   {
@@ -113,6 +124,7 @@ error_log($count);
     $sql = "SELECT 
     C.customerName as customerName,
     C.customerCode as customerCode,
+    C.customerCity as customerCity,
     P.projectId as projectId,
     P.projectCode as projectCode,
     P.project_status as projectStatus,
@@ -141,6 +153,7 @@ error_log($count);
         $project->set_projectCode($row['projectCode']);
         $project->set_custName($row['customerName']);
         $project->set_custid($row['customerCode']);
+        $project->set_customerCity($row['customerCity']);
         $project->set_quoteid($row["quoid"]);
         $project->set_quoteType($row["quo_type"]);
         $project->set_quotecode($row['quoteCode']);
@@ -153,7 +166,7 @@ error_log($count);
         $project->set_projectstatus($row["projectStatus"]);
         array_push($projectList, $project);
       }
-    
+
     } else {
       // echo "0 results";
     }
@@ -167,6 +180,7 @@ error_log($count);
     $sql = "SELECT 
     C.customerName as customerName,
     C.customerCode as customerCode,
+    C.customerCity as customerCity,
     P.projectId as projectId,
     P.projectCode as projectCode,
     P.project_status as projectStatus,
@@ -188,7 +202,9 @@ error_log($count);
      JOIN `quotation_details`  Q on Q.quoteCode=P.quoteId
      JOIN enquiry_category AS EC ON EC.enq_catid=Q.enqCatId
      LEFT JOIN units AS U ON U.unitId=Q.unitId
-     where P.project_status='In Progress'";
+     where P.project_status='In Progress'
+
+     ";
 
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
@@ -200,6 +216,7 @@ error_log($count);
         $project->set_projectCode($row['projectCode']);
         $project->set_custName($row['customerName']);
         $project->set_custid($row['customerCode']);
+        $project->set_customerCity($row['customerCity']);
         $project->set_quoteid($row["quoteCode"]);
         $project->set_quoteType($row["quo_type"]);
         $project->set_quotecode($row['quoteCode']);
@@ -210,16 +227,33 @@ error_log($count);
         $project->setEnqCatName($row["EnqCatname"]);
         $project->setCatId($row["enqCatId"]);
         $project->set_projectstatus($row["projectStatus"]);
-        $project->setDOA(date('Y-m-d',strtotime($row["modifiedon"])));
+        $project->setDOA(date('Y-m-d', strtotime($row["modifiedon"])));
         $project->setDayCount($row["DateDiff"]);
         $project->setInputType($row["InputType"]);
         array_push($projectList, $project);
       }
-    
+
     } else {
       // echo "0 results";
     }
     return $projectList;
+  }
+  public static function getCustomersWithApprovedQuotes()
+  {
+    $db = ConnectDb::getInstance()->getConnection();
+
+    $sql = "
+        SELECT DISTINCT
+            C.customerCode,
+            C.customerName,
+            C.customerCity
+        FROM quotation_details Q
+        JOIN customer C ON C.customerId = Q.customerId
+        WHERE Q.quo_status = 'Approved'
+        ORDER BY C.customerName
+    ";
+
+    return $db->query($sql)->fetch_all(MYSQLI_ASSOC);
   }
 
   public static function getAllprojectsbasedonPendingStatus()
@@ -229,6 +263,7 @@ error_log($count);
     $sql = "SELECT 
     C.customerName as customerName,
     C.customerCode as customerCode,
+    C.customerCity as customerCity,
     P.projectId as projectId,
     P.projectCode as projectCode,
     P.project_status as projectStatus,
@@ -262,6 +297,7 @@ error_log($count);
         $project->set_projectCode($row['projectCode']);
         $project->set_custName($row['customerName']);
         $project->set_custid($row['customerCode']);
+        $project->set_customerCity($row['customerCity']);
         $project->set_quoteid($row["quoteCode"]);
         $project->set_quoteType($row["quo_type"]);
         $project->set_quotecode($row['quoteCode']);
@@ -272,13 +308,13 @@ error_log($count);
         $project->setEnqCatName($row["EnqCatname"]);
         $project->setCatId($row["enqCatId"]);
         $project->set_projectstatus($row["projectStatus"]);
-        $project->setDOA(date('Y-m-d',strtotime($row["modifiedon"])));
+        $project->setDOA(date('Y-m-d', strtotime($row["modifiedon"])));
         $project->setDayCount($row["DateDiff"]);
         $project->setInputType($row["InputType"]);
-       
+
         array_push($projectList, $project);
       }
-    
+
     } else {
       // echo "0 results";
     }
@@ -293,6 +329,7 @@ error_log($count);
     $sql = "SELECT 
     C.customerName as customerName,
     C.customerCode as customerCode,
+    C.customerCity as customerCity,
     P.projectId as projectId,
     P.projectCode as projectCode,
     P.project_status as projectStatus,
@@ -324,6 +361,7 @@ error_log($count);
         $project->set_projectCode($row['projectCode']);
         $project->set_custName($row['customerName']);
         $project->set_custid($row['customerCode']);
+        $project->set_customerCity($row['customerCity']);
         $project->set_quoteid($row["quoteCode"]);
         $project->set_quoteType($row["quo_type"]);
         $project->set_quotecode($row['quoteCode']);
@@ -334,10 +372,10 @@ error_log($count);
         $project->setEnqCatName($row["EnqCatname"]);
         $project->setCatId($row["enqCatId"]);
         $project->set_projectstatus($row["projectStatus"]);
-       
+
         array_push($projectList, $project);
       }
-    
+
     } else {
       // echo "0 results";
     }
@@ -361,7 +399,7 @@ error_log($count);
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql='SELECT P.projectId as ProjectId,
+    $sql = 'SELECT P.projectId as ProjectId,
     P.projectCode as ProjectCode,
     C.customerCode as customerId,
     C.customerName as customerName 
@@ -389,7 +427,8 @@ error_log($count);
   }
 
 
-  public static function selectcustomer($id){
+  public static function selectcustomer($id)
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT customerName FROM customer where customerCode='$id'";
@@ -400,7 +439,7 @@ error_log($count);
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new customer();
         $view->set_customerName($row['customerName']);
-        
+
       }
     } else {
       // echo "0 results";
@@ -409,10 +448,11 @@ error_log($count);
   }
 
 
-  public static function delete($projectId){
-    $db=ConnectDb::getInstance();
-    $connectionObj=$db->getConnection();
-    $sql="DELETE from projects where projectId='".$projectId."'";
+  public static function delete($projectId)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+    $sql = "DELETE from projects where projectId='" . $projectId . "'";
     if ($connectionObj->query($sql) === TRUE) {
     } else {
       echo "Error: " . $sql . "<br>" . $connectionObj->error;

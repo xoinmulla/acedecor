@@ -72,10 +72,17 @@ include('session.php');
                     <i class="fab fa-product-hunt"></i>
                     <span>Products</span></a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link" href="itemstocklist.php">
+                    <i class="fas fa-user-astronaut"></i>
+                    <span>Stock List</span></a>
+            </li>
+            
+            <br>
+            <hr class="sidebar-divider">
             <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
-                    <i class="fas fa-backward"></i>
+                    <i class="fas fa-home"></i>
                     <span>Home</span></a>
             </li>
             <!-- <li class="nav-item">

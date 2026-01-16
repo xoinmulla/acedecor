@@ -127,7 +127,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Customer List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Customer List</h6>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#Modal>
@@ -172,7 +172,26 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             echo '<li class="">' . $interest . '</li>';
                         }
                         echo "</td>";
-                        echo "<td>" . $customer->getQuotationCount() . "</td>";
+    echo "<td>";
+    ?>
+    <ul class="mb-0">
+    <?php
+    $quotes = DBcustomer::getQuotationSummaryByCustomer(
+        $customer->get_customerId()
+    );
+
+    if (!empty($quotes)) {
+        foreach ($quotes as $q) {
+            echo "<li>{$q['name']} - {$q['count']}</li>";
+        }
+    } else {
+        echo "<span class='text-muted'>No Quotation</span>";
+    }
+    ?>
+    </ul>
+    <?php
+    echo "</td>";
+
                         echo "<td style='display:none'>" . $customer->get_customerPhone() . "</td>
                         <td style='display:none'>" . $customer->get_customerEmail() . "</td>
                         <td style='display:none'>" . $customer->get_customerAddress() . "</td>
@@ -809,6 +828,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                                     class="form-control" value="" />
                                                 <input type="hidden" name="unitFactor" id="unitFactor"
                                                     class="form-control" value="" />
+                                                <input type="hidden" name="spu" id="spu" class="form-control"
+                                                    value="" />
                                                 <input type="hidden" name="itemarticleNo" id="itemarticleNo"
                                                     class="form-control" value="" />
                                                 <input type="hidden" name="itemimage" id="itemimage"
@@ -1824,6 +1845,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#editItemQty, #editTradeDiscount').off('keyup change').on('keyup change', function () {
                 const qty = Number($('#editItemQty').val()) || 0;
                 const tDis = Number($('#editTradeDiscount').val()) || 0;
+                const uFac = Number(payload.unitFactor || $('#unitFactor').val()) || 1;
+
 
                 let perPieceTrade = MRP;
                 if (tDis > 0) {
@@ -1831,7 +1854,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     perPieceTrade = discounted + (discounted * (GST / 100));
                 }
 
-                const totalTradePrice = perPieceTrade * qty;
+                const totalTradePrice = perPieceTrade * qty * uFac;
                 $('#editTradePrice').val(totalTradePrice.toFixed(2));
             });
         }
@@ -1900,12 +1923,12 @@ require_once("../Model/enq_cat_mappingmodel.php");
         }
 
         $('#infoCustomerModal').on('show.bs.modal', function (e) {
-            debugger;
+            //debugger;
             var rowid = $(e.relatedTarget).data('id');
             $('#customerId').val(rowid);
             var contactUrl = config.developmentPath +
                 "/Admin/Controller/quotationController.php?custId=" + rowid;
-            debugger;
+            //debugger;
             $.getJSON(contactUrl, function (data) {
                 $("#quotationdetails_table").find("tr:gt(0)").remove();
                 $.each(data, function (index, value) {
@@ -1933,7 +1956,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#quote_form').submit(function (event) {
-            debugger;
+            //debugger;
             customers[0].quoteValue = $('#quoteValue').val();
             console.log(customers[0]);
             $.ajax({
@@ -1971,7 +1994,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         $('#inputType').on('change', function () {
-            debugger;
+            //debugger;
             if ($('#inputType').val() == 4) {
                 document.getElementById('brand').required = false;
                 document.getElementById('itemCategory').required = false;
@@ -2023,7 +2046,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         function setItemlist(catId, subcatId, brandId, thicknessId = 0) {
-            debugger;
+            //debugger;
             $('#itemquantity').val("");
             $('#totalPrice').val("");
             $('#totalAmount').val("");
@@ -2083,7 +2106,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             }
         }
         $('#itemCategory').on('change', function () {
-            debugger;
+            //debugger;
             $('#itemsubCategory').empty();
             if ($('#inputType').val() == 1) {
                 fetchsubcaturl =
@@ -2132,13 +2155,13 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#itemsubCategory').on('change', function () {
-            debugger;
+            //debugger;
             $('#itemid').empty();
             setItemlist($('#itemCategory').val(), this.value, $('#brand').val());
         });
 
         $('#brand').on('change', function () {
-            debugger;
+            //debugger;
             $('#itemid').empty();
             $('#itemCategory').empty();
             $('#itemsubCategory').empty();
@@ -2215,7 +2238,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         function setproductSubCategory(productcatid) {
-            debugger;
+            //debugger;
             var fetchsubcaturl = window.location.origin +
                 "/Acedecor/Admin/Controller/product_SubcategoryController.php/?productcatid=" +
                 productcatid;
@@ -2242,7 +2265,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         function setProductName(catId, subcatId, finishId, typeId) {
-            debugger;
+            //debugger;
             var fetchsubcaturl = window.location.origin +
                 "/Acedecor/Admin/Controller/productDefinitionController.php/?catId=" + catId + "&subcatId=" +
                 subcatId + "&finishId=" + finishId + "&typeId=" + typeId;
@@ -2271,7 +2294,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         function setMatName(thicknessId, catId, subcatId, brandId) {
-            debugger;
+            //debugger;
             var fetchsubcaturl = window.location.origin +
                 "/Acedecor/Admin/Controller/materialController.php/?thicknessId=" +
                 thicknessId + "&catId=" + catId + "&subcatId=" + subcatId + "&brandId=" + brandId;
@@ -2298,11 +2321,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
         }
 
         $('#productCategory').on('change', function () {
-            debugger;
+            //debugger;
             $('#productsubCategory').empty();
             setproductSubCategory(this.value);
         });
-        debugger;
+        //debugger;
 
         fetchFinishurl =
             config.developmentPath +
@@ -2337,7 +2360,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#CabinetType').on('change', function () {
-            debugger;
+            //debugger;
             $('#productName').empty();
             setProductName($('#productCategory').val(), $('#productsubCategory').val(), $('#Finish').val(),
                 this.value)
@@ -2364,7 +2387,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#MatBrand').on('change', function () {
-            debugger;
+            //debugger;
             $('#MatCategory').empty();
             $('#MatSubCategory').empty();
             var url = config.developmentPath +
@@ -2391,7 +2414,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         $('#MatCategory').on('change', function () {
-            debugger; y
+            //debugger; y
             var fetchsubcaturl = config.developmentPath +
                 "/Admin/Controller/material_SubcategoryController.php/?catId=" + this
                     .value;
@@ -2434,7 +2457,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#Thickness').on('change', function () {
-            debugger;
+            //debugger;
             $('#MatName').empty();
             setMatName(this.value, $('#MatCategory').val(), $('#MatSubCategory').val(), $('#MatBrand')
                 .val());
@@ -2485,26 +2508,27 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
             }
         });
-        $('#tradeDiscount').on('keyup', function () {
-            debugger;
-            const mrp = parseFloat($('#itemppMRP').val()) || 0;
-            const tradeDiscount = parseFloat($(this).val()) || 0;
-            const companyPrice = parseFloat($('#companyPrice').val()) || 0;
+        // $('#tradeDiscount').on('keyup', function () {
+        //     //debugger;
+        //     const mrp = parseFloat($('#itemppMRP').val()) || 0;
+        //     const tradeDiscount = parseFloat($(this).val()) || 0;
+        //     const companyPrice = parseFloat($('#companyPrice').val()) || 0;
+        //     const uFac = Number($('#unitFactor').val()) || 1;
 
-            let tradePrice = 0;
-            if (tradeDiscount > 0) {
-                const discounted = mrp - (mrp * (tradeDiscount / 100));
-                tradePrice = discounted + (discounted * 0.18);
-            } else {
-                tradePrice = companyPrice;
-            }
+        //     let tradePrice = 0;
+        //     if (tradeDiscount > 0) {
+        //         const discounted = mrp - (mrp * (tradeDiscount / 100));
+        //         tradePrice = (discounted + (discounted * 0.18)) * uFac;
+        //     } else {
+        //         tradePrice = companyPrice;
+        //     }
 
-            $('#tradePrice').val(tradePrice.toFixed(2));
-        });
+        //     $('#tradePrice').val(tradePrice.toFixed(2));
+        // });
 
 
         $('#quoteModal').on('show.bs.modal', function (e) {
-            debugger;
+            //debugger;
             var rowid = $(e.relatedTarget).data('id');
             $('#quotecustomerId').val(rowid);
             $('#itemid').empty();
@@ -2561,7 +2585,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#itemid').on('change', function (e) {
-            debugger;
+            //debugger;
             if ($('#inputType').val() == 1) {
                 for (var i = 0; i < itemDetails.length; i++) {
                     // look for the entry with a matching `code` value
@@ -2665,7 +2689,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         function mappItemPrice(price, gst, name, unitFactor, itemarticleNo, itemimage) {
-            debugger;
+            //debugger;
             $('#itemppMRP').val(price);
             $('#GST').val(gst);
             $('#selectedItemName').val(name);
@@ -2673,11 +2697,16 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#itemarticleNo').val(itemarticleNo);
             $('#itemimage').val(itemimage);
 
+
         }
+
+        let companyBasePrice = 0;
         // 1) Fetch everything we need for a picked item — FROM DB ONLY
         function fetchCompanyValues(itemId) {
+            console.log(config.developmentPath + "/Admin/Controller/item_detailscontroller.php?infoitemid=" + itemId,);
             $.getJSON(
                 config.developmentPath + "/Admin/Controller/item_detailscontroller.php?infoitemid=" + itemId,
+
                 function (data) {
                     if (!data || !data.length) return;
 
@@ -2688,13 +2717,15 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     const cDisc = parseFloat(r.itemDiscount || 0);
                     const cPrice = parseFloat(r.itemPrice || 0);
                     const tVal = parseFloat(r.itemTotalValue || 0);
-                    const spu = parseFloat(r.itemSPU || 0);   // ✅ ensure this matches your JSON key exactly
+                    console.log(r.spu);
+                    const spu = parseFloat(r.spu || 0);   // ✅ ensure this matches your JSON key exactly
                     const uFact = parseFloat(r.unitFactor || 1);
-
+                    $('#spu').val(spu.toFixed(2));
                     $('#itemppMRP').val(mrp.toFixed(2));
                     $('#GST').val(gst.toFixed(2));
                     $('#companyDiscount').val(cDisc.toFixed(2));
                     $('#companyPrice').val(cPrice.toFixed(2));
+                    companyBasePrice = cPrice.toFixed(2);
                     $('#companyPrice').data('base', cPrice);
                     $('#totalValue').val(tVal.toFixed(2));
 
@@ -2707,6 +2738,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                     const qty = parseFloat($('#itemquantity').val()) || 0;
                     const totalAmount = mrp * qty * uFact;
+
                     $('#totalAmount').val(totalAmount.toFixed(2));
 
                     $('#tradePrice').val(cPrice.toFixed(2));
@@ -2716,44 +2748,97 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
         // ✅ Unified handler: Quantity + Trade Discount + GST + SPU logic
         // ✅ Unified SPU Logic Calculation
-        $(document).off('keyup change', '#itemquantity, #tradeDiscount, #GST').on('keyup change', '#itemquantity, #tradeDiscount, #GST', function () {
-            const qty = Number($('#itemquantity').val()) || 0;
-            const mrp = Number($('#itemppMRP').val()) || 0;
-            const gst = Number($('#GST').val()) || 0;
-            const tDis = Number($('#tradeDiscount').val()) || 0;
-            const uFac = Number($('#unitFactor').val()) || 1;
+        // $(document).off('keyup change', '#itemquantity, #tradeDiscount, #GST').on('keyup change', '#itemquantity, #tradeDiscount, #GST', function () {
+        //     const qty = Number($('#itemquantity').val()) || 0;
+        //     const mrp = Number($('#itemppMRP').val()) || 0;
+        //     const gst = Number($('#GST').val()) || 0;
+        //     const tDis = Number($('#tradeDiscount').val()) || 0;
+        //     const uFac = Number($('#unitFactor').val()) || 1;
 
-            // Total Amount = MRP × Qty × UnitFactor
-            const totalAmt = mrp * qty * uFac;
-            $('#totalAmount').val(totalAmt.toFixed(2));
+        //     // Total Amount = MRP × Qty × UnitFactor
+        //     const totalAmt = mrp * qty * uFac;
+        //     $('#totalAmount').val(totalAmt.toFixed(2));
 
-            // Company Price
-            const companyBase = Number($('#companyPrice').data('base')) || Number($('#companyPrice').val()) || 0;
-            $('#companyPrice').val((companyBase * qty).toFixed(2));
+        //     // Company Price
+        //     const companyBase = Number($('#companyPrice').data('base')) || Number($('#companyPrice').val()) || 0;
+        //     $('#companyPrice').val((companyBase * qty).toFixed(2));
 
-            // Trade Price
-            let perPieceTrade = companyBase;
-            if (tDis > 0) {
-                const discounted = mrp - (mrp * (tDis / 100));
-                perPieceTrade = discounted + (discounted * (gst / 100));
-            }
-            const tradeTotal = perPieceTrade * qty;
-            $('#tradePrice').val(tradeTotal.toFixed(2));
+        //     // Trade Price
+        //     let perPieceTrade = companyBase;
+        //     if (tDis > 0) {
+        //         const discounted = mrp - (mrp * (tDis / 100));
+        //         perPieceTrade = discounted + (discounted * (gst / 100));
+        //     }
 
-            // ✅ Total Value with SPU logic
-            const baseTotalValue = Number($('#totalValue').data('base')) || 0;
-            const spu = Number($('#totalValue').data('spu')) || Number($('#itemSPU').val()) || 1;
 
-            let totalValue = 0;
-            if (baseTotalValue > 0 && spu > 0 && qty > 0) {
-                totalValue = baseTotalValue * Math.ceil(qty / spu);
-            } else {
-                totalValue = baseTotalValue * qty;
-            }
+        //     const tradeTotal = perPieceTrade * qty * uFac;
+        //     $('#tradePrice').val(tradeTotal.toFixed(2));
 
-            $('#totalValue').val(totalValue.toFixed(2));
-            console.log(`SPU=${spu}, Qty=${qty}, Base=${baseTotalValue}, Total=${totalValue}`);
-        });
+
+        //     // ✅ Total Value with SPU logic
+        //     const baseTotalValue = Number($('#totalValue').data('base')) || 0;
+        //     const spu = Number($('#totalValue').data('spu')) || Number($('#itemSPU').val()) || 1;
+
+        //     let totalValue = 0;
+        //     if (baseTotalValue > 0 && spu > 0 && qty > 0) {
+        //         totalValue = baseTotalValue * Math.ceil(qty / spu);
+        //     } else {
+        //         totalValue = baseTotalValue * qty;
+        //     }
+
+        //     $('#totalValue').val(totalValue.toFixed(2));
+        //     console.log(`SPU=${spu}, Qty=${qty}, Base=${baseTotalValue}, Total=${totalValue}`);
+        // });
+        $(document)
+
+            .on('change', '#itemquantity, #tradeDiscount, #GST', function () {
+
+                let qty = Number($('#itemquantity').val()) || 0;
+                const mrp = Number($('#itemppMRP').val()) || 0;
+                const gst = Number($('#GST').val()) || 0;
+                const tDis = Number($('#tradeDiscount').val()) || 0;
+                const uFac = Number($('#unitFactor').val()) || 1;
+                const spu = Number($('#spu').val()) || 1;
+                const price = Number($('#companyPrice').val()) || 0;
+
+                // Adjust qty based on SPU
+
+                // 1️⃣ Total Amount
+                $('#totalAmount').val((mrp * qty * uFac).toFixed(2));
+
+                // 2️⃣ Company Price (already per-piece base × qty)
+                const companyBase = Number($('#companyPrice').data('base')) || 0;
+                const companyTotal = companyBase * qty;
+                $('#companyPrice').val(companyTotal.toFixed(2));
+
+                // 3️⃣ Trade Price
+                let tradeTotal = companyTotal;   // ✅ DEFAULT (NO trade discount)
+
+                if (tDis > 0) {
+                    const discounted = mrp - (mrp * (tDis / 100));
+                    const perPieceTrade = discounted + (discounted * (gst / 100));
+                    tradeTotal = perPieceTrade * qty * uFac;
+                }
+
+                $('#tradePrice').val(tradeTotal.toFixed(2));
+
+                // 4️⃣ Total Value with SPU logic
+                debugger;
+                const baseTotalValue = Number($('#totalValue').data('base')) || 0;
+                const spuVal = Number($('#spu').val()) || 1;
+
+                let effectiveQty = qty;
+                if (spuVal > 1) {
+                    effectiveQty = Math.ceil(qty / spuVal);
+                }
+
+                const totalValue = baseTotalValue * effectiveQty;
+
+
+                $('#totalValue').val(totalValue.toFixed(2));
+
+            });
+
 
 
         // 2) When item changes, pull DB values and reset user-entry fields
@@ -2763,21 +2848,21 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
 
-        $('#tradeDiscount').on('keyup', function () {
-            debugger;
-            const mrp = parseFloat($('#itemppMRP').val()) || 0;
-            const tradeDiscount = parseFloat($(this).val()) || 0;
-            let tradePrice;
+        // $('#tradeDiscount').on('keyup', function () {
+        //     //debugger;
+        //     const mrp = parseFloat($('#itemppMRP').val()) || 0;
+        //     const tradeDiscount = parseFloat($(this).val()) || 0;
+        //     let tradePrice;
 
-            if (tradeDiscount > 0) {
-                const discounted = mrp - (mrp * (tradeDiscount / 100));
-                tradePrice = discounted + (discounted * 0.18);
-            } else {
-                tradePrice = parseFloat($('#companyPrice').val()) || 0;
-            }
+        //     if (tradeDiscount > 0) {
+        //         const discounted = mrp - (mrp * (tradeDiscount / 100));
+        //         tradePrice = (discounted + (discounted * 0.18)) * uFac;
+        //     } else {
+        //         tradePrice = parseFloat($('#companyPrice').val()) || 0;
+        //     }
 
-            $('#tradePrice').val(tradePrice.toFixed(2));
-        });
+        //     $('#tradePrice').val(tradePrice.toFixed(2));
+        // });
 
         function mappMaterialPrice(
             price, gst, name, unitFactor, materialcode, materialimage,
@@ -2794,6 +2879,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#companyPrice').val(companyPrice.toFixed(2));
             $('#companyPrice').data('base', companyPrice);
 
+            $('spu').val(spu);
             $('#totalValue').val(totalValue.toFixed(2));
             $('#totalValue').data('base', totalValue);
             $('#totalValue').data('spu', spu);
@@ -2867,14 +2953,14 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
         $('#deleteUserModal').on('show.bs.modal', function (e) {
-            debugger;
+            // //debugger;
             var rowid = $(e.relatedTarget).data('id');
             $('#deletecustomerId').val(rowid);
 
         });
 
         $('#delete_customer_form').submit(function () {
-            debugger;
+            // //debugger;
             $.ajax({
                 url: config.developmentPath +
                     "/Admin/Controller/customerController.php/",
@@ -2893,48 +2979,48 @@ require_once("../Model/enq_cat_mappingmodel.php");
             });
         });
         // ✅ Unified Trade Discount + Quantity + SPU logic
-        $(document).on('keyup change', '#itemquantity, #tradeDiscount, #GST', function () {
-            const qty = Number($('#itemquantity').val()) || 0;
-            const mrp = Number($('#itemppMRP').val()) || 0;
-            const gst = Number($('#GST').val()) || 0;          // %
-            const tDis = Number($('#tradeDiscount').val()) || 0; // %
-            const uFac = Number($('#unitFactor').val()) || 1;
+        // $(document).on('keyup change', '#itemquantity, #tradeDiscount, #GST', function () {
+        //     const qty = Number($('#itemquantity').val()) || 0;
+        //     const mrp = Number($('#itemppMRP').val()) || 0;
+        //     const gst = Number($('#GST').val()) || 0;          // %
+        //     const tDis = Number($('#tradeDiscount').val()) || 0; // %
+        //     const uFac = Number($('#unitFactor').val()) || 1;
 
-            // 1️⃣ Total Amount = MRP × Qty × UnitFactor
-            $('#totalAmount').val((mrp * qty * uFac).toFixed(2));
+        //     // 1️⃣ Total Amount = MRP × Qty × UnitFactor
+        //     $('#totalAmount').val((mrp * qty * uFac).toFixed(2));
 
-            // 2️⃣ Company Price (total)
-            const companyBase = Number($('#companyPrice').data('base')) || Number($('#companyPrice').val()) || 0;
-            const companyTotal = qty > 0 ? companyBase * qty : companyBase;
-            $('#companyPrice').val(companyTotal.toFixed(2));
+        //     // 2️⃣ Company Price (total)
+        //     const companyBase = Number($('#companyPrice').data('base')) || Number($('#companyPrice').val()) || 0;
+        //     const companyTotal = qty > 0 ? companyBase * qty : companyBase;
+        //     $('#companyPrice').val(companyTotal.toFixed(2));
 
-            // 3️⃣ Trade Price (total)
-            let perPieceTrade = companyBase;
-            if (tDis > 0) {
-                const discounted = mrp - (mrp * (tDis / 100));
-                perPieceTrade = discounted + (discounted * (gst / 100));
-            }
-            const tradeTotal = perPieceTrade * (qty || 0);
-            $('#tradePrice').val(tradeTotal.toFixed(2));
+        //     // 3️⃣ Trade Price (total)
+        //     let perPieceTrade = companyBase;
+        //     if (tDis > 0) {
+        //         const discounted = mrp - (mrp * (tDis / 100));
+        //         perPieceTrade = discounted + (discounted * (gst / 100));
+        //     }
+        //     const tradeTotal = perPieceTrade * (qty || 0);
+        //     $('#tradePrice').val(tradeTotal.toFixed(2));
 
-            // 4️⃣ Total Value based on SPU (ceil rule)
-            // ✅ Safe SPU-based Total Value Calculation
-            const baseTotalValue = Number($('#totalValue').data('base')) || 0;
-            const qtyNow = Number($('#itemquantity').val()) || 0;
-            const spu = Number($('#totalValue').data('spu')) || Number($('#itemSPU').val()) || 1; // fallback
+        //     // 4️⃣ Total Value based on SPU (ceil rule)
+        //     // ✅ Safe SPU-based Total Value Calculation
+        //     const baseTotalValue = Number($('#totalValue').data('base')) || 0;
+        //     const qtyNow = Number($('#itemquantity').val()) || 0;
+        //     const spu = Number($('#totalValue').data('spu')) || Number($('#itemSPU').val()) || 1; // fallback
 
-            let totalValue = 0;
+        //     let totalValue = 0;
 
-            if (spu > 0 && qty > 0) {
-                totalValue = baseTotalValue * Math.ceil(qty / spu);
-            } else {
-                totalValue = baseTotalValue;
-            }
+        //     if (spu > 0 && qty > 0) {
+        //         totalValue = baseTotalValue * Math.ceil(qty / spu);
+        //     } else {
+        //         totalValue = baseTotalValue;
+        //     }
 
-            $('#totalValue').val(totalValue.toFixed(2));
-            console.log(`SPU=${spu}, Qty=${qty}, Base=${baseTotalValue}, Total=${totalValue}`);
+        //     $('#totalValue').val(totalValue.toFixed(2));
+        //     console.log(`SPU=${spu}, Qty=${qty}, Base=${baseTotalValue}, Total=${totalValue}`);
 
-        });
+        // });
 
         // ✅ Prevent accidental recalculation when typing in Reference or Note fields
         $(document).on('focus', '#tradequoteReferencePrice, #quoteNote', function () {

@@ -9,13 +9,112 @@ require_once("../Model/materialModel.php");
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
+<style>
+    /* Modal Polish */
+    .modal-content-modern {
+        border-radius: 16px;
+        border: none;
+        overflow: hidden;
+    }
 
+    .modal-header-modern {
+        background: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        padding: 1.5rem;
+    }
+
+    /* Image Box */
+    .product-img-frame {
+        background-color: #fff;
+        border: 1px solid #e3e6f0;
+        border-radius: 12px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 10px;
+    }
+
+    .product-img-frame img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+
+    /* Info Cards */
+    .info-card {
+        background-color: #f8f9fc;
+        border-radius: 10px;
+        padding: 12px 15px;
+        height: 100%;
+        border-left: 4px solid #e3e6f0;
+        transition: transform 0.2s;
+    }
+
+    .info-card:hover {
+        background-color: #fff;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    /* Card Colors */
+    .card-highlight {
+        border-left-color: #1cc88a;
+        background-color: #f0fdf4;
+    }
+
+    /* Green/Money */
+    .card-spec {
+        border-left-color: #4e73df;
+    }
+
+    /* Blue/Specs */
+    .card-warn {
+        border-left-color: #f6c23e;
+    }
+
+    /* Yellow/Units */
+
+    /* Typography */
+    .label-text {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #858796;
+        display: block;
+        margin-bottom: 4px;
+        font-weight: 700;
+    }
+
+    .value-text {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #5a5c69;
+        margin: 0;
+    }
+
+    .value-text-lg {
+        font-size: 1.4rem;
+        color: #1cc88a;
+    }
+
+    /* Modern Table */
+    .table-modern thead th {
+        background-color: #eaecf4;
+        color: #4e73df;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        border: none;
+    }
+</style>
 <span id="message"></span>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Material List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                    List</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle="modal" data-target="#itemdetailsModal">
@@ -602,7 +701,16 @@ require_once("../Model/materialModel.php");
                             </div>
                         </div>
                     </div>
-
+                    <!-- Amount (MRP × Factor) -->
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-4 text-right">Amount <span class="text-danger">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" name="editedmaterialAmount" id="editedmaterialAmount"
+                                    class="form-control" required readonly />
+                            </div>
+                        </div>
+                    </div>
                     <!-- Price & Total for Edited -->
                     <div class="form-group">
                         <div class="row">
@@ -850,165 +958,156 @@ require_once("../Model/materialModel.php");
     </div>
 </div>
 <div class="modal fade" id="detailsItemModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Item Info</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content modal-content-modern shadow-lg">
+
+            <div class="modal-header modal-header-modern align-items-center">
+                <div>
+                    <h5 class="modal-title font-weight-bold text-primary" id="modal_title">
+                        <i class="fas fa-info-circle mr-2"></i> Material Information
+                    </h5>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" style="font-size: 1.5rem;">&times;</span>
+                </button>
             </div>
 
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-body">
+            <div class="modal-body bg-light px-4 py-4">
+                <input type="hidden" id="infoitemid">
 
-                        <div class="row">
+                <div class="row mb-4">
+                    <div class="col-lg-3 col-md-4 mb-3 mb-md-0">
+                        <div class="product-img-frame">
+                            <img id="itemImage" src="" alt="Item Image">
+                        </div>
+                    </div>
 
-                            <div class="col-4">
-                                <img id="itemImage" src="" width="200" height="200">
+                    <div class="col-lg-9 col-md-8">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="font-weight-bold text-dark mb-1" id="displayItemName"></h3>
+                                <div class="mb-3">
+                                    <span class="badge badge-primary px-3 py-2 mr-1" id="displayItemCategory"></span>
+                                    <span class="badge badge-light border px-3 py-2 text-muted"
+                                        id="displayItemSubCategory"></span>
+                                </div>
                             </div>
-
-                            <div class="col-8">
-
-                                <input type="hidden" id="infoitemid">
-
-                                <div class="row">
-                                    <div class="col-4"><label>Item Name</label></div>
-                                    <div class="col-8">
-                                        <h5 id="displayItemName"></h5>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Item Category</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemCategory"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Item Subcategory</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemSubCategory"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Description</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemDescription"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Brand</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemComapny"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Item Code</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemArticleNo"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>HSN Code</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemHSNCode"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>SPU</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItempu"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Quantity</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemsize"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Unit</label></div>
-                                    <div class="col-8">
-                                        <p id="displayunit"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Unit Factor</label></div>
-                                    <div class="col-8">
-                                        <p id="displayunitFactor"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Thickness</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemThickness"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Grains</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemGrains"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>MRP</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemMRP"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>GST</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemGST"></p>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-4"><label>Price</label></div>
-                                    <div class="col-8">
-                                        <p id="displayItemppMRP"></p>
-                                    </div>
-                                </div>
-
+                            <div class="text-right">
+                                <small class="text-muted text-uppercase font-weight-bold">Brand</small>
+                                <h5 class="text-dark font-weight-bold" id="displayItemComapny"></h5>
                             </div>
+                        </div>
 
-                            <div class="row mt-3">
-                                <table class="table table-bordered" id="details_table" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>PO Code</th>
-                                            <th>Invoice No</th>
-                                            <th>Date of Purchase</th>
-                                            <th>Item Price</th>
-                                            <th>ReceivedQty</th>
-                                            <th>ReceivedQtyAmt</th>
-                                            <th>TotalAmount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
+                        <div class="bg-white p-3 rounded shadow-sm border-0 mt-2">
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <small class="text-muted font-weight-bold">Description</small>
+                                    <p class="mb-0 text-dark" id="displayItemDescription"></p>
+                                </div>
+                                <div class="col-md-6 border-top pt-2 mt-1">
+                                    <small class="text-muted">Item Code: </small>
+                                    <span class="font-weight-bold text-dark" id="displayItemArticleNo"></span>
+                                </div>
+                                <div class="col-md-6 border-top pt-2 mt-1">
+                                    <small class="text-muted">HSN Code: </small>
+                                    <span class="font-weight-bold text-dark" id="displayItemHSNCode"></span>
+                                </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
+
+                <h6 class="text-primary font-weight-bold mb-3 pl-1 text-uppercase small ls-1">Product Specifications &
+                    Financials</h6>
+
+                <div class="row mb-2">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card card-warn">
+                            <span class="label-text">SPU</span>
+                            <p class="value-text" id="displayItempu"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card card-warn">
+                            <span class="label-text">Quantity</span>
+                            <p class="value-text" id="displayItemsize"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card">
+                            <span class="label-text">Unit</span>
+                            <p class="value-text" id="displayunit"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card">
+                            <span class="label-text">Unit Factor</span>
+                            <p class="value-text" id="displayunitFactor"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card card-spec">
+                            <span class="label-text">Thickness</span>
+                            <p class="value-text" id="displayItemThickness"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6 mb-3">
+                        <div class="info-card card-spec">
+                            <span class="label-text">Grains</span>
+                            <p class="value-text" id="displayItemGrains"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="info-card">
+                            <span class="label-text">MRP</span>
+                            <p class="value-text" id="displayItemMRP"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="info-card">
+                            <span class="label-text">GST</span>
+                            <p class="value-text" id="displayItemGST"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-12 mb-3">
+                        <div class="info-card card-highlight">
+                            <span class="label-text text-success">Net Price</span>
+                            <p class="value-text value-text-lg" id="displayItemppMRP"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm mt-3 overflow-hidden rounded-lg">
+                    <div class="card-header bg-white border-bottom-0 pt-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Purchase History</h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-modern table-hover mb-0" id="details_table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>PO Code</th>
+                                    <th>Invoice No</th>
+                                    <th>Date of Purchase</th>
+                                    <th>Item Price</th>
+                                    <th>ReceivedQty</th>
+                                    <th>ReceivedQtyAmt</th>
+                                    <th>TotalAmount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss="modal">Close</button>
+            <div class="modal-footer bg-white border-top-0">
+                <button class="btn btn-light text-secondary font-weight-bold" data-dismiss="modal">Close</button>
             </div>
 
         </div>
@@ -1365,29 +1464,29 @@ require_once("../Model/materialModel.php");
         });
 
         // ---------- Edited units/factors (material edit modal) ----------
-            $.getJSON(matUnitsUrl, function (data) {
-                $('#editedunit').empty();
-                $.each(data, function (i, v) {
-                    $('#editedunit').append(`<option value="${v.unitId}">${v.unitName}</option>`);
-                });
-                if (data.length) matLoadEditedUnitFactor(data[0].unitId);
-            }).fail(function () { console.error("Failed to load units for edit"); });
-
-            function matLoadEditedUnitFactor(unitId) {
-                $('#editedunitFactor').empty();
-                $.getJSON(matUnitFactorBase + unitId, function (data) {
-                    $('#editedunitFactor').append('<option hidden disabled selected value>-- select an option --</option>');
-                    $.each(data, function (i, v) {
-                        // Use unitFactorId as value, unitFactor as text
-                        $('#editedunitFactor').append(`<option value="${v.unitFactorId}">${v.unitFactor}</option>`);
-                    });
-                }).fail(function () { console.error("Failed to load edited unit factors for", unitId); });
-            }
-
-            $('#editedunit').on('change', function () {
-                matLoadEditedUnitFactor(this.value);
-                matCalculateEditedMaterialPriceAndValue();
+        $.getJSON(matUnitsUrl, function (data) {
+            $('#editedunit').empty();
+            $.each(data, function (i, v) {
+                $('#editedunit').append(`<option value="${v.unitId}">${v.unitName}</option>`);
             });
+            if (data.length) matLoadEditedUnitFactor(data[0].unitId);
+        }).fail(function () { console.error("Failed to load units for edit"); });
+
+        function matLoadEditedUnitFactor(unitId) {
+            $('#editedunitFactor').empty();
+            $.getJSON(matUnitFactorBase + unitId, function (data) {
+                $('#editedunitFactor').append('<option hidden disabled selected value>-- select an option --</option>');
+                $.each(data, function (i, v) {
+                    // Use unitFactorId as value, unitFactor as text
+                    $('#editedunitFactor').append(`<option value="${v.unitFactorId}">${v.unitFactor}</option>`);
+                });
+            }).fail(function () { console.error("Failed to load edited unit factors for", unitId); });
+        }
+
+        $('#editedunit').on('change', function () {
+            matLoadEditedUnitFactor(this.value);
+            matCalculateEditedMaterialPriceAndValue();
+        });
 
         // ---------- Calculation logic (material) ----------
         function matRecalcMaterialPriceAndValue() {
@@ -1430,6 +1529,9 @@ require_once("../Model/materialModel.php");
                 price = discounted * (1 + (GST / 100)); // ✅ same GST rule
             }
 
+            let amount = MRP * factor;
+
+            $('#editedmaterialAmount').val((MRP * factor).toFixed(2)); // ✅ amount calc
             $('#editedmaterialPrice').val(price.toFixed(2));
             $('#editedmaterialTotalValue').val((price * SPU).toFixed(2)); // ✅ same final
         }
@@ -1470,7 +1572,7 @@ require_once("../Model/materialModel.php");
             const img = btn.data('image');
             $('#editedPreviewImage').attr("src",
                 img ? (baseCtrl + "/../img/materials/" + img) : (baseCtrl + "/../img/default.png")
-            );  
+            );
             $('#existing_image').val(img);
 
 
@@ -1483,6 +1585,10 @@ require_once("../Model/materialModel.php");
             }).catch(err => {
                 console.error("Failed populating edited dropdowns:", err);
             });
+            setTimeout(() => {
+                matCalculateEditedMaterialPriceAndValue();
+            }, 300);
+
         });
 
         // helpers for edited dropdown population (material)
@@ -1540,6 +1646,8 @@ require_once("../Model/materialModel.php");
                 .then(() => {
                     if (unitId) $('#editedunit').val(unitId);
                     if (unitFactorId) $('#editedunitFactor').val(unitFactorId);
+
+                    matCalculateEditedMaterialPriceAndValue();
                 });
         }
 
@@ -1816,19 +1924,29 @@ require_once("../Model/materialModel.php");
                 $('#itemImage').attr("src", img);
 
                 // PURCHASE TABLE
-                $('#details_table tbody').empty();
-                $.each(data, function (i, r) {
-                    $('#details_table tbody').append(`
-                    <tr>
-                        <td>${safe(r.POcode)}</td>
-                        <td>${safe(r.InvoiceNo)}</td>
-                        <td>${safe(r.DateofPurchase)}</td>
-                        <td>${safe(r.ItemPrice)}</td>
-                        <td>${safe(r.ReceivedQty)}</td>
-                        <td>${safe(r.ReceivedQtyAmt)}</td>
-                        <td>${safe(r.TotalAmount)}</td>
-                    </tr>
-                `);
+                $("#details_table tbody").empty();
+
+                let runningTotal = 0;
+
+                // ✅ Sort by date / id if needed (important)
+                data.sort((a, b) => new Date(a.DateofPurchase) - new Date(b.DateofPurchase));
+
+                $.each(data, function (index, r) {
+
+                    let receivedAmt = parseFloat(r.ReceivedQtyAmt) || 0;
+                    runningTotal += receivedAmt;
+
+                    $("#details_table tbody").append(`
+        <tr>
+            <td>${safe(r.POcode)}</td>
+            <td>${safe(r.InvoiceNo)}</td>
+            <td>${safe(r.DateofPurchase)}</td>
+            <td>${safe(r.ItemPrice)}</td>
+            <td>${safe(r.ReceivedQty)}</td>
+            <td>${receivedAmt.toFixed(2)}</td>
+            <td>${runningTotal.toFixed(2)}</td>
+        </tr>
+    `);
                 });
 
             }).fail(function (xhr, status, err) {

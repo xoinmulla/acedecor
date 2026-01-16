@@ -35,12 +35,39 @@ class PurchaselineItem implements JsonSerializable
     private $HSNcode;
     private $Itemcatname;
     private $Itemsubcatname;
-    
+
+    private $InventoryPrice;
+
+    private $InventoryType;
+
+    private $Description;
+
+
+
+    public function setInventoryType($InventoryType)
+    {
+        $this->InventoryType = $InventoryType;
+    }
+
+    public function getInventoryType()
+    {
+        return $this->InventoryType;
+    }
+
+    public function setInventoryPrice($price)
+    {
+        $this->InventoryPrice = $price;
+    }
+
+    public function getInventoryPrice()
+    {
+        return $this->InventoryPrice ?? 0;
+    }
 
 
     public function set_GST($GST)
     {
-        $this->GST=$GST;
+        $this->GST = $GST;
     }
     public function get_GST()
     {
@@ -48,20 +75,20 @@ class PurchaselineItem implements JsonSerializable
     }
     public function set_totalamt($totalamt)
     {
-        $this->TotalAmt=$totalamt;
+        $this->TotalAmt = $totalamt;
     }
     public function get_totalamt()
     {
         return $this->TotalAmt;
     }
-    
+
     public function get_POID()
     {
         return $this->POID;
     }
     public function set_POID($POID)
     {
-        $this->POID=$POID;
+        $this->POID = $POID;
     }
 
     public function get_POlineitemId()
@@ -70,29 +97,29 @@ class PurchaselineItem implements JsonSerializable
     }
     public function set_POlineitemId($POlineitemId)
     {
-        $this->POlineitemId=$POlineitemId;
+        $this->POlineitemId = $POlineitemId;
     }
 
     public function set_itemid($itemid)
     {
-        $this->Item_id =$itemid;
+        $this->Item_id = $itemid;
     }
     public function get_itemid()
     {
-        return $this->Item_id ;
+        return $this->Item_id;
     }
 
     public function set_supplierId($supplierId)
     {
-        $this->SupplierId =$supplierId;
+        $this->SupplierId = $supplierId;
     }
     public function get_supplierId()
     {
-        return $this->SupplierId ;
+        return $this->SupplierId;
     }
     public function set_price($price)
     {
-        $this->Price=$price;
+        $this->Price = $price;
     }
     public function get_price()
     {
@@ -101,7 +128,7 @@ class PurchaselineItem implements JsonSerializable
 
     public function set_PPMRP($PPMRP)
     {
-        $this->PPMRP=$PPMRP;
+        $this->PPMRP = $PPMRP;
     }
     public function get_PPMRP()
     {
@@ -111,7 +138,7 @@ class PurchaselineItem implements JsonSerializable
 
     public function set_quantity($quantity)
     {
-        $this->Quantity=$quantity;
+        $this->Quantity = $quantity;
     }
     public function get_quantity()
     {
@@ -120,7 +147,7 @@ class PurchaselineItem implements JsonSerializable
 
     public function setRaisedQty($RaisedQty)
     {
-        $this->RaisedQty=$RaisedQty;
+        $this->RaisedQty = $RaisedQty;
     }
     public function getRaisedQty()
     {
@@ -130,7 +157,7 @@ class PurchaselineItem implements JsonSerializable
 
     public function setbarcodeimg($barcodeimg)
     {
-        $this->BarcodeImg=$barcodeimg;
+        $this->BarcodeImg = $barcodeimg;
     }
     public function getbarcodeimg()
     {
@@ -139,7 +166,7 @@ class PurchaselineItem implements JsonSerializable
 
     function set_ReceivedQty($ReceivedQty)
     {
-        $this->ReceivedQty	=$ReceivedQty;
+        $this->ReceivedQty = $ReceivedQty;
     }
     function get_ReceivedQty()
     {
@@ -148,7 +175,7 @@ class PurchaselineItem implements JsonSerializable
 
     function set_ReceivedQtyAmt($ReceivedQtyAmt)
     {
-        $this->ReceivedQtyAmt	=$ReceivedQtyAmt;
+        $this->ReceivedQtyAmt = $ReceivedQtyAmt;
     }
     function get_ReceivedQtyAmt()
     {
@@ -156,10 +183,10 @@ class PurchaselineItem implements JsonSerializable
     }
 
 
-   
+
     function set_BalanceQty($BalanceQty)
     {
-        $this->BalanceQty	=$BalanceQty;
+        $this->BalanceQty = $BalanceQty;
     }
     function get_BalanceQty()
     {
@@ -170,38 +197,40 @@ class PurchaselineItem implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-                'POID' => $this->POID,
-                'POlineitemId' => $this->POlineitemId,
-                'itemid' => $this->Item_id,
-                'price' => $this->Price,
-                // 'issues'=>$this->Issues,
-                'quantity'=> $this->Quantity,
-                'totalamt' => $this->TotalAmt,
-                'GST' => $this->GST,
-                'Name' => $this->Name,
-                'Brand'=>$this->Brand,
-                'unitName'=>$this->unitName,
-                'Description'=>$this->Description,
-                // 'Itemcatname'=>$this->Itemcatname,
-                // 'Itemsubcatname'=>$this->Itemsubcatname, 
-                'OtherCharges'=>$this->OtherCharges,
-                'TaxableValue'=>$this->TaxableValue,
-                'CD'=>$this->CD,
-                'Discount'=>$this->Discount,
-                'IGST'=>$this->IGST,
-                'GSTamt'=>$this->GSTamt,
-                'StockId'=>$this->StockId,
-                'POcode'=>$this->POcode,
-                'Itemcode'=>$this->Itemcode,
-                'barcodeimg' =>$this->BarcodeImg,
-                'InvoiceNo'=>$this->InvoiceNo,
-                'supplierId'=>$this->SupplierId,
-                'ReceivedQtyAmt'=>$this->ReceivedQtyAmt,
-                'ReceivedQty'=>$this->ReceivedQty,
-                'ItemImage'=>$this->ItemImage,
-                'BalanceQty'=>$this->BalanceQty,
-                'PPMRP'=>$this->PPMRP,
-                'RaisedQty'=>$this->RaisedQty,
+            'POID' => $this->POID,
+            'POlineitemId' => $this->POlineitemId,
+            'itemid' => $this->Item_id,
+            'price' => $this->Price,
+            // 'issues'=>$this->Issues,
+            'quantity' => $this->Quantity,
+            'totalamt' => $this->TotalAmt,
+            'GST' => $this->GST,
+            'Name' => $this->Name,
+            'Brand' => $this->Brand,
+            'unitName' => $this->unitName,
+            'Description' => $this->Description,
+            // 'Itemcatname'=>$this->Itemcatname,
+            // 'Itemsubcatname'=>$this->Itemsubcatname, 
+            'OtherCharges' => $this->OtherCharges,
+            'TaxableValue' => $this->TaxableValue,
+            'CD' => $this->CD,
+            'Discount' => $this->Discount,
+            'IGST' => $this->IGST,
+            'GSTamt' => $this->GSTamt,
+            'StockId' => $this->StockId,
+            'POcode' => $this->POcode,
+            'Itemcode' => $this->Itemcode,
+            'barcodeimg' => $this->BarcodeImg,
+            'InvoiceNo' => $this->InvoiceNo,
+            'supplierId' => $this->SupplierId,
+            'ReceivedQtyAmt' => $this->ReceivedQtyAmt,
+            'ReceivedQty' => $this->ReceivedQty,
+            'ItemImage' => $this->ItemImage,
+            'BalanceQty' => $this->BalanceQty,
+            'PPMRP' => $this->PPMRP,
+            'RaisedQty' => $this->RaisedQty,
+            'InventoryPrice' => $this->InventoryPrice,
+            'InventoryType' => $this->InventoryType,
         ];
     }
 
@@ -221,13 +250,13 @@ class PurchaselineItem implements JsonSerializable
 
         return $this;
     }
-    
+
 
     /**
      * Set the value of unitName
      *
      * @return  self
-     */ 
+     */
     public function setunitName($unitName)
     {
         $this->unitName = $unitName;
@@ -238,8 +267,8 @@ class PurchaselineItem implements JsonSerializable
     {
         return $this->unitName;
     }
-    
-    
+
+
 
     public function setBrand($Brand)
     {
@@ -262,7 +291,7 @@ class PurchaselineItem implements JsonSerializable
     {
         return $this->Description;
     }
-    
+
     public function setHSNcode($HSNcode)
     {
         $this->HSNcode = $HSNcode;
@@ -285,7 +314,7 @@ class PurchaselineItem implements JsonSerializable
         return $this->InvoiceNo;
     }
 
-   
+
     public function setItemcode($Itemcode)
     {
         $this->Itemcode = $Itemcode;
@@ -343,7 +372,7 @@ class PurchaselineItem implements JsonSerializable
         return $this->Discount;
     }
 
-    
+
     public function setCD($CD)
     {
         $this->CD = $CD;
@@ -411,7 +440,7 @@ class PurchaselineItem implements JsonSerializable
      * Set the value of Name
      *
      * @return  self
-     */ 
+     */
     public function setItemcatname($Itemcatname)
     {
         $this->Itemcatname = $Itemcatname;
@@ -428,7 +457,7 @@ class PurchaselineItem implements JsonSerializable
      * Set the value of Name
      *
      * @return  self
-     */ 
+     */
     public function setItemsubcatname($Itemsubcatname)
     {
         $this->Itemsubcatname = $Itemsubcatname;
@@ -438,7 +467,7 @@ class PurchaselineItem implements JsonSerializable
 
     /**
      * Get the value of POType
-     */ 
+     */
     public function getPOType()
     {
         return $this->POType;
@@ -448,7 +477,7 @@ class PurchaselineItem implements JsonSerializable
      * Set the value of POType
      *
      * @return  self
-     */ 
+     */
     public function setPOType($POType)
     {
         $this->POType = $POType;
@@ -456,7 +485,7 @@ class PurchaselineItem implements JsonSerializable
         return $this;
     }
 
-    
+
     public function getInputName()
     {
         return $this->InputName;

@@ -35,9 +35,20 @@ class DBitemsubcategory
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * FROM item_subcategory As subCat
-      JOIN item_category cat 
-      ON subCat.item_catid=cat.item_catid";
+    $sql = "
+SELECT 
+    subCat.*,
+    cat.item_catName,
+    (
+        SELECT COUNT(*) 
+        FROM item_details ID 
+        WHERE ID.item_subcatid = subCat.item_subcatid
+    ) AS itemCount
+FROM item_subcategory subCat
+JOIN item_category cat 
+ON subCat.item_catid = cat.item_catid
+";
+
 
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
@@ -52,6 +63,8 @@ class DBitemsubcategory
         $view->set_itemsubcatdescription($row["item_subcatDescription"]);
         $view->set_itemsubcatcreatedby($row["item_subcatCreatedBy"]);
         $view->set_itemsubcatmodifiedby($row["item_subcatModifiedBy"]);
+        $canDelete = ($row['itemCount'] == 0);
+        $view->set_canDelete($canDelete);
 
         array_push($itemsubcatlist, $view);
       }

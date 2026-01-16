@@ -15,14 +15,14 @@ require_once("../Model/taskModel.php");
     }
     </style>
 </head> -->
-<h1 class="h3 mb-4 text-gray-800">Tasks Management</h1>
+<h1 class="h3 mb-4 text-gray-800">Project Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Tasks</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Project Tasks</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#projectModal>

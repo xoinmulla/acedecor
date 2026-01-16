@@ -77,13 +77,16 @@
                 <span>Settings</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="expense.php?action=list">
+                <i class="fas fa-calendar-check"></i>
+                <span>Transaction</span>
+            </a>
+        </li>
+
             <br>
             <hr class="sidebar-divider">
-            <li class="nav-item">
-                <a class="nav-link" href="employeeDashboard.php">
-                <i class="fas fa-backward"></i>
-                <span>Back</span></a>
-            </li>
+            
             
             <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">

@@ -27,7 +27,7 @@ require_once("../Model/brandmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Brands List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Brands List</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#brandModal>
@@ -96,7 +96,7 @@ require_once("../Model/brandmodel.php");
               </button>";
                         } else {
                             echo "<button class='btn btn-secondary dropdown-item' disabled>
-                        <i class='fas fa-ban'></i> Cannot Delete (Mapped with Item Category)
+                        <i class='fas fa-ban'></i> Cannot Delete ( Brand is Mapped )
               </button>";
                         }
 

@@ -30,7 +30,7 @@ require_once("../Model/quotationModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Quotation List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Quotation List</h6>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#quoteModal>
@@ -444,7 +444,6 @@ require_once("../Model/quotationModel.php");
         </form>
     </div>
 </div>
-
 <div class="modal fade" id=customerModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -684,7 +683,6 @@ require_once("../Model/quotationModel.php");
     </div>
 </div> -->
 
-
 <div class="modal fade" id=deleteQuotationModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_quote_form" enctype="multipart/form-data">
@@ -828,9 +826,18 @@ require_once("../Model/quotationModel.php");
                 $('#unit').append(`<option value="">Select Unit</option>`);
 
                 $.each(unitsData, function (i, u) {
-                    $('#unit').append(`<option value="${u.unitId}">${u.unitName}</option>`);
+                    $('#unit').append(
+                        `<option value="${u.unitId}">${u.unitName}</option>`
+                    );
                 });
+
+                // ✅ IMPORTANT: set value AFTER loading options
+                let savedUnitId = $('#unitId').val();
+                if (savedUnitId) {
+                    $('#unit').val(savedUnitId);
+                }
             });
+
 
         });
 

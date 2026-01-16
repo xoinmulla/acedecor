@@ -1,51 +1,200 @@
-
 <?php
 include('session.php');
 include('channelpartnerheader.php');
 
 
-        include "../DB Operations/dashboardOps.php";
-        $customer = DBDashboard::customerenqpercentage();
-        $projectstatus=DBDashboard::projectstatus();       
-        $EnqAndCustomer = DBDashboard::EnqandCustomer();
-        $totalbrands=DBDashboard::totalbrands();
-        $totalsuppliers=DBDashboard::totalsupplierscount();
-        // $inwardedbrand=DBDashboard::totalbrandinwarded();
-        // $completedprojects=DBDashboard::CompletedProjects();
-        // $pendingprojects=DBDashboard::PendingProjects();
-    ?>
+include "../DB Operations/dashboardOps.php";
+$customer = DBDashboard::customerenqpercentage();
+$projectstatus = DBDashboard::projectstatus();
+$EnqAndCustomer = DBDashboard::EnqandCustomer();
+$totalbrands = DBDashboard::totalbrands();
+$totalsuppliers = DBDashboard::totalsupplierscount();
+// $inwardedbrand=DBDashboard::totalbrandinwarded();
+// $completedprojects=DBDashboard::CompletedProjects();
+// $pendingprojects=DBDashboard::PendingProjects();
+?>
 
 <head>
     <style>
-    .widget-stat,
-    .media {
+        /* ===== Dashboard Theme ===== */
+        :root {
+            --primary: #4f6bed;
+            --secondary: #00c6ff;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --info: #3498db;
+            --dark: #2c3e50;
+        }
 
-        align-items: center;
-        background-color: white;
-        height: 100px;
-    }
+        /* Page background */
+        body {
+            background: linear-gradient(135deg, #eef2f7, #f8fbff);
+            font-family: "Segoe UI", sans-serif;
+        }
 
-    .card {
+        /* Card Grid */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+            padding: 25px;
+        }
 
-        padding: 0.5rem;
-    }
+        /* Ultimate Card */
+        .dashboard-card {
+            position: relative;
+            height: 210px;
+            border-radius: 22px;
+            padding: 25px;
+            color: #fff;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s ease;
+        }
 
-    .card-body {
+        /* Hover Effect */
+        .dashboard-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 55px rgba(0, 0, 0, 0.25);
+        }
 
-        padding: 0rem;
-    }
+        /* Glass Overlay */
+        .dashboard-card::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.08);
+            transform: rotate(25deg);
+        }
 
+        /* Icon */
+        .dashboard-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
 
-    .card-fas {
+        /* Title */
+        .dashboard-title {
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.85;
+        }
 
-        color: #6699cc;
-    }
+        /* Value */
+        .dashboard-value {
+            font-size: 42px;
+            font-weight: 800;
+            margin-top: 8px;
+        }
 
-    .col-sm-3 {
-        flex: 0 0 22%;
-        max-width: 20%;
-    }
+        /* Different Card Colors */
+        .card-brands {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .card-suppliers {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .card-inward {
+            background: linear-gradient(135deg, #f7971e, #ffd200);
+        }
+
+        /* =========================
+   RESPONSIVE FIXES
+========================= */
+
+        /* Large Screens (Desktop) */
+        @media (min-width: 1200px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Tablets */
+        @media (max-width: 992px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 20px;
+                gap: 20px;
+            }
+
+            .dashboard-card {
+                height: 170px;
+                padding: 22px;
+            }
+
+            .dashboard-value {
+                font-size: 36px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+
+            /* Header spacing */
+            .card-header h6 {
+                font-size: 1.2rem !important;
+                text-align: center;
+            }
+
+            /* Card grid */
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 18px;
+            }
+
+            /* Card size */
+            .dashboard-card {
+                height: auto;
+                padding: 20px;
+                border-radius: 18px;
+            }
+
+            /* Icon */
+            .dashboard-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 22px;
+                margin-bottom: 10px;
+            }
+
+            /* Title */
+            .dashboard-title {
+                font-size: 13px;
+            }
+
+            /* Value */
+            .dashboard-value {
+                font-size: 32px;
+            }
+        }
+
+        /* Extra Small Devices */
+        @media (max-width: 360px) {
+            .dashboard-value {
+                font-size: 28px;
+            }
+
+            .dashboard-title {
+                font-size: 12px;
+            }
+        }
     </style>
+
 
     <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
@@ -67,10 +216,10 @@ include('channelpartnerheader.php');
         var data = new google.visualization.arrayToDataTable([
             ['MONTH', 'Enquiries', 'Customer', 'Projects'],
             <?php
-        while ($row = mysqli_fetch_array($EnqAndCustomer)) {
-            echo "['" . $row['MONTH'] . "'," .intval($row['Enquiries'])."," .intval($row['Customer']). "," .intval($row['Projects']). "],";
-        }
-         ?>
+            while ($row = mysqli_fetch_array($EnqAndCustomer)) {
+                echo "['" . $row['MONTH'] . "'," . intval($row['Enquiries']) . "," . intval($row['Customer']) . "," . intval($row['Projects']) . "],";
+            }
+            ?>
         ]);
 
         // Set chart options
@@ -92,11 +241,11 @@ include('channelpartnerheader.php');
         var data = new google.visualization.arrayToDataTable([
             ['Entity', 'Count'],
             <?php
-        $row = mysqli_fetch_array($customer) ;
-            echo "['Enquiries'," .intval($row['Enquiries']). "],";
-            echo "['Customer'," .intval($row['Customer']). "]";
+            $row = mysqli_fetch_array($customer);
+            echo "['Enquiries'," . intval($row['Enquiries']) . "],";
+            echo "['Customer'," . intval($row['Customer']) . "]";
 
-         ?>
+            ?>
 
         ]);
 
@@ -119,11 +268,11 @@ include('channelpartnerheader.php');
         var data = new google.visualization.arrayToDataTable([
             ['Entity', 'Count'],
             <?php
-$row = mysqli_fetch_array($projectstatus) ;
-    echo "['Ongoing Projects'," .intval($row['OngoingProjects']). "],";
-    echo "['Completed Projects'," .intval($row['CompletedProjects']). "]";
+            $row = mysqli_fetch_array($projectstatus);
+            echo "['Ongoing Projects'," . intval($row['OngoingProjects']) . "],";
+            echo "['Completed Projects'," . intval($row['CompletedProjects']) . "]";
 
- ?>
+            ?>
 
         ]);
 
@@ -143,78 +292,70 @@ $row = mysqli_fetch_array($projectstatus) ;
 </head>
 
 <body>
-    
+
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">CHANNEL PARTNER DASHBOARD</h6>
+            <h6 class="m-0 text-primary" style="font-size: 1.5rem; font-weight: bolder;">Channel Partners Dashboard</h6>
         </div></br>
-        <div class="row">
-            <div class="col-sm-4" style="height: 5rem;">
-                <div class="card mb-1" style="max-width: 327px;height: 6 rem; ">
-                    <div class="card-body text-center " style="height: 6 rem;">
-                        <i class="card-fas fas fa-question-circle fa-2x"></i></br></br>
-                        <h6 class="text-center font-weight-bold card-title" style="color:#B97A57;">Total Brands
-                        </h6>
-                        <h3 class="text-center font-weight-bold" style=font-size:50px;color:#6699cc>
-                            <?php
-                                 echo $totalbrands['total'];
-                            ?>
-                        </h3>
-                    </div>
+        <div class="dashboard-cards">
+
+            <!-- Total Brands -->
+            <div class="dashboard-card card-brands">
+                <div class="dashboard-icon">
+                    <i class="fas fa-cubes"></i>
                 </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card mb-1" style="max-width: 327px;height: 6 rem; ">
-                    <div class="card-body text-center" style="height: 6 rem;">
-                        <i class="card-fas fas fa-users fa-2x"></i></br></br>
-                        <h6 class=" text-center font-weight-bold card-title" style="color:#B97A57;">Total Suppliers
-                        </h6>
-                        <h3 class=" text-center font-weight-bold" style=font-size:50px;color:#6699cc>
-                        <?php
-                                 echo $totalsuppliers['total'];
-                            ?>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-4">
-                <div class="card mb-1" style="max-width: 327px;height: 6 rem; ">
-                    <div class="card-body text-center" style="height: 6 rem;">
-                        <i class="card-fas fas fa-check-circle fa-2x"></i></br></br>
-                        <h6 class=" text-center font-weight-bold card-title" style="color:#B97A57;">Inwarded Brand
-                        </h6>
-                        <h3 class=" text-center font-weight-bold" style=font-size:50px;color:#6699cc>
-                        <!-- <?php
-                                 echo $inwardedbrand['total'];
-                            ?>  -->
-                        </h3>
-
-                    </div>
-
-
+                <div class="dashboard-title">Total Brands</div>
+                <div class="dashboard-value">
+                    <?php echo $totalbrands['total']; ?>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-1"></div>
-                <div class="col-lg-10">
-                    <div id="enquiries_div"></div>
+            <!-- Total Suppliers -->
+            <div class="dashboard-card card-suppliers">
+                <div class="dashboard-icon">
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="col-lg-1"></div>
+                <div class="dashboard-title">Total Suppliers</div>
+                <div class="dashboard-value">
+                    <?php echo $totalsuppliers['total']; ?>
+                </div>
             </div>
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-5">
-                    <div id="customer_div"></div>
+
+            <!-- Inwarded Brand -->
+            <div class="dashboard-card card-inward">
+                <div class="dashboard-icon">
+                    <i class="fas fa-check-circle"></i>
                 </div>
-                <div class="col-md-5">
-                    <div id="projectstatus_div"></div>
+                <div class="dashboard-title">Inwarded Brands</div>
+                <div class="dashboard-value">
+                    0
+                    <!-- <?php // echo $inwardedbrand['total']; ?> -->
                 </div>
-                <div class="col-md-1"></div>
             </div>
 
         </div>
+
+
+        <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-10">
+                <div id="enquiries_div"></div>
+            </div>
+            <div class="col-lg-1"></div>
+        </div>
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-5">
+                <div id="customer_div"></div>
+            </div>
+            <div class="col-md-5">
+                <div id="projectstatus_div"></div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+
+    </div>
     </div>
 </body>
-<?php include('footer.php'); ?>
+
 </html>

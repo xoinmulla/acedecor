@@ -67,7 +67,18 @@ class DBitemcategory
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * FROM item_category";
+    $sql = "
+SELECT 
+    IC.*,
+    (
+        SELECT COUNT(*) FROM item_details ID WHERE ID.item_catid = IC.item_catid
+    ) AS itemCount,
+    (
+        SELECT COUNT(*) FROM item_subcategory ISB WHERE ISB.item_catid = IC.item_catid
+    ) AS subCatCount
+FROM item_category IC
+";
+
 
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
@@ -80,6 +91,10 @@ class DBitemcategory
         $view->set_itemcatdescription($row["item_catDescription"]);
         $view->set_itemcatcreatedby($row["item_catCreatedBy"]);
         $view->set_itemcatmodifiedby($row["item_catModifiedBy"]);
+
+        $canDelete = ($row['itemCount'] == 0 && $row['subCatCount'] == 0);
+        $view->set_canDelete($canDelete);
+
         array_push($itemcatlist, $view);
 
 

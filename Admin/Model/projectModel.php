@@ -25,9 +25,20 @@ class Project implements JsonSerializable
     private $table_name = "projects";
 
 
+    private $customerCity;
+
+    public function set_customerCity($customerCity)
+    {
+        $this->customerCity = $customerCity;
+    }
+    public function get_customerCity()
+    {
+        return $this->customerCity;
+    }
+
     public function set_projectId($projectId)
     {
-        $this->projectId= $projectId;
+        $this->projectId = $projectId;
     }
     public function get_projectId()
     {
@@ -36,7 +47,7 @@ class Project implements JsonSerializable
 
     public function set_projectCode($projectCode)
     {
-        $this->projectCode= $projectCode;
+        $this->projectCode = $projectCode;
     }
     public function get_projectCode()
     {
@@ -46,7 +57,7 @@ class Project implements JsonSerializable
 
     public function set_progressNote($progressNote)
     {
-        $this->progressNote= $progressNote;
+        $this->progressNote = $progressNote;
     }
     public function get_progressNote()
     {
@@ -56,7 +67,7 @@ class Project implements JsonSerializable
 
     public function set_custid($custid)
     {
-        $this->custId= $custid;
+        $this->custId = $custid;
     }
     public function get_custid()
     {
@@ -65,7 +76,7 @@ class Project implements JsonSerializable
 
     public function set_quoteid($quoteid)
     {
-        $this->quoteId= $quoteid;
+        $this->quoteId = $quoteid;
     }
     public function get_quoteid()
     {
@@ -74,7 +85,7 @@ class Project implements JsonSerializable
 
     public function set_quotecode($quotecode)
     {
-        $this->QuoteCode= $quotecode;
+        $this->QuoteCode = $quotecode;
     }
     public function get_quotecode()
     {
@@ -84,17 +95,17 @@ class Project implements JsonSerializable
 
     public function set_quoteamt($quoteamt)
     {
-        $this->quoteAmt= $quoteamt;
+        $this->quoteAmt = $quoteamt;
     }
     public function get_quoteamt()
     {
         return $this->quoteAmt;
     }
 
-       
+
     public function set_quoteType($quoteType)
     {
-        $this->quoteType= $quoteType;
+        $this->quoteType = $quoteType;
     }
     public function get_quoteType()
     {
@@ -112,7 +123,7 @@ class Project implements JsonSerializable
 
     public function setQuantity($Quantity)
     {
-        $this->Quantity= $Quantity;
+        $this->Quantity = $Quantity;
     }
     public function getQuantity()
     {
@@ -121,7 +132,7 @@ class Project implements JsonSerializable
 
     public function setUnitId($UnitId)
     {
-        $this->UnitId= $UnitId;
+        $this->UnitId = $UnitId;
     }
     public function getUnitId()
     {
@@ -130,7 +141,7 @@ class Project implements JsonSerializable
 
     public function setUnitName($UnitName)
     {
-        $this->UnitName= $UnitName;
+        $this->UnitName = $UnitName;
     }
     public function getUnitName()
     {
@@ -139,7 +150,7 @@ class Project implements JsonSerializable
 
     public function setEnqCatName($EnqCatName)
     {
-        $this->EnqCatName= $EnqCatName;
+        $this->EnqCatName = $EnqCatName;
     }
     public function getEnqCatName()
     {
@@ -148,7 +159,7 @@ class Project implements JsonSerializable
 
     public function setCatId($CatId)
     {
-        $this->CatId= $CatId;
+        $this->CatId = $CatId;
     }
     public function getCatId()
     {
@@ -157,7 +168,7 @@ class Project implements JsonSerializable
 
     public function set_projectstatus($projectstatus)
     {
-        $this->project_status= $projectstatus;
+        $this->project_status = $projectstatus;
     }
     public function get_projectstatus()
     {
@@ -166,7 +177,7 @@ class Project implements JsonSerializable
 
     public function setAllocatedQty($AllocatedQty)
     {
-        $this->AllocatedQty= $AllocatedQty;
+        $this->AllocatedQty = $AllocatedQty;
     }
     public function getAllocatedQty()
     {
@@ -175,7 +186,7 @@ class Project implements JsonSerializable
 
     public function setItemId($ItemId)
     {
-        $this->ItemId= $ItemId;
+        $this->ItemId = $ItemId;
     }
     public function getItemId()
     {
@@ -184,7 +195,7 @@ class Project implements JsonSerializable
 
     public function setStockId($StockId)
     {
-        $this->StockId= $StockId;
+        $this->StockId = $StockId;
     }
     public function getStockId()
     {
@@ -195,33 +206,34 @@ class Project implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            
-               
-                'custid' =>$this->custId,
-                'quoteid' =>$this->quoteId,
-                'quoteamt' =>$this->quoteAmt,
-                'projectstatus'=>$this->project_status,
-                'projectCode'=>$this->projectCode,
-                'custName'=>$this->custName,
-                'projectId'=>$this->projectId,
-                'quotecode'=>$this->QuoteCode,
-                'quoteType'=>$this->quoteType,
-                'Quantity'=>$this->Quantity,
-                'UnitId'=>$this->UnitId,
-                'UnitName'=>$this->UnitName,
-                'EnqCatName'=>$this->EnqCatName,
-                'CatId'=>$this->CatId,
-                'AllocatedQty'=>$this->AllocatedQty,
-                'ItemId'=>$this->ItemId,
-                'StockId'=>$this->StockId,
-                'DOA'=>$this->DOA,
-                'InputType'=>$this->InputType,
+
+
+            'custid' => $this->custId,
+            'quoteid' => $this->quoteId,
+            'quoteamt' => $this->quoteAmt,
+            'projectstatus' => $this->project_status,
+            'projectCode' => $this->projectCode,
+            'custName' => $this->custName,
+            'projectId' => $this->projectId,
+            'quotecode' => $this->QuoteCode,
+            'quoteType' => $this->quoteType,
+            'Quantity' => $this->Quantity,
+            'UnitId' => $this->UnitId,
+            'UnitName' => $this->UnitName,
+            'EnqCatName' => $this->EnqCatName,
+            'CatId' => $this->CatId,
+            'AllocatedQty' => $this->AllocatedQty,
+            'ItemId' => $this->ItemId,
+            'StockId' => $this->StockId,
+            'DOA' => $this->DOA,
+            'InputType' => $this->InputType,
+            'customerCity' => $this->customerCity,
 
         ];
     }
     public function set_custName($custName)
     {
-        $this->custName= $custName;
+        $this->custName = $custName;
     }
     public function get_custName()
     {
@@ -231,7 +243,7 @@ class Project implements JsonSerializable
 
     /**
      * Get the value of DOA
-     */ 
+     */
     public function getDOA()
     {
         return $this->DOA;
@@ -241,7 +253,7 @@ class Project implements JsonSerializable
      * Set the value of DOA
      *
      * @return  self
-     */ 
+     */
     public function setDOA($DOA)
     {
         $this->DOA = $DOA;
@@ -249,7 +261,7 @@ class Project implements JsonSerializable
         return $this;
     }
 
-    
+
     public function getDayCount()
     {
         return $this->DayCount;
@@ -263,7 +275,7 @@ class Project implements JsonSerializable
 
     /**
      * Get the value of InputType
-     */ 
+     */
     public function getInputType()
     {
         return $this->InputType;
@@ -273,7 +285,7 @@ class Project implements JsonSerializable
      * Set the value of InputType
      *
      * @return  self
-     */ 
+     */
     public function setInputType($InputType)
     {
         $this->InputType = $InputType;

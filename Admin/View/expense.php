@@ -10,20 +10,16 @@ require_once("../Model/customerModel.php");
 require_once("../DB Operations/employeePaymentOps.php");
 require_once("../DB Operations/employeeOps.php");
 require_once("../Controller/employeePaymentController.php");
-
+require_once(__DIR__ . "/../DB Operations/generalSubcategoryOps.php");
+require_once("../DB Operations/projectOps.php");
 
 $employees = DBEmployee::readAll();
 $payments = DBEmployeePayment::readAll();
 $expenses = DBExpense::readAll();
-$expenseCategories = DBExpenseCategory::getAll();
+$generalSubcategories = DBGeneralSubcategory::getAll(); // 🔥 THIS WAS MISSING
+$approvedCustomers = DBpayment::getCustomersWithApprovedQuotes();
 
-// Category → Type map
-$categoryTypeMap = [];
-foreach ($expenseCategories as $cat) {
-    $categoryTypeMap[$cat->getName()] = $cat->getType();
-}
 ?>
-
 <style>
     .nav-tabs .nav-link.active {
         background-color: #e3f2fd;
@@ -35,12 +31,20 @@ foreach ($expenseCategories as $cat) {
         color: rgb(0, 0, 0);
         font-weight: 500;
     }
+
+    .modal-content {
+        background-color: #ffffff;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
 </style>
 
 <div class="card shadow mb-4 mt-4 mx-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">💸 Expense Management</h6>
-        <button class="btn btn-success btn-circle btn-sm" data-bs-toggle="modal" data-bs-target="#expenseModal">
+        <h6 class="m-0 text-primary" style="font-size: 25px; font-weight: 800;"> Payments Management</h6>
+        <button class="btn btn-success btn-circle btn-sm" data-bs-toggle="modal" data-bs-target="#allExpenseModal">
             <i class="fas fa-plus"></i>
         </button>
     </div>
@@ -49,7 +53,7 @@ foreach ($expenseCategories as $cat) {
         <ul class="nav nav-tabs mb-3" id="expenseTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
-                    role="tab"><b>All Expenses</b></button>
+                    role="tab"><b>All Transactions</b></button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer" type="button"
@@ -73,8 +77,9 @@ foreach ($expenseCategories as $cat) {
                         <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Category</th>
                                 <th>Type</th>
+                                <th>Category</th>
+                                <th>Subcategory</th>
                                 <th>Amount (₹)</th>
                                 <th>Payment Mode</th>
                                 <th>Notes</th>
@@ -84,31 +89,69 @@ foreach ($expenseCategories as $cat) {
                         <tbody>
                             <?php foreach ($expenses as $exp):
                                 $catName = htmlspecialchars($exp['category']);
-                                $type = $categoryTypeMap[$catName] ?? 'N/A';
+
+                                // ✅ SAFE TYPE HANDLING
+                                $typeRaw = $exp['type'] ?? '';
+                                $type = trim($typeRaw);
+
+                                if ($type === '') {
+                                    $type = 'N/A';
+                                    $badgeClass = 'bg-secondary';
+                                } elseif ($type === 'Income') {
+                                    $badgeClass = 'bg-success';
+                                } else {
+                                    $badgeClass = 'bg-danger';
+                                }
+
+                                $subcategory = 'N/A';
+
+                                if (
+                                    $type === 'Expense' &&
+                                    strtolower($catName) === 'general' &&
+                                    !empty($exp['subcategory_name'])
+                                ) {
+                                    $subcategory = htmlspecialchars($exp['subcategory_name']);
+                                }
+
+
                                 ?>
+
                                 <tr>
                                     <td><?= htmlspecialchars($exp['expense_date']); ?></td>
-                                    <td><?= $catName; ?></td>
-                                    <td><span
-                                            class="badge <?= $type === 'Income' ? 'bg-success' : 'bg-danger'; ?>"><?= $type; ?></span>
+
+                                    <td>
+                                        <span class="badge <?= $badgeClass; ?>">
+                                            <?= htmlspecialchars($type); ?>
+                                        </span>
                                     </td>
+
+                                    <td><?= $catName; ?></td>
+                                    <td><?= $subcategory; ?></td>
+
+
                                     <td>₹<?= number_format($exp['amount'], 2); ?></td>
+
                                     <td><?= htmlspecialchars($exp['payment_type']); ?></td>
+
                                     <td><?= nl2br(htmlspecialchars($exp['notes'])); ?></td>
+
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
-                                                data-bs-toggle="dropdown">Actions</button>
+                                                data-bs-toggle="dropdown">
+                                                Actions
+                                            </button>
                                             <div class="dropdown-menu">
                                                 <button class="dropdown-item text-primary edit-btn" data-bs-toggle="modal"
                                                     data-bs-target="#editExpenseModal" data-id="<?= $exp['id']; ?>"
                                                     data-date="<?= $exp['expense_date']; ?>"
-                                                    data-category="<?= $catName; ?>" data-type="<?= $type; ?>"
-                                                    data-amount="<?= $exp['amount']; ?>"
+                                                    data-type="<?= htmlspecialchars($type); ?>"
+                                                    data-category="<?= $catName; ?>" data-amount="<?= $exp['amount']; ?>"
                                                     data-payment="<?= htmlspecialchars($exp['payment_type']); ?>"
                                                     data-notes="<?= htmlspecialchars($exp['notes']); ?>">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </button>
+
                                                 <button class="dropdown-item text-danger delete-btn" data-bs-toggle="modal"
                                                     data-bs-target="#deleteExpenseModal" data-id="<?= $exp['id']; ?>">
                                                     <i class="fas fa-trash-alt"></i> Delete
@@ -147,14 +190,15 @@ foreach ($expenseCategories as $cat) {
                                         <th style=display:none>Payment Id</th>
                                         <th>Customer ID</th>
                                         <th>Customer Name</th>
-                                        <th>Customer Contact No.</th>
+                                        <th>Customer No.</th>
                                         <th style=display:none> Customer Address</th>
                                         <th>DOQ</th>
-                                        <th>DOE</th>
-                                        <th>Quote Code</th>
+                                        <!-- <th>DOE</th> -->
+                                        <!-- <th>Quote Code</th> -->
                                         <th>Total Amt</th>
                                         <th>Paid Amt</th>
                                         <th>Balance Amt</th>
+                                        <th>Expenditure</th>
                                         <th>Credit Discount</th>
                                         <th>Action</th>
                                     </tr>
@@ -162,65 +206,64 @@ foreach ($expenseCategories as $cat) {
                                 <tbody>
                                     <?php
                                     $customerList = DBpayment::getAllcustomerpayment();
+
                                     foreach ($customerList as $customer) {
-                                        echo "<tr> <td style=display:none >" . $customer->get_paymentid() . "</td>
-                                        <td >" . $customer->get_custid() . "</td>
-                                        <td>" . $customer->get_custname() . "</td>
-                                        <td>" . $customer->get_custcontactnumber() . "</td>
-                                        <td style=display:none >" . $customer->getcustomerAddress() . "</td>
-                                        <td>" . $customer->getcustomerDOV() . "</td>
-                                        <td>" . $customer->getDOQ() . "</td>
-                                        <td>" . $customer->getQuoteCode() . "</td>
-                                        <td>" . $customer->get_totalamt() . "</td>
-                                        <td>" . $customer->get_receivedamt() . "</td>
-                                        <td>" . $customer->get_pendingamt() . "</td>
-                                        <td>" . $customer->get_creditdiscount() . "</td>
-                                        <td><div class='dropdown'>
-                                                <button class='btn btn-secondary dropdown-toggle' 
-                                                type='button' 
-                                                id='dropdownMenu2' 
-                                                data-toggle='dropdown' 
-                                            
-                                                aria-expanded='false'>
-                                                Actions
-                                                </button>
-                                                <div class='dropdown-menu' 
-                                                aria-labelledby='dropdownMenu2'>
-                                                    <button class='btn btn-danger dropdown-item' 
-                                                    id='Payment'
-                                                    data-toggle='modal'
-                                                    data-target='#paymentinfoModal' 
-                                                    name='delete_button' 
-                                                    role='button' 
-                                                    data-id='" . $customer->get_custid() . "'>
-                                                    <i class='fas fa-rupee-sign'></i>
-                                                    Payment Updates  
-                                                    </button>
-                                                    <button class='btn btn-danger dropdown-item' 
-                                                    id='Payment'
-                                                    data-toggle='modal'
-                                                    data-target='#CreditdiscountModal' 
-                                                    name='delete_button' 
-                                                    role='button' 
-                                                    data-id='" . $customer->get_custid() . "'>
-                                                    <i class='fas fa-percentage'></i>
-                                                    Credit Discount
-                                                    </button>
-                                                    <button class='btn btn-primary dropdown-item'
-                                                    data-toggle='modal' 
-                                                    data-target='#TransactionModal' 
-                                                    role='button' 
-                                                
-                                                    data-id='" . $customer->get_custid() . "'> 
-                                                    <i class='fas fa-info'></i>
-                                                        View Transaction
-                                                </button>
-                                                </div>
-                                            </div>
-                                    </td></tr>";
+
+                                        echo "
+    <tr>
+    <td style='display:none'>" . $customer->get_paymentid() . "</td>
+    <td>" . $customer->get_custid() . "</td>
+    <td>" . $customer->get_custname() . "</td>
+    <td>" . $customer->get_custcontactnumber() . "</td>
+    <td style='display:none'>" . $customer->getcustomerAddress() . "</td>
+    <td>" . $customer->getcustomerDOV() . "</td>
+    <!-- <td>" . $customer->getDOQ() . "</td>-->
+    <!-- <td>" . $customer->getQuoteCode() . "</td> -->
+    <td>" . $customer->get_totalamt() . "</td>
+    <td>" . $customer->get_receivedamt() . "</td>
+    <td>" . $customer->get_pendingamt() . "</td>
+    <td>" . number_format($customer->get_expenditure(), 2) . "</td>
+    <td>" . $customer->get_creditdiscount() . "</td>
+
+
+        <td>
+            <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle'
+                        type='button'
+                        data-toggle='dropdown'
+                        aria-expanded='false'>
+                    Actions
+                </button>
+
+                <div class='dropdown-menu'>
+                    <button class='btn btn-danger dropdown-item'
+                            data-toggle='modal'
+                            data-target='#paymentinfoModal'
+                            data-id='" . $customer->get_custid() . "'>
+                        <i class='fas fa-rupee-sign'></i> Payment Updates
+                    </button>
+
+                    <button class='btn btn-danger dropdown-item'
+                            data-toggle='modal'
+                            data-target='#CreditdiscountModal'
+                            data-id='" . $customer->get_custid() . "'>
+                        <i class='fas fa-percentage'></i> Credit Discount
+                    </button>
+
+<button class='btn btn-primary dropdown-item view-transaction'
+        data-custid='" . $customer->get_custid() . "'>
+    <i class='fas fa-info'></i> View Transaction
+</button>
+
+
+                </div>
+            </div>
+        </td>
+    </tr>";
                                     }
                                     ?>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
@@ -318,9 +361,7 @@ foreach ($expenseCategories as $cat) {
                                                                 <td id="totalpaidAmount" style="text-align:center"></td>
                                                             </tr>
                                                         </tfoot>
-                                                        <tr>
 
-                                                        </tr>
 
                                                     </table>
                                                     <div>
@@ -352,7 +393,6 @@ foreach ($expenseCategories as $cat) {
                             </div>
                         </div>
                     </div>
-
                     <div class="modal fade" id=paymentinfoModal tabindex=-1 role=dialog aria-hidden=true>
                         <div class="modal-dialog modal-xl">
                             <div class="row gutters-sm">
@@ -583,12 +623,12 @@ foreach ($expenseCategories as $cat) {
                             <div class="col">
                                 <h6 class="m-0 font-weight-bold text-primary">Employee Payment List</h6>
                             </div>
-                            <div class="col" align="right">
+                            <!-- <div class="col" align="right">
                                 <button class="btn btn-primary" data-toggle="modal" data-target="#addPaymentModal"
                                     role="button">
                                     <i class="fas fa-plus-circle"></i> Add Payment
                                 </button>
-                            </div>
+                            </div> -->
 
                         </div>
                     </div>
@@ -851,69 +891,171 @@ foreach ($expenseCategories as $cat) {
         </div>
     </div>
 </div>
+<!-- ===================== ALL EXPENSE MODAL ===================== -->
+<div class="modal fade" id="allExpenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <form id="allExpenseForm" method="POST" action="../Controller/expenseController.php">
+            <div class="modal-content shadow-lg rounded-4">
 
-<!-- ===================== ADD MODAL ===================== -->
-<div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form method="POST" action="../Controller/expenseController.php">
-            <input type="hidden" name="action" value="add">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">➕ Add Expense</h4>
+                <!-- Header -->
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="bi bi-plus-circle me-2 text-success"></i>
+                        Transactions
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
+
+                <!-- Body -->
+                <div class="modal-body pt-3">
                     <div class="row g-3">
+
+                        <!-- Date -->
+                        <!-- <div class="col-12">
+                            <label class="form-label fw-medium">Date</label>
+                            <input type="date" id="ae_date" class="form-control form-control-lg"
+                                value="<?= date('Y-m-d'); ?>" required>
+                        </div> -->
+
+                        <!-- Type -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Type</label>
+                            <select id="ae_type" name="type" class="form-select form-select-lg" required>
+                                <option value="">Select Type</option>
+                                <option value="Expense">Expense</option>
+                                <option value="Income">Income</option>
+                            </select>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Category</label>
+                            <select id="ae_category" class="form-select form-select-lg" required>
+                                <option value="">Select Category</option>
+                                <option value="projects">Customer</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <!-- <div class="col-12">
+                            <label class="form-label fw-medium">Notes</label>
+                            <textarea id="ae_notes" class="form-control" rows="3"
+                                placeholder="Optional remarks..."></textarea>
+                        </div> -->
+
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 pt-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-success px-4 fw-semibold">
+                        Next →
+                    </button>
+                </div>
+                <input type="hidden" name="action" value="add">
+
+                <input type="hidden" name="subcategory_id" id="ae_subcategory_id">
+                <input type="hidden" name="subcategory_name" id="ae_subcategory_name">
+                <input type="hidden" name="amount" id="ae_amount">
+                <input type="hidden" name="expense_date" value="<?= date('Y-m-d'); ?>">
+                <input type="hidden" name="payment_type" value="Cash">
+                <input type="hidden" name="notes" id="ae_notes">
+
+            </div>
+        </form>
+    </div>
+</div>
+<!-- ===================== ADD MODAL ===================== -->
+<div class="modal fade" id="expenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form method="POST" action="../Controller/expenseController.php">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="type" id="expense_type">
+
+            <div class="modal-content shadow-lg rounded-4">
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="bi bi-wallet2 me-2 text-success"></i>
+                        Add Expense
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+
                         <div class="col-md-4">
-                            <label class="form-label">Date</label>
-                            <input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d'); ?>"
-                                required>
+                            <label class="form-label fw-medium">Date</label>
+                            <input type="date" name="expense_date" class="form-control form-control-lg"
+                                value="<?= date('Y-m-d'); ?>" required>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label">Category</label>
-                            <select name="category" id="addCategorySelect" class="form-select" required>
-                                <option value="">Select Category</option>
-                                <?php foreach ($expenseCategories as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat->getName()); ?>"
-                                        data-type="<?= htmlspecialchars($cat->getType()); ?>">
-                                        <?= htmlspecialchars($cat->getName()); ?> (<?= $cat->getType(); ?>)
+                            <label class="form-label fw-medium">Category</label>
+                            <input type="text" id="addCategoryType" name="category_type"
+                                class="form-control form-control-lg bg-light" value=" General" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Subcategory</label>
+                            <select name="subcategory_id" id="subcategorySelect" class="form-select form-select-lg"
+                                required>
+
+                                <option value="">Select Subcategory</option>
+                                <?php foreach ($generalSubcategories as $sub): ?>
+                                    <option value="<?= $sub->getId(); ?>"
+                                        data-name="<?= htmlspecialchars($sub->getName()); ?>">
+                                        <?= htmlspecialchars($sub->getName()); ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
+
+                            <input type="hidden" name="subcategory_name" id="subcategoryName">
                         </div>
+
+
                         <div class="col-md-4">
-                            <label class="form-label">Type</label>
-                            <input type="text" id="addCategoryType" name="category_type" class="form-control bg-light"
-                                readonly>
+                            <label class="form-label fw-medium">Amount (₹)</label>
+                            <input type="number" step="0.01" name="amount" class="form-control form-control-lg"
+                                required>
                         </div>
+
                         <div class="col-md-4">
-                            <label class="form-label">Amount (₹)</label>
-                            <input type="number" step="0.01" name="amount" class="form-control" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">Payment Mode</label>
-                            <select name="payment_type" class="form-select">
+                            <label class="form-label fw-medium">Payment Mode</label>
+                            <select name="payment_type" class="form-select form-select-lg">
                                 <option>Cash</option>
                                 <option>Bank Transfer</option>
                                 <option>UPI</option>
                                 <option>Cheque</option>
                             </select>
                         </div>
+
                         <div class="col-12">
-                            <label class="form-label">Notes</label>
-                            <textarea name="notes" class="form-control" rows="2"></textarea>
+                            <label class="form-label fw-medium">Notes</label>
+                            <textarea name="notes" class="form-control" rows="3"
+                                placeholder="Optional notes..."></textarea>
                         </div>
+
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Add</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 pt-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-success px-4 fw-semibold">
+                        Add Expense
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
 <!-- ===================== EDIT MODAL ===================== -->
 <div class="modal fade" id="editExpenseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -935,12 +1077,7 @@ foreach ($expenseCategories as $cat) {
                             <label class="form-label">Category</label>
                             <select name="category" id="editCategorySelect" class="form-select" required>
                                 <option value="">Select Category</option>
-                                <?php foreach ($expenseCategories as $cat): ?>
-                                    <option value="<?= htmlspecialchars($cat->getName()); ?>"
-                                        data-type="<?= htmlspecialchars($cat->getType()); ?>">
-                                        <?= htmlspecialchars($cat->getName()); ?> (<?= $cat->getType(); ?>)
-                                    </option>
-                                <?php endforeach; ?>
+
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -976,7 +1113,6 @@ foreach ($expenseCategories as $cat) {
         </form>
     </div>
 </div>
-
 <!-- ===================== DELETE MODAL ===================== -->
 <div class="modal fade" id="deleteExpenseModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -998,6 +1134,419 @@ foreach ($expenseCategories as $cat) {
         </form>
     </div>
 </div>
+<!-- ===================== SALARY EXPENSE MODAL ===================== -->
+<div class="modal fade" id="salaryExpenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form method="POST" action="../Controller/employeePaymentController.php">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="type" id="salary_expense_type">
+            <div class="modal-content shadow-lg rounded-4">
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="bi bi-person-badge me-2 text-primary"></i>
+                        Employee Payment
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Date *</label>
+                            <input type="date" name="payment_date" class="form-control form-control-lg"
+                                value="<?= date('Y-m-d') ?>" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Employee *</label>
+                            <select name="emp_id" class="form-select form-select-lg" required>
+                                <option value="">Select Employee</option>
+                                <?php foreach ($employees as $emp): ?>
+                                    <option value="<?= $emp['id'] ?>">
+                                        <?= htmlspecialchars($emp['name']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Due Amount (₹)</label>
+                            <input type="text" name="due_amount" class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Amount *</label>
+                            <input type="number" step="0.01" name="amount" class="form-control form-control-lg"
+                                required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Payment Type</label>
+                            <select name="payment_type" class="form-select form-select-lg">
+                                <option>Cash</option>
+                                <option>Bank Transfer</option>
+                                <option>UPI</option>
+                                <option>Cheque</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Status</label>
+                            <select name="status" class="form-select form-select-lg">
+                                <option>Paid</option>
+                                <option>Pending</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Remarks</label>
+                            <textarea name="remarks" class="form-control" rows="3"
+                                placeholder="Optional remarks..."></textarea>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 pt-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                        Save Payment
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="projectIncomeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <form method="POST" action="../Controller/customerpaymentcontroller.php">
+
+            <!-- 🔑 identify this as project income -->
+            <input type="hidden" name="action" value="project_income">
+            <input type="hidden" name="type" id="project_income_type">
+
+            <div class="modal-content shadow-lg rounded-4">
+
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="bi bi-cash-coin me-2 text-success"></i>
+                        Project Income
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body pt-0">
+                    <div class="row g-3">
+
+                        <!-- Date -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Date</label>
+                            <input type="date" name="paymentdate" class="form-control form-control-lg"
+                                value="<?= date('Y-m-d'); ?>" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Category</label>
+                            <input type="text" class="form-control form-control-lg bg-light" value="Customer" readonly>
+                        </div>
+
+                        <!-- Customer -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Customer Name</label>
+                            <select id="pi_customer" class="form-select form-select-lg" required>
+                                <option value="">Select Customer</option>
+
+                                <?php foreach ($approvedCustomers as $c): ?>
+                                    <option value="<?= $c['customerCode']; ?>" data-custid="<?= $c['customerCode']; ?>"
+                                        data-custname="<?= htmlspecialchars($c['customerName']); ?>"
+                                        data-customercity="<?= htmlspecialchars($c['customerCity']); ?>">
+                                        <?= htmlspecialchars($c['customerName']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+
+                        </div>
+
+                        <!-- Auto Fields -->
+                        <div class=" col-md-4">
+                            <label class="form-label fw-medium">Customer ID</label>
+                            <input type="text" name="custid" id="pi_custid"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Location</label>
+                            <input type="text" name="customercity" id="pi_customercity"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+
+                        <!-- Customer Contact No -->
+                        <!-- <div class="col-md-4">
+                            <label class="form-label fw-medium">Customer Contact No</label>
+                            <input type="text" name="custcontactno" id="pi_custcontact"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div> -->
+
+                        <!-- Total Amount -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Total Amount (₹)</label>
+                            <input type="number" name="totalamt" id="pi_totalamt"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+                        <!-- Received Amount -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Received Amount (₹)</label>
+                            <input type="number" step="0.01" name="receivedamt" id="pi_receivedamt"
+                                class="form-control form-control-lg">
+                        </div>
+
+                        <!-- Paid Amount -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Paid Amount (₹)</label>
+                            <input type="number" name="paidamt" id="pi_paidamt"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+                        <!-- Pending Amount -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Pending Amount (₹)</label>
+                            <input type="number" name="pendingamt" id="pi_pendingamt"
+                                class="form-control form-control-lg bg-light" readonly>
+                        </div>
+
+                        <!-- Payment Plan -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Payment Plan</label>
+                            <select name="paymentplan" id="pi_paymentplan" class="form-select form-select-lg">
+                                <option value="Full Payment">Full Payment</option>
+                                <option value="Part Payment">Part Payment</option>
+                            </select>
+                        </div>
+
+                        <!-- Next Payment Date -->
+                        <!-- <div class="col-md-4 d-none" id="pi_nextpayment_div">
+                            <label class="form-label fw-medium">Next Payment On</label>
+                            <input type="date" name="nextpaymentdate" id="pi_nextpaymentdate"
+                                class="form-control form-control-lg">
+                        </div> -->
+
+
+
+                        <!-- Amount -->
+                        <!-- <div class="col-md-4">
+                            <label class="form-label fw-medium">Amount (₹)</label>
+                            <input type="number" step="0.01" name="receivedamt" class="form-control form-control-lg"
+                                required>
+                        </div> -->
+
+                        <!-- Payment Mode -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-medium">Payment Mode</label>
+                            <select name="paymentmode" class="form-select form-select-lg">
+                                <option>Cash</option>
+                                <option>UPI</option>
+                                <option>Bank Transfer</option>
+                                <option>Cheque</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label class="form-label fw-medium">Payment Description</label>
+                            <textarea name="paymentdescription" class="form-control" rows="3"
+                                placeholder="Project income notes..."></textarea>
+                        </div>
+
+                        <!-- Hidden required fields -->
+                        <input type="hidden" name="custname" id="pi_custname">
+                        <input type="hidden" name="modifiedby" value="Admin">
+                        <input type="hidden" name="paymentid" value="0">
+
+
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0 pt-3">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-success px-4 fw-semibold">
+                        Save Income
+                    </button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+<div class="modal fade" id="projectExpenseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <form id="projectExpenseForm" method="POST" action="../Controller/expenseController.php">
+
+            <div class="modal-content shadow-lg rounded-4">
+
+                <!-- Header -->
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-semibold">
+                        <i class="bi bi-briefcase-fill me-2 text-danger"></i>
+                        Project Expense
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div id="pe_success_msg" class="alert alert-success d-none fw-semibold" role="alert">
+                    ✅ Project expense added successfully
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div class="row g-3">
+
+                        <!-- Date -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-medium">Date</label>
+                            <input type="date" name="expense_date" class="form-control" value="<?= date('Y-m-d'); ?>"
+                                required>
+                        </div>
+
+                        <!-- Category (Fixed) -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-medium">Category</label>
+                            <input type="text" class="form-control" value="Customer" readonly>
+                        </div>
+
+                        <!-- Project / Customer -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Customer Name</label>
+                            <select id="pe_project" class="form-select" required>
+                                <option value="">Select Project</option>
+                                <?php
+                                $customers = DBpayment::getCustomersWithApprovedQuotes();
+                                foreach ($customers as $c):
+                                    ?>
+                                    <option value="<?= $c['customerCode'] ?>" data-custid="<?= $c['customerCode'] ?>"
+                                        data-projectid="<?= $c['projectId'] ?>"
+                                        data-city="<?= htmlspecialchars($c['customerCity']) ?>">
+                                        <?= htmlspecialchars($c['customerName']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+
+
+                            </select>
+                        </div>
+
+                        <!-- Auto-filled fields -->
+                        <div class="col-md-3">
+                            <label class="form-label">Customer ID</label>
+                            <input type="text" id="pe_custid" class="form-control" readonly>
+                        </div>
+
+
+                        <div class="col-md-3">
+                            <label class="form-label">Location</label>
+                            <input type="text" id="pe_location" class="form-control" readonly>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Total Amount</label>
+                            <input type="text" id="pe_totalamt" class="form-control" readonly>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Paid Amount</label>
+                            <input type="text" id="pe_paidamt" class="form-control" readonly>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Expenditure</label>
+                            <input type="text" id="pe_expenditure" class="form-control" readonly>
+                        </div>
+
+                        <!-- Expense Input -->
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold text-danger">
+                                Expense Amount
+                            </label>
+                            <input type="number" name="amount" class="form-control" min="1" step="0.01" required>
+                        </div>
+
+                        <!-- Subcategory -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Subcategory</label>
+                            <select name="subcategory_id" id="pe_subcategory" class="form-select" required>
+                                <option value="">Select Subcategory</option>
+                                <?php
+                                $subs = DBGeneralSubcategory::getAll();
+
+                                foreach ($subs as $sub) {
+                                    ?>
+                                    <option value="<?= $sub->getId(); ?>" data-name="<?= $sub->getName(); ?>">
+                                        <?= $sub->getName(); ?>
+                                    </option>
+                                <?php } ?>
+
+
+                            </select>
+                        </div>
+
+                        <!-- Payment Mode -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Payment Mode</label>
+                            <select name="payment_type" class="form-select" required>
+                                <option value="">Select Mode</option>
+                                <option>Cash</option>
+                                <option>UPI</option>
+                                <option>Bank Transfer</option>
+                                <option>Cheque</option>
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Payment Description</label>
+                            <input type="text" name="notes" class="form-control" placeholder="Optional remarks">
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="submit" class="btn btn-danger fw-semibold">
+                        Save Expense
+                    </button>
+                </div>
+
+
+
+                <!-- Hidden values -->
+                <input type="hidden" name="action" value="add_project_expense">
+                <input type="hidden" name="category" value="Projects">
+                <input type="hidden" name="customer_id" id="pe_hidden_custid">
+                <input type="hidden" name="project_id" id="pe_hidden_projectid">
+                <input type="hidden" name="subcategory_name" id="pe_subcategory_name">
+
+            </div>
+        </form>
+    </div>
+</div>
 
 <!-- JS -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1007,6 +1556,8 @@ foreach ($expenseCategories as $cat) {
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 <script>
+    console.count('EXPENSE JS LOADED');
+
     document.addEventListener("DOMContentLoaded", function () {
         // All Expenses table
         $('#allExpenseTable').DataTable({
@@ -1057,7 +1608,7 @@ foreach ($expenseCategories as $cat) {
             $('#transactioncustcontactno').text(this.cells[3].innerHTML);
             $('#transactioncustomerAddress').text(this.cells[4].innerHTML);
             $('#totalamt').val(this.cells[8].innerHTML);
-            $('#transactiontotalamt').text(this.cells[8].innerHTML);
+            $('#transactiontotalamt').text(this.cells[7].innerHTML);
             $('#paidamt').val(this.cells[9].innerHTML);
             $('#paidAmount').val(this.cells[9].innerHTML);
             $('#pendingamt').val(this.cells[10].innerHTML);
@@ -1086,33 +1637,55 @@ foreach ($expenseCategories as $cat) {
             });
         });
 
-        $('#TransactionModal').on('show.bs.modal', function (e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#custid').val(rowid);
-            var quoteId = $('#quoteid').val();
-            var transactionUrl = config.developmentPath + "/Admin/Controller/customerpaymentcontroller.php?id=" + quoteId;
-            $.getJSON(transactionUrl, function (data) {
-                var count = 1, TotalPendingAmount = 0, TotalPaidAmount = 0;
-                $("#Transactiontable tbody").find("tr:gt(0)").remove();
-                $.each(data, function (index, value) {
-                    $('#Transactiontable tbody').append(
-                        '<tr>' +
-                        '<td>' + (count++) + '</td>' +
-                        '<td>' + value.modifieddate + '</td>' +
-                        '<td>' + value.paymentmode + '</td>' +
-                        '<td>' + value.pendingamt + '</td>' +
-                        '<td>' + value.receivedamt + '</td>' +
-                        '</tr>'
-                    );
-                    TotalPendingAmount = parseInt(value.pendingamt);
-                    TotalPaidAmount = parseInt(TotalPaidAmount) + parseInt(value.receivedamt);
-                });
-                $('#pending').text(TotalPendingAmount);
-                $('#totalpaidAmount').text(TotalPaidAmount);
-            });
-        });
+        // $('#TransactionModal').on('show.bs.modal', function (e) {
 
-        $('#Customer_table').DataTable({});
+        //     const btn = $(e.relatedTarget);
+        //     const quoteCode = btn.data('quotecode');
+
+        //     $('#Transactiontable tbody').empty();
+
+        //     $.ajax({
+        //         url: '../Controller/customerpaymentController.php',
+        //         type: 'GET',                 // ✅ MUST BE GET
+        //         dataType: 'json',
+        //         data: {
+        //             id: quoteCode            // ✅ MUST BE id
+        //         },
+        //         success: function (data) {
+
+        //             if (!data || data.length === 0) {
+        //                 $('#Transactiontable tbody').append(
+        //                     '<tr><td colspan="5" class="text-center">No Transactions Found</td></tr>'
+        //                 );
+        //                 return;
+        //             }
+
+        //             let totalPaid = 0;
+        //             let lastPending = 0;
+
+        //             data.forEach((row, index) => {
+
+        //                 totalPaid += parseFloat(row.receivedamt);
+        //                 lastPending = row.pendingamt;
+
+        //                 $('#Transactiontable tbody').append(`
+        //             <tr>
+        //                 <td class="text-center">${index + 1}</td>
+        //                 <td class="text-center">${row.modifieddate}</td>
+        //                 <td class="text-center">${row.paymentmode}</td>
+        //                 <td class="text-center">${row.pendingamt}</td>
+        //                 <td class="text-center">${row.receivedamt}</td>
+        //             </tr>
+        //         `);
+        //             });
+
+        //             $('#totalpaidAmount').text(totalPaid.toFixed(2));
+        //             $('#pending').text(lastPending);
+        //         }
+        //     });
+        // });
+
+        // $('#Customer_table').DataTable({});
 
         $("#paymentplan").change(function () {
             if ($(this).val() == "Part Payment") {
@@ -1202,23 +1775,56 @@ foreach ($expenseCategories as $cat) {
         });
 
         // ===== DUE AMOUNT (Add & Edit modals) =====
-        $(document).on("change", 'select[name="emp_id"], input[name="payment_date"]', function () {
-            var modal = $(this).closest(".modal");
-            var empId = modal.find('select[name="emp_id"]').val();
-            var dueField = modal.find("#add_due_amount, #edit_due_amount");
+        // $(document).on("change", 'select[name="emp_id"], input[name="payment_date"]', function () {
+        //     var modal = $(this).closest(".modal");
+        //     var empId = modal.find('select[name="emp_id"]').val();
+        //     var dueField = modal.find("#add_due_amount, #edit_due_amount");
 
-            if (!empId) {
-                dueField.val("");
-                return;
+        //     if (!empId) {
+        //         dueField.val("");
+        //         return;
+        //     }
+
+        //     $.getJSON("../Controller/employeePaymentController.php",
+        //         { action: "getTotalDue", emp_id: empId },
+        //         function (data) {
+        //             const v = parseFloat(data.due);
+        //             dueField.val(isFinite(v) ? "₹ " + v.toFixed(2) : "₹ 0.00");
+        //         }
+        //     );
+        // });
+        function fetchDue(modal) {
+
+            const empSelect = modal.find('select[name="emp_id"]');
+            const payDate = modal.find('input[name="payment_date"]');
+            const dueField = modal.find('input[name="due_amount"]');
+
+            function updateDue() {
+                const empId = empSelect.val();
+                if (!empId) {
+                    dueField.val('');
+                    return;
+                }
+
+                const month = (payDate.val() || new Date().toISOString().slice(0, 10)).slice(0, 7);
+
+                $.getJSON('../Controller/employeePaymentController.php',
+                    { action: 'getDue', emp_id: empId, month: month },
+                    function (data) {
+                        const v = parseFloat(data.due);
+                        dueField.val(isFinite(v) ? '₹ ' + v.toFixed(2) : '₹ 0.00');
+                    }
+                );
             }
 
-            $.getJSON("../Controller/employeePaymentController.php",
-                { action: "getTotalDue", emp_id: empId },
-                function (data) {
-                    const v = parseFloat(data.due);
-                    dueField.val(isFinite(v) ? "₹ " + v.toFixed(2) : "₹ 0.00");
-                }
-            );
+            empSelect.off('change').on('change', updateDue);
+            payDate.off('change').on('change', updateDue);
+
+            updateDue();
+        }
+
+        $('#salaryExpenseModal').on('shown.bs.modal', function () {
+            fetchDue($(this));
         });
 
 
@@ -1292,6 +1898,408 @@ foreach ($expenseCategories as $cat) {
         //     pageLength: 10,
         //     columnDefs: [{ orderable: false, targets: [0, 7] }]
         // });
+
+        // Populate category based on type
+        $('#ae_type').on('change', function () {
+            const category = $('#ae_category');
+            category.empty().append('<option value="">Select Category</option>');
+
+            if (this.value === 'Expense') {
+                ['General', 'Employee', 'Customer'].forEach(c => {
+                    category.append(`<option value="${c}">${c}</option>`);
+                });
+            }
+
+            if (this.value === 'Income') {
+                ['Customer'].forEach(c => {
+                    category.append(`<option value="${c}">${c}</option>`);
+                });
+            }
+        });
+
+
+        // Handle NEXT button
+        $('#allExpenseForm').on('submit', function (e) {
+            e.preventDefault();
+
+            const type = $('#ae_type').val();
+            const category = $('#ae_category').val();
+
+            if (!type || !category) {
+                alert('Please select Type and Category');
+                return;
+            }
+
+            $('#allExpenseModal').modal('hide');
+
+            // EXPENSE
+            if (type === 'Expense' && category === 'General') {
+                $('#expenseModal').modal('show');
+                return;
+            }
+
+            if (type === 'Expense' && category === 'Employee') {
+                $('#salaryExpenseModal').modal('show');
+                return;
+            }
+
+            if (type === 'Expense' && category === 'Customer') {
+                $('#projectExpenseModal').modal('show');
+                return;
+            }
+
+            // INCOME
+            if (type === 'Income' && category === 'Customer') {
+                $('#projectIncomeModal').modal('show');
+                return;
+            }
+
+            alert('Invalid selection');
+        });
+
+        $('#subcategorySelect').on('change', function () {
+            const name = $(this).find(':selected').data('name') || '';
+            $('#subcategoryName').val(name);
+        });
+        $('#pi_customer').on('change', function () {
+
+            const opt = $(this).find(':selected');
+            if (!opt.val()) return;
+
+            $('#pi_custid').val(opt.data('custid'));
+            $('#pi_custname').val(opt.data('custname'));
+            // $('#pi_projectcode').val(opt.data('quotecode')); // 🔑 USE QUOTE CODE
+            $('#pi_customercity').val(opt.data('customercity'));
+
+            $.ajax({
+                url: '../Controller/customerpaymentcontroller.php',
+                type: 'GET',
+                dataType: 'json',
+                data: {
+                    action: 'getCustomerProjectSummary',
+                    custid: opt.data('custid')
+                },
+                success: function (res) {
+                    if (res.status !== 'success') {
+                        alert(res.message);
+                        return;
+                    }
+
+                    $('#pi_totalamt').val(res.total);
+                    $('#pi_paidamt').val(res.paid).data('base', res.paid);
+                    $('#pi_pendingamt').val(res.pending);
+                    $('#pi_receivedamt').val('');
+                }
+            });
+
+        });
+
+        // When customer is selected in Project Income modal
+        // $('#Customer_table tbody').on('click', 'tr', function () {
+
+        //     $('#pi_custcontact').val(this.cells[3].innerHTML);
+        //     $('#pi_totalamt').val(this.cells[8].innerHTML);
+        //     $('#pi_paidamt').val(this.cells[9].innerHTML);
+        //     $('#pi_pendingamt').val(this.cells[10].innerHTML);
+
+        // });
+        $('#pi_receivedamt').on('input', function () {
+
+            let total = parseFloat($('#pi_totalamt').val()) || 0;
+            let recv = parseFloat($(this).val()) || 0;
+
+            let basePaid = parseFloat($('#pi_paidamt').data('base')) || 0;
+
+            if (recv + basePaid > total) {
+                alert("Received amount exceeds pending amount");
+                $(this).val('');
+                return;
+            }
+
+            let paid = basePaid + recv;
+            let pending = total - paid;
+
+            $('#pi_paidamt').val(paid.toFixed());
+            $('#pi_pendingamt').val(pending.toFixed(2));
+        });
+
+
+
+        // $('#pi_paymentplan').on('change', function () {
+
+        //if ($(this).val() === 'Part Payment') {
+        //$('#pi_nextpayment_div').removeClass('d-none');
+
+        //let today = new Date().toISOString().split('T')[0];
+        //$('#pi_nextpaymentdate').attr('min', today).prop('required', true);
+
+        //} else {
+        //  $('#pi_nextpayment_div').addClass('d-none');
+        // $('#pi_nextpaymentdate').val('').prop('required', false);
+        // }
+        // });
+        $('#projectIncomeModal form').on('submit', function (e) {
+            debugger;
+            e.preventDefault();
+
+            $.ajax({
+                url: '../Controller/customerpaymentcontroller.php',
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function (res) {
+                    console.log('SUMMARY RESPONSE:', res);
+
+                    if (res.status === 'success') {
+
+                        const cid = res.custid;
+
+                        // ✅ Update table instantly
+                        $('#total_' + cid).text(res.total);
+                        $('#paid_' + cid).text(res.paid);
+                        $('#pending_' + cid).text(res.pending);
+
+                        // ✅ RESET MODAL FORM
+                        const modal = $('#projectIncomeModal');
+
+                        modal.find('form')[0].reset();
+
+                        // reset calculated fields explicitly
+                        modal.find('#pi_paidamt').val('0.00');
+                        modal.find('#pi_pendingamt').val('');
+                        modal.find('#pi_totalamt').val('');
+                        modal.find('#pi_receivedamt').val('');
+
+                        // hide optional sections
+                        // $('#pi_nextpayment_div').addClass('d-none');
+                        // $('#pi_nextpaymentdate').val('').prop('required', false);
+
+                        // close modal
+                        modal.modal('hide');
+
+                        alert(res.message);
+                    }
+                }
+
+
+                ,
+                error: function (xhr) {
+                    console.error(xhr.responseText);
+                    alert('Server error while saving income');
+                }
+
+            });
+        });
+        $('#pe_project').on('change', function () {
+
+            const opt = this.options[this.selectedIndex];
+            const custId = opt.dataset.custid;
+            const city = opt.dataset.city;
+            const projectId = opt.dataset.projectid;
+
+            if (!custId) return;
+
+            $('#pe_custid').val(custId);
+            $('#pe_hidden_custid').val(custId);
+            $('#pe_location').val(city);
+            $('#pe_hidden_projectid').val(projectId);
+
+            // 1️⃣ Fetch TOTAL & PAID
+            $.getJSON('../Controller/customerpaymentcontroller.php', {
+                action: 'getCustomerProjectSummary',
+                custid: custId
+            }, function (res) {
+                if (res.status === 'success') {
+                    $('#pe_totalamt').val(res.total);
+                    $('#pe_paidamt').val(res.paid);
+                } else {
+                    $('#pe_totalamt').val(0);
+                    $('#pe_paidamt').val(0);
+                }
+            });
+
+            // 2️⃣ Fetch EXPENDITURE (SEPARATE CALL)
+            $.getJSON('../Controller/expenseController.php', {
+                action: 'getCustomerProjectExpense',
+                custid: custId
+            }, function (res) {
+
+                console.log('Expenditure Response:', res);
+
+                if (res.status === 'success') {
+                    $('#pe_expenditure').val(res.expenditure);
+                } else {
+                    $('#pe_expenditure').val(0);
+                }
+            });
+        });
+
+
+        $('#projectExpenseForm').on('submit', function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                dataType: 'json',
+
+                success: function (res) {
+
+                    if (res.status === 'success') {
+
+                        /* 1️⃣ SHOW SUCCESS MESSAGE */
+                        $('#pe_success_msg')
+                            .removeClass('d-none')
+                            .hide()
+                            .fadeIn();
+
+                        /* 2️⃣ RESET INPUT FIELDS (KEEP PROJECT SELECTED) */
+                        // clear only user-entered fields
+                        $('#projectExpenseForm')
+                            .find('input[name="amount"], input[name="notes"]')
+                            .val('');
+
+                        $('#projectExpenseForm')
+                            .find('select')
+                            .not('#pe_project')
+                            .prop('selectedIndex', 0);
+
+
+                        /* 3️⃣ REFRESH EXPENDITURE */
+                        $('#pe_project').trigger('change');
+
+                        /* 4️⃣ AUTO-HIDE MESSAGE AFTER 3 SECONDS */
+                        setTimeout(function () {
+                            $('#pe_success_msg').fadeOut();
+                        }, 3000);
+                    }
+                },
+
+                error: function () {
+                    alert('Server error while saving expense');
+                }
+            });
+        });
+        $('#projectExpenseModal').modal('hide');
+
+        $('#projectExpenseModal').on('shown.bs.modal', function () {
+            const projectId = $('#pe_project').val();
+            if (projectId) {
+                $('#pe_project').trigger('change'); // 🔑 force reload
+            }
+        });
+        $('#projectExpenseModal').on('shown.bs.modal', function () {
+
+            const custId = $('#pe_hidden_custid').val();
+
+            if (!custId) return;
+
+            // fetch expenditure every time modal opens
+            $.getJSON('../Controller/expenseController.php', {
+                action: 'getCustomerProjectExpense',
+                custid: custId
+            }, function (res) {
+
+                console.log('Expenditure Response:', res);
+
+                if (res.status === 'success') {
+                    $('#pe_expenditure').val(res.expenditure);
+                } else {
+                    $('#pe_expenditure').val('0.00');
+                }
+            });
+        });
+
+        // $('#projectIncomeModal').on('shown.bs.modal', function () {
+        //     const quoteId = $('#pi_projectcode').val();
+        //     if (!quoteId) return;
+
+        //     $.getJSON('../Controller/customerpaymentcontroller.php', {
+        //         action: 'getQuotationTotal',
+        //         quoteid: quoteId
+        //     }, function (res) {
+        //         $('#pi_totalamt').val(res.total);
+        //         $('#pi_paidamt').val(res.paid);
+        //         $('#pi_pendingamt').val(res.total - res.paid);
+        //     });
+        // });
+
+
+        $(document).on('click', '.view-transaction', function (e) {
+            e.preventDefault();
+
+            const custId = $(this).data('custid');
+
+            if (!custId) {
+                alert('Customer ID missing');
+                return;
+            }
+
+            const tbody = $('#Transactiontable tbody');
+            tbody.empty();
+
+            $.ajax({
+                url: '../Controller/customerpaymentController.php',
+                type: 'GET',
+                dataType: 'json',
+                data: { custid: custId },
+                success: function (data) {
+
+                    if (!data || data.length === 0) {
+                        tbody.append(`<tr><td colspan="5" class="text-center">No Transactions</td></tr>`);
+                        $('#TransactionModal').modal('show');
+                        return;
+                    }
+
+                    let totalPaid = 0;
+                    let totalAmount = 0;
+
+                    data.forEach((row, index) => {
+                        const paid = Number(row.receivedamt) || 0;
+
+                        if (index === 0) {
+                            totalAmount = Number(row.totalamt) || 0;
+                        }
+
+                        tbody.append(`
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${row.modifieddate}</td>
+                        <td>${row.paymentmode}</td>
+                        <td>${(totalAmount - totalPaid).toFixed(2)}</td>
+                        <td>${paid.toFixed(2)}</td>
+                    </tr>
+                `);
+
+                        totalPaid += paid;
+                    });
+
+                    $('#totalpaidAmount').text(totalPaid.toFixed(2));
+                    $('#pending').text((totalAmount - totalPaid).toFixed(2));
+
+                    $('#TransactionModal').modal('show');
+                }
+            });
+        });
+
+
+
+        function loadCustomerExpenditure(custId) {
+            $('#pe_expenditure').val('0.00'); // default first
+
+            $.getJSON('../Controller/expenseController.php', {
+                action: 'getCustomerProjectExpense',
+                custid: custId
+            }, function (res) {
+
+                console.log('Expenditure Response:', res);
+
+                if (res.status === 'success') {
+                    $('#pe_expenditure').val(res.expenditure);
+                }
+            });
+        }
 
     });
 </script>

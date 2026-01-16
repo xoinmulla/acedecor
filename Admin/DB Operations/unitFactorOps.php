@@ -163,4 +163,59 @@ class DBunitFactor
       error_log("DBunitFactor::delete prepare error: " . $connectionObj->error);
     }
   }
+  // 🔍 Check if UnitFactor is used in ITEM
+  // 🔒 ITEM CHECK (NUMERIC SAFE)
+  public static function isUnitFactorMappedToItemById($unitFactorId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    // get unitFactor value
+    $stmt = $conn->prepare(
+      "SELECT unitFactorId FROM unitsfactor WHERE unitFactorId = ?"
+    );
+    $stmt->bind_param("i", $unitFactorId);
+    $stmt->execute();
+    $unitFactor = $stmt->get_result()->fetch_row()[0];
+    $stmt->close();
+
+    // compare numerically
+    $stmt = $conn->prepare(
+      "SELECT COUNT(*) FROM item_details WHERE item_unitFactor = ?"
+    );
+    $stmt->bind_param("d", $unitFactor);
+    $stmt->execute();
+    $count = $stmt->get_result()->fetch_row()[0];
+
+    return $count > 0;
+  }
+
+
+  // 🔒 MATERIAL CHECK (NUMERIC SAFE)
+  public static function isUnitFactorMappedToMaterialById($unitFactorId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare(
+      "SELECT unitFactorId FROM unitsfactor WHERE unitFactorId = ?"
+    );
+    $stmt->bind_param("i", $unitFactorId);
+    $stmt->execute();
+    $unitFactor = $stmt->get_result()->fetch_row()[0];
+    $stmt->close();
+
+    $stmt = $conn->prepare(
+      "SELECT COUNT(*) FROM material WHERE Mat_factor = ?"
+    );
+    $stmt->bind_param("d", $unitFactor);
+    $stmt->execute();
+    $count = $stmt->get_result()->fetch_row()[0];
+
+    return $count > 0;
+  }
+
+
+
+
 }

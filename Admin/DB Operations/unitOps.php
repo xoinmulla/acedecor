@@ -1,4 +1,3 @@
-
 <?php
 require_once "../DB Operations/dbconnection.php";
 require_once "../Model/unitsModel.php";
@@ -13,10 +12,10 @@ class DBunit
     `createdBy`,
     `modifiedBy`) 
                 values ('" . $unit->get_unitName() .
-                "','" . $unit->get_unitDescription() .
-                "','" . $unit->get_CreatedBy() .
-                 "','" . $unit->get_ModifiedBy() . 
-                 "')";
+      "','" . $unit->get_unitDescription() .
+      "','" . $unit->get_CreatedBy() .
+      "','" . $unit->get_ModifiedBy() .
+      "')";
 
     if ($connectionObj->query($sql) === true) {
     } else {
@@ -43,7 +42,7 @@ class DBunit
         $unit->set_modifiedby($row["modifiedBy"]);
         array_push($unitList, $unit);
       }
-    
+
     } else {
       // echo "0 results";
     }
@@ -68,7 +67,7 @@ class DBunit
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql='SELECT unitId,unitName FROM units';
+    $sql = 'SELECT unitId,unitName FROM units';
     $result = mysqli_query($db->getConnection(), $sql);
     error_log($sql);
     $unitList = [];
@@ -86,14 +85,41 @@ class DBunit
     echo json_encode($unitList);
   }
 
-  public static function delete($unitId){
-    $db=ConnectDb::getInstance();
-    $connectionObj=$db->getConnection();
-    $sql="DELETE from units where unitId='".$unitId."'";
-    if ($connectionObj->query($sql) === TRUE) {
-    } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+  public static function delete($unitId)
+  {
+    if (self::isUnitMapped($unitId)) {
+      echo json_encode([
+        "status" => "error",
+        "message" => "❌ Unit is mapped to Unit Factor and cannot be deleted"
+      ]);
+      exit;
     }
 
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare("DELETE FROM units WHERE unitId = ?");
+    $stmt->bind_param("i", $unitId);
+    $stmt->execute();
+
+    echo json_encode([
+      "status" => "success",
+      "message" => "✅ Unit deleted successfully"
+    ]);
   }
+
+  public static function isUnitMapped($unitId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "SELECT COUNT(*) AS total FROM unitsfactor WHERE unitId = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $unitId);
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
+    return ($result['total'] > 0);
+  }
+
 }

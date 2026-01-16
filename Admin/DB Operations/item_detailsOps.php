@@ -176,52 +176,66 @@ GROUP BY I.item_id";
   public static function getallItemdetailsbasedonID($Itemid)
   {
     $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
+    $conn = $db->getConnection();
 
     $sql = "
-       SELECT 
-    I.item_id AS itemid,
-    I.item_name AS itemname,
-    I.item_description AS itemdescription,
-    C.item_catName AS categoryname,
-    SC.item_subcatName AS subcategoryname,
-    B.brand_name AS brandname,
-    I.item_ArticleNo AS itemcode,
-    I.item_HSNcode AS hsncode,
-    I.item_PackingUnit AS spu,
-    I.item_Size AS qty,
-    U.unitName AS unitname,
-    UF.unitFactor AS unitfactor,
-    I.item_MRP AS itemMRP,
-    I.item_Amount AS itemAmount,       -- ⭐ ADD THIS
-    I.item_GST AS itemGST,
-    I.item_Discount AS itemDiscount,
-    I.item_Price AS itemPrice,
-    I.item_TotalValue AS itemTotalValue,
-    I.item_pp_MRP AS itemppMRP,
-    I.item_image AS itemimage
-FROM item_details I
-LEFT JOIN item_category C ON C.item_catid = I.item_catid
-LEFT JOIN item_subcategory SC ON SC.item_subcatid = I.item_subcatid
-LEFT JOIN brands B ON B.brand_id = I.item_compid
-LEFT JOIN units U ON U.unitId = I.item_unit
-LEFT JOIN unitsfactor UF ON UF.unitFactorId = I.item_unitFactor
-WHERE I.item_id = ?
+    SELECT
+        I.item_id AS itemid,
+        I.item_name AS itemname,
+        I.item_description AS itemdescription,
+        C.item_catName AS categoryname,
+        SC.item_subcatName AS subcategoryname,
+        B.brand_name AS brandname,
+        I.item_ArticleNo AS itemcode,
+        I.item_HSNcode AS hsncode,
+        I.item_PackingUnit AS spu,
+        I.item_Size AS qty,
+        U.unitName AS unitname,
+        UF.unitFactor AS unitfactor,
+        I.item_MRP AS itemMRP,
+        I.item_Amount AS itemAmount,
+        I.item_GST AS itemGST,
+        I.item_Discount AS itemDiscount,
+        I.item_Price AS itemPrice,
+        I.item_TotalValue AS itemTotalValue,
+        I.item_pp_MRP AS itemppMRP,
+        I.item_image AS itemimage,
 
+        -- 🔽 PURCHASE / INWARD DATA
+        PO.POcode AS POcode,
+        S.InvoiceNo AS InvoiceNo,
+        PO.PurchasedDate AS DateofPurchase,
+        S.Price AS ItemPrice,
+        S.ReceivedQty AS ReceivedQty,
+        S.ReceivedQtyAmt AS ReceivedQtyAmt,
+        S.TotalAmount AS TotalAmount
+
+    FROM item_details I
+    LEFT JOIN item_category C ON C.item_catid = I.item_catid
+    LEFT JOIN item_subcategory SC ON SC.item_subcatid = I.item_subcatid
+    LEFT JOIN brands B ON B.brand_id = I.item_compid
+    LEFT JOIN units U ON U.unitId = I.item_unit
+    LEFT JOIN unitsfactor UF ON UF.unitFactorId = I.item_unitFactor
+
+    LEFT JOIN item_stock S ON S.item_id = I.item_id
+    LEFT JOIN purchase_order PO ON PO.id = S.POID
+
+    WHERE I.item_id = ?
+    ORDER BY PO.PurchasedDate DESC
     ";
 
-    $stmt = $connectionObj->prepare($sql);
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $Itemid);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $res = $stmt->get_result();
 
     $data = [];
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $res->fetch_assoc()) {
       $data[] = $row;
     }
 
     header('Content-Type: application/json');
-    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
+    echo json_encode($data, JSON_NUMERIC_CHECK);
     exit;
   }
 
@@ -587,4 +601,47 @@ WHERE I.item_id = ?
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
   }
+
+  public static function recalculateItemsByUnitFactor($unitFactorId, $newFactor)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "
+        UPDATE item_details
+        SET
+            item_Amount = item_MRP * ? * item_PackingUnit,
+
+            item_Price = (
+                (item_MRP * ? * item_PackingUnit)
+                - ((item_MRP * ? * item_PackingUnit) * (item_Discount / 100))
+            ) * (1 + (item_GST / 100)),
+
+            item_TotalValue = (
+                (
+                    (item_MRP * ? * item_PackingUnit)
+                    - ((item_MRP * ? * item_PackingUnit) * (item_Discount / 100))
+                ) * (1 + (item_GST / 100))
+            ),
+
+            item_totalMRP = item_MRP * item_PackingUnit
+        WHERE item_unitFactor = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param(
+      "dddddi",
+      $newFactor,
+      $newFactor,
+      $newFactor,
+      $newFactor,
+      $newFactor,
+      $unitFactorId
+    );
+
+    $stmt->execute();
+    $stmt->close();
+  }
+
+
 }

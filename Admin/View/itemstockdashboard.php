@@ -37,7 +37,7 @@ require_once("../Model/item_stocksmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Item List With Issues </h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Item List With Issues </h6>
             </div>
            
         </div>

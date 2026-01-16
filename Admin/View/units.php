@@ -11,11 +11,12 @@ require_once("../Model/unitsModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Unit</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Unit</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#unitModal>
-                    <button type="button" + class="btn btn-success btn-circle btn-sm"><i class="fas fa-plus"></i></button>
+                    <button type="button" + class="btn btn-success btn-circle btn-sm"><i
+                            class="fas fa-plus"></i></button>
                 </span>
             </div>
         </div>
@@ -33,44 +34,51 @@ require_once("../Model/unitsModel.php");
                 <tbody>
                     <?php
                     $unitList = DBunit::getAllUnit();
+
                     foreach ($unitList as $unit) {
-                        echo "<tr><td>" . $unit->get_unitName() . "</td>
-                        <td>" . $unit->get_unitDescription() . "</td>
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#editUnitModal' 
-                            role='button' 
-                            data-id='" . $unit->get_unitId() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                Edit Unit
-                           </button>
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deleteCategoryModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $unit->get_unitId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete Unit
-                          </button>
-                        </div>
-                    </div>
-                        
-                       </td></tr>";
+
+                        // ✅ check mapping
+                        $isMapped = DBunit::isUnitMapped($unit->get_unitId());
+                        ?>
+                        <tr>
+                            <td><?= $unit->get_unitName(); ?></td>
+                            <td><?= $unit->get_unitDescription(); ?></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+
+                                    <div class="dropdown-menu">
+
+                                        <!-- EDIT -->
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#editUnitModal" data-id="<?= $unit->get_unitId(); ?>">
+                                            <i class="fas fa-user-edit"></i> Edit Unit
+                                        </button>
+
+                                        <!-- DELETE -->
+                                        <?php if ($isMapped) { ?>
+                                            <button class="btn btn-secondary dropdown-item" disabled
+                                                title="Unit is mapped to Unit Factor">
+                                                <i class="fas fa-lock"></i> Delete Disabled
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                data-target="#deleteUnitsModal" data-id="<?= $unit->get_unitId(); ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Unit
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php
                     }
                     ?>
                 </tbody>
+
             </table>
         </div>
     </div>
@@ -90,32 +98,41 @@ require_once("../Model/unitsModel.php");
                         <div class="row">
                             <label class="col-md-4 text-right">Unit Name <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="unitName" id="unitName" class="form-control" required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150" data-parsley-trigger="keyup" />
+                                <input type="text" name="unitName" id="unitName" class="form-control" required
+                                    data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
+                                    data-parsley-trigger="keyup" />
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <label class="col-md-4 text-right">Unit Description <span class="text-danger">*</span></label>
+                            <label class="col-md-4 text-right">Unit Description <span
+                                    class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="unitDescription" id="unitDescription" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-
-                            <div class="col-md-8">
-                                <input type="hidden" name="createdby" id="createdby" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="text" name="unitDescription" id="unitDescription" class="form-control"
+                                    required data-parsley-type="integer" data-parsley-minlength="10"
+                                    data-parsley-maxlength="12" data-parsley-trigger="keyup" />
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="row">
+
                             <div class="col-md-8">
-                                <input type="hidden" name="modifiedby" id="modifiedby" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="hidden" name="createdby" id="createdby" class="form-control" required
+                                    data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12"
+                                    data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="hidden" name="modifiedby" id="modifiedby" class="form-control" required
+                                    data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12"
+                                    data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
                             </div>
                         </div>
                     </div>
@@ -145,16 +162,22 @@ require_once("../Model/unitsModel.php");
                         <div class="row">
                             <label class="col-md-4 text-right">Unit Name <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="unitName" id="editedUnitName" class="form-control" required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150" data-parsley-trigger="keyup" />
+                                <input type="text" name="unitName" id="editedUnitName" class="form-control" required
+                                    data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
+                                    data-parsley-trigger="keyup" />
                                 <input type="hidden" name="unitId" id="unitId" value="">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
-                            <label class="col-md-4 text-right">Unit Description <span class="text-danger">*</span></label>
+                            <label class="col-md-4 text-right">Unit Description <span
+                                    class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="unitDescription" id="editedUnitDescription" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" />
+                                <input type="text" name="unitDescription" id="editedUnitDescription"
+                                    class="form-control" required data-parsley-type="integer"
+                                    data-parsley-minlength="10" data-parsley-maxlength="12"
+                                    data-parsley-trigger="keyup" />
                             </div>
                         </div>
                     </div>
@@ -163,7 +186,9 @@ require_once("../Model/unitsModel.php");
                         <div class="row">
 
                             <div class="col-md-8">
-                                <input type="hidden" name="createdby" id="editedcreatedby" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="hidden" name="createdby" id="editedcreatedby" class="form-control" required
+                                    data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12"
+                                    data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
                             </div>
                         </div>
                     </div>
@@ -172,7 +197,10 @@ require_once("../Model/unitsModel.php");
                         <div class="row">
 
                             <div class="col-md-8">
-                                <input type="hidden" name="modifiedby" id="editedmodifiedby" class="form-control" required data-parsley-type="integer" data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup" value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="hidden" name="modifiedby" id="editedmodifiedby" class="form-control"
+                                    required data-parsley-type="integer" data-parsley-minlength="10"
+                                    data-parsley-maxlength="12" data-parsley-trigger="keyup"
+                                    value="<?php echo $_SESSION['login_user']; ?>" />
                             </div>
                         </div>
                     </div>
@@ -211,60 +239,121 @@ require_once("../Model/unitsModel.php");
     </div>
 </div>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        $('#editUnitModal').on('show.bs.modal', function(e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#unitId').val(rowid);
+        // =============================
+        // DATATABLE
+        // =============================
+        var dataTable = $('#units_table').DataTable({});
 
+        // =============================
+        // EDIT MODAL – LOAD DATA
+        // =============================
+        $('#editUnitModal').on('show.bs.modal', function (e) {
+            let button = $(e.relatedTarget);
+            let unitId = button.data('id');
+
+            let row = button.closest('tr');
+
+            $('#unitId').val(unitId);
+            $('#editedUnitName').val(row.find('td:eq(0)').text());
+            $('#editedUnitDescription').val(row.find('td:eq(1)').text());
+
+            $('#editUnitModal #form_message').html('');
         });
-        var dataTable = $('#units_table').DataTable({
 
-        });
+        // =============================
+        // INSERT UNIT
+        // =============================
+        $('#user_form').submit(function (e) {
+            e.preventDefault();
 
-        var nEditing = null;
+            let formData = new FormData(this);
 
-        $('#units_table tbody').on('click', 'tr', function() {
-            /* Get the row as a parent of the link that was clicked on */
-            $('#editedUnitName').val(this.cells[0].innerHTML);
-            $('#editedUnitDescription').val(this.cells[1].innerHTML);
-        });
-        $('#unit_form').submit(function(event) {
-
-            var formData = new FormData(this);
             $.ajax({
+                url: config.developmentPath + "/Admin/Controller/unitsContoller.php",
                 type: "POST",
-                url: config.developmentPath+
-                    "/Admin/Controller/unitsContoller.php/",
                 data: formData,
                 processData: false,
-                contentType: false
-            }).done(function(data) {
-                console.log(data);
+                contentType: false,
+                dataType: "json",
+                success: function (res) {
+                    if (res.status === "success") {
+                        $('#form_message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        $('#form_message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+                    }
+                }
             });
-            $('#editbutton').dispose();
-            event.preventDefault();
         });
-        $('#deleteUnitsModal').on('show.bs.modal', function(e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#itemcatid').val(rowid);
-        });
-        $('#deletebutton').click(function() {
+
+        // =============================
+        // UPDATE UNIT
+        // =============================
+        $('#unit_form').submit(function (e) {
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
             $.ajax({
-                url:  config.developmentPath+"/Admin/Controller/unitsContoller.php/",
+                url: config.developmentPath + "/Admin/Controller/unitsContoller.php",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                dataType: "json",
+                success: function (res) {
+                    if (res.status === "success") {
+                        $('#editUnitModal #form_message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        $('#editUnitModal #form_message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+                    }
+                }
+            });
+        });
+
+        // =============================
+        // DELETE MODAL
+        // =============================
+        $('#deleteUnitsModal').on('show.bs.modal', function (e) {
+            let unitId = $(e.relatedTarget).data('id');
+            $('#itemcatid').val(unitId);
+        });
+
+        // =============================
+        // DELETE UNIT
+        // =============================
+        $('#deletebutton').click(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: config.developmentPath + "/Admin/Controller/unitsContoller.php",
                 method: "POST",
+                dataType: "json",
                 data: {
                     id: $('#itemcatid').val(),
                     action: 'delete'
                 },
-                success: function(data) {
-                    $('#message').html(data);
-                    dataTable.ajax.reload();
-                    setTimeout(function() {
-                        $('#message').html('');
-                    }, 5000);
+                success: function (res) {
+                    if (res.status === "error") {
+                        alert(res.message);
+                    } else {
+                        alert(res.message);
+                        location.reload();
+                    }
                 }
             });
         });
+
     });
 </script>

@@ -9,13 +9,22 @@ class DBpurchase
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "INSERT INTO purchase_order (`Item_id`, `SupplierId`, `POcode`,`PurchasedDate`,`ProjectId`) 
-                values ('" . $purchaseObj->get_itemid() ."','".$purchaseObj->get_supplier()."','" . $purchaseObj->getPOcode() ."','" . $purchaseObj->get_purchaseddate() ."','" . $purchaseObj->get_projectId() ."')";
-      error_log($sql);
+    $sql = "INSERT INTO purchase_order 
+(`Item_id`, `SupplierId`, `InventoryType`, `POcode`, `PurchasedDate`, `ProjectId`) 
+VALUES (
+  '" . $purchaseObj->get_itemid() . "',
+  '" . $purchaseObj->get_supplier() . "',
+  '" . $purchaseObj->getInventoryType() . "',
+  '" . $purchaseObj->getPOcode() . "',
+  '" . $purchaseObj->get_purchaseddate() . "',
+  '" . $purchaseObj->get_projectId() . "'
+)";
+
+    error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
-      $purchaseId=$connectionObj->insert_id;
-   
-      $sql="UPDATE purchase_order SET POcode='".$purchaseObj->getPOcode().$purchaseId."' WHERE Id=".$purchaseId;
+      $purchaseId = $connectionObj->insert_id;
+
+      $sql = "UPDATE purchase_order SET POcode='" . $purchaseObj->getPOcode() . $purchaseId . "' WHERE Id=" . $purchaseId;
       error_log($sql);
       $connectionObj->query($sql);
       return $purchaseId;
@@ -40,6 +49,7 @@ class DBpurchase
     PO.PurchasedDate as PurchasedDate,
     PO.SupplierId AS SupplierId, 
     TEMP1.TotalAmt AS TotalAmt,
+    PO.InventoryType AS InventoryType,
     SUM(SP.received_amount)As ReceivedAmt,
     COALESCE(TEMP.ReceivedQty,0) as ReceivedQty,
     COALESCE ((TEMP1.Quantity)-TEMP.ReceivedQty,0) as BalanceQuantity,
@@ -65,7 +75,7 @@ class DBpurchase
     SUM(ReceivedQty)As ReceivedQty
     from item_stock 
     group by POID) AS TEMP ON TEMP.POID=PO.Id 
-      group by POcode,Id,POtype,ItemId,PurchasedDate,SupplierId,SupplierName";
+      group by POcode,Id,POtype,ItemId,InventoryType,PurchasedDate,SupplierId,SupplierName";
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $purchaseList = [];
@@ -82,7 +92,8 @@ class DBpurchase
         $purchase->setSupplierName($row["SupplierName"]);
         $purchase->setQuantity($row["Quantity"]);
         $purchase->set_totalAmount($row["TotalAmt"]);
-        $purchase->setBalanceAmt($row['TotalAmt']-$row['ReceivedAmt']);
+        $purchase->setInventoryType($row["InventoryType"]);
+        $purchase->setBalanceAmt($row['TotalAmt'] - $row['ReceivedAmt']);
         $purchase->set_purchaseddate($row["PurchasedDate"]);
         array_push($purchaseList, $purchase);
       }
@@ -90,7 +101,7 @@ class DBpurchase
     return $purchaseList;
   }
 
-//   public static function getAllpurchasesbasedonItemId($POItemId)
+  //   public static function getAllpurchasesbasedonItemId($POItemId)
 //   {
 //     $db = ConnectDb::getInstance();
 //     $connectionObj = $db->getConnection();
@@ -117,13 +128,13 @@ class DBpurchase
 //         $purchase = new PurchaseOrder();
 //         $purchase->set_Id($row["Id"]);
 //         $purchase->setPOcode($row["POcode"]);
-       
-//         $purchase->set_supplier($row["SupplierId"]);
+
+  //         $purchase->set_supplier($row["SupplierId"]);
 //         $purchase->setSupplierName($row["SupplierName"]);
-        
-//         $purchase->set_totalAmount($row["TotalAmt"]);
-      
-//         $purchase->set_purchaseddate($row["PurchasedDate"]);
+
+  //         $purchase->set_totalAmount($row["TotalAmt"]);
+
+  //         $purchase->set_purchaseddate($row["PurchasedDate"]);
 //         array_push($purchaseList, $purchase);
 //       }
 //     }
@@ -167,7 +178,7 @@ class DBpurchase
    (quantity)As TotalQty
     from item_stock 
     group by POID) AS TEMPSTOCK ON TEMPSTOCK.POID=PO.ID  
-    where PO.Id='".$purchase."'
+    where PO.Id='" . $purchase . "'
     ";
     error_log($sql);
     $result = $connectionObj->query($sql);
@@ -188,7 +199,7 @@ class DBpurchase
         $purchase->set_purchaseddate($row["PurchasedDate"]);
         $purchase->setTotalQuantity($row["TotalQuantity"]);
         $purchase->setTotalReceivedQty($row["TotalReceivedQty"]);
-        
+
       }
     }
     return $purchase;
@@ -221,11 +232,11 @@ class DBpurchase
     JOIN `item_details`  I ON I.item_id =P.Item_id
     JOIN `purchaseorder_lineitem`  PO ON PO.POID =P.Id
     JOIN `units`  U  ON U.unitId =I.item_unit
-    WHERE P.Id=".$id;
+    WHERE P.Id=" . $id;
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     error_log($sql);
-    $purchaseList=[];
+    $purchaseList = [];
     if ($count > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $purchase = new PurchaseOrder();
@@ -236,23 +247,24 @@ class DBpurchase
         $purchase->setArticleNo($row["ArticleNo"]);
         $purchase->setDescription($row["Description"]);
         $purchase->setSupplierAddress($row["SupplierAddress"]);
-       
+
         $purchase->setQuantity($row["Quantity"]);
         $purchase->set_itemId($row["ItemId"]);
         $purchase->set_purchaseddate($row["PurchasedDate"]);
         $purchase->set_totalAmount($row["TotalAmt"]);
         $purchase->setUnitName($row["UnitName"]);
-       
-       
-        array_push($purchaseList,$purchase);
+
+
+        array_push($purchaseList, $purchase);
       }
     }
     return $purchaseList;
   }
 
 
-  
-  public static function selectCompany($id){
+
+  public static function selectCompany($id)
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT item_compName FROM item_companydetails where item_compid=$id";
@@ -263,7 +275,7 @@ class DBpurchase
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new Item_Companydetails();
         $view->set_itemcompname($row['item_compName']);
-        
+
       }
     } else {
       // echo "0 results";
@@ -277,9 +289,9 @@ class DBpurchase
     $connectionObj = $db->getConnection();
     $sql = "UPDATE purchase_order SET 
         Quantity='" . $purchaseObj->get_quantity() .
-        "', Price='".$purchaseObj->get_price().
-        "', TotalAmt='".$purchaseObj->get_totalamt().
-        "', POID='".$purchaseObj->get_POID().
+      "', Price='" . $purchaseObj->get_price() .
+      "', TotalAmt='" . $purchaseObj->get_totalamt() .
+      "', POID='" . $purchaseObj->get_POID() .
       "' WHERE Id=" . $purchaseObj->get_Id();
     if ($connectionObj->query($sql) === TRUE) {
     } else {
@@ -287,18 +299,18 @@ class DBpurchase
     }
   }
 
-  
+
   public static function updateFileName($purchaseObj)
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "UPDATE purchase_order SET ";
-  
-      $sql.="purchasePDFName='".$purchaseObj->get_purchasePDFName();
+
+    $sql .= "purchasePDFName='" . $purchaseObj->get_purchasePDFName();
 
     //  $sql.= "', modifiedby='" . $purchaseObj->get_modifiedby() .
-      "' WHERE Id=" . $purchaseObj->get_Id();
-      error_log($sql);
+    "' WHERE Id=" . $purchaseObj->get_Id();
+    error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
     } else {
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
@@ -309,7 +321,7 @@ class DBpurchase
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "UPDATE purchase_order SET Status=1 WHERE Id=".$purchaseId;
+    $sql = "UPDATE purchase_order SET Status=1 WHERE Id=" . $purchaseId;
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
     } else {
@@ -320,7 +332,7 @@ class DBpurchase
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "UPDATE purchase_order SET Status=0 WHERE Id=".$purchaseId;
+    $sql = "UPDATE purchase_order SET Status=0 WHERE Id=" . $purchaseId;
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
     } else {
@@ -331,29 +343,28 @@ class DBpurchase
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "DELETE FROM purchase_order WHERE Id=".$purchaseId;
+    $sql = "DELETE FROM purchase_order WHERE Id=" . $purchaseId;
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
-      $sql = "DELETE FROM supplierpaymentinfo WHERE POID=".$purchaseId;
+      $sql = "DELETE FROM supplierpaymentinfo WHERE POID=" . $purchaseId;
       error_log($sql);
       if ($connectionObj->query($sql) === TRUE) {
-        $sql = "DELETE FROM item_stock WHERE POID=".$purchaseId;
+        $sql = "DELETE FROM item_stock WHERE POID=" . $purchaseId;
         error_log($sql);
         if ($connectionObj->query($sql) === TRUE) {
-          $sql = "DELETE FROM purchaseorder_lineitem WHERE POID=".$purchaseId;
+          $sql = "DELETE FROM purchaseorder_lineitem WHERE POID=" . $purchaseId;
           error_log($sql);
-        if ($connectionObj->query($sql) === TRUE) {
-        
-        }else{
-        echo "Error: " . $sql . "<br>" . $connectionObj->error;
-      }
+          if ($connectionObj->query($sql) === TRUE) {
 
-        }else{
-        echo "Error: " . $sql . "<br>" . $connectionObj->error;
-      }
+          } else {
+            echo "Error: " . $sql . "<br>" . $connectionObj->error;
+          }
 
-      }
-      else{
+        } else {
+          echo "Error: " . $sql . "<br>" . $connectionObj->error;
+        }
+
+      } else {
         echo "Error: " . $sql . "<br>" . $connectionObj->error;
       }
     } else {

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -80,7 +79,8 @@
                     <i class="fas fa-layer-group"></i>
                     <span>Material Stock List</span></a>
             </li>
-
+            <br>
+            <hr class="sidebar-divider">
             <li class="nav-item">
                 <a class="nav-link" href="inventorydashboard.php">
                     <i class="fas fa-backward"></i>

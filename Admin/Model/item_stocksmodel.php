@@ -36,11 +36,19 @@ class Item_Stock implements JsonSerializable
     private $LineitemPrice;
     private $PricingIssues_Id;
     private $ItemCode;
-    
-   
+    private $InventoryType;
     private $table_name="item_stock";
 
+    public function getInventoryType()
+    {
+        return $this->InventoryType;
+    }
+    public function setInventoryType($InventoryType)
+    {
+        $this->InventoryType = $InventoryType;
 
+        return $this;
+    }
     function set_SupplierName($SupplierName)
     {
         $this->SupplierName =$SupplierName;
@@ -281,6 +289,7 @@ class Item_Stock implements JsonSerializable
                 'LineitemPrice'=>$this->LineitemPrice,
                 'PricingIssues_Id'=>$this->PricingIssues_Id,
                 'ItemCode'=>$this->ItemCode,
+                'InventoryType'=>$this->InventoryType,
                
         ];
     }

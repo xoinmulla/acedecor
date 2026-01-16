@@ -20,14 +20,14 @@ require_once("../Model/item_categorymodel.php");
         margin-left: 0;
     }
 </style>
-<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
+<h1 class="h3 mb-4 text-gray-800 ">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Item Category</h6>
+                <h6 class="m-0  text-primary" style="font-size: 1.2rem; font-weight: bold;">Item Category</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#itemcatModal>
@@ -87,13 +87,15 @@ require_once("../Model/item_categorymodel.php");
                                 Category Info
                           </button>
                             <button class='btn btn-danger dropdown-item'
-                            data-toggle='modal'
-                            data-target='#deleteCategoryModal'
-                            role='button'
-                            data-id='" . $itemcat->get_itemcatid() . "'>
-                            <i class='fas fa-trash-alt'></i> 
-                                Delete Category
-                           </button>
+    data-toggle='modal'
+    data-target='#deleteCategoryModal'
+    role='button'
+    data-id='" . $itemcat->get_itemcatid() . "'
+    " . (!$itemcat->get_canDelete() ? 'disabled title="Category in use"' : '') . ">
+    <i class='fas fa-trash-alt'></i>
+    " . (!$itemcat->get_canDelete() ? 'Cannot Delete' : 'Delete Category') . "
+</button>
+
                         
                         </div>
                     </div>     
@@ -556,6 +558,10 @@ require_once("../Model/item_categorymodel.php");
             });
         });
 
+        $(document).on('click', '.dropdown-item[disabled]', function (e) {
+            e.preventDefault();
+            alert('❌ This category cannot be deleted because it is in use.');
+        });
 
     });
 </script>

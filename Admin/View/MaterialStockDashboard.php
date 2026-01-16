@@ -33,7 +33,7 @@ require_once("../Model/material_stocksModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Material List With Issues </h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material List With Issues </h6>
             </div>
             
         </div>

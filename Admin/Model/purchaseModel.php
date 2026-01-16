@@ -23,6 +23,17 @@ class PurchaseOrder implements JsonSerializable
     private $POStatus;
     private $BalanceQuantity;
 
+    private $InventoryType;
+
+    public function setInventoryType($InventoryType)
+    {
+        $this->InventoryType = $InventoryType;
+    }
+
+    public function getInventoryType()
+    {
+        return $this->InventoryType;
+    }
 
 
     // public function set_GST($GST)
@@ -36,13 +47,13 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_id($id)
     {
-        $this->Id=$id;
+        $this->Id = $id;
     }
     public function get_id()
     {
         return $this->Id;
     }
-    
+
     public function getPOcode()
     {
         return $this->POcode;
@@ -101,7 +112,7 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_supplier($supplier)
     {
-        $this->SupplierId=$supplier;
+        $this->SupplierId = $supplier;
     }
     public function get_supplier()
     {
@@ -110,17 +121,17 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_projectId($projectId)
     {
-        $this->ProjectId=$projectId;
+        $this->ProjectId = $projectId;
     }
     public function get_projectId()
     {
         return $this->ProjectId;
     }
 
-    
+
     public function set_itemid($itemid)
     {
-        $this->Item_id=$itemid;
+        $this->Item_id = $itemid;
     }
     public function get_itemid()
     {
@@ -130,7 +141,7 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_itemperpieceprice($itemperpieceprice)
     {
-        $this->Price=$itemperpieceprice;
+        $this->Price = $itemperpieceprice;
     }
     public function get_itemperpieceprice()
     {
@@ -140,7 +151,7 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_itemquantity($itemquantity)
     {
-        $this->Quantity=$itemquantity;
+        $this->Quantity = $itemquantity;
     }
     public function get_itemquantity()
     {
@@ -150,7 +161,7 @@ class PurchaseOrder implements JsonSerializable
 
     public function set_totalAmount($totalAmount)
     {
-        $this->TotalAmt=$totalAmount;
+        $this->TotalAmt = $totalAmount;
     }
     public function get_totalAmount()
     {
@@ -158,75 +169,82 @@ class PurchaseOrder implements JsonSerializable
     }
     public function set_paidAmount($paidAmount)
     {
-        $this->PaidAmt=$paidAmount;
+        $this->PaidAmt = $paidAmount;
     }
     public function get_paidAmount()
     {
         return $this->PaidAmt;
     }
-    
+
     public function set_purchaseddate($purchaseddate)
     {
-        $this->PurchasedDate=$purchaseddate;
+        $this->PurchasedDate = $purchaseddate;
     }
     public function get_purchaseddate()
     {
         return $this->PurchasedDate;
     }
 
-    public function set_purchasePDFName($purchasePDFName){
-        $this->purchasePDFName=$purchasePDFName;
+    public function set_purchasePDFName($purchasePDFName)
+    {
+        $this->purchasePDFName = $purchasePDFName;
     }
-    public function get_purchasePDFName(){
-       return $this->purchasePDFName;
-    }
-
-    public function setTotalQuantity($TotalQuantity){
-        $this->TotalQuantity=$TotalQuantity;
-    }
-    public function getTotalQuantity(){
-       return $this->TotalQuantity;
+    public function get_purchasePDFName()
+    {
+        return $this->purchasePDFName;
     }
 
-    public function setTotalReceivedQty($TotalReceivedQty){
-        $this->TotalReceivedQty=$TotalReceivedQty;
+    public function setTotalQuantity($TotalQuantity)
+    {
+        $this->TotalQuantity = $TotalQuantity;
     }
-    public function getTotalReceivedQty(){
-       return $this->TotalReceivedQty;
+    public function getTotalQuantity()
+    {
+        return $this->TotalQuantity;
+    }
+
+    public function setTotalReceivedQty($TotalReceivedQty)
+    {
+        $this->TotalReceivedQty = $TotalReceivedQty;
+    }
+    public function getTotalReceivedQty()
+    {
+        return $this->TotalReceivedQty;
     }
 
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return [
-                'id'=>$this->id,
-                'POcode' => $this->POcode,
-                'supplier' => $this->SupplierId,
-                'projectId'=>$this->ProjectId,
-                'itemid' => $this->Item_id,
-                'itemquantity' => $this->Quantity,
-                'itemperpieceprice' => $this->Price,
-                'totalAmount' => $this->TotalAmt,
-                'purchaseddate'=>$this->PurchasedDate,
-                'SupplierName'=>$this->SupplierName,
-                'ArticleNo'=>$this->ArticleNo,
-                'Description'=>$this->Description,
-                'SupplierAddress'=>$this->SupplierAddress,
-                'Name'=>$this->Name,
-                'Itemcatname'=>$this->Itemcatname,
-                'Itemsubcatname'=>$this->Itemsubcatname,
-                'Quantity'=>$this->Quantity,
-                'UnitName'=>$this->unitName,
-                'purchasePDFName' => $this->purchasePDFName,
-                'Projectcode'=> $this->Projectcode,
-                'BrandName'=> $this->BrandName,
-                'POtype' => $this->POtype,
-                'Status' => $this->Status,
-                'BalanceQuantity' => $this->BalanceQuantity,
-                'paidAmount'=>$this->PaidAmt,
-                'TotalReceivedQty'=>$this->TotalReceivedQty,
-                'TotalQuantity'=>$this->TotalQuantity,
-                'BalanceAmt'=>$this->BalanceAmt,
+            'id' => $this->id,
+            'POcode' => $this->POcode,
+            'supplier' => $this->SupplierId,
+            'projectId' => $this->ProjectId,
+            'itemid' => $this->Item_id,
+            'itemquantity' => $this->Quantity,
+            'itemperpieceprice' => $this->Price,
+            'totalAmount' => $this->TotalAmt,
+            'purchaseddate' => $this->PurchasedDate,
+            'SupplierName' => $this->SupplierName,
+            'ArticleNo' => $this->ArticleNo,
+            'Description' => $this->Description,
+            'SupplierAddress' => $this->SupplierAddress,
+            'Name' => $this->Name,
+            'Itemcatname' => $this->Itemcatname,
+            'Itemsubcatname' => $this->Itemsubcatname,
+            'Quantity' => $this->Quantity,
+            'UnitName' => $this->unitName,
+            'purchasePDFName' => $this->purchasePDFName,
+            'Projectcode' => $this->Projectcode,
+            'BrandName' => $this->BrandName,
+            'POtype' => $this->POtype,
+            'Status' => $this->Status,
+            'BalanceQuantity' => $this->BalanceQuantity,
+            'paidAmount' => $this->PaidAmt,
+            'TotalReceivedQty' => $this->TotalReceivedQty,
+            'TotalQuantity' => $this->TotalQuantity,
+            'BalanceAmt' => $this->BalanceAmt,
+            'inventoryType' => $this->InventoryType,
         ];
     }
     public function getSupplierName()
@@ -295,11 +313,11 @@ class PurchaseOrder implements JsonSerializable
 
     //     return $this;
     // }
-    
+
     public function getQuantity()
     {
         return $this->Quantity;
-    } 
+    }
     public function setQuantity($Quantity)
     {
         $this->Quantity = $Quantity;
@@ -329,18 +347,18 @@ class PurchaseOrder implements JsonSerializable
         return $this;
     }
 
-    
+
     public function getDescription()
     {
         return $this->Description;
-    } 
+    }
     public function setDescription($Description)
     {
         $this->Description = $Description;
 
         return $this;
     }
-    
+
     public function getSupplierAddress()
     {
         return $this->SupplierAddress;
@@ -375,7 +393,7 @@ class PurchaseOrder implements JsonSerializable
 
     /**
      * Get the value of BalanceAmt
-     */ 
+     */
     public function getBalanceAmt()
     {
         return $this->BalanceAmt;
@@ -385,7 +403,7 @@ class PurchaseOrder implements JsonSerializable
      * Set the value of BalanceAmt
      *
      * @return  self
-     */ 
+     */
     public function setBalanceAmt($BalanceAmt)
     {
         $this->BalanceAmt = $BalanceAmt;

@@ -1,16 +1,28 @@
 <?php
 class Item_Category implements JsonSerializable
 {
-    private $item_catid ;
+    private $item_catid;
     private $item_catName;
-    private	$item_catDescription;
-    private	$item_catModifiedOn;
-    private	$item_catCreatedBy;
+    private $item_catDescription;
+    private $item_catModifiedOn;
+    private $item_catCreatedBy;
     private $item_catCreatedOn;
-    private $item_catModifiedBy	;
+    private $item_catModifiedBy;
     private $item_brandName;
     private $brand_list = [];
-    private $table_name="item_category";
+    private $table_name = "item_category";
+    private $canDelete = true;
+
+    public function set_canDelete($val)
+    {
+        $this->canDelete = $val;
+    }
+
+    public function get_canDelete()
+    {
+        return $this->canDelete;
+    }
+
     function set_brandList($list)
     {
         $this->brand_list = $list;
@@ -19,18 +31,18 @@ class Item_Category implements JsonSerializable
     {
         return $this->brand_list;
     }
-   function set_itemcatid($itemcatid)
+    function set_itemcatid($itemcatid)
     {
-        $this->item_catid =$itemcatid;
+        $this->item_catid = $itemcatid;
     }
     function get_itemcatid()
     {
-        return $this->item_catid ;
+        return $this->item_catid;
     }
 
     function set_itemcatname($itemcatname)
     {
-        $this->item_catName=$itemcatname;
+        $this->item_catName = $itemcatname;
     }
     function get_itemcatname()
     {
@@ -39,7 +51,7 @@ class Item_Category implements JsonSerializable
 
     function set_itemcatdescription($itemcatdescription)
     {
-        $this->item_catDescription=$itemcatdescription;
+        $this->item_catDescription = $itemcatdescription;
     }
     function get_itemcatdescription()
     {
@@ -49,7 +61,7 @@ class Item_Category implements JsonSerializable
 
     function set_itemcatcreatedon($itemcatcreatedon)
     {
-        $this->item_catCreatedOn=$itemcatcreatedon;
+        $this->item_catCreatedOn = $itemcatcreatedon;
     }
     function get_itemcatcreatedon()
     {
@@ -58,7 +70,7 @@ class Item_Category implements JsonSerializable
 
     function set_itemcatcreatedby($itemcatcreatedby)
     {
-        $this->item_catCreatedBy=$itemcatcreatedby;
+        $this->item_catCreatedBy = $itemcatcreatedby;
     }
     function get_itemcatcreatedby()
     {
@@ -67,7 +79,7 @@ class Item_Category implements JsonSerializable
 
     function set_itemcatmodifiedby($itemcatmodifiedby)
     {
-        $this->item_catModifiedBy	=$itemcatmodifiedby;
+        $this->item_catModifiedBy = $itemcatmodifiedby;
     }
     function get_itemcatmodifiedby()
     {
@@ -75,7 +87,7 @@ class Item_Category implements JsonSerializable
     }
     public function set_brandname($brandname)
     {
-        $this->item_brandName=$brandname;
+        $this->item_brandName = $brandname;
     }
     public function get_brandname()
     {
@@ -85,13 +97,13 @@ class Item_Category implements JsonSerializable
     #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
-        return 
+        return
             [
                 'itemcatid' => $this->item_catid,
                 'itemcatname' => $this->item_catName,
                 'itemcatdescription' => $this->item_catDescription,
                 'brandname' => $this->item_brandName,
             ];
-        
+
     }
 }

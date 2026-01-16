@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <!-- Custom styles for this template-->
     <link href="../css/sb-admin-2.min.css" rel="stylesheet">
@@ -21,9 +21,9 @@
     <!-- Custom styles for this page -->
     <link href="../vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" type="text/css" href="../vendor/parsley/parsley.css"/>
+    <link rel="stylesheet" type="text/css" href="../vendor/parsley/parsley.css" />
 
-    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-select/bootstrap-select.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-select/bootstrap-select.min.css" />
 
 </head>
 
@@ -43,30 +43,45 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-           
-           
+
+
             <!-- <li class="nav-item">
                 <a class="nav-link" href="quotationView.php">
                 <i class='fab fa-quora'></i>
                     <span>Quotation</span></a>
             </li> -->
             <li class="nav-item">
+                <a class="nav-link" href="projectView.php">
+                    <i class="fab fa-product-hunt"></i>
+                    <span>Project Tasks</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="ongoingprojects.php">
+                    <i class="fas fa-spinner"></i>
+                    <span>Ongoing Projects</span></a>
+            </li>
+
+            <li class="nav-item">
                 <a class="nav-link" href="pendingprojects.php">
-                <i class="fab fa-product-hunt"></i>
+                    <i class="fas fa-exclamation-triangle"></i>
                     <span>Pending Projects</span></a>
             </li>
+
             <li class="nav-item">
-                <a class="nav-link" href="projectView.php">
-                <i class="fas fa-backward"></i>
-                    <span>Back</span></a>
+                <a class="nav-link" href="completedprojects.php">
+                    <i class="fas fa-check-square"></i>
+                    <span>Completed Projects</span></a>
             </li>
-            <!-- <li class="nav-item">
+            <br>
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
                     <i class="fas fa-home"></i>
                     <span>Home</span></a>
-            </li> -->
-          
-          
+            </li>
+
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -88,13 +103,14 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div class="sidebar-brand-text mx-3"><i class="fas fa-user"></i> <?php echo $_SESSION['login_user']; ?></div>
+                    <div class="sidebar-brand-text mx-3"><i class="fas fa-user"></i>
+                        <?php echo $_SESSION['login_user']; ?></div>
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        
+
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
@@ -110,7 +126,7 @@
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
-                              
+
                                 <a class="dropdown-item" href="setting.php">
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings

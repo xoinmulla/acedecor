@@ -12,7 +12,7 @@ require_once("../Model/projectModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h5 class="m-0 font-weight-bold text-primary">Completed Projects List</h5>
+                <h5 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Completed Projects List</h5>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#projectModal>

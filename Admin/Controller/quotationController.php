@@ -120,9 +120,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $project = new Project();
 
             $project->set_custid(Sanitization::test_input($_POST["customerCode"]));
-            $project->set_quoteid(Sanitization::test_input($_POST["quoteCode"]));
+            $project->set_quoteid($_POST["quoteCode"]);     // project.quoteId stores quoteCode
+            $project->set_quotecode($_POST["quoteCode"]);  // keep model consistent
+
             $project->set_quoteamt(Sanitization::test_input($_POST["QuoteAmount"]));
             $project->set_custName(Sanitization::test_input($_POST["customeName"]));
+
             // $project->set_projectstatus(Sanitization::test_input($_POST["projectstatus"]));
             $date = date('my h:i:s a', time());
             $custname = DBproject::selectcustomer($project->get_custid());

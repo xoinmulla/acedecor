@@ -1,4 +1,3 @@
-
 <?php
 include('session.php');
 ?>
@@ -27,7 +26,9 @@ include('session.php');
     <link rel="stylesheet" type="text/css" href="../vendor/parsley/parsley.css" />
 
     <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-select/bootstrap-select.min.css" />
-    
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -48,11 +49,11 @@ include('session.php');
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <!-- <li class="nav-item">
+            <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
-                <i class="fas fa-chart-line"></i>
+                    <i class="fas fa-chart-line"></i>
                     <span>Dashboard</span></a>
-            </li> -->
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="enquiry.php">
                     <i class="fas fa-question-circle"></i>

@@ -4,28 +4,25 @@ include('POviewnavigation.php');
 require_once("../DB Operations/purchaseorderOps.php");
 require_once("../DB Operations/POlineitemOps.php");
 require_once("../Model/purchaseModel.php");
-
-
-
 ?>
 <style>
-#editedPOlineItemTable {
-    height: 200px;
-    display: inline-block;
-    width: 100%;
-    overflow: auto;
-}
+    #editedPOlineItemTable {
+        height: 200px;
+        display: inline-block;
+        width: 100%;
+        overflow: auto;
+    }
 
-#editedPOlineItemTable thead {
-    background-color: grey;
-    color: whitesmoke;
-    position: sticky;
-    top: 0;
-}
+    #editedPOlineItemTable thead {
+        background-color: grey;
+        color: whitesmoke;
+        position: sticky;
+        top: 0;
+    }
 
-.pad {
-    padding-right: .5rem;
-}
+    .pad {
+        padding-right: .5rem;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Purchase Order Management</h1>
 <!-- DataTales Example -->
@@ -34,7 +31,8 @@ require_once("../Model/purchaseModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Purchase Order List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Purchase
+                    Order List</h6>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#purchaseModal>
@@ -52,6 +50,7 @@ require_once("../Model/purchaseModel.php");
                         <th>Purchase Order ID</th>
                         <th>Purchased Date</th>
                         <th>PO type</th>
+                        <th>Inventory</th>
                         <th style='display:none'>Supplier Id</th>
                         <th>Supplier Name</th>
                         <th>Total Quantity</th>
@@ -71,6 +70,7 @@ require_once("../Model/purchaseModel.php");
                         <td>" . $purchaseObj->getPOcode() . "</td>
                         <td>" . $purchaseObj->get_purchaseddate() . "</td>
                         <td>" . $purchaseObj->getPOtype() . "</td>
+                        <td>" . $purchaseObj->getInventoryType() . "</td>
                         <td style='display:none'>" . $purchaseObj->get_supplier() . "</td>
                         <td >" . $purchaseObj->getSupplierName() . "</td>
                         <td >" . $purchaseObj->getQuantity() . "</td>
@@ -102,11 +102,11 @@ require_once("../Model/purchaseModel.php");
 
                         <a class='btn btn-primary dropdown-item'
                         role='button' 
-                        href='../View/itemstocks.php?id=".$purchaseObj->get_Id()."'>
-                       <i class='fas fa-layer-group'></i>Inward stock </a> 
+                        href='../View/itemstocks.php?id=" . $purchaseObj->get_Id() . "'>
+                       <i class='fas fa-layer-group'></i>Inward stock </a>  
                         
                         <button class='btn btn-primary dropdown-item'";
-                       
+
                         if ($purchaseObj->getPOStatus() == '1') {
                             echo "data-toggle='modal' data-target='#ResumePurchaseModal' 
                         name='resume_button' 
@@ -114,16 +114,18 @@ require_once("../Model/purchaseModel.php");
                         data-id='" . $purchaseObj->get_Id() . "'>
                         <i class='far fa-pause-circle'></i>
                             Resume Purchase Order
-                       ";}else{
-                        echo "data-toggle='modal' data-target='#cancelPurchaseModal' 
+                       ";
+                        } else {
+                            echo "data-toggle='modal' data-target='#cancelPurchaseModal' 
                         name='cancel_button' 
                         role='button' 
                         data-id='" . $purchaseObj->get_Id() . "'>
                         <i class='far fa-times-circle'></i>
                             Cancel Purchase Order
                         
-                       ";}
-                       echo "
+                       ";
+                        }
+                        echo "
                        <button class='btn btn-primary dropdown-item'
                        data-toggle='modal' data-target='#deletePurchaseModal' 
                        name='delete_button' 
@@ -142,7 +144,9 @@ require_once("../Model/purchaseModel.php");
         </div>
     </div>
 </div>
+
 <?php include('footer.php'); ?>
+
 <div class="modal fade" id=viewModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-xl">
         <form class="" method="POST" id="quote_form" enctype="multipart/form-data">
@@ -265,6 +269,7 @@ require_once("../Model/purchaseModel.php");
         </form>
     </div>
 </div>
+
 <div class="modal fade" id=editpurchaseModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -413,8 +418,6 @@ require_once("../Model/purchaseModel.php");
     </div>
 </div>
 
-
-
 <div class="modal fade" id=cancelPurchaseModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_quote_form" enctype="multipart/form-data">
@@ -438,6 +441,7 @@ require_once("../Model/purchaseModel.php");
         </form>
     </div>
 </div>
+
 <div class="modal fade" id=ResumePurchaseModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_quote_form" enctype="multipart/form-data">
@@ -461,6 +465,7 @@ require_once("../Model/purchaseModel.php");
         </form>
     </div>
 </div>
+
 <div class="modal fade" id=deletePurchaseModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_quote_form" enctype="multipart/form-data">
@@ -486,301 +491,271 @@ require_once("../Model/purchaseModel.php");
 </div>
 
 <script>
-$(document).ready(function() {
-    // var waterMarked = false;
-    // $('#flexSwitchCheckDefault').on('click', function(e) {
-    //     if ($(this).attr('checked') != 'checked') {
-    //         $(this).attr('checked', 'checked');
-    //         waterMarked = true;
-    //     } else {
-    //         $(this).removeAttr('checked');
-    //         waterMarked = false;
-    //     }
-    // })
-    // $('#itemListForm').submit(function(e) {
-    //     var content = $('#printtopdf').html();
-    //     var fileName = $('#customerCode').text() + $('#listquoteCode').text();
-    //     var uniturl = config.developmentPath +
-    //         "/Admin/Controller/pdfGeneratorContorller.php";
-    //     $.ajax({
-    //         type: "POST",
-    //         url: uniturl,
-    //         data: {
-    //             "modifiedby": $('#modifiedby').val(),
-    //             "quoteId": $('#quoteid').val(),
-    //             "fileType": "itemList",
-    //             "waterMarked": waterMarked,
-    //             "fileName": fileName,
-    //             "html": content
-    //         },
-    //         dataType: "json",
-    //         encode: true,
-    //     }).done(function(data) {
-    //         console.log(data);
-    //     });
-    // });
+    $(document).ready(function () {
+        // var waterMarked = false;
+        // $('#flexSwitchCheckDefault').on('click', function(e) {
+        //     if ($(this).attr('checked') != 'checked') {
+        //         $(this).attr('checked', 'checked');
+        //         waterMarked = true;
+        //     } else {
+        //         $(this).removeAttr('checked');
+        //         waterMarked = false;
+        //     }
+        // })
+        // $('#itemListForm').submit(function(e) {
+        //     var content = $('#printtopdf').html();
+        //     var fileName = $('#customerCode').text() + $('#listquoteCode').text();
+        //     var uniturl = config.developmentPath +
+        //         "/Admin/Controller/pdfGeneratorContorller.php";
+        //     $.ajax({
+        //         type: "POST",
+        //         url: uniturl,
+        //         data: {
+        //             "modifiedby": $('#modifiedby').val(),
+        //             "quoteId": $('#quoteid').val(),
+        //             "fileType": "itemList",
+        //             "waterMarked": waterMarked,
+        //             "fileName": fileName,
+        //             "html": content
+        //         },
+        //         dataType: "json",
+        //         encode: true,
+        //     }).done(function(data) {
+        //         console.log(data);
+        //     });
+        // });
 
-    $('#editpurchaseModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        debugger;
-        $('#id').val(rowid);
-        $('#editPOLineItem').attr('href', 'POlineitemview.php?id=' + rowid);
-        var uniturl = config.developmentPath +
-            "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
+        $('#editpurchaseModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            debugger;
+            $('#id').val(rowid);
+            $('#editPOLineItem').attr('href', 'POlineitemview.php?id=' + rowid);
+            var uniturl = config.developmentPath +
+                "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
 
-        $.getJSON(uniturl, function(data) {
-            $("#editedPOlineItemTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#editedPOlineItemTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.Id
+            $.getJSON(uniturl, function (data) {
+                $("#editedPOlineItemTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#editedPOlineItemTable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.Id
 
-                }));
-                $('#editedPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Name
-                }));
+                        }));
+                    $('#editedPOlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Name
+                        }));
 
-                $('#editedPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Brand
-                }));
-
-
-                $('#editedPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Description
-                }));
+                    $('#editedPOlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Brand
+                        }));
 
 
-                $('#editedPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.quantity
-                }));
-
-                $('#editedPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.unitName
-                }));
+                    $('#editedPOlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Description
+                        }));
 
 
+                    $('#editedPOlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.quantity
+                        }));
 
-
-            });
-
-        });
-    });
-
-
-    $('#viewModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#printPDF').attr('href', 'printPurchase.php?id=' + rowid);
-        $('#editPOLineItem').attr('href', 'POlineitemview.php?id=' + rowid);
-        var uniturl = config.developmentPath +
-            "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
-
-        $.getJSON(uniturl, function(data) {
-            $("#displayPOlineItemTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#displayPOlineItemTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.POlineitemId
-
-                }));
-
-                $('#displayPOlineItemTable tr:last').
-                append($(document.createElement('td')).append($(document.createElement(
-                        'img'))
-                    .prop({
-                        src: "../img/items/" + value.image,
-                        style: "width:100px; height:100px",
-                        class: 'img-fluid'
-                    })));
-
-                $('#displayPOlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Itemcode
-                }));
-
-                $('#displayPOlineItemTable tr:last').append($(document
-                    .createElement('td')).prop({
-                    innerHTML: value.Name
-                }));
-
-                $('#displayPOlineItemTable tr:last').append($(document
-                    .createElement('td')).prop({
-                    innerHTML: value.Brand
-                }));
-
-                $('#displayPOlineItemTable tr:last').append($(document
-                    .createElement('td')).prop({
-                    innerHTML: value.Description
-                }));
-
-                $('#displayPOlineItemTable tr:last').append($(document
-                    .createElement('td')).prop({
-                    innerHTML: value.quantity
-                }));
-
-                $('#displayPOlineItemTable tr:last').append($(document
-                    .createElement('td')).prop({
-                    innerHTML: value.unitName
-                }));
+                    $('#editedPOlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.unitName
+                        }));
 
 
 
+
+                });
 
             });
         });
-    });
-
-    var dataTable = $('#quote_table').DataTable({});
-    var nEditing = null;
-    $('#quote_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-        $('#id').val(this.cells[0].innerHTML);
-        $('#POcode').val(this.cells[1].innerHTML);
-        $('#purchaseddate').val(this.cells[2].innerHTML);
-        $('#POtype').val(this.cells[3].innerHTML);
-        $('#supplier').val(this.cells[4].innerHTML);
-        $('#editedSupplierName').val(this.cells[5].innerHTML);
-        $('#displaySupplierName').val(this.cells[5].innerHTML);
-        $('#editedTotalAmount').val(this.cells[8].innerHTML);
-        $('#displayTotalAmount').val(this.cells[8].innerHTML);
-        // if (this.cells[11].innerHTML != "") {
-        //     $('#downloadPOLineItem').attr('href', '../pdfs/itemList/' + this.cells[11].innerHTML);
-        // } else {
-        //     $('#downloadPOLineItem').removeAttr('target');
-        //     $('#downloadPOLineItem').attr('onclick', 'alert("Please save the Item List as PDF")');
-        // }
-        // if (this.cells[12].innerHTML != "") {
-
-        //     $('#downloadPO').attr('href', '../pdfs/quotations/' + this.cells[12].innerHTML);
-        // } else {
-        //     $('#downloadPO').removeAttr('target');
-        //     $('#downloadPO').attr('onclick', 'alert("Please save the Quotation as PDF")');
-        // }
-    });
-
-    $('#InwardModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#Id').val(rowid);
-        // reloadloadItemTable(rowid);
-    });
-
-    $('#itemListModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#Id').val(rowid);
-        reloadloadItemTable(rowid);
-    });
-
-    function reloadloadItemTable(rowid) {
-        debugger;
-        var uniturl = config.developmentPath +
-            "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
-        $.getJSON(uniturl, function(data) {
-            $("#POlineItemTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#POlineItemTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.POlineItemId
-
-                }));
-
-                $('#POlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Name
-                }));
-
-                $('#POlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Brand
-                }));
-
-                $('#POlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Description
-                }));
 
 
+        $('#viewModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#printPDF').attr('href', 'printPurchase.php?id=' + rowid);
+            $('#editPOLineItem').attr('href', 'POlineitemview.php?id=' + rowid);
+            var uniturl = config.developmentPath +
+                "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
 
-                $('#POlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.quantity
-                }));
-                $('#POlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.unitName
-                }));
+            $.getJSON(uniturl, function (data) {
+                $("#displayPOlineItemTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    console.log("PO View Data:", data);
+
+                    $('#displayPOlineItemTable tbody').append(
+                        $('<tr>', { id: value.POlineitemId })
+                            .append($('<td>').append(
+                                $('<img>', {
+                                    src: "../img/items/" + value.ItemImage,
+                                    style: "width:100px; height:100px",
+                                    class: "img-fluid"
+                                })
+                            ))
+                            .append($('<td>').text(value.Itemcode))
+                            .append($('<td>').text(value.Name))
+                            .append($('<td>').text(value.Brand))
+                            .append($('<td>').text(value.Description))
+                            .append($('<td>').text(value.quantity))
+                            .append($('<td>').text(value.unitName))
+                    );
+                });
             });
         });
-    }
 
-    $('#cancelPurchaseModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#id').val(rowid);
-    });
-    $('#cancelbutton').click(function() {
-        $.ajax({
-            url: config.developmentPath +
-                "/Admin/Controller/purchaseordercontroller.php/",
-            method: "POST",
-            data: {
-                id: $('#id').val(),
-                action: 'cancel'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
+        var dataTable = $('#quote_table').DataTable({});
+        var nEditing = null;
+        $('#quote_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+            $('#id').val(this.cells[0].innerHTML);
+            $('#POcode').val(this.cells[1].innerHTML);
+            $('#purchaseddate').val(this.cells[2].innerHTML);
+            $('#POtype').val(this.cells[3].innerHTML);
+            $('#supplier').val(this.cells[4].innerHTML);
+            $('#editedSupplierName').val(this.cells[5].innerHTML);
+            $('#displaySupplierName').val(this.cells[5].innerHTML);
+            $('#editedTotalAmount').val(this.cells[8].innerHTML);
+            $('#displayTotalAmount').val(this.cells[8].innerHTML);
+            // if (this.cells[11].innerHTML != "") {
+            //     $('#downloadPOLineItem').attr('href', '../pdfs/itemList/' + this.cells[11].innerHTML);
+            // } else {
+            //     $('#downloadPOLineItem').removeAttr('target');
+            //     $('#downloadPOLineItem').attr('onclick', 'alert("Please save the Item List as PDF")');
+            // }
+            // if (this.cells[12].innerHTML != "") {
 
-            }
+            //     $('#downloadPO').attr('href', '../pdfs/quotations/' + this.cells[12].innerHTML);
+            // } else {
+            //     $('#downloadPO').removeAttr('target');
+            //     $('#downloadPO').attr('onclick', 'alert("Please save the Quotation as PDF")');
+            // }
         });
-    });
 
-    $('#ResumePurchaseModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#id').val(rowid);
-    });
-    $('#resumebtn').click(function() {
-        $.ajax({
-            url: config.developmentPath +
-                "/Admin/Controller/purchaseordercontroller.php/",
-            method: "POST",
-            data: {
-                id: $('#id').val(),
-                action: 'resume'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
-
-            }
+        $('#InwardModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#Id').val(rowid);
+            // reloadloadItemTable(rowid);
         });
-    });
-    $('#deletePurchaseModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#id').val(rowid);
-    });
-    $('#deletebutton').click(function() {
-        $.ajax({
-            url: config.developmentPath +
-                "/Admin/Controller/purchaseordercontroller.php/",
-            method: "POST",
-            data: {
-                id: $('#id').val(),
-                action: 'delete'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
 
-            }
+        $('#itemListModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#Id').val(rowid);
+            reloadloadItemTable(rowid);
         });
+
+        function reloadloadItemTable(rowid) {
+            debugger;
+            var uniturl = config.developmentPath +
+                "/Admin/Controller/POitemlistcontroller.php?id=" + rowid;
+            $.getJSON(uniturl, function (data) {
+                $("#POlineItemTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#POlineItemTable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.POlineItemId
+
+                        }));
+
+                    $('#POlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Name
+                        }));
+
+                    $('#POlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Brand
+                        }));
+
+                    $('#POlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Description
+                        }));
+
+
+
+                    $('#POlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.quantity
+                        }));
+                    $('#POlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.unitName
+                        }));
+                });
+            });
+        }
+
+        $('#cancelPurchaseModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#id').val(rowid);
+        });
+        $('#cancelbutton').click(function () {
+            $.ajax({
+                url: config.developmentPath +
+                    "/Admin/Controller/purchaseordercontroller.php/",
+                method: "POST",
+                data: {
+                    id: $('#id').val(),
+                    action: 'cancel'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+
+                }
+            });
+        });
+
+        $('#ResumePurchaseModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#id').val(rowid);
+        });
+        $('#resumebtn').click(function () {
+            $.ajax({
+                url: config.developmentPath +
+                    "/Admin/Controller/purchaseordercontroller.php/",
+                method: "POST",
+                data: {
+                    id: $('#id').val(),
+                    action: 'resume'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+
+                }
+            });
+        });
+        $('#deletePurchaseModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#id').val(rowid);
+        });
+        $('#deletebutton').click(function () {
+            $.ajax({
+                url: config.developmentPath +
+                    "/Admin/Controller/purchaseordercontroller.php/",
+                method: "POST",
+                data: {
+                    id: $('#id').val(),
+                    action: 'delete'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+
+                }
+            });
+        });
+
+
     });
-
-
-});
 </script>

@@ -2,6 +2,7 @@
 class SupplierPayment  implements JsonSerializable
 {
     private $supplier_name;
+    private $suppliername;
     private $supplierId;
     private $supplierpaymentId;
     private $POID;

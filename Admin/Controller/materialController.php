@@ -32,9 +32,9 @@ function jsonResponse($data = [], $httpCode = 200)
 ====================================================== */
 if (isset($_GET['matInfoId'])) {
     $matId = (int) $_GET['matInfoId'];
-    DBmaterialdetails::getMaterialFullDetailsById($matId);
-    // getMaterialFullDetailsById already sets headers and echoes JSON then exits.
+    DBmaterialdetails::getMaterialWithInwardHistory($matId);
 }
+
 
 /* ======================================================
    POST REQUESTS

@@ -185,13 +185,13 @@ class DBbrand
       B.brand_id AS BrandId,
       QLI.itemId as QuoteItemId,
       QLI.quantity as ReqItemQuantity,
-      Q.quoId as QuoteId,
+      Q.quoteId as QuoteId,
       Q.quoteCode As quoteCode,
       PR.quoteId as ProjectQuoteId
       FROM item_details I 
       JOIN brands B ON I.item_compid=B.brand_id
       JOIN quotelineitem QLI ON I.item_name=QLI.InputName
-      JOIN quotation_details Q ON Q.quoid=QLI.quoteId
+      JOIN quotation_details Q ON Q.quoteId=QLI.quoteId
       JOIN projects PR ON PR.quoteId=Q.quoteCode
       where PR.projectId=$projId
        group by BrandName
@@ -203,13 +203,13 @@ class DBbrand
       B.brand_id AS BrandId,
       QLI.itemId as QuoteItemId,
       QLI.quantity as ReqItemQuantity,
-      Q.quoId as QuoteId,
+      Q.quoteId as QuoteId,
       Q.quoteCode As quoteCode,
       PR.quoteId as ProjectQuoteId
       FROM material M 
       JOIN brands B ON M.Brand=B.brand_id
       JOIN quotelineitem QLI ON M.Material_Id =QLI.itemId
-      JOIN quotation_details Q ON Q.quoid=QLI.quoteId
+      JOIN quotation_details Q ON Q.quoteId=QLI.quoteId
       JOIN projects PR ON PR.quoteId=Q.quoteCode
       where PR.projectId='" . $projId . "'
        group by BrandName";

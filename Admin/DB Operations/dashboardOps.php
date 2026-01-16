@@ -36,7 +36,6 @@ class DBDashboard
         return $InwardedandAvailable;
     }
 
-
     public static function Totalenquiries()
     {
         $db = ConnectDb::getInstance();
@@ -74,8 +73,6 @@ class DBDashboard
         return mysqli_fetch_assoc($result);
     }
 
-
-
     public static function CompletedProjects()
     {
         $db = ConnectDb::getInstance();
@@ -93,8 +90,6 @@ class DBDashboard
         return mysqli_fetch_assoc($result);
     }
 
-
-
     public static function PendingProjects()
     {
         $db = ConnectDb::getInstance();
@@ -110,8 +105,6 @@ class DBDashboard
         $result = mysqli_query($conn, $query);
         return mysqli_fetch_assoc($result);
     }
-
-
 
     public static function Totalsuppliers()
     {
@@ -232,7 +225,6 @@ class DBDashboard
         $result = mysqli_query($conn, $query);
         return mysqli_fetch_assoc($result);
     }
-
     /** ✅ Total Expenses (sum of all expense amounts) */
     public static function TotalExpenseAmount()
     {
@@ -243,7 +235,6 @@ class DBDashboard
         $result = mysqli_query($conn, $query);
         return mysqli_fetch_assoc($result);
     }
-
     /** ✅ Employee Payment Info (Paid vs Pending for charts) */
     public static function employeepaymentinfo()
     {
@@ -287,7 +278,6 @@ class DBDashboard
         $data = mysqli_query($conn, "SELECT $paid AS PaidAmt, $balance AS BalanceAmt");
         return $data;
     }
-
     public static function TotalEmployees()
     {
         $conn = ConnectDb::getInstance()->getConnection();
@@ -328,35 +318,31 @@ class DBDashboard
     /** ✅ Total Income (Sum of expenses linked to Income categories) */
     public static function TotalIncome()
     {
-        $db = ConnectDb::getInstance();
-        $conn = $db->getConnection();
+        $conn = ConnectDb::getInstance()->getConnection();
 
-        $query = "
-        SELECT COALESCE(SUM(e.amount), 0) AS total
-        FROM expense e
-        JOIN expense_category c ON e.category = c.name
-        WHERE c.type = 'Income'
+        $sql = "
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM expense
+        WHERE type = 'Income'
     ";
 
-        $result = mysqli_query($conn, $query);
-        return mysqli_fetch_assoc($result);
+        $res = mysqli_query($conn, $sql);
+        return mysqli_fetch_assoc($res);
     }
 
     /** ✅ Total Expenses (Sum of expenses linked to Expense categories) */
     public static function TotalExpenses()
     {
-        $db = ConnectDb::getInstance();
-        $conn = $db->getConnection();
+        $conn = ConnectDb::getInstance()->getConnection();
 
-        $query = "
-        SELECT COALESCE(SUM(e.amount), 0) AS total
-        FROM expense e
-        JOIN expense_category c ON e.category = c.name
-        WHERE c.type = 'Expense'
+        $sql = "
+        SELECT COALESCE(SUM(amount), 0) AS total
+        FROM expense
+        WHERE type = 'Expense'
     ";
 
-        $result = mysqli_query($conn, $query);
-        return mysqli_fetch_assoc($result);
+        $res = mysqli_query($conn, $sql);
+        return mysqli_fetch_assoc($res);
     }
 
     /** ✅ Net Balance (Income - Expense) */
@@ -372,7 +358,43 @@ class DBDashboard
 
         return ['total' => $balance];
     }
+    public static function MainProjects()
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
 
+        $query = "
+        SELECT COUNT(DISTINCT custId) AS total
+        FROM projects
+        WHERE project_status = 'In Progress'
+    ";
+
+        $result = mysqli_query($conn, $query);
+        return mysqli_fetch_assoc($result);
+    }
+    public static function CustomerFinancialGraph()
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "
+        SELECT 
+            c.customer_name AS name,
+            SUM(cp.total_amount) AS total_amt,
+            SUM(cp.pending_amount) AS pending_amt,
+            COALESCE(SUM(e.amount), 0) AS expenditure
+        FROM customerpaymentinfo cp
+        JOIN customer c ON c.customer_id = cp.customer_id
+        LEFT JOIN expense e 
+            ON e.type = 'Expense' 
+            AND e.category = 'Customer' 
+            AND e.customer_id = cp.customer_id
+        GROUP BY cp.customer_id
+        ORDER BY c.customer_name
+    ";
+
+        return mysqli_query($conn, $sql);
+    }
 
 
 }
