@@ -38,44 +38,63 @@ VALUES (
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT 
-    case When PO.ProjectId =0 Then 
-    'General'
-    else 'Project Based'
-    end  as POtype,
+    CASE 
+        WHEN PO.ProjectId = 0 THEN 'General'
+        ELSE 'Project Based'
+    END AS POtype,
+
     PO.Id AS Id,
-    PO.POcode as POcode,
+    PO.POcode AS POcode,
     PO.Item_id AS ItemId,
-    PO.Status as POStatus,
-    PO.PurchasedDate as PurchasedDate,
-    PO.SupplierId AS SupplierId, 
-    TEMP1.TotalAmt AS TotalAmt,
+    PO.Status AS POStatus,
+    PO.PurchasedDate AS PurchasedDate,
+    PO.SupplierId AS SupplierId,
+
+    COALESCE(STOCK_AMT.TotalAmt, 0) AS TotalAmt,
     PO.InventoryType AS InventoryType,
-    SUM(SP.received_amount)As ReceivedAmt,
-    COALESCE(TEMP.ReceivedQty,0) as ReceivedQty,
-    COALESCE ((TEMP1.Quantity)-TEMP.ReceivedQty,0) as BalanceQuantity,
+
+    SUM(SP.received_amount) AS ReceivedAmt,
+
+    COALESCE(STOCK_AMT.ReceivedQty, 0) AS ReceivedQty,
+    COALESCE(TEMP1.Quantity - STOCK_AMT.ReceivedQty, TEMP1.Quantity) AS BalanceQuantity,
+
     CO.item_compname AS SupplierName,
-    TEMP1.Quantity AS Quantity,
-    case When  TEMP1.Quantity = TEMP.ReceivedQty Then 'Fully Received'
-    When  TEMP1.Quantity > TEMP.ReceivedQty Then 'Partially Received'
-    when PO.Status= 1 then 'Cancelled'
-    else  'Raised'
-    end as Status 
-    FROM `purchase_order` AS PO
-    LEFT JOIN (SELECT 
-	  POID ,
-    SUM(TotalAmt)As TotalAmt,
-    sum(Quantity) as Quantity
-    from purchaseorder_lineitem 
-    group by POID) AS TEMP1 ON TEMP1.POID=PO.Id 
-    
-    JOIN `item_companydetails` CO ON CO.item_compid=PO.SupplierId 
-    LEFT JOIN `supplierpaymentinfo` SP on SP.POID=PO.Id
-   	LEFT JOIN (SELECT 
-  	POID ,
-    SUM(ReceivedQty)As ReceivedQty
-    from item_stock 
-    group by POID) AS TEMP ON TEMP.POID=PO.Id 
-      group by POcode,Id,POtype,ItemId,InventoryType,PurchasedDate,SupplierId,SupplierName";
+    COALESCE(TEMP1.Quantity, 0) AS Quantity,
+
+    CASE 
+        WHEN TEMP1.Quantity = STOCK_AMT.ReceivedQty THEN 'Fully Received'
+        WHEN TEMP1.Quantity > STOCK_AMT.ReceivedQty THEN 'Partially Received'
+        WHEN PO.Status = 1 THEN 'Cancelled'
+        ELSE 'Raised'
+    END AS Status
+
+FROM purchase_order PO
+
+/* ✅ ORDERED QTY */
+LEFT JOIN (
+    SELECT 
+        POID,
+        SUM(Quantity) AS Quantity
+    FROM purchaseorder_lineitem
+    GROUP BY POID
+) AS TEMP1 ON TEMP1.POID = PO.Id
+
+/* ✅ INWARD / INVOICE AMOUNT */
+LEFT JOIN (
+    SELECT 
+        POID,
+        SUM(ReceivedQtyAmt) AS TotalAmt,
+        SUM(ReceivedQty) AS ReceivedQty
+    FROM item_stock
+    GROUP BY POID
+) AS STOCK_AMT ON STOCK_AMT.POID = PO.Id
+
+JOIN item_companydetails CO ON CO.item_compid = PO.SupplierId
+
+LEFT JOIN supplierpaymentinfo SP ON SP.POID = PO.Id
+
+GROUP BY PO.Id";
+
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $purchaseList = [];

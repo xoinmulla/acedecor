@@ -9,6 +9,7 @@ require_once("../Model/customerModel.php");
 <h1 class="h3 mb-4 text-gray-800">Supplier Payment Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
@@ -88,8 +89,8 @@ require_once("../Model/customerModel.php");
         </div>
     </div>
 </div>
-<?php include('footer.php'); ?>
 
+<?php include('footer.php'); ?>
 
 <div class="modal fade" id=paymentinfoModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-xl">

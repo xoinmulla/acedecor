@@ -151,6 +151,27 @@ if (
     exit;
 }
 
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' &&
+    isset($_POST['action']) &&
+    $_POST['action'] === 'add_supplier_expense'
+) {
+
+    $e = new Expense();
+    $e->setType('Expense');
+    $e->setCategory('Suppliers');
+    $e->setSupplierId($_POST['supplier_id'] ?? null);
+    $e->setPoId($_POST['po_id'] ?? null);
+    $e->setAmount($_POST['amount']);
+    $e->setExpenseDate($_POST['expense_date']);
+    $e->setPaymentType($_POST['payment_type']);
+    $e->setNotes($_POST['notes'] ?? '');
+
+    DBExpense::insertSupplierExpense($e);
+
+    echo json_encode(['status' => 'success']);
+    exit;
+}
 
 
 
