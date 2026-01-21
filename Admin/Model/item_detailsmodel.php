@@ -47,7 +47,18 @@ class Item_Details implements JsonSerializable
     private $item_Price;
     private $item_TotalValue;
     private $item_Amount;
+    // 🔒 Flag: item used in approved quotation
+    private $isUsedInApprovedQuotation = 0;
 
+    public function set_isUsedInApprovedQuotation($value)
+    {
+        $this->isUsedInApprovedQuotation = (int) $value;
+    }
+
+    public function get_isUsedInApprovedQuotation()
+    {
+        return $this->isUsedInApprovedQuotation;
+    }
     // ========== DISCOUNT ==========
     function set_itemDiscount($item_Discount)
     {

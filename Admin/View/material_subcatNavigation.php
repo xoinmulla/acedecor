@@ -64,11 +64,7 @@
                     <span>Material List</span></a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link" href="MaterialStocklist.php">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Material Stock List</span></a>
-            </li>
+            
             <br>
             <hr class="sidebar-divider">
             <li class="nav-item">

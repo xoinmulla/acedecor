@@ -1017,47 +1017,54 @@ require_once("../Model/materialModel.php");
                     </div>
                 </div>
 
-                <h6 class="text-primary font-weight-bold mb-3 pl-1 text-uppercase small ls-1">Product Specifications &
-                    Financials</h6>
+                <h6 class="text-primary font-weight-bold mb-3 pl-1 text-uppercase small ls-1">
+                    Product Specifications & Financials
+                </h6>
 
+                <!-- ROW 1 -->
                 <div class="row mb-2">
-                    <div class="col-md-3 col-6 mb-3">
+                    <div class="col-md-2 col-6 mb-3">
                         <div class="info-card card-warn">
                             <span class="label-text">SPU</span>
                             <p class="value-text" id="displayItempu"></p>
                         </div>
                     </div>
-                    <div class="col-md-3 col-6 mb-3">
-                        <div class="info-card card-warn">
-                            <span class="label-text">Quantity</span>
-                            <p class="value-text" id="displayItemsize"></p>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-6 mb-3">
+
+                    <div class="col-md-2 col-6 mb-3">
                         <div class="info-card">
                             <span class="label-text">Unit</span>
                             <p class="value-text" id="displayunit"></p>
                         </div>
                     </div>
-                    <div class="col-md-3 col-6 mb-3">
+
+                    <div class="col-md-2 col-6 mb-3">
                         <div class="info-card">
                             <span class="label-text">Unit Factor</span>
                             <p class="value-text" id="displayunitFactor"></p>
                         </div>
                     </div>
-                </div>
 
-                <div class="row">
                     <div class="col-md-3 col-6 mb-3">
                         <div class="info-card card-spec">
                             <span class="label-text">Thickness</span>
                             <p class="value-text" id="displayItemThickness"></p>
                         </div>
                     </div>
+
                     <div class="col-md-3 col-6 mb-3">
                         <div class="info-card card-spec">
                             <span class="label-text">Grains</span>
                             <p class="value-text" id="displayItemGrains"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROW 2 -->
+                <div class="row">
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="info-card card-warn">
+                            <span class="label-text">Quantity</span>
+                            <p class="value-text" id="displayItemsize"></p>
                         </div>
                     </div>
 
@@ -1067,35 +1074,52 @@ require_once("../Model/materialModel.php");
                             <p class="value-text" id="displayItemMRP"></p>
                         </div>
                     </div>
+
                     <div class="col-md-2 col-6 mb-3">
                         <div class="info-card">
                             <span class="label-text">GST</span>
                             <p class="value-text" id="displayItemGST"></p>
                         </div>
                     </div>
-                    <div class="col-md-2 col-12 mb-3">
+
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="info-card">
+                            <span class="label-text">Discount</span>
+                            <p class="value-text" id="displayItemDiscount"></p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2 col-6 mb-3">
                         <div class="info-card card-highlight">
                             <span class="label-text text-success">Net Price</span>
                             <p class="value-text value-text-lg" id="displayItemppMRP"></p>
                         </div>
                     </div>
+
+                    <div class="col-md-2 col-6 mb-3">
+                        <div class="info-card card-highlight">
+                            <span class="label-text text-success">Total Value</span>
+                            <p class="value-text value-text-lg" id="displayItemTotalValue"></p>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="card border-0 shadow-sm mt-3 overflow-hidden rounded-lg">
                     <div class="card-header bg-white border-bottom-0 pt-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Purchase History</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Price History</h6>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-modern table-hover mb-0" id="details_table" width="100%">
                             <thead>
                                 <tr>
+                                    <th>Supplier</th>
                                     <th>PO Code</th>
                                     <th>Invoice No</th>
                                     <th>Date of Purchase</th>
                                     <th>Item Price</th>
                                     <th>ReceivedQty</th>
                                     <th>ReceivedQtyAmt</th>
-                                    <th>TotalAmount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1914,6 +1938,14 @@ require_once("../Model/materialModel.php");
                 $('#displayItemGST').text(safe(m.MaterialGST) + "%");
 
                 $('#displayItemppMRP').text(safe(m.MaterialCompanyPrice));
+                $('#displayItemDiscount').text(
+                    safe(m.MaterialDiscount ? m.MaterialDiscount + "%" : "0%")
+                );
+
+                $('#displayItemTotalValue').text(
+                    safe(parseFloat(m.MaterialTotalValue || 0).toFixed(2))
+                );
+
 
 
                 // IMAGE
@@ -1933,20 +1965,24 @@ require_once("../Model/materialModel.php");
 
                 $.each(data, function (index, r) {
 
-                    let receivedAmt = parseFloat(r.ReceivedQtyAmt) || 0;
-                    runningTotal += receivedAmt;
+                    let qty = parseFloat(r.ReceivedQty) || 0;
+                    let amt = parseFloat(r.ReceivedQtyAmt) || 0;
+
+                    // ✅ DIVIDED VALUE (same as inward modal)
+                    let perUnitAmt = qty > 0 ? (amt / qty) : 0;
 
                     $("#details_table tbody").append(`
-        <tr>
-            <td>${safe(r.POcode)}</td>
-            <td>${safe(r.InvoiceNo)}</td>
-            <td>${safe(r.DateofPurchase)}</td>
-            <td>${safe(r.ItemPrice)}</td>
-            <td>${safe(r.ReceivedQty)}</td>
-            <td>${receivedAmt.toFixed(2)}</td>
-            <td>${runningTotal.toFixed(2)}</td>
-        </tr>
-    `);
+<tr>
+    <td>${safe(r.SupplierName)}</td>
+    <td>${safe(r.POcode)}</td>
+    <td>${safe(r.InvoiceNo)}</td>
+    <td>${safe(r.DateofPurchase)}</td>
+    <td>${safe(r.ItemPrice)}</td>
+    <td>${safe(r.ReceivedQty)}</td>
+    <td>${perUnitAmt.toFixed(2)}</td>
+</tr>
+`);
+
                 });
 
             }).fail(function (xhr, status, err) {

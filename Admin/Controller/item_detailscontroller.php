@@ -63,16 +63,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // ================== DELETE ITEM ==================
   if (isset($_POST["action"]) && $_POST["action"] == 'delete') {
-    DBitemdetails::delete($_POST['id']);
 
-    if ($isAjax) {
-      echo json_encode(["status" => "success", "message" => "Item deleted"]);
+    $itemId = intval($_POST['id']);
+
+    // 🚫 BLOCK DELETE IF USED IN APPROVED QUOTATION
+    if (DBitemdetails::isItemUsedInApprovedQuotation($itemId)) {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => "❌ Cannot delete item. It is used in an approved quotation."
+      ]);
       exit();
     }
 
-    header("Location: ../View/inventory.php");
+    DBitemdetails::delete($itemId);
+
+    echo json_encode([
+      "status" => "success",
+      "message" => "Item deleted successfully"
+    ]);
     exit();
   }
+
 
   // ================== INSERT NEW ITEM ==================
   $details = new Item_Details();

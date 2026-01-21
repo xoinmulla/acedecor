@@ -18,6 +18,7 @@ class DBitemcompdetails
      `item_compaccIFSCcode`,
      `item_compaccMICRcode`,
      `item_compAddress`,
+     `item_compLocation`,
      `item_compCreatedBy`,
      `item_compModifiedBy`,
      `item_complogo`) 
@@ -29,12 +30,13 @@ class DBitemcompdetails
       "','" . $itemcompdetailsObj->get_itemcompaccifsc() .
       "','" . $itemcompdetailsObj->get_itemcompaccmicr() .
       "','" . $itemcompdetailsObj->get_itemcompaddress() .
+      "','" . $itemcompdetailsObj->get_itemcomplocation() .
       "','" . $itemcompdetailsObj->get_itemcompcreatedby() .
-      "','" . $itemcompdetailsObj->get_itemcompmodifiedby().
-      "','" . $itemcompdetailsObj->get_itemcomplogo() ."')";
+      "','" . $itemcompdetailsObj->get_itemcompmodifiedby() .
+      "','" . $itemcompdetailsObj->get_itemcomplogo() . "')";
 
     if ($connectionObj->query($sql) === true) {
-      $lastInsertedId =  $connectionObj->insert_id;
+      $lastInsertedId = $connectionObj->insert_id;
       foreach ($itemcompdetailsObj->get_brandList() as $brand) {
         $map = new supplierBrandMappingModel();
         $map->set_supplierId($lastInsertedId);
@@ -63,6 +65,7 @@ class DBitemcompdetails
         $view->set_itemcompname($row['item_compName']);
         $view->set_itemcompdescription($row["item_compDescription"]);
         $view->set_itemcompaddress($row["item_compAddress"]);
+        $view->set_itemcomplocation($row["item_compLocation"]);
         $view->set_itemcompgstin($row["item_compGSTIN"]);
         $view->set_itemcompaccno($row["item_compAccountno"]);
         $view->set_itemcompaccname($row["item_compAccountname"]);
@@ -84,34 +87,52 @@ class DBitemcompdetails
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "UPDATE item_companydetails SET item_compName='" . $detailsObj->get_itemcompname() .
-      "', item_compDescription='" . $detailsObj->get_itemcompdescription() .
-      "', item_compAddress='" . $detailsObj->get_itemcompaddress();
-      if($detailsObj->get_itemcomplogo()!=""){
-      $sql.="', item_complogo='" . $detailsObj->get_itemcomplogo();
-      }
-      $sql.="', item_compGSTIN='" . $detailsObj->get_itemcompgstin() .
-      "', item_compAccountno='" . $detailsObj->get_itemcompaccno() .
-      "', item_compAccountname='" . $detailsObj->get_itemcompaccno() .
-      "', item_compaccIFSCcode='" . $detailsObj->get_itemcompaccifsc() .
-      "', item_compaccMICRcode='" . $detailsObj->get_itemcompaccmicr() .
-      "', item_compCreatedBy='" . $detailsObj->get_itemcompcreatedby() .
-      "', item_compModifiedBy='" . $detailsObj->get_itemcompmodifiedby() .
-      "' WHERE item_compid=" . $detailsObj->get_itemcompid();
-error_log($sql);
+
+    $sql = "UPDATE item_companydetails SET 
+        item_compName = '" . $detailsObj->get_itemcompname() . "',
+        item_compDescription = '" . $detailsObj->get_itemcompdescription() . "',
+        item_compAddress = '" . $detailsObj->get_itemcompaddress() . "',
+        item_compLocation = '" . $detailsObj->get_itemcomplocation() . "',
+        item_compGSTIN = '" . $detailsObj->get_itemcompgstin() . "',
+        item_compAccountno = '" . $detailsObj->get_itemcompaccno() . "',
+        item_compAccountname = '" . $detailsObj->get_itemcompaccname() . "',
+        item_compaccIFSCcode = '" . $detailsObj->get_itemcompaccifsc() . "',
+        item_compaccMICRcode = '" . $detailsObj->get_itemcompaccmicr() . "',
+        item_compCreatedBy = '" . $detailsObj->get_itemcompcreatedby() . "',
+        item_compModifiedBy = '" . $detailsObj->get_itemcompmodifiedby() . "'";
+
+    // ✅ Append logo safely
+    if (!empty($detailsObj->get_itemcomplogo())) {
+      $sql .= ", item_complogo = '" . $detailsObj->get_itemcomplogo() . "'";
+    }
+
+    $sql .= " WHERE item_compid = " . $detailsObj->get_itemcompid();
+
+    error_log($sql);
+
     if ($connectionObj->query($sql) === TRUE) {
-      DBsupplierBrandMapping::delete($detailsObj->get_itemcompid());
-      foreach ($detailsObj->get_brandList() as $brand) {
-        $map = new supplierBrandMappingModel();
-        $map->set_supplierId($detailsObj->get_itemcompid());
-        $map->set_brandId($brand);
-        DBsupplierBrandMapping::insert($map);
+      // Only update brand mapping if brand_list is sent
+      if (!empty($detailsObj->get_brandList())) {
+
+        DBsupplierBrandMapping::delete($detailsObj->get_itemcompid());
+
+        foreach ($detailsObj->get_brandList() as $brand) {
+          $map = new supplierBrandMappingModel();
+          $map->set_supplierId($detailsObj->get_itemcompid());
+          $map->set_brandId($brand);
+          $map->set_CreatedBy($detailsObj->get_itemcompmodifiedby());
+          $map->set_ModifiedBy($detailsObj->get_itemcompmodifiedby());
+          DBsupplierBrandMapping::insert($map);
+        }
       }
+
     } else {
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
   }
-  public static function selectCompany(){
+
+  public static function selectCompany()
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT item_compid,item_compName FROM item_companydetails";
@@ -132,7 +153,8 @@ error_log($sql);
     echo json_encode($itemcompdetailslist);
   }
 
-  public static function selectcompanybasedonBrandId($brandId){
+  public static function selectcompanybasedonBrandId($brandId)
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT SB.supplierId as supplierId,
@@ -143,7 +165,7 @@ error_log($sql);
      Join `item_companydetails` I on I.item_compid=SB.supplierId
      where B.brand_id =$brandId
      group by supplierId ";
-     error_log($sql);
+    error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $itemcompdetailslist = [];
@@ -161,7 +183,8 @@ error_log($sql);
     echo json_encode($itemcompdetailslist);
   }
 
-  public static function selectcompanybasedonPOID($POID){
+  public static function selectcompanybasedonPOID($POID)
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT 	I.item_compid as CompanyId,
@@ -172,7 +195,7 @@ error_log($sql);
      Join `item_companydetails` I on I.item_compid=PLI.SupplierId
      where  PLI.POID =$POID 
      group by SupplierName";
-     error_log($sql);
+    error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $itemcompdetailslist = [];
@@ -190,21 +213,53 @@ error_log($sql);
     echo json_encode($itemcompdetailslist);
   }
 
-  public static function delete($compdetailsObj){
-    $db=ConnectDb::getInstance();
-    $connectionObj=$db->getConnection();
-    $sql="DELETE from item_companydetails where item_compid='".$compdetailsObj."'";
+  public static function delete($compdetailsObj)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+    $sql = "DELETE from item_companydetails where item_compid='" . $compdetailsObj . "'";
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
-      $sql="DELETE from suppliercontactdetails where 	supplierId ='".$compdetailsObj."'";
+      $sql = "DELETE from suppliercontactdetails where 	supplierId ='" . $compdetailsObj . "'";
       error_log($sql);
       if ($connectionObj->query($sql) === TRUE) {
-      }
-      else {
+      } else {
         echo "Error: " . $sql . "<br>" . $connectionObj->error;
       }
     } else {
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
   }
+
+  public static function getCompanyById($id)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $sql = "SELECT * FROM item_companydetails WHERE item_compid = $id LIMIT 1";
+    $result = $connectionObj->query($sql);
+
+    $itemcompdetailslist = [];
+
+    if ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+      $view = new Item_Companydetails();
+      $view->set_itemcompid($row['item_compid']);
+      $view->set_itemcompname($row['item_compName']);
+      $view->set_itemcompdescription($row['item_compDescription']);
+      $view->set_itemcompaddress($row['item_compAddress']);
+      $view->set_itemcomplocation($row['item_compLocation']);
+      $view->set_itemcompgstin($row['item_compGSTIN']);
+      $view->set_itemcompaccno($row['item_compAccountno']);
+      $view->set_itemcompaccname($row['item_compAccountname']);
+      $view->set_itemcompaccifsc($row['item_compaccIFSCcode']);
+      $view->set_itemcompaccmicr($row['item_compaccMICRcode']);
+      $view->set_itemcomplogo($row['item_complogo']);
+
+      array_push($itemcompdetailslist, $view);
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode($itemcompdetailslist);
+  }
+
 }

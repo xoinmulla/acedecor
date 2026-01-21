@@ -111,11 +111,26 @@ class DBitemdetails
     U.unitName AS unitName,
     UF.unitFactorId AS unitFactorId,
     UF.unitFactor AS unitFactor,
-    SUM(A.AllocatedQty) as AllocatedQty,
-    TEMP.ReceivedQty as InwardedQty,
-    CASE WHEN SUM(A.AllocatedQty) IS NULL THEN TEMP.ReceivedQty
-         ELSE TEMP.ReceivedQty - SUM(A.AllocatedQty) END AS AvailableQty,
-    I.item_totalMRP AS totalMRP
+    SUM(A.AllocatedQty) AS AllocatedQty,
+    TEMP.ReceivedQty AS InwardedQty,
+    CASE 
+        WHEN SUM(A.AllocatedQty) IS NULL THEN TEMP.ReceivedQty
+        ELSE TEMP.ReceivedQty - SUM(A.AllocatedQty)
+    END AS AvailableQty,
+    I.item_totalMRP AS totalMRP,
+
+    -- 🔒 DELETE-PROTECTION FLAG
+    CASE 
+        WHEN EXISTS (
+            SELECT 1
+            FROM quotelineitem qli
+            JOIN quotation_details qd ON qd.quoteid = qli.quoteId
+            WHERE qli.itemId = I.item_id
+              AND qd.quo_status = 'Approved'
+        )
+        THEN 1 ELSE 0
+    END AS IsUsedInApprovedQuotation
+
 FROM item_details I
 JOIN item_category C ON I.item_catid = C.item_catid 
 JOIN item_subcategory SC ON I.item_subcatid = SC.item_subcatid 
@@ -129,6 +144,7 @@ LEFT JOIN (
 LEFT JOIN itemallocation A ON A.ItemId = I.item_id
 JOIN unitsfactor UF ON UF.unitFactorId = I.item_unitFactor
 GROUP BY I.item_id";
+
     error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
@@ -164,6 +180,8 @@ GROUP BY I.item_id";
         $view->set_itemDiscount($row["Discount"]);
         $view->set_itemPrice($row["Price"]);
         $view->set_itemTotalValue($row["TotalValue"]);
+        $view->set_isUsedInApprovedQuotation($row['IsUsedInApprovedQuotation']);
+
         array_push($itemdetailslist, $view);
       }
     } else {
@@ -179,50 +197,72 @@ GROUP BY I.item_id";
     $conn = $db->getConnection();
 
     $sql = "
-    SELECT
-        I.item_id AS itemid,
-        I.item_name AS itemname,
-        I.item_description AS itemdescription,
-        C.item_catName AS categoryname,
-        SC.item_subcatName AS subcategoryname,
-        B.brand_name AS brandname,
-        I.item_ArticleNo AS itemcode,
-        I.item_HSNcode AS hsncode,
-        I.item_PackingUnit AS spu,
-        I.item_Size AS qty,
-        U.unitName AS unitname,
-        UF.unitFactor AS unitfactor,
-        I.item_MRP AS itemMRP,
-        I.item_Amount AS itemAmount,
-        I.item_GST AS itemGST,
-        I.item_Discount AS itemDiscount,
-        I.item_Price AS itemPrice,
-        I.item_TotalValue AS itemTotalValue,
-        I.item_pp_MRP AS itemppMRP,
-        I.item_image AS itemimage,
+SELECT
+    I.item_id AS itemid,
+    I.item_name AS itemname,
+    I.item_description AS itemdescription,
+    C.item_catName AS categoryname,
+    SC.item_subcatName AS subcategoryname,
+    B.brand_name AS brandname,
+    I.item_ArticleNo AS itemcode,
+    I.item_HSNcode AS hsncode,
+    I.item_PackingUnit AS spu,
+    I.item_Size AS qty,
+    U.unitName AS unitname,
+    UF.unitFactor AS unitfactor,
+    I.item_MRP AS itemMRP,
+    I.item_Amount AS itemAmount,
+    I.item_GST AS itemGST,
+    I.item_Discount AS itemDiscount,
+    I.item_Price AS itemPrice,
+    I.item_TotalValue AS itemTotalValue,
+    I.item_pp_MRP AS itemppMRP,
+    I.item_image AS itemimage,
 
-        -- 🔽 PURCHASE / INWARD DATA
-        PO.POcode AS POcode,
-        S.InvoiceNo AS InvoiceNo,
-        PO.PurchasedDate AS DateofPurchase,
-        S.Price AS ItemPrice,
-        S.ReceivedQty AS ReceivedQty,
-        S.ReceivedQtyAmt AS ReceivedQtyAmt,
-        S.TotalAmount AS TotalAmount
+    -- SUPPLIER
+    SUP.item_compName AS SupplierName,
 
-    FROM item_details I
-    LEFT JOIN item_category C ON C.item_catid = I.item_catid
-    LEFT JOIN item_subcategory SC ON SC.item_subcatid = I.item_subcatid
-    LEFT JOIN brands B ON B.brand_id = I.item_compid
-    LEFT JOIN units U ON U.unitId = I.item_unit
-    LEFT JOIN unitsfactor UF ON UF.unitFactorId = I.item_unitFactor
+    -- PO / INWARD
+    PO.POcode AS POcode,
+    PO.PurchasedDate AS DateofPurchase,
+    S.InvoiceNo AS InvoiceNo,
 
-    LEFT JOIN item_stock S ON S.item_id = I.item_id
-    LEFT JOIN purchase_order PO ON PO.id = S.POID
+    -- PRICE (same logic as itemstocks.php)
+    COALESCE(S.Price, I.item_Price) AS ItemPrice,
 
-    WHERE I.item_id = ?
-    ORDER BY PO.PurchasedDate DESC
-    ";
+    -- ✅ AGGREGATED VALUES (THIS FIXES THE MISMATCH)
+    SUM(S.ReceivedQty) AS ReceivedQty,
+    SUM(S.ReceivedQtyAmt) AS ReceivedQtyAmt
+
+FROM item_details I
+
+LEFT JOIN item_category C ON C.item_catid = I.item_catid
+LEFT JOIN item_subcategory SC ON SC.item_subcatid = I.item_subcatid
+LEFT JOIN brands B ON B.brand_id = I.item_compid
+LEFT JOIN units U ON U.unitId = I.item_unit
+LEFT JOIN unitsfactor UF ON UF.unitFactorId = I.item_unitFactor
+
+LEFT JOIN item_stock S 
+    ON S.item_id = I.item_id
+
+LEFT JOIN purchase_order PO 
+    ON PO.Id = S.POID
+
+LEFT JOIN item_companydetails SUP 
+    ON SUP.item_compid = PO.SupplierId
+
+WHERE I.item_id = ?
+
+GROUP BY 
+    S.InvoiceNo,
+    PO.POcode,
+    PO.PurchasedDate,
+    SUP.item_compName,
+    ItemPrice
+
+ORDER BY PO.PurchasedDate DESC
+";
+
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $Itemid);
@@ -237,6 +277,27 @@ GROUP BY I.item_id";
     header('Content-Type: application/json');
     echo json_encode($data, JSON_NUMERIC_CHECK);
     exit;
+  }
+
+  public static function isItemUsedInApprovedQuotation($itemId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "
+        SELECT COUNT(*) AS total
+        FROM quotelineitem qli
+        JOIN quotation_details qd ON qd.quoteid = qli.quoteId
+        WHERE qli.itemId = ?
+          AND qd.quo_status = 'Approved'
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $itemId);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+
+    return ($res['total'] > 0);
   }
 
   public static function getallItemdetailsbasedonIDforstocks($Itemid)

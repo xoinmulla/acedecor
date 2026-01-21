@@ -174,35 +174,45 @@ class DBitemstock
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT 
-      I.item_id AS ItemId,
-      I.item_name AS ItemName,
-      I.item_description AS ItemDescription,
-      I.item_catid AS CategoryId,
-      C.item_catName AS CategoryName,
-      I.item_subcatid AS SubCategoryId,
-      SC.item_subcatName AS SubCategoryName,
-      (S.Quantity) As Quantity,
-      (S.ReceivedQtyAmt) As ReceivedQtyAmt,
-      P.POcode as POcode,
-      IC.item_compName as SupplierName,
-      S.InvoiceNo as 	InvoiceNo,
-      IP.Status as Status,
-      IP.PricingIssues_Id as PricingIssues_Id,
-      I.item_MRP as MRP,
-      S.Price as Price,
-      PLI.Price as LineitemPrice
-      FROM item_stock S
-      JOIN `item_details` AS I ON S.Item_id=I.item_id 
-      JOIN item_category C ON I.item_catid=C.item_catid 
-      JOIN item_subcategory SC ON I.item_subcatid=SC.item_subcatid
-      Join  purchase_order P on P.Id=S.POID
-      Join purchaseorder_lineitem PLI on PLI.POID=P.Id
-      LEFT JOIN item_pricingissues IP on IP.ItemName=I.item_name
-      Join item_companydetails IC on IC.item_compid=P.SupplierId
-      WHERE S.ReceivedQtyAmt > S.Price 
-      Group By
-      ItemName,
-      ItemDescription ";
+    I.item_id AS ItemId,
+    I.item_name AS ItemName,
+    P.POcode,
+    IC.item_compName AS SupplierName,
+    S.InvoiceNo,
+
+    I.item_Price AS ExpectedUnitPrice,
+    PLI.Price AS QuotePrice,
+
+    ROUND(S.ReceivedQtyAmt / NULLIF(S.ReceivedQty,0), 2) AS PaidUnitPrice,
+
+    IP.Status,
+    IP.PricingIssues_Id
+
+FROM item_stock S
+JOIN item_details I ON I.item_id = S.item_id
+JOIN purchase_order P ON P.Id = S.POID
+JOIN purchaseorder_lineitem PLI 
+    ON PLI.POID = P.Id AND PLI.Item_id = I.item_id
+JOIN item_companydetails IC 
+    ON IC.item_compid = P.SupplierId
+LEFT JOIN item_pricingissues IP 
+    ON IP.PricingIssues_Id = (
+        SELECT pip.PricingIssues_Id
+        FROM item_pricingissues pip
+        WHERE pip.ItemName = I.item_name
+          AND pip.POID = P.POcode
+          AND pip.InvoiceNo = S.InvoiceNo
+        LIMIT 1
+    )
+
+
+WHERE 
+    (S.ReceivedQtyAmt / NULLIF(S.ReceivedQty,0)) > I.item_Price
+
+GROUP BY 
+    S.item_stockid,
+    IP.PricingIssues_Id
+";
     error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
@@ -210,23 +220,27 @@ class DBitemstock
     if ($count > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new Item_Stock();
+        $view = new Item_Stock();
+
         $view->set_itemid($row['ItemId']);
         $view->setPricingIssues_Id($row['PricingIssues_Id']);
-        $view->setitemname($row['ItemName']);
-        $view->setItemdescription($row["ItemDescription"]);
+
+        $view->setItemname($row['ItemName']);
+        $view->setPOcode($row['POcode']);
+        $view->set_InvoiceNo($row['InvoiceNo']);
+        $view->set_SupplierName($row['SupplierName']);
+
+        $view->set_LineitemPrice($row['QuotePrice']);  // Quote price
+        $view->set_PaidUnitPrice($row['PaidUnitPrice']);
+        $view->setStatus($row['Status']);
+        $view->set_price($row['ExpectedUnitPrice']);   // ✅ Inventory Net Price
+
         // $view->setitemsubcatid($row["SubCategoryId"]);
         // $view->setitemcatid($row["CategoryId"]);
-        $view->setItemcatname($row["CategoryName"]);
-        $view->setItemsubcatname($row["SubCategoryName"]);
-        $view->set_quantity($row["Quantity"]);
+
         // $view->set_totalamt($row["TotalAmount"]);
-        $view->set_InvoiceNo($row["InvoiceNo"]);
-        $view->set_SupplierName($row["SupplierName"]);
-        $view->set_ReceivedQtyAmt($row["ReceivedQtyAmt"]);
-        $view->set_price($row["MRP"]);
-        $view->set_LineitemPrice($row["LineitemPrice"]);
-        $view->setPOcode($row["POcode"]);
-        $view->setStatus($row["Status"]);
+
+
         array_push($ItemList, $view);
       }
     } else {

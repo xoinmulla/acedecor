@@ -1,12 +1,12 @@
 <?php
 class Item_Stock implements JsonSerializable
 {
-    										
-    private $item_stockid ;
+
+    private $item_stockid;
     private $item_id;
-    private	$POID;
-    private	$Quantity;
-    private	$Price;
+    private $POID;
+    private $Quantity;
+    private $Price;
     private $Unit;
     private $TotalAmount;
     private $OtherCharges;
@@ -18,9 +18,9 @@ class Item_Stock implements JsonSerializable
     private $stockPDFName;
     private $InvoiceNo;
     private $BarcodeImg;
-    private	$POcode;
-    private	$FollowupItemId;
-    private	$FollowupIssues;
+    private $POcode;
+    private $FollowupItemId;
+    private $FollowupIssues;
     private $ReceivedQtyAmt;
     private $ReceivedQty;
     private $BalanceQty;
@@ -37,7 +37,19 @@ class Item_Stock implements JsonSerializable
     private $PricingIssues_Id;
     private $ItemCode;
     private $InventoryType;
-    private $table_name="item_stock";
+    private $table_name = "item_stock";
+
+    private $PaidUnitPrice;
+
+    public function set_PaidUnitPrice($v)
+    {
+        $this->PaidUnitPrice = $v;
+    }
+    public function get_PaidUnitPrice()
+    {
+        return $this->PaidUnitPrice;
+    }
+
 
     public function getInventoryType()
     {
@@ -51,46 +63,46 @@ class Item_Stock implements JsonSerializable
     }
     function set_SupplierName($SupplierName)
     {
-        $this->SupplierName =$SupplierName;
+        $this->SupplierName = $SupplierName;
     }
     function get_SupplierName()
     {
-        return $this->SupplierName ;
+        return $this->SupplierName;
     }
 
 
- 
+
     function set_InvoiceNo($InvoiceNo)
     {
-        $this->InvoiceNo =$InvoiceNo;
+        $this->InvoiceNo = $InvoiceNo;
     }
     function get_InvoiceNo()
     {
-        return $this->InvoiceNo ;
+        return $this->InvoiceNo;
     }
 
-   function set_StockId($StockId)
+    function set_StockId($StockId)
     {
-        $this->item_stockid =$StockId;
+        $this->item_stockid = $StockId;
     }
     function get_StockId()
     {
-        return $this->item_stockid ;
+        return $this->item_stockid;
     }
 
 
     function set_itemid($itemid)
     {
-        $this->item_id =$itemid;
+        $this->item_id = $itemid;
     }
     function get_itemid()
     {
-        return $this->item_id ;
+        return $this->item_id;
     }
-    
+
     function set_quantity($quantity)
     {
-        $this->Quantity=$quantity;
+        $this->Quantity = $quantity;
     }
     function get_quantity()
     {
@@ -99,7 +111,7 @@ class Item_Stock implements JsonSerializable
 
     function set_price($price)
     {
-        $this->Price=$price;
+        $this->Price = $price;
     }
     function get_price()
     {
@@ -108,7 +120,7 @@ class Item_Stock implements JsonSerializable
 
     function set_LineitemPrice($LineitemPrice)
     {
-        $this->LineitemPrice=$LineitemPrice;
+        $this->LineitemPrice = $LineitemPrice;
     }
     function get_LineitemPrice()
     {
@@ -119,7 +131,7 @@ class Item_Stock implements JsonSerializable
 
     function set_unit($unit)
     {
-        $this->Unit=$unit;
+        $this->Unit = $unit;
     }
     function get_unit()
     {
@@ -128,7 +140,7 @@ class Item_Stock implements JsonSerializable
 
     function set_totalamt($totalamt)
     {
-        $this->TotalAmount=$totalamt;
+        $this->TotalAmount = $totalamt;
     }
     function get_totalamt()
     {
@@ -137,7 +149,7 @@ class Item_Stock implements JsonSerializable
 
     function set_othercharges($othercharges)
     {
-        $this->OtherCharges =$othercharges;
+        $this->OtherCharges = $othercharges;
     }
     function get_othercharges()
     {
@@ -146,7 +158,7 @@ class Item_Stock implements JsonSerializable
 
     function set_discount($discount)
     {
-        $this->Discount	=$discount;
+        $this->Discount = $discount;
     }
     function get_discount()
     {
@@ -156,7 +168,7 @@ class Item_Stock implements JsonSerializable
 
     function set_CD($CD)
     {
-        $this->CD	=$CD;
+        $this->CD = $CD;
     }
     function get_CD()
     {
@@ -165,7 +177,7 @@ class Item_Stock implements JsonSerializable
 
     function set_POID($POID)
     {
-        $this->POID	=$POID;
+        $this->POID = $POID;
     }
     function get_POID()
     {
@@ -175,7 +187,7 @@ class Item_Stock implements JsonSerializable
 
     function set_taxablevalue($taxablevalue)
     {
-        $this->TaxableValue	=$taxablevalue;
+        $this->TaxableValue = $taxablevalue;
     }
     function get_taxablevalue()
     {
@@ -186,7 +198,7 @@ class Item_Stock implements JsonSerializable
 
     function set_IGST($IGST)
     {
-        $this->IGST	=$IGST;
+        $this->IGST = $IGST;
     }
     function get_IGST()
     {
@@ -195,7 +207,7 @@ class Item_Stock implements JsonSerializable
 
     function set_GST($GST)
     {
-        $this->GST	=$GST;
+        $this->GST = $GST;
     }
     function get_GST()
     {
@@ -203,25 +215,27 @@ class Item_Stock implements JsonSerializable
     }
 
 
-    public function set_stockPDFName($stockPDFName){
-        $this->stockPDFName=$stockPDFName;
+    public function set_stockPDFName($stockPDFName)
+    {
+        $this->stockPDFName = $stockPDFName;
     }
-    public function get_stockPDFName(){
-       return $this->stockPDFName;
+    public function get_stockPDFName()
+    {
+        return $this->stockPDFName;
     }
 
     function set_barcodeimg($barcodeimg)
     {
-        $this->BarcodeImg =$barcodeimg;
+        $this->BarcodeImg = $barcodeimg;
     }
     function get_barcodeimg()
     {
-        return $this->BarcodeImg ;
+        return $this->BarcodeImg;
     }
 
     function set_ReceivedQty($ReceivedQty)
     {
-        $this->ReceivedQty	=$ReceivedQty;
+        $this->ReceivedQty = $ReceivedQty;
     }
     function get_ReceivedQty()
     {
@@ -230,7 +244,7 @@ class Item_Stock implements JsonSerializable
 
     function set_ReceivedQtyAmt($ReceivedQtyAmt)
     {
-        $this->ReceivedQtyAmt	=$ReceivedQtyAmt;
+        $this->ReceivedQtyAmt = $ReceivedQtyAmt;
     }
     function get_ReceivedQtyAmt()
     {
@@ -239,7 +253,7 @@ class Item_Stock implements JsonSerializable
 
     function set_BalanceQty($BalanceQty)
     {
-        $this->BalanceQty	=$BalanceQty;
+        $this->BalanceQty = $BalanceQty;
     }
     function get_BalanceQty()
     {
@@ -248,7 +262,7 @@ class Item_Stock implements JsonSerializable
 
     function set_modifieddate($modifieddate)
     {
-        $this->modifiedOn	=$modifieddate;
+        $this->modifiedOn = $modifieddate;
     }
     function get_modifieddate()
     {
@@ -259,38 +273,38 @@ class Item_Stock implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-                'itemid'=>$this->item_id,
-                'StockId' => $this->item_stockid,
-                'POID' => $this->POID,
-                'quantity' => $this->Quantity,
-                'unit' => $this->Unit,
-                'price' =>$this->Price,
-                'discount'=>$this->Discount,
-                'othercharges'=>$this->OtherCharges,
-                'taxablevalue'=>$this->TaxableValue,
-                'CD'=>$this->CD,
-                'IGST'=>$this->IGST,
-                'totalamt'=>$this->TotalAmount,
-                'GST'=>$this->GST,
-                'Itemname'=>$this->Itemname,
-                'Itemcatname'=>$this->Itemcatname,
-                'Itemsubcatname'=>$this->Itemsubcatname,
-                'Itemdescription'=>$this->Itemdescription,
-                'InvoiceNo'=>$this->InvoiceNo,
-                'barcodeimg'=>$this->BarcodeImg,
-                'POcode'=>$this->POcode,
-                'FollowupItemId'=>$this->FollowupItemId,
-                'FollowupIssues'=>$this->FollowupIssues,
-                'ReceivedQtyAmt'=>$this->ReceivedQtyAmt,
-                'ReceivedQty'=>$this->ReceivedQty,
-                'BalanceQty'=>$this->BalanceQty,
-                'modifieddate'=>$this->modifiedOn,
-                'followupId'=>$this->followupId,
-                'LineitemPrice'=>$this->LineitemPrice,
-                'PricingIssues_Id'=>$this->PricingIssues_Id,
-                'ItemCode'=>$this->ItemCode,
-                'InventoryType'=>$this->InventoryType,
-               
+            'itemid' => $this->item_id,
+            'StockId' => $this->item_stockid,
+            'POID' => $this->POID,
+            'quantity' => $this->Quantity,
+            'unit' => $this->Unit,
+            'price' => $this->Price,
+            'discount' => $this->Discount,
+            'othercharges' => $this->OtherCharges,
+            'taxablevalue' => $this->TaxableValue,
+            'CD' => $this->CD,
+            'IGST' => $this->IGST,
+            'totalamt' => $this->TotalAmount,
+            'GST' => $this->GST,
+            'Itemname' => $this->Itemname,
+            'Itemcatname' => $this->Itemcatname,
+            'Itemsubcatname' => $this->Itemsubcatname,
+            'Itemdescription' => $this->Itemdescription,
+            'InvoiceNo' => $this->InvoiceNo,
+            'barcodeimg' => $this->BarcodeImg,
+            'POcode' => $this->POcode,
+            'FollowupItemId' => $this->FollowupItemId,
+            'FollowupIssues' => $this->FollowupIssues,
+            'ReceivedQtyAmt' => $this->ReceivedQtyAmt,
+            'ReceivedQty' => $this->ReceivedQty,
+            'BalanceQty' => $this->BalanceQty,
+            'modifieddate' => $this->modifiedOn,
+            'followupId' => $this->followupId,
+            'LineitemPrice' => $this->LineitemPrice,
+            'PricingIssues_Id' => $this->PricingIssues_Id,
+            'ItemCode' => $this->ItemCode,
+            'InventoryType' => $this->InventoryType,
+
         ];
     }
 
@@ -429,7 +443,7 @@ class Item_Stock implements JsonSerializable
         return $this;
     }
 
-  
+
     public function getItemCode()
     {
         return $this->ItemCode;
@@ -441,5 +455,5 @@ class Item_Stock implements JsonSerializable
         return $this;
     }
 
-  
+
 }

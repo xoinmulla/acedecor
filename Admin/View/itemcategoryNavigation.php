@@ -77,11 +77,11 @@
                     <span>Item List </span></a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="itemstocklist.php">
                     <i class="fas fa-user-astronaut"></i>
                     <span>Stock List</span></a>
-            </li>
+            </li> -->
             <br>
             <hr class="sidebar-divider">
 

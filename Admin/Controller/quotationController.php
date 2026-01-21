@@ -170,9 +170,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // ✅ Delete whole quotation
             case 'delete':
-                DBQuotation::delete($_POST['id']);
-                echo json_encode(['status' => 'success', 'message' => 'Quotation deleted']);
+
+                $quoteId = intval($_POST['id']);
+
+                // 🔐 Fetch quote status before delete
+                $quote = DBQuotation::getQuotations($quoteId);
+
+                if ($quote && strtolower($quote->get_quoteStatus()) === 'approved') {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Approved quotation cannot be deleted'
+                    ]);
+                    exit;
+                }
+
+                DBQuotation::delete($quoteId);
+
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Quotation deleted successfully'
+                ]);
                 exit;
+
 
             // ✅ Update line item
             case 'update_lineitem':

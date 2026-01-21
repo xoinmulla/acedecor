@@ -489,51 +489,58 @@ class DBmaterialdetails
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
-      $sql = "SELECT
-          M.Material_Id AS MaterialId,
-          M.Material_Name AS MaterialName,
-          M.Material_Description AS MaterialDescription,
+    $sql = "
+        SELECT
+            M.Material_Id AS MaterialId,
+            M.Material_Name AS MaterialName,
+            M.Material_Description AS MaterialDescription,
 
-          MC.material_catName AS CategoryName,
-          MSC.material_subcatName AS SubCategoryName,
-          B.brand_name AS BrandName,
+            MC.material_catName AS CategoryName,
+            MSC.material_subcatName AS SubCategoryName,
+            B.brand_name AS BrandName,
 
-          M.Material_Code AS MaterialCode,
-          M.Mat_HSNCode AS HSNCode,
-          M.Mat_SPU AS MaterialSPU,
-          U.unitName AS Unit,
-          UF.unitFactor AS MaterialUnitFactor,
-          T.Thickness AS Thickness,
-          R.sides AS Grains,
-          M.Mat_Qty AS Qty,
+            M.Material_Code AS MaterialCode,
+            M.Mat_HSNCode AS HSNCode,
+            M.Mat_SPU AS MaterialSPU,
+            U.unitName AS Unit,
+            UF.unitFactor AS MaterialUnitFactor,
+            T.Thickness AS Thickness,
+            R.sides AS Grains,
+            M.Mat_Qty AS Qty,
 
-          M.Mat_MRP AS MaterialPPMRP,
-          M.Mat_GST AS MaterialGST,
-          M.MaterialPrice AS MaterialCompanyPrice,
+            M.Mat_MRP AS MaterialPPMRP,
+            M.Mat_GST AS MaterialGST,
+            M.MaterialDiscount AS MaterialDiscount,
+            M.MaterialPrice AS MaterialCompanyPrice,
+            M.MaterialTotalValue AS MaterialTotalValue,
 
-          M.Mat_Image AS MaterialImage,
+            M.Mat_Image AS MaterialImage,
 
-          PO.POcode,
-          PO.PurchasedDate AS DateofPurchase,
-          S.InvoiceNo,
-          S.Price AS ItemPrice,
-          S.ReceivedQty,
-          S.ReceivedQtyAmt,
-          S.TotalAmount AS TotalAmount
+            PO.POcode,
+            PO.PurchasedDate AS DateofPurchase,
 
-      FROM material M
-      LEFT JOIN material_category MC ON MC.material_catId = M.Category
-      LEFT JOIN material_subcategory MSC ON MSC.material_subcatId = M.SubCategory
-      LEFT JOIN brands B ON B.brand_id = M.Brand
-      LEFT JOIN units U ON U.unitId = M.Mat_Unit
-      LEFT JOIN unitsfactor UF ON UF.unitFactorId = M.Mat_factor
-      LEFT JOIN thickness T ON T.Thickness_Id = M.Mat_Thickness
-      LEFT JOIN rotation R ON R.rotationId = M.Mat_Grains
-      LEFT JOIN item_stock S ON S.item_id = M.Material_Id
-      LEFT JOIN purchase_order PO ON PO.Id = S.POID
+            IC.item_compName AS SupplierName,   -- ✅ SUPPLIER FIX
 
-      WHERE M.Material_Id = ?
-      ORDER BY PO.PurchasedDate ASC";
+            S.InvoiceNo,
+            COALESCE(S.Price, M.MaterialPrice) AS ItemPrice,
+            S.ReceivedQty,
+            S.ReceivedQtyAmt                    -- ✅ DIVIDED VALUE (NO TOTAL)
+        FROM material M
+        LEFT JOIN material_category MC ON MC.material_catId = M.Category
+        LEFT JOIN material_subcategory MSC ON MSC.material_subcatId = M.SubCategory
+        LEFT JOIN brands B ON B.brand_id = M.Brand
+        LEFT JOIN units U ON U.unitId = M.Mat_Unit
+        LEFT JOIN unitsfactor UF ON UF.unitFactorId = M.Mat_factor
+        LEFT JOIN thickness T ON T.Thickness_Id = M.Mat_Thickness
+        LEFT JOIN rotation R ON R.rotationId = M.Mat_Grains
+
+        LEFT JOIN item_stock S ON S.item_id = M.Material_Id
+        LEFT JOIN purchase_order PO ON PO.Id = S.POID
+        LEFT JOIN item_companydetails IC ON IC.item_compid = PO.SupplierId
+
+        WHERE M.Material_Id = ?
+        ORDER BY PO.PurchasedDate ASC
+    ";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $matId);
@@ -541,6 +548,7 @@ class DBmaterialdetails
 
     $res = $stmt->get_result();
     $data = [];
+
     while ($row = $res->fetch_assoc()) {
       $data[] = $row;
     }
@@ -549,6 +557,7 @@ class DBmaterialdetails
     echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_NUMERIC_CHECK);
     exit;
   }
+
 
   public static function selectMaterialbasedonThicknessId($thicknessId, $catId, $subcatId, $brandId)
   {

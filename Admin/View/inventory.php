@@ -165,79 +165,76 @@ require_once("../Model/item_detailsmodel.php");
                     <?php
                     $itemdetailslist = DBitemdetails::getallItemdetails();
                     foreach ($itemdetailslist as $itemdetails) {
-                        echo "<tr><td>" . $itemdetails->get_itemname() . "</td>
-                        <td>" . $itemdetails->get_itemdescription() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemcatid() . "</td>
-                        <td>" . $itemdetails->get_itemcategoryname() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemsubcatid() . "</td>
-                        <td>" . $itemdetails->get_itemsubcategoryname() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemcompid() . "</td>
-                        <td>" . $itemdetails->get_itemCompanyname() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemhsncode() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemarticleno() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_packingunit() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_size() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_MRP() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_ppMRP() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemGST() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemimage() . "</td>
-                
-                        <td style='display:none'>" . $itemdetails->get_itemunit() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemunitFactor() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemunitId() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemunitFactorId() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemtotalMRP() . "</td>
-                        <td style='display:none'>" . $itemdetails->get_itemDiscount() . "</td>
-                        <td>" . $itemdetails->get_itemPrice() . "</td>
-                        <td>" . $itemdetails->get_ReceivedQty() . "</td>
-                        <td>" . $itemdetails->get_AllocatedQty() . "</td>
-                        <td>" . $itemdetails->get_AvailableQty() . "</td>
-                       
-                        <td>  <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                       
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#detailsItemModal' id='iteminfo'
-                            role='button' data-id='" . $itemdetails->get_itemid() . "'> 
-                            <i class='fas fa-info-circle'></i>
-                               Item Info
-                            </button>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#edititemdetailsModal' 
-                            role='button' data-id='" . $itemdetails->get_itemid() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                Edit Item
-                           </button>
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deleteItemModal' 
-                           role='button' 
-                           data-id='" . $itemdetails->get_itemid() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete Item
-                          </button>
-                        </div>
-                    </div>
+                        ?>
+                        <tr>
+                            <td><?= $itemdetails->get_itemname(); ?></td>
+                            <td><?= $itemdetails->get_itemdescription(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemcatid(); ?></td>
+                            <td><?= $itemdetails->get_itemcategoryname(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemsubcatid(); ?></td>
+                            <td><?= $itemdetails->get_itemsubcategoryname(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemcompid(); ?></td>
+                            <td><?= $itemdetails->get_itemCompanyname(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemhsncode(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemarticleno(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_packingunit(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_size(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_MRP(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_ppMRP(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemGST(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemimage(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemunit(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemunitFactor(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemunitId(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemunitFactorId(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemtotalMRP(); ?></td>
+                            <td style="display:none"><?= $itemdetails->get_itemDiscount(); ?></td>
+                            <td><?= $itemdetails->get_itemPrice(); ?></td>
+                            <td><?= $itemdetails->get_ReceivedQty(); ?></td>
+                            <td><?= $itemdetails->get_AllocatedQty(); ?></td>
+                            <td><?= $itemdetails->get_AvailableQty(); ?></td>
 
-                       </td></tr>
-                        </span></td></tr>";
-                    }
-                    ?>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+
+                                    <div class="dropdown-menu">
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#detailsItemModal" data-id="<?= $itemdetails->get_itemid(); ?>">
+                                            <i class="fas fa-info-circle"></i> Item Info
+                                        </button>
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#edititemdetailsModal"
+                                            data-id="<?= $itemdetails->get_itemid(); ?>">
+                                            <i class="fas fa-user-edit"></i> Edit Item
+                                        </button>
+
+                                        <?php if ($itemdetails->get_isUsedInApprovedQuotation()) { ?>
+                                            <button class="btn btn-secondary dropdown-item" disabled
+                                                title="Item used in approved quotation">
+                                                <i class="fas fa-lock"></i> Delete Item
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                data-target="#deleteItemModal" data-id="<?= $itemdetails->get_itemid(); ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Item
+                                            </button>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
+
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
 <?php include('footer.php'); ?>
 
 <!-- Item Details Modal -->
@@ -1036,28 +1033,29 @@ require_once("../Model/item_detailsmodel.php");
                     </div>
                     <div class="col-md-3 col-6 mb-3">
                         <div class="info-card card-highlight">
-                            <span class="label-text text-success"> Amount</span>
-                            <p class="value-text value-text-lg" id="displayamount"></p>
+                            <span class="label-text text-success">Total Value</span>
+                            <p class="value-text value-text-lg" id="displayItemTotalValue"></p>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="card border-0 shadow-sm mt-3 overflow-hidden rounded-lg">
                     <div class="card-header bg-white border-bottom-0 pt-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Purchase History</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Price History</h6>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-modern table-hover mb-0" id="details_table" width="100%"
                             cellspacing="0">
                             <thead>
                                 <tr>
+                                    <th>Supplier Name</th>
                                     <th>PO Code</th>
                                     <th>Invoice No</th>
                                     <th>Date</th>
                                     <th>Price</th>
                                     <th>Rcvd Qty</th>
-                                    <th>Rcvd Amt</th>
-                                    <th>Total</th>
+                                    <th>Received Qty Amt</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1372,7 +1370,7 @@ require_once("../Model/item_detailsmodel.php");
                 $('#displayItemName').text(safe(i.itemname));
                 $('#displayItemCategory').text(safe(i.categoryname));
                 $('#displayItemSubCategory').text(safe(i.subcategoryname));
-                $('#displayItemDescription').text(safe(i.itemdesc));
+                $('#displayItemDescription').text(safe(i.itemdescription));
                 $('#displayItemComapny').text(safe(i.brandname));
                 $('#displayItemArticleNo').text(safe(i.itemcode));
                 $('#displayItemHSNCode').text(safe(i.hsncode));
@@ -1383,7 +1381,10 @@ require_once("../Model/item_detailsmodel.php");
                 $('#displayItemMRP').text(safe(i.itemMRP));
                 $('#displayItemGST').text(safe(i.itemGST) + "%");
                 $('#displayItemppMRP').text(safe(i.itemPrice));
-                $('#displayamount').text(safe(i.itemAmount));
+                $('#displayItemTotalValue').text(
+                    safe(parseFloat(i.itemTotalValue).toFixed(2))
+                );
+
 
                 // IMAGE FIX
                 let img = i.itemimage
@@ -1403,21 +1404,28 @@ require_once("../Model/item_detailsmodel.php");
 
                 $.each(data, function (index, r) {
 
-                    let receivedAmt = parseFloat(r.ReceivedQtyAmt) || 0;
-                    runningTotal += receivedAmt;
+                    let perUnitAmt = 0;
+
+                    if (parseFloat(r.ReceivedQty) > 0) {
+                        perUnitAmt = (
+                            parseFloat(r.ReceivedQtyAmt) /
+                            parseFloat(r.ReceivedQty)
+                        ).toFixed(2);
+                    }
 
                     $("#details_table tbody").append(`
         <tr>
+            <td>${safe(r.SupplierName)}</td>
             <td>${safe(r.POcode)}</td>
             <td>${safe(r.InvoiceNo)}</td>
             <td>${safe(r.DateofPurchase)}</td>
             <td>${safe(r.ItemPrice)}</td>
             <td>${safe(r.ReceivedQty)}</td>
-            <td>${receivedAmt.toFixed(2)}</td>
-            <td>${runningTotal.toFixed(2)}</td>
+            <td>${safe(perUnitAmt)}</td>
         </tr>
     `);
                 });
+
 
             });
         });

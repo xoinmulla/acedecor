@@ -9,6 +9,7 @@ class contactInfo implements JsonSerializable{
     private $supplier;
     private $createdby;
     private $modifiedby;
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
 

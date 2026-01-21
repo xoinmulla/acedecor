@@ -1,48 +1,48 @@
-<?php 
+<?php
 include('session.php');
 include('channelpartnerheader.php');
 require_once("../DB Operations/item_compdetailsOps.php");
 require_once("../Model/item_companydetailsmodel.php");
 ?>
 <style>
-.form-switch .form-check-input {
-    margin-left: 0 !important;
-}
+    .form-switch .form-check-input {
+        margin-left: 0 !important;
+    }
 
-.form-check .form-check-input {
-    margin-left: 0 !important;
-    float: none;
-}
+    .form-check .form-check-input {
+        margin-left: 0 !important;
+        float: none;
+    }
 
-.form-check-input {
-    position: static;
-    margin-top: .3em;
-    margin-left: 0;
-}
+    .form-check-input {
+        position: static;
+        margin-top: .3em;
+        margin-left: 0;
+    }
 
-fieldset {
-    border: 1px solid lightgray !important;
-}
+    fieldset {
+        border: 1px solid lightgray !important;
+    }
 
-legend {
-    float: none;
-    width: inherit !important;
-    max-width: none !important;
-    padding: 0;
-    margin-bottom: .5rem;
-    font-size: 16px;
-    line-height: inherit;
-}
+    legend {
+        float: none;
+        width: inherit !important;
+        max-width: none !important;
+        padding: 0;
+        margin-bottom: .5rem;
+        font-size: 16px;
+        line-height: inherit;
+    }
 
-.accordion-body {
-    padding: 0rem 0.25rem;
-}
+    .accordion-body {
+        padding: 0rem 0.25rem;
+    }
 
-button.accordion-button {
-    padding: 7px;
-    background-color: lightgrey !important;
-    color: #858796 !important;
-}
+    button.accordion-button {
+        padding: 7px;
+        background-color: lightgrey !important;
+        color: #858796 !important;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Channel Partners</h1>
 <!-- DataTales Example -->
@@ -51,7 +51,8 @@ button.accordion-button {
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Suppliers List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Suppliers
+                    List</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#itemcompdetailsModal>
@@ -70,6 +71,7 @@ button.accordion-button {
                         <th style='display:none'>Contact Name</th>
                         <th style='display:none'>Contact #</th>
                         <th style='display:none'>Address</th>
+                        <th style="display:none">Location</th>
                         <th style='display:none'>Account no</th>
                         <th style='display:none'>Account name</th>
                         <th style='display:none'>Account IFSCcode</th>
@@ -89,6 +91,7 @@ button.accordion-button {
                         <td style='display:none'>" . $itemcompdetails->get_itemcompcontactname() . "</td>
                         <td style='display:none'>" . $itemcompdetails->get_itemcompcontactno() . "</td>
                         <td style='display:none'>" . $itemcompdetails->get_itemcompaddress() . "</td>
+                        <td style='display:none'>" . $itemcompdetails->get_itemcomplocation() . "</td>
                         <td style='display:none'>" . $itemcompdetails->get_itemcompaccno() . "</td>
                         <td style='display:none'>" . $itemcompdetails->get_itemcompaccname() . "</td>
                         <td style='display:none'>" . $itemcompdetails->get_itemcompaccifsc() . "</td>
@@ -105,8 +108,8 @@ button.accordion-button {
                           <div id='collapse-" . $itemcompdetails->get_itemcompid() . "' class='accordion-collapse collapse' aria-labelledby='headingOne' data-bs-parent='#accordionExample'>
                             <div class='accordion-body'>
                             <ul style='margin:0px; list-style:none;padding:0px'>
-                            <li>Account Name :". $itemcompdetails->get_itemcompaccname()  . "</li>
-                            <li>Account Number : ". $itemcompdetails->get_itemcompaccno() ."</li>
+                            <li>Account Name :" . $itemcompdetails->get_itemcompaccname() . "</li>
+                            <li>Account Number : " . $itemcompdetails->get_itemcompaccno() . "</li>
                             <li>IFSC Code :" . $itemcompdetails->get_itemcompaccifsc() . "</li>
                             <li>MICR Code :" . $itemcompdetails->get_itemcompaccmicr() . "</li>
                             </ul>
@@ -136,7 +139,7 @@ button.accordion-button {
                             <i class='fas fa-user-edit'></i>
                                 Edit Supplier
                            </button>
-                           <a class='btn btn-primary dropdown-item' href='supplierContactView.php?id=".$itemcompdetails->get_itemcompid()."' role='button'>
+                           <a class='btn btn-primary dropdown-item' href='supplierContactView.php?id=" . $itemcompdetails->get_itemcompid() . "' role='button'>
                            <i class='fas fa-phone-alt'></i>
                             Supplier Contact
                             </a>
@@ -241,6 +244,19 @@ button.accordion-button {
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-md-4 text-right">
+                                    Location <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-md-8">
+                                    <input type="text" name="itemcomplocation" id="itemcomplocation"
+                                        class="form-control" required data-parsley-maxlength="150"
+                                        data-parsley-trigger="keyup" placeholder="Enter Location / City" />
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <div class="row">
                                 <label class="col-md-4 text-right">Upload Logo <span
@@ -425,6 +441,19 @@ button.accordion-button {
                         </div>
                         <div class="form-group">
                             <div class="row">
+                                <label class="col-md-4 text-right">
+                                    Location <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-md-8">
+                                    <input type="text" name="itemcomplocation" id="editeditemcomplocation"
+                                        class="form-control" required data-parsley-maxlength="150"
+                                        data-parsley-trigger="keyup" placeholder="Enter City / Area" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row">
                                 <label class="col-md-4 text-right">Upload Logo</label>
                                 <div class="col-md-8">
                                     <input type="file" name="itemcomplogo" id="editeditemcomplogo"
@@ -596,6 +625,15 @@ button.accordion-button {
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
+                                        <label for="displaycomplocation">Location</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="card-title" id="displaycomplocation"></p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-4">
                                         <label for="displaycompaccno">Account Number</label>
                                     </div>
                                     <div class="col-8">
@@ -755,185 +793,211 @@ button.accordion-button {
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php";
-    $.getJSON(fetchsubcaturl, function(data) {
-        $.each(data, function(index, value) {
-            $('#checkboxes').append(
-                $(document.createElement('li')).prop({
-                    class: 'form-check form-switch'
-                }).append(
-                    $(document.createElement('input')).prop({
-                        class: 'form-check-input me-1',
-                        id: 'myCheckBox',
-                        name: 'brand_list[]',
-                        value: value.brandid,
-                        type: 'checkbox'
-                    })).append(
-                    $(document.createElement('label')).prop({
-                        for: 'myCheckBox'
-                    }).html(value.brandname)
-                ).append(document.createElement('br')));
-        });
-    });
-
-    $('#detailsCompanyModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $("#mappedBrands").find("ul").remove();
-        var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php?id=" +
-            rowid;
-        $.getJSON(fetchsubcaturl, function(data) {
-            $.each(data, function(index, value) {
-                if (value.isMapped) {
-                    $('#mappedBrands').append(
-                        $(document.createElement('ul')).prop({
-                            class: 'list-group list-group-flush'
-                        }).append(
-                            $(document.createElement('li')).prop({
-                                class: 'list-group-item'
-                            })).html(value.brandname).append(
-                            document.createElement('br')));
-                }
-            });
-        });
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/supplierContactController.php?id=" + rowid;
-        debugger;
-        $.getJSON(contactUrl, function(data) {
-            $("#contact_table").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#contact_table tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.contactId
-                }));
-
-                $('#contact_table tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.contactName
-                }));
-                $('#contact_table tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.contactDesignation
-                }));
-                $('#contact_table tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.phone
-                }));
-                $('#contact_table tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.email
-                }));
-            });
-        });
-    });
-    $('#addContactModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#supplierId').val(rowid);
-    });
-
-    $('#edititemcompdetailsModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#itemcompid').val(rowid);
-        $('#editedcheckboxes').empty();
-        var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php?id=" + $(
-            '#itemcompid').val();
-        $.getJSON(fetchsubcaturl, function(data) {
-            $.each(data, function(index, value) {
-                if (value.isMapped == 0){
-                    checked= false;
-                }else{
-                    checked=true;
-                }
-                $('#editedcheckboxes').append(
+    $(document).ready(function () {
+        var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php";
+        $.getJSON(fetchsubcaturl, function (data) {
+            $.each(data, function (index, value) {
+                $('#checkboxes').append(
                     $(document.createElement('li')).prop({
                         class: 'form-check form-switch'
                     }).append(
                         $(document.createElement('input')).prop({
                             class: 'form-check-input me-1',
-                            id: 'editedmyCheckBox',
+                            id: 'myCheckBox',
                             name: 'brand_list[]',
-                            checked:checked,
                             value: value.brandid,
-                            type: 'checkbox',
-                            checked: value.isMapped ? "checked" : ""
-
+                            type: 'checkbox'
                         })).append(
-                        $(document.createElement('label')).prop({
-                            for: 'myCheckBox'
-                        }).html(value.brandname)
-                    ).append(document.createElement('br')));
+                            $(document.createElement('label')).prop({
+                                for: 'myCheckBox'
+                            }).html(value.brandname)
+                        ).append(document.createElement('br')));
+            });
+        });
+
+        $('#detailsCompanyModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $("#mappedBrands").find("ul").remove();
+            var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php?id=" +
+                rowid;
+            $.getJSON(fetchsubcaturl, function (data) {
+                $.each(data, function (index, value) {
+                    if (value.isMapped) {
+                        $('#mappedBrands').append(
+                            $(document.createElement('ul')).prop({
+                                class: 'list-group list-group-flush'
+                            }).append(
+                                $(document.createElement('li')).prop({
+                                    class: 'list-group-item'
+                                })).html(value.brandname).append(
+                                    document.createElement('br')));
+                    }
+                });
+            });
+
+            var companyUrl = config.developmentPath +
+                "/Admin/Controller/item_compdetailscontroller.php?id=" + rowid;
+
+            $.getJSON(companyUrl, function (data) {
+                if (data.length > 0) {
+                    $('#displayItemName').text(data[0].itemcompname);
+                    $('#displayItemDescription').text(data[0].itemcompdescription);
+                    $('#displaycompaddress').text(data[0].itemcompaddress);
+
+                    // ✅ ADD THIS
+                    $('#displaycomplocation').text(data[0].itemcomplocation);
+
+                    $('#displaycompaccno').text(data[0].itemcompaccno);
+                    $('#displaycompaccname').text(data[0].itemcompaccname);
+                    $('#displaycompaccifsc').text(data[0].itemcompaccifsc);
+                    $('#displaycompaccmicr').text(data[0].itemcompaccmicr);
+                    $('#displaycompgstin').text(data[0].itemcompgstin);
+
+                    $('#companyLogo').attr(
+                        'src',
+                        config.developmentPath + "/Admin/img/companylogo/" + data[0].itemcomplogo
+                    );
+                }
+            });
+
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/supplierContactController.php?id=" + rowid;
+            debugger;
+            $.getJSON(contactUrl, function (data) {
+                $("#contact_table").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#contact_table tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.contactId
+                        }));
+
+                    $('#contact_table tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.contactName
+                        }));
+                    $('#contact_table tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.contactDesignation
+                        }));
+                    $('#contact_table tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.phone
+                        }));
+                    $('#contact_table tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.email
+                        }));
+                });
+            });
+        });
+        $('#addContactModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#supplierId').val(rowid);
+        });
+
+        $('#edititemcompdetailsModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#itemcompid').val(rowid);
+            $('#editedcheckboxes').empty();
+            var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php?id=" + $(
+                '#itemcompid').val();
+            $.getJSON(fetchsubcaturl, function (data) {
+                $.each(data, function (index, value) {
+                    if (value.isMapped == 0) {
+                        checked = false;
+                    } else {
+                        checked = true;
+                    }
+                    $('#editedcheckboxes').append(
+                        $(document.createElement('li')).prop({
+                            class: 'form-check form-switch'
+                        }).append(
+                            $(document.createElement('input')).prop({
+                                class: 'form-check-input me-1',
+                                id: 'editedmyCheckBox_' + value.brandid,
+                                name: 'brand_list[]',
+                                checked: checked,
+                                value: value.brandid,
+                                type: 'checkbox',
+                                checked: value.isMapped ? "checked" : ""
+
+                            })).append(
+                                $(document.createElement('label')).prop({
+                                    for: 'editedmyCheckBox_' + value.brandid
+                                }).html(value.brandname)
+                            ).append(document.createElement('br')));
+                });
+            });
+        });
+
+        var dataTable = $('#itemcompdetails_table').DataTable({});
+        var nEditing = null;
+        $('#itemcompdetails_table tbody').on('click', 'tr', function () {
+
+            $('#editeditemcompname').val(this.cells[0].innerText);
+            $('#editeditemcompgstin').val(this.cells[1].innerText);
+
+            $('#editeditemcontactname').val(this.cells[2].innerText);
+            $('#editeditemcontactno').val(this.cells[3].innerText);
+
+            $('#editeditemcompaddress').val(this.cells[4].innerText);
+            $('#editeditemcomplocation').val(this.cells[5].innerText);
+
+            $('#editeditemcompaccno').val(this.cells[6].innerText);
+            $('#editeditemcompaccname').val(this.cells[7].innerText);
+            $('#editeditemcompaccifsc').val(this.cells[8].innerText);
+            $('#editeditemcompaccmicr').val(this.cells[9].innerText);
+
+            $('#editeditemcompdescription').val(this.cells[10].innerText.trim());
+
+            $('#companyLogo').attr(
+                'src',
+                config.developmentPath + "/Admin/img/companylogo/" + this.cells[11].innerText.trim()
+            );
+        });
+
+
+
+        $('#edititemcompdetails_form').submit(function (event) {
+
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/item_compdetailscontroller.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
+            $('#edititemcompdetailsModal').dispose();
+            event.preventDefault();
+        });
+
+        $('#deleteCompanyModal').on('show.bs.modal', function (e) {
+
+            var rowid = $(e.relatedTarget).data('id');
+            $('#itemcompid').val(rowid);
+        });
+        $('#deletebutton').click(function () {
+
+            $.ajax({
+                url: config.developmentPath + "/Admin/Controller/item_compdetailscontroller.php/",
+                method: "POST",
+                data: {
+                    id: $('#itemcompid').val(),
+                    action: 'delete'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+                    setTimeout(function () {
+                        $('#message').html('');
+                    }, 5000);
+                }
             });
         });
     });
-
-    var dataTable = $('#itemcompdetails_table').DataTable({});
-    var nEditing = null;
-    $('#itemcompdetails_table tbody').on('click', 'tr', function() {
-        /* Get the row as a parent of the link that was clicked on */
-        $('#editeditemcompname').val(this.cells[0].innerHTML);
-        $('#displayItemName').text(this.cells[0].innerHTML);
-        $('#editeditemcompdescription').val(this.cells[9].innerHTML.replace('&amp;', '&'));
-        $('#displayItemDescription').text(this.cells[9].innerHTML.replace('&amp;', '&'));
-        $('#editeditemcontactname').val(this.cells[2].innerHTML);
-        $('#displaycontactname').text(this.cells[2].innerHTML);
-        $('#editeditemcontactno').val(this.cells[3].innerHTML);
-        $('#displaycontactno').text(this.cells[3].innerHTML);
-        $('#editeditemcompaddress').val(this.cells[4].innerHTML);
-        $('#displaycompaddress').text(this.cells[4].innerHTML);
-        $('#editeditemcompaccno').val(this.cells[5].innerHTML);
-        $('#displaycompaccno').text(this.cells[5].innerHTML);
-        $('#editeditemcompaccname').val(this.cells[6].innerHTML);
-        $('#displaycompaccname').text(this.cells[6].innerHTML);
-        $('#editeditemcompaccifsc').val(this.cells[7].innerHTML);
-        $('#displaycompaccifsc').text(this.cells[7].innerHTML);
-        $('#editeditemcompaccmicr').val(this.cells[8].innerHTML);
-        $('#displaycompaccmicr').text(this.cells[8].innerHTML);
-        $('#editeditemcompgstin').val(this.cells[1].innerHTML);
-        $('#displaycompgstin').text(this.cells[1].innerHTML);
-        $('#companyLogo').attr('src', config.developmentPath +
-            "/Admin/img/companylogo/" + this.cells[10].innerHTML)
-    });
-
-    $('#edititemcompdetails_form').submit(function(event) {
-
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/item_compdetailscontroller.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
-        });
-        $('#edititemcompdetailsModal').dispose();
-        event.preventDefault();
-    });
-
-    $('#deleteCompanyModal').on('show.bs.modal', function(e) {
-
-        var rowid = $(e.relatedTarget).data('id');
-        $('#itemcompid').val(rowid);
-    });
-    $('#deletebutton').click(function() {
-
-        $.ajax({
-            url: config.developmentPath + "/Admin/Controller/item_compdetailscontroller.php/",
-            method: "POST",
-            data: {
-                id: $('#itemcompid').val(),
-                action: 'delete'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
-                setTimeout(function() {
-                    $('#message').html('');
-                }, 5000);
-            }
-        });
-    });
-});
 </script>

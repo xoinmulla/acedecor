@@ -24,6 +24,17 @@ class PurchaseOrder implements JsonSerializable
     private $BalanceQuantity;
 
     private $InventoryType;
+    private $HasInward;
+    public function setHasInward($HasInward)
+    {
+        $this->HasInward = $HasInward;
+    }
+
+    public function getHasInward()
+    {
+        return $this->HasInward;
+    }
+
 
     public function setInventoryType($InventoryType)
     {

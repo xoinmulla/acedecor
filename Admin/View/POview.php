@@ -65,81 +65,76 @@ require_once("../Model/purchaseModel.php");
                     <?php
                     $purchaseList = DBpurchase::getAllpurchases();
                     foreach ($purchaseList as $purchaseObj) {
-                        echo "<tr>
-                        <td style='display:none'>" . $purchaseObj->get_Id() . "</td>
-                        <td>" . $purchaseObj->getPOcode() . "</td>
-                        <td>" . $purchaseObj->get_purchaseddate() . "</td>
-                        <td>" . $purchaseObj->getPOtype() . "</td>
-                        <td>" . $purchaseObj->getInventoryType() . "</td>
-                        <td style='display:none'>" . $purchaseObj->get_supplier() . "</td>
-                        <td >" . $purchaseObj->getSupplierName() . "</td>
-                        <td >" . $purchaseObj->getQuantity() . "</td>
-                        <td>" . $purchaseObj->getBalanceQuantity() . "</td>
-                        <td >" . $purchaseObj->get_totalAmount() . "</td>
-                        <td>" . $purchaseObj->getBalanceAmt() . " </td>
-                        <td>" . $purchaseObj->getStatus() . "</td>
-                       
-                        
-                        <td><div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
+                        ?>
+                        <tr>
+                            <td style="display:none"><?= $purchaseObj->get_id(); ?></td>
+                            <td><?= $purchaseObj->getPOcode(); ?></td>
+                            <td><?= $purchaseObj->get_purchaseddate(); ?></td>
+                            <td><?= $purchaseObj->getPOtype(); ?></td>
+                            <td><?= $purchaseObj->getInventoryType(); ?></td>
+                            <td style="display:none"><?= $purchaseObj->get_supplier(); ?></td>
+                            <td><?= $purchaseObj->getSupplierName(); ?></td>
+                            <td><?= $purchaseObj->getQuantity(); ?></td>
+                            <td><?= $purchaseObj->getBalanceQuantity(); ?></td>
+                            <td><?= $purchaseObj->get_totalAmount(); ?></td>
+                            <td><?= $purchaseObj->getBalanceAmt(); ?></td>
+                            <td><?= $purchaseObj->getStatus(); ?></td>
 
-                        <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal' 
-                        data-target='#viewModal' 
-                        role='button' 
-                        data-id='" . $purchaseObj->get_Id() . "'>
-                        <i class='fas fa-info-circle'></i>
-                            Purchase Order Info
-                        </button>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
+                                    </button>
 
-                        <a class='btn btn-primary dropdown-item'
-                        role='button' 
-                        href='../View/itemstocks.php?id=" . $purchaseObj->get_Id() . "'>
-                       <i class='fas fa-layer-group'></i>Inward stock </a>  
-                        
-                        <button class='btn btn-primary dropdown-item'";
+                                    <div class="dropdown-menu">
 
-                        if ($purchaseObj->getPOStatus() == '1') {
-                            echo "data-toggle='modal' data-target='#ResumePurchaseModal' 
-                        name='resume_button' 
-                        role='button' 
-                        data-id='" . $purchaseObj->get_Id() . "'>
-                        <i class='far fa-pause-circle'></i>
-                            Resume Purchase Order
-                       ";
-                        } else {
-                            echo "data-toggle='modal' data-target='#cancelPurchaseModal' 
-                        name='cancel_button' 
-                        role='button' 
-                        data-id='" . $purchaseObj->get_Id() . "'>
-                        <i class='far fa-times-circle'></i>
-                            Cancel Purchase Order
-                        
-                       ";
-                        }
-                        echo "
-                       <button class='btn btn-primary dropdown-item'
-                       data-toggle='modal' data-target='#deletePurchaseModal' 
-                       name='delete_button' 
-                       role='button' 
-                       data-id='" . $purchaseObj->get_Id() . "'>
-                       <i class='fas fa-trash-alt'></i>
-                           Delete Purchase Order
-                       </button>
-                        </button>
-                        </div>
-                    </div> </td></tr>";
-                    }
-                    ?>
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#viewModal" data-id="<?= $purchaseObj->get_id(); ?>">
+                                            <i class="fas fa-info-circle"></i>
+                                            Purchase Order Info
+                                        </button>
+
+                                        <a class="btn btn-primary dropdown-item"
+                                            href="../View/itemstocks.php?id=<?= $purchaseObj->get_id(); ?>">
+                                            <i class="fas fa-layer-group"></i>
+                                            Inward stock
+                                        </a>
+
+                                        <?php if ($purchaseObj->getPOStatus() == '1') { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#ResumePurchaseModal" data-id="<?= $purchaseObj->get_id(); ?>">
+                                                <i class="far fa-pause-circle"></i>
+                                                Resume Purchase Order
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#cancelPurchaseModal" data-id="<?= $purchaseObj->get_id(); ?>">
+                                                <i class="far fa-times-circle"></i>
+                                                Cancel Purchase Order
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if ($purchaseObj->getHasInward() == 1) { ?>
+                                            <button class="btn btn-secondary dropdown-item" disabled
+                                                title="Cannot delete. Stock already inwarded">
+                                                <i class="fas fa-trash-alt"></i>
+                                                Delete Purchase Order
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                data-target="#deletePurchaseModal" data-id="<?= $purchaseObj->get_id(); ?>">
+                                                <i class="fas fa-trash-alt"></i>
+                                                Delete Purchase Order
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
+
             </table>
         </div>
     </div>
@@ -257,7 +252,7 @@ require_once("../Model/purchaseModel.php");
                                 <div class="modal-footer">
                                     <input type="hidden" name="hidden_id" id="hidden_id" />
                                     <input type="hidden" name="action" id="action" value="Add" />
-                                    <a name="button" id="editPOLineItem" class="btn btn-success">Edit Line item </a>
+                                    <a name="button" id="editPOLineItem" class="btn btn-success">Edit </a>
                                     <a name="button" id="printPDF" class="btn btn-success">Print/Save as PDF</a>
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>

@@ -12,23 +12,23 @@ require_once("../Model/item_stocksmodel.php");
 
 ?>
 <style>
-#editedPOlineItemTable {
-    height: 200px;
-    display: inline-block;
-    width: 100%;
-    overflow: auto;
-}
+    #editedPOlineItemTable {
+        height: 200px;
+        display: inline-block;
+        width: 100%;
+        overflow: auto;
+    }
 
-#editedPOlineItemTable thead {
-    background-color: grey;
-    color: whitesmoke;
-    position: sticky;
-    top: 0;
-}
+    #editedPOlineItemTable thead {
+        background-color: grey;
+        color: whitesmoke;
+        position: sticky;
+        top: 0;
+    }
 
-.pad {
-    padding-right: .5rem;
-}
+    .pad {
+        padding-right: .5rem;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Item Stock Management</h1>
 <!-- DataTales Example -->
@@ -37,9 +37,10 @@ require_once("../Model/item_stocksmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Item List With Issues </h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Item List
+                    With Issues </h6>
             </div>
-           
+
         </div>
     </div>
     <div class="card-body">
@@ -55,7 +56,7 @@ require_once("../Model/item_stocksmodel.php");
                         type="button" role="tab" aria-controls="PricingIssues" aria-selected="false"><b>Pricing
                             Issues</b></button>
                 </li>
-               
+
             </ul>
         </div>
         <div class="tab-content" id="myTabContent">
@@ -78,9 +79,9 @@ require_once("../Model/item_stocksmodel.php");
                         </thead>
                         <tbody>
                             <?php
-                    $stockList = DBitemstock::getStockList();
-                    foreach ($stockList as $stockObj) {
-                        echo "<tr>
+                            $stockList = DBitemstock::getStockList();
+                            foreach ($stockList as $stockObj) {
+                                echo "<tr>
                         <td style='display:none'>" . $stockObj->get_StockId() . "</td>
                         <td style='display:none'>" . $stockObj->get_itemid() . "</td>
                         <td>" . $stockObj->getItemname() . "</td>
@@ -104,7 +105,7 @@ require_once("../Model/item_stocksmodel.php");
                             data-toggle='modal' 
                             data-target='#editIssuesModal' 
                             role='button' 
-                            data-id='".$stockObj->get_itemid()."'>
+                            data-id='" . $stockObj->get_itemid() . "'>
                             <i class='fas fa-user-edit'></i> 
                                 Edit
                            </button>
@@ -131,8 +132,8 @@ require_once("../Model/item_stocksmodel.php");
                         
                    </td>
                        </tr>";
-                    }
-                    ?>
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -149,26 +150,29 @@ require_once("../Model/item_stocksmodel.php");
                                 <th>Invoice No</th>
                                 <th>Supplier</th>
                                 <th>Name</th>
-                                <th>MRP</th>
-                                <th>Quote Price</th>
-                                <th>Paid Price</th>
+                                <th>Rate / Item</th>
+                                <!-- <th>Quote Price</th> -->
+                                <th>Paid / Item</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                    $ItemList = DBitemstock::getallItemsWithHighPrices();
-                    foreach ($ItemList as $Items) {
-                        echo "<tr><td style='display:none'>" . $Items->get_itemid() . "</td>
+                            $ItemList = DBitemstock::getallItemsWithHighPrices();
+                            foreach ($ItemList as $Items) {
+                                echo "<tr><td style='display:none'>" . $Items->get_itemid() . "</td>
                         <td style='display:none'>" . $Items->getPricingIssues_Id() . "</td>
                         <td>" . $Items->getPOcode() . "</td>
                         <td>" . $Items->get_InvoiceNo() . "</td>
                         <td >" . $Items->get_SupplierName() . "</td>
                         <td >" . $Items->getitemname() . "</td>
-                        <td >" . $Items->get_price() . "</td>
-                        <td> " . $Items->get_LineitemPrice() . "</td>
-                        <td style='background-color:red;color:black'>" . $Items->get_ReceivedQtyAmt() . "</td>
+                        <td>" . number_format($Items->get_price(), 2) . "</td>
+             <!-- MRP -->
+<td style='background:red;color:black'>
+    " . number_format($Items->get_PaidUnitPrice(), 2) . "             <!-- Paid / Item -->
+</td>
+
                         <td>" . $Items->getStatus() . "</td>
                         <td>
                         <div class='dropdown'>
@@ -185,7 +189,7 @@ require_once("../Model/item_stocksmodel.php");
                             data-toggle='modal' 
                             data-target='#editPricingIssuesModal' 
                             role='button' 
-                            data-id='".$Items->get_itemid()."'>
+                            data-id='" . $Items->get_itemid() . "'>
                             <i class='fas fa-user-edit'></i> 
                                 Edit
                            </button>
@@ -204,8 +208,8 @@ require_once("../Model/item_stocksmodel.php");
                         
                    </td>
                        </tr>";
-                    }
-                    ?>
+                            }
+                            ?>
                         </tbody>
 
                     </table>
@@ -279,7 +283,6 @@ require_once("../Model/item_stocksmodel.php");
         </form>
     </div>
 </div>
-
 
 <div class="modal fade" id=editPricingIssuesModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog ">
@@ -450,140 +453,140 @@ require_once("../Model/item_stocksmodel.php");
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#IssuesfollowupModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#followupItemId').val(rowid);
-        var POID = 0;
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/issues_followupcontroller.php/?id=" +
-            rowid + "&POID=" + POID;
-        $.getJSON(contactUrl, function(data) {
-            $("#Issuesfollowuptable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#Issuesfollowuptable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.followupPOID
-                }));
+    $(document).ready(function () {
+        $('#IssuesfollowupModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#followupItemId').val(rowid);
+            var POID = 0;
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/issues_followupcontroller.php/?id=" +
+                rowid + "&POID=" + POID;
+            $.getJSON(contactUrl, function (data) {
+                $("#Issuesfollowuptable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#Issuesfollowuptable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.followupPOID
+                        }));
 
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_by
-                }));
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_comments
-                }));
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_on
-                }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_by
+                        }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_comments
+                        }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_on
+                        }));
+                });
             });
         });
-    });
 
-    $('#AllocateModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#followupItemId').val(rowid);
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/allocateitemsController.php/?id=" +
-            rowid;
-        $.getJSON(contactUrl, function(data) {
-            $("#Allocationtable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#Allocationtable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.followupItemId
-                }));
+        $('#AllocateModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#followupItemId').val(rowid);
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/allocateitemsController.php/?id=" +
+                rowid;
+            $.getJSON(contactUrl, function (data) {
+                $("#Allocationtable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#Allocationtable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.followupItemId
+                        }));
 
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.CustomerName
-                }));
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.ProjectCode
-                }));
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AllocatedQty
-                }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.CustomerName
+                        }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.ProjectCode
+                        }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AllocatedQty
+                        }));
+                });
             });
         });
-    });
 
 
-    $('#editedIssues_form').submit(function(event) {
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/issues_followupcontroller.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
+        $('#editedIssues_form').submit(function (event) {
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/issues_followupcontroller.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
         });
-    });
 
-    $('#editedPricingIssues_form').submit(function(event) {
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/pricingissueController.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
+        $('#editedPricingIssues_form').submit(function (event) {
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/pricingissueController.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
         });
+
+
+        var dataTable = $('#quote_table').DataTable({});
+        var nEditing = null;
+
+        var dataTable = $('#priceissue_table').DataTable({});
+        var nEditing = null;
+
+        var dataTable = $('#item_table').DataTable({});
+        var nEditing = null;
+        $('#quote_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+            $('#id').val(this.cells[0].innerHTML);
+            $('#POcode').val(this.cells[1].innerHTML);
+            $('#followupPOID').val(this.cells[3].innerHTML);
+            $('#PricingPOID').val(this.cells[1].innerHTML);
+            $('#itemid').val(this.cells[1].innerHTML);
+            $('#purchaseddate').val(this.cells[2].innerHTML);
+            $('#POtype').val(this.cells[3].innerHTML);
+            $('#supplier').val(this.cells[4].innerHTML);
+            $('#editedItemName').val(this.cells[2].innerHTML);
+            $('#editedPriceItemName').val(this.cells[4].innerHTML);
+            $('#displaySupplierName').val(this.cells[2].innerHTML);
+            $('#editedPriceSupplierName').val(this.cells[3].innerHTML);
+            $('#followupId').val(this.cells[6].innerHTML);
+            $('#invoiceNo').val(this.cells[2].innerHTML);
+
+        });
+        $('#priceissue_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+
+            $('#POcode').val(this.cells[2].innerHTML);
+            $('#PricingPOID').val(this.cells[2].innerHTML);
+            $('#editedPriceItemName').val(this.cells[5].innerHTML.replace('&amp;', '&'));
+            $('#editedPriceSupplierName').val(this.cells[4].innerHTML);
+            $('#invoiceNo').val(this.cells[3].innerHTML);
+            $('#PricingIssueId').val(this.cells[1].innerHTML);
+        });
+
+
+
     });
-
-
-    var dataTable = $('#quote_table').DataTable({});
-    var nEditing = null;
-
-    var dataTable = $('#priceissue_table').DataTable({});
-    var nEditing = null;
-
-    var dataTable = $('#item_table').DataTable({});
-    var nEditing = null;
-    $('#quote_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-        $('#id').val(this.cells[0].innerHTML);
-        $('#POcode').val(this.cells[1].innerHTML);
-        $('#followupPOID').val(this.cells[3].innerHTML);
-        $('#PricingPOID').val(this.cells[1].innerHTML);
-        $('#itemid').val(this.cells[1].innerHTML);
-        $('#purchaseddate').val(this.cells[2].innerHTML);
-        $('#POtype').val(this.cells[3].innerHTML);
-        $('#supplier').val(this.cells[4].innerHTML);
-        $('#editedItemName').val(this.cells[2].innerHTML);
-        $('#editedPriceItemName').val(this.cells[4].innerHTML);
-        $('#displaySupplierName').val(this.cells[2].innerHTML);
-        $('#editedPriceSupplierName').val(this.cells[3].innerHTML);
-        $('#followupId').val(this.cells[6].innerHTML);
-        $('#invoiceNo').val(this.cells[2].innerHTML);
-
-    });
-    $('#priceissue_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-
-        $('#POcode').val(this.cells[2].innerHTML);
-        $('#PricingPOID').val(this.cells[2].innerHTML);
-        $('#editedPriceItemName').val(this.cells[5].innerHTML.replace('&amp;', '&'));
-        $('#editedPriceSupplierName').val(this.cells[4].innerHTML);
-        $('#invoiceNo').val(this.cells[3].innerHTML);
-        $('#PricingIssueId').val(this.cells[1].innerHTML);
-    });
-
-
-
-});
 </script>

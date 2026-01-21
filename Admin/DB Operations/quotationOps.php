@@ -426,6 +426,15 @@ class DBQuotation
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
+    $check = $connectionObj->query(
+      "SELECT quo_status FROM quotation_details WHERE quoteId = $quoteId LIMIT 1"
+    );
+
+    if ($check && $row = $check->fetch_assoc()) {
+      if (strtolower($row['quo_status']) === 'approved') {
+        throw new Exception("Approved quotation cannot be deleted");
+      }
+    }
     $enqId = DBQuotation::selectenqbasedonQuoteid($quoteId);
     $quoteCode = DBQuotation::selectQuoteCodebasedonQuoteId($quoteId);
 

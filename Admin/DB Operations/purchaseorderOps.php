@@ -58,6 +58,12 @@ VALUES (
     COALESCE(STOCK_AMT.ReceivedQty, 0) AS ReceivedQty,
     COALESCE(TEMP1.Quantity - STOCK_AMT.ReceivedQty, TEMP1.Quantity) AS BalanceQuantity,
 
+    /* ✅ THIS IS THE FIX */
+    CASE 
+        WHEN COALESCE(STOCK_AMT.ReceivedQty, 0) > 0 THEN 1
+        ELSE 0
+    END AS HasInward,
+
     CO.item_compname AS SupplierName,
     COALESCE(TEMP1.Quantity, 0) AS Quantity,
 
@@ -70,27 +76,19 @@ VALUES (
 
 FROM purchase_order PO
 
-/* ✅ ORDERED QTY */
 LEFT JOIN (
-    SELECT 
-        POID,
-        SUM(Quantity) AS Quantity
+    SELECT POID, SUM(Quantity) AS Quantity
     FROM purchaseorder_lineitem
     GROUP BY POID
 ) AS TEMP1 ON TEMP1.POID = PO.Id
 
-/* ✅ INWARD / INVOICE AMOUNT */
 LEFT JOIN (
-    SELECT 
-        POID,
-        SUM(ReceivedQtyAmt) AS TotalAmt,
-        SUM(ReceivedQty) AS ReceivedQty
+    SELECT POID, SUM(ReceivedQtyAmt) AS TotalAmt, SUM(ReceivedQty) AS ReceivedQty
     FROM item_stock
     GROUP BY POID
 ) AS STOCK_AMT ON STOCK_AMT.POID = PO.Id
 
 JOIN item_companydetails CO ON CO.item_compid = PO.SupplierId
-
 LEFT JOIN supplierpaymentinfo SP ON SP.POID = PO.Id
 
 GROUP BY PO.Id";
@@ -114,6 +112,8 @@ GROUP BY PO.Id";
         $purchase->setInventoryType($row["InventoryType"]);
         $purchase->setBalanceAmt($row['TotalAmt'] - $row['ReceivedAmt']);
         $purchase->set_purchaseddate($row["PurchasedDate"]);
+        $purchase->setHasInward($row['HasInward']);
+
         array_push($purchaseList, $purchase);
       }
     }

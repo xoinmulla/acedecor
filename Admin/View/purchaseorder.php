@@ -37,6 +37,8 @@ require_once("../Model/purchaseModel.php");
                                     <input type="hidden" name="Articleno" id="Articleno">
                                     <input type="hidden" name="itemdescription" id="itemdescription">
                                     <input type="hidden" name="unitFactor" id="unitFactor">
+                                    <input type="hidden" name="selectedBrandName" id="selectedBrandName">
+
 
                                     <div class="col-md-3">
                                         <label>Supplier <span class="text-danger">*</span></label>
@@ -109,6 +111,7 @@ require_once("../Model/purchaseModel.php");
                                         <th>Inventory</th>
                                         <th> Code</th>
                                         <th> Name</th>
+                                        <th>Brand</th>
                                         <th> Description</th>
                                         <th>Quantity</th>
                                     </tr>
@@ -206,6 +209,9 @@ include "footer.php";
         });
     }
     $('#brands').on('change', function () {
+        let brandName = $('#brands option:selected').text();
+        $('#selectedBrandName').val(brandName);
+
         $('#inventoryType').val('');
         $('#itemCategory, #itemsubCategory, #itemid').empty();
     });
@@ -328,6 +334,11 @@ include "footer.php";
                 $('#lineItemTable tr:last').
                     append($(document.createElement('td')).prop({
                         innerHTML: formData['selectedItemName']
+                    }));
+                    
+                $('#lineItemTable tr:last').
+                    append($(document.createElement('td')).prop({
+                        innerHTML: formData['selectedBrandName']
                     }));
 
                 $('#lineItemTable tr:last').

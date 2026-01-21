@@ -45,15 +45,21 @@
             <!-- Nav Item - Dashboard -->
 
             <li class="nav-item">
-                <a class="nav-link" href="itemstocklist.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>Stock List</span></a>
+                <a class="nav-link" href="material_Category.php">
+                    <i class="fas fa-th-list"></i>
+                    <span>Material Category</span></a>
+            </li>
+    
+            <li class="nav-item">
+                <a class="nav-link" href="material_Subcategory.php">
+                    <i class="fas fa-stream"></i>
+                    <span>Material Sub Category</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="MaterialStocklist.php">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Material Stock List</span></a>
+                <a class="nav-link" href="material.php">
+                    <i class="fas fa-swatchbook"></i>
+                    <span>Material List</span></a>
             </li>
             <br>
             <hr class="sidebar-divider">

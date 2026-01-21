@@ -56,7 +56,7 @@ class DBallocate
          PR.projectId as ProjectId
         FROM `quotelineitem` AS QLI 
         JOIN `item_details` AS I ON QLI.InputName=I.item_name
-        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoid 
+        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoteid
         JOIN `brands` AS B ON I.item_compid=B.brand_id 
         JOIN units AS U ON U.unitId=I.item_unit
         JOIN `projects` AS PR ON PR.quoteId=Q.quoteCode 
@@ -142,7 +142,7 @@ class DBallocate
          PR.projectId as ProjectId
         FROM `quotelineitem` AS QLI 
         JOIN `material` AS M ON QLI.InputName=M.Material_Name 
-        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoid 
+        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoteid 
         JOIN `brands` AS B ON M.Brand=B.brand_id 
         JOIN units AS U ON U.unitId=M.Mat_Unit
         JOIN `projects` AS PR ON PR.quoteId=Q.quoteCode 

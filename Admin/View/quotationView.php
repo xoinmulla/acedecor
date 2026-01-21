@@ -30,7 +30,8 @@ require_once("../Model/quotationModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Quotation List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Quotation
+                    List</h6>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#quoteModal>
@@ -72,96 +73,109 @@ require_once("../Model/quotationModel.php");
                 <tbody>
                     <?php
                     $quotationList = DBQuotation::getAllquotations();
+
                     foreach ($quotationList as $quotationObj) {
-                        echo "<tr>
-                        <td style='display:none'>" . $quotationObj->get_customerId() . "</td>
-                        <td>" . $quotationObj->getCustomerCode() . "</td>
-                        <td>" . $quotationObj->get_customerName() . "</td>
-                        <td>" . $quotationObj->getDOE() . "</td>
-                        <td>" . $quotationObj->getQuoteCode() . "</td>
-                        <td>" . $quotationObj->getDOQ() . "</td>
-                        <td>" . $quotationObj->get_quoteDescription() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_quoteType() . "</td>
-                        <td>" . $quotationObj->getQuoteValue() . "</td>
-                        <td>" . $quotationObj->get_quoteStatus() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_quoteComments() . "</td>
-                        <td style='display:none'>" . $quotationObj->getUnitId() . "</td>
-                        <td style='display:none'>" . $quotationObj->getQuantity() . "</td>
-                        <td style='display:none'>" . $quotationObj->getUnitName() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_quotePDFName() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_itemListName() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_customerEmail() . "</td>
-                        <td style='display:none'>" . $quotationObj->getCustomerphone() . "</td>
-                        <td style='display:none'>" . $quotationObj->getcustomerAddress() . "</td>
-                        <td style='display:none'>" . $quotationObj->getCustomerCity() . "</td>
-                        <td style='display:none'>" . $quotationObj->get_customerState() . "</td>
-                        <td style='display:none'>" . $quotationObj->getInputType() . " </td>
-                        <td><div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                        <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal' 
-                        data-target='#inputListModal' 
-                        role='button' 
-                        data-id='" . $quotationObj->get_quoteId() . "'>
-                        <i class='fas fa-list-alt'></i>
-                            Input List
-                       </button>
-                       
-                       <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#customerModal' 
-                            role='button' 
-                            data-id='" . $quotationObj->get_customerId() . "'>
-                            <i class='fas fa-info'></i>
-                                Customer Info
-                           </button>
-                           
 
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#editquoteModal' 
-                            role='button' 
-                            data-id='" . $quotationObj->get_quoteId() . "'>
-                            <i class='fas fa-user-edit'></i> 
-                                Edit Quotation
-                           </button>
+                        // ✅ Check approval status
+                        $isApproved = strtolower($quotationObj->get_quoteStatus()) === 'approved';
 
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#viewModal' 
-                           role='button' 
-                           data-id='" . $quotationObj->get_quoteId() . "'>
-                           <i class='fas fa-info'></i> 
-                               Quotation Info
-                          </button>
-                      
-                          <a class='btn btn-primary dropdown-item' 
-                        role='button' 
-                        href=printQuote.php?id=" . $quotationObj->get_customerId() . ">
-                       <i class='fas fa-print'></i> 
-                           Print Quote
-                      </a>
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' data-target='#deleteQuotationModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $quotationObj->get_quoteId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete Quotation
-                          </button>
-                        </div>
-                    </div> </td></tr>";
+                        // ✅ Prepare delete button safely
+                        if ($isApproved) {
+                            $deleteBtn = "
+            <button class='btn btn-secondary dropdown-item disabled' disabled
+                title='Approved quotation cannot be deleted'>
+                <i class='fas fa-lock'></i> Approved – Locked
+            </button>";
+                        } else {
+                            $deleteBtn = "
+            <button class='btn btn-primary dropdown-item'
+                data-toggle='modal'
+                data-target='#deleteQuotationModal'
+                name='delete_button'
+                role='button'
+                data-id='" . $quotationObj->get_quoteId() . "'>
+                <i class='fas fa-trash-alt'></i> Delete Quotation
+            </button>";
+                        }
+
+                        echo "
+    <tr>
+        <td style='display:none'>{$quotationObj->get_customerId()}</td>
+        <td>{$quotationObj->getCustomerCode()}</td>
+        <td>{$quotationObj->get_customerName()}</td>
+        <td>{$quotationObj->getDOE()}</td>
+        <td>{$quotationObj->getQuoteCode()}</td>
+        <td>{$quotationObj->getDOQ()}</td>
+        <td>{$quotationObj->get_quoteDescription()}</td>
+        <td style='display:none'>{$quotationObj->get_quoteType()}</td>
+        <td>{$quotationObj->getQuoteValue()}</td>
+        <td>{$quotationObj->get_quoteStatus()}</td>
+        <td style='display:none'>{$quotationObj->get_quoteComments()}</td>
+        <td style='display:none'>{$quotationObj->getUnitId()}</td>
+        <td style='display:none'>{$quotationObj->getQuantity()}</td>
+        <td style='display:none'>{$quotationObj->getUnitName()}</td>
+        <td style='display:none'>{$quotationObj->get_quotePDFName()}</td>
+        <td style='display:none'>{$quotationObj->get_itemListName()}</td>
+        <td style='display:none'>{$quotationObj->get_customerEmail()}</td>
+        <td style='display:none'>{$quotationObj->getCustomerphone()}</td>
+        <td style='display:none'>{$quotationObj->getCustomerAddress()}</td>
+        <td style='display:none'>{$quotationObj->getCustomerCity()}</td>
+        <td style='display:none'>{$quotationObj->get_customerState()}</td>
+        <td style='display:none'>{$quotationObj->getInputType()}</td>
+
+        <td>
+            <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle'
+                    type='button'
+                    data-toggle='dropdown'>
+                    Actions
+                </button>
+
+                <div class='dropdown-menu'>
+
+                    <button class='btn btn-primary dropdown-item'
+                        data-toggle='modal'
+                        data-target='#inputListModal'
+                        data-id='{$quotationObj->get_quoteId()}'>
+                        <i class='fas fa-list-alt'></i> Input List
+                    </button>
+
+                    <button class='btn btn-primary dropdown-item'
+                        data-toggle='modal'
+                        data-target='#customerModal'
+                        data-id='{$quotationObj->get_customerId()}'>
+                        <i class='fas fa-info'></i> Customer Info
+                    </button>
+
+                    <button class='btn btn-primary dropdown-item'
+                        data-toggle='modal'
+                        data-target='#editquoteModal'
+                        data-id='{$quotationObj->get_quoteId()}'>
+                        <i class='fas fa-user-edit'></i> Edit Quotation
+                    </button>
+
+                    <button class='btn btn-primary dropdown-item'
+                        data-toggle='modal'
+                        data-target='#viewModal'
+                        data-id='{$quotationObj->get_quoteId()}'>
+                        <i class='fas fa-info'></i> Quotation Info
+                    </button>
+
+                    <a class='btn btn-primary dropdown-item'
+                        href='printQuote.php?id={$quotationObj->get_customerId()}'>
+                        <i class='fas fa-print'></i> Print Quote
+                    </a>
+
+                    $deleteBtn
+
+                </div>
+            </div>
+        </td>
+    </tr>";
                     }
                     ?>
                 </tbody>
+
             </table>
         </div>
     </div>
