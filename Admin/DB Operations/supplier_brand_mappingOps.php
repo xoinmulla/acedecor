@@ -22,60 +22,59 @@ class DBsupplierBrandMapping
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
         }
     }
-    
-    public static function getMappedBrands($id)
+
+    public static function getMappedBrands($supplierId)
     {
         $db = ConnectDb::getInstance();
-        $connectionObj = $db->getConnection();
-        $sql = "SELECT B.brand_id AS Id,
-        B.brand_name AS name,
-        CASE When TEMP.SupplierId is null then
-        FALSE
-        ELSE 
-        TRUE
-        end as supplierId
-        FROM brands as B
-        LEFT JOIN (SELECT S.item_compid as SupplierId,
-        SB.brandId as brandId
-        from
-        item_companydetails as S 
-        Left join supplier_brand_mapping as SB
-        on
-        S.item_compid=SB.supplierId 
-        where S.item_compid=".$id.") as TEMP on B.brand_id=TEMP.brandId";
-        error_log($sql);
-        $result = mysqli_query($connectionObj, $sql);
+        $conn = $db->getConnection();
+
+        $sql = "
+        SELECT B.brand_id AS Id,
+               B.brand_name AS name,
+               CASE WHEN SB.brandId IS NULL THEN 0 ELSE 1 END AS isMapped
+        FROM brands B
+        LEFT JOIN supplier_brand_mapping SB
+               ON SB.brandId = B.brand_id
+              AND SB.supplierId = $supplierId
+    ";
+
+        $result = $conn->query($sql);
         $brandlist = [];
 
-        if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                $brand = new brand();
-                $brand->set_brandid($row["Id"]);
-                $brand->set_brandname($row["name"]);
-                if (($row["supplierId"])==0) {
-                    $brand->set_isMapped(false);
-                } else {
-                    $brand->set_isMapped(true);
-                }
-                array_push($brandlist, $brand);
-            }
-        } else {
-            $sql = "SELECT B.brand_id AS Id, B.brand_name AS name FROM brands AS B";
-            error_log($sql);
-            $result = mysqli_query($connectionObj, $sql);
-            $brandlist = [];
-            if (mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                    $brand = new brand();
-                    $brand->set_brandid($row["Id"]);
-                    $brand->set_brandname($row["name"]);
-                    $brand->set_isMapped(false);
-                    array_push($brandlist, $brand);
-                }
-            }
+        while ($row = mysqli_fetch_assoc($result)) {
+            $brand = new Brand();
+            $brand->set_brandid($row["Id"]);
+            $brand->set_brandname($row["name"]);
+            $brand->set_isMapped((bool) $row["isMapped"]);
+
+            // 🔒 NEW: check PO usage
+            $isUsedInPO = DBsupplierBrandMapping::isBrandUsedInPO(
+                $supplierId,
+                $row["Id"]
+            );
+
+            $brand->set_isUsedInPO($isUsedInPO);
+
+            $brandlist[] = $brand;
         }
+
         echo json_encode($brandlist);
     }
+    public static function getExistingBrandIds($supplierId)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "SELECT brandId FROM supplier_brand_mapping WHERE supplierId = $supplierId";
+        $res = $conn->query($sql);
+
+        $brands = [];
+        while ($row = mysqli_fetch_assoc($res)) {
+            $brands[] = $row['brandId'];
+        }
+        return $brands;
+    }
+    
     public static function delete($id)
     {
         $db = ConnectDb::getInstance();
@@ -87,4 +86,42 @@ class DBsupplierBrandMapping
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
         }
     }
+    public static function isBrandUsedInPO($supplierId, $brandId)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        // --- Item based PO ---
+        $sqlItem = "
+        SELECT 1
+        FROM purchaseorder_lineitem PLI
+        JOIN item_details I ON PLI.Item_id = I.item_id
+        WHERE PLI.SupplierId = $supplierId
+          AND I.item_compid = $brandId
+        LIMIT 1
+    ";
+
+        $resItem = $conn->query($sqlItem);
+        if ($resItem && $resItem->num_rows > 0) {
+            return true;
+        }
+
+        // --- Material based PO ---
+        $sqlMat = "
+        SELECT 1
+        FROM purchaseorder_lineitem PLI
+        JOIN material M ON PLI.Item_id = M.Material_Id
+        WHERE PLI.SupplierId = $supplierId
+          AND M.Brand = $brandId
+        LIMIT 1
+    ";
+
+        $resMat = $conn->query($sqlMat);
+        if ($resMat && $resMat->num_rows > 0) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

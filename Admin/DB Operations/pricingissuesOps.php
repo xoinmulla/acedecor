@@ -8,7 +8,7 @@ class DBPricingIssues
     {
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
-        $sql= "SELECT * FROM itemissues_followup WHERE followup_ItemId=" . $ItemId;
+        $sql = "SELECT * FROM itemissues_followup WHERE followup_ItemId=" . $ItemId;
         error_log($sql);
         $result = $connectionObj->query($sql);
         $followUpList = [];
@@ -31,12 +31,12 @@ class DBPricingIssues
         $connectionObj = $db->getConnection();
         $sql = "insert into item_pricingissues (`InvoiceNo`, `SupplierName`,`ItemName`, `POID`,`Status`) 
                 values ('" . $followObj->get_InvoiceNo() .
-                "','" . $followObj->get_SupplierName() . 
-      "','" . $followObj->get_ItemName() .
-      "','" . $followObj->get_POID() .
-      "','" . $followObj->get_Status() . "')";
+            "','" . $followObj->get_SupplierName() .
+            "','" . $followObj->get_ItemName() .
+            "','" . $followObj->get_POID() .
+            "','" . $followObj->get_Status() . "')";
         error_log($sql);
-    
+
         if ($connectionObj->query($sql) === true) {
         } else {
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
@@ -47,15 +47,30 @@ class DBPricingIssues
     {
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
-        $sql = "UPDATE item_pricingissues SET POID='". $follow->get_POID() . 
+        $sql = "UPDATE item_pricingissues SET POID='" . $follow->get_POID() .
             "', Status='" . $follow->get_Status() .
             "' WHERE 	PricingIssues_Id=" . $follow->get_PricingIssuesId();
-            error_log( $sql);
+        error_log($sql);
         if ($connectionObj->query($sql) === TRUE) {
-           
+
         } else {
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
         }
     }
+    public static function delete($pricingIssueId)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "DELETE FROM item_pricingissues 
+            WHERE PricingIssues_Id = " . intval($pricingIssueId);
+
+        error_log($sql);
+
+        if (!$conn->query($sql)) {
+            echo "Delete failed: " . $conn->error;
+        }
+    }
+
 
 }

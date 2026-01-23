@@ -88,6 +88,8 @@ class DBitemcompdetails
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
 
+    $supplierId = $detailsObj->get_itemcompid();
+
     $sql = "UPDATE item_companydetails SET 
         item_compName = '" . $detailsObj->get_itemcompname() . "',
         item_compDescription = '" . $detailsObj->get_itemcompdescription() . "',
@@ -101,35 +103,72 @@ class DBitemcompdetails
         item_compCreatedBy = '" . $detailsObj->get_itemcompcreatedby() . "',
         item_compModifiedBy = '" . $detailsObj->get_itemcompmodifiedby() . "'";
 
-    // ✅ Append logo safely
+    // ✅ Update logo only if new one uploaded
     if (!empty($detailsObj->get_itemcomplogo())) {
       $sql .= ", item_complogo = '" . $detailsObj->get_itemcomplogo() . "'";
     }
 
-    $sql .= " WHERE item_compid = " . $detailsObj->get_itemcompid();
+    $sql .= " WHERE item_compid = " . $supplierId;
 
     error_log($sql);
 
     if ($connectionObj->query($sql) === TRUE) {
-      // Only update brand mapping if brand_list is sent
-      if (!empty($detailsObj->get_brandList())) {
 
-        DBsupplierBrandMapping::delete($detailsObj->get_itemcompid());
+      // -------------------------------
+      // 🔒 SAFE BRAND UPDATE LOGIC
+      // -------------------------------
 
-        foreach ($detailsObj->get_brandList() as $brand) {
-          $map = new supplierBrandMappingModel();
-          $map->set_supplierId($detailsObj->get_itemcompid());
-          $map->set_brandId($brand);
-          $map->set_CreatedBy($detailsObj->get_itemcompmodifiedby());
-          $map->set_ModifiedBy($detailsObj->get_itemcompmodifiedby());
-          DBsupplierBrandMapping::insert($map);
+      // 1️⃣ Get existing mapped brands
+      $existingBrands = DBsupplierBrandMapping::getExistingBrandIds($supplierId);
+
+      $finalBrands = [];
+
+      // 2️⃣ Preserve brands used in PO
+      foreach ($existingBrands as $brandId) {
+        if (DBsupplierBrandMapping::isBrandUsedInPO($supplierId, $brandId)) {
+          $finalBrands[] = $brandId; // 🔒 frozen brand
         }
+      }
+
+      // 3️⃣ Merge editable brands from form
+      if (!empty($detailsObj->get_brandList())) {
+        $finalBrands = array_unique(
+          array_merge($finalBrands, $detailsObj->get_brandList())
+        );
+      }
+
+      // 4️⃣ Rewrite mappings safely
+      DBsupplierBrandMapping::delete($supplierId);
+
+      foreach ($finalBrands as $brandId) {
+        $map = new supplierBrandMappingModel();
+        $map->set_supplierId($supplierId);
+        $map->set_brandId($brandId);
+        $map->set_CreatedBy($detailsObj->get_itemcompmodifiedby());
+        $map->set_ModifiedBy($detailsObj->get_itemcompmodifiedby());
+        DBsupplierBrandMapping::insert($map);
       }
 
     } else {
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
   }
+
+public static function isSupplierUsedInPO($supplierId)
+{
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "SELECT COUNT(*) AS cnt 
+            FROM purchase_order 
+            WHERE SupplierId = " . intval($supplierId);
+
+    error_log($sql);
+    $result = $conn->query($sql);
+    $row = mysqli_fetch_assoc($result);
+
+    return ($row['cnt'] > 0) ? 1 : 0;
+}
 
   public static function selectCompany()
   {

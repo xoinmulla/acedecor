@@ -194,15 +194,13 @@ require_once("../Model/item_stocksmodel.php");
                                 Edit
                            </button>
 
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deletePricingIssuesModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $Items->get_itemid() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete 
-                          </button>
+                           <button class='btn btn-danger dropdown-item'
+    data-toggle='modal'
+    data-target='#deletePricingIssuesModal'
+    data-id='" . $Items->getPricingIssues_Id() . "'>
+    <i class='fas fa-trash-alt'></i> Delete
+</button>
+
                         </div>
                     </div>     
                         
@@ -428,29 +426,31 @@ require_once("../Model/item_stocksmodel.php");
     </div>
 </div>
 
-<div class="modal fade" id=deleteItemModal tabindex=-1 role=dialog aria-hidden=true>
+<div class="modal fade" id="deletePricingIssuesModal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
-        <form method="POST" id="delete_item_form" enctype="multipart/form-data">
+        <form method="POST" id="delete_pricingissue_form">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Delete Item</h4>
+                    <h4 class="modal-title">Delete Pricing Issue</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
+
                 <div class="modal-body">
-                    <p class="lead">
-                        Are you sure. Would you like to delete this Item.
+                    <p class="lead text-danger">
+                        Are you sure you want to delete this pricing issue?
                     </p>
-                    <input type="hidden" name="itemid" id="deleteitemid" value="">
+                    <input type="hidden" name="deletePricingIssueId" id="deletePricingIssueId">
                 </div>
+
                 <div class="modal-footer">
-                    <input type="hidden" name="hidden_id" id="hidden_id" />
-                    <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 
 <script>
     $(document).ready(function () {
@@ -586,6 +586,21 @@ require_once("../Model/item_stocksmodel.php");
             $('#PricingIssueId').val(this.cells[1].innerHTML);
         });
 
+        $('#deletePricingIssuesModal').on('show.bs.modal', function (e) {
+            var pricingIssueId = $(e.relatedTarget).data('id');
+            $('#deletePricingIssueId').val(pricingIssueId);
+        });
+        $('#delete_pricingissue_form').submit(function (e) {
+            e.preventDefault();
+
+            $.post(
+                config.developmentPath + "/Admin/Controller/pricingissueController.php",
+                $(this).serialize(),
+                function () {
+                    location.reload();
+                }
+            );
+        });
 
 
     });

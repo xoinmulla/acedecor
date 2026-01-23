@@ -66,7 +66,9 @@ require_once("../Model/purchaseModel.php");
                     $purchaseList = DBpurchase::getAllpurchases();
                     foreach ($purchaseList as $purchaseObj) {
                         ?>
+                        
                         <tr>
+                            
                             <td style="display:none"><?= $purchaseObj->get_id(); ?></td>
                             <td><?= $purchaseObj->getPOcode(); ?></td>
                             <td><?= $purchaseObj->get_purchaseddate(); ?></td>
@@ -614,11 +616,13 @@ require_once("../Model/purchaseModel.php");
             $('#POcode').val(this.cells[1].innerHTML);
             $('#purchaseddate').val(this.cells[2].innerHTML);
             $('#POtype').val(this.cells[3].innerHTML);
-            $('#supplier').val(this.cells[4].innerHTML);
-            $('#editedSupplierName').val(this.cells[5].innerHTML);
-            $('#displaySupplierName').val(this.cells[5].innerHTML);
-            $('#editedTotalAmount').val(this.cells[8].innerHTML);
-            $('#displayTotalAmount').val(this.cells[8].innerHTML);
+            $('#supplier').val(this.cells[5].innerHTML);              // Supplier ID (hidden)
+            $('#editedSupplierName').val(this.cells[6].innerHTML);   // Supplier Name
+            $('#displaySupplierName').val(this.cells[6].innerHTML);  // Supplier Name
+
+            $('#editedTotalAmount').val(this.cells[9].innerHTML);    // Total Amount
+            $('#displayTotalAmount').val(this.cells[9].innerHTML);   // Total Amount
+
             // if (this.cells[11].innerHTML != "") {
             //     $('#downloadPOLineItem').attr('href', '../pdfs/itemList/' + this.cells[11].innerHTML);
             // } else {

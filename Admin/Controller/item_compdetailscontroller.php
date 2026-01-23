@@ -8,30 +8,48 @@ include "../DB Operations/item_compdetailsOps.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   if (isset($_POST['itemcompid'])) {
+
     $compdetails = new Item_Companydetails();
 
-    $compdetails->set_itemcompname(Sanitization::test_input($_POST["itemcompname"]));
-    $compdetails->set_itemcompdescription(Sanitization::test_input($_POST["itemcompdescription"]));
-    $compdetails->set_itemcompaddress(Sanitization::test_input($_POST["itemcompaddress"]));
+    $compdetails->set_itemcompid($_POST["itemcompid"]);
+    $compdetails->set_itemcompname($_POST["itemcompname"]);
+    $compdetails->set_itemcompdescription($_POST["itemcompdescription"]);
+    $compdetails->set_itemcompaddress($_POST["itemcompaddress"]);
+    $compdetails->set_itemcomplocation($_POST["itemcomplocation"]);
+    $compdetails->set_itemcompcreatedby($_POST["itemcompcreatedby"]);
+    $compdetails->set_itemcompmodifiedby($_POST["itemcompmodifiedby"]);
+    $compdetails->set_itemcompaccno($_POST["itemcompaccno"]);
+    $compdetails->set_itemcompaccname($_POST["itemcompaccname"]);
+    $compdetails->set_itemcompaccifsc($_POST["itemcompaccifsc"]);
+    $compdetails->set_itemcompaccmicr($_POST["itemcompaccmicr"]);
+    $compdetails->set_itemcompgstin($_POST["itemcompgstin"]);
 
-    // ✅ ADD THIS LINE
-    $compdetails->set_itemcomplocation(
-      Sanitization::test_input($_POST["itemcomplocation"])
-    );
+    // ✅ ADD THIS (BRANDS)
+    if (isset($_POST['brand_list'])) {
+      $compdetails->set_brandList($_POST['brand_list']);
+    }
+    // ✅ Handle logo update
+    if (isset($_FILES["itemcomplogo"]) && $_FILES["itemcomplogo"]["size"] > 0) {
 
-    $compdetails->set_itemcompcreatedby(Sanitization::test_input($_POST["itemcompcreatedby"]));
-    $compdetails->set_itemcompmodifiedby(Sanitization::test_input($_POST["itemcompmodifiedby"]));
-    $compdetails->set_itemcompaccno(Sanitization::test_input($_POST["itemcompaccno"]));
-    $compdetails->set_itemcompaccname(Sanitization::test_input($_POST["itemcompaccname"]));
-    $compdetails->set_itemcompaccifsc(Sanitization::test_input($_POST["itemcompaccifsc"]));
-    $compdetails->set_itemcompaccmicr(Sanitization::test_input($_POST["itemcompaccmicr"]));
-    $compdetails->set_itemcompgstin(Sanitization::test_input($_POST["itemcompgstin"]));
-    $compdetails->set_itemcompid(Sanitization::test_input($_POST["itemcompid"]));
+      $filetoupload = $_FILES["itemcomplogo"];
+      Helper::fileupload($filetoupload, "../img/companylogo/");
+      $compdetails->set_itemcomplogo($_FILES["itemcomplogo"]['name']);
+    }
+
 
     DBitemcompdetails::update($compdetails);
   } else if ($_POST["action"] == 'delete') {
-    DBitemcompdetails::delete($_POST['id']);
-  } else {
+
+    $supplierId = intval($_POST['id']);
+
+    // 🔒 HARD SAFETY CHECK
+    if (DBitemcompdetails::isSupplierUsedInPO($supplierId)) {
+        echo "❌ Cannot delete supplier. Supplier is already used in Purchase Orders.";
+        exit;
+    }
+
+    DBitemcompdetails::delete($supplierId);
+} else {
     $compdetails = new Item_Companydetails();
     $compdetails->set_itemcompname(Sanitization::test_input($_POST["itemcompname"]));
     $compdetails->set_itemcompdescription(Sanitization::test_input($_POST["itemcompdescription"]));

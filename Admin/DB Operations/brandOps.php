@@ -472,6 +472,37 @@ class DBbrand
 
     $stmt->close();
   }
+  public static function getInventoryTypesByBrand($brandId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    // ✅ ITEM inventory check (brand → item category mapping)
+    $itemSql = "
+        SELECT 1 
+        FROM brand_category_mapping 
+        WHERE brandId = '$brandId' 
+        LIMIT 1
+    ";
+    $itemResult = $conn->query($itemSql);
+    $hasItem = ($itemResult && $itemResult->num_rows > 0);
+
+    // ✅ MATERIAL inventory check (brand → material category mapping)
+    $materialSql = "
+        SELECT 1 
+        FROM brand_matcat_mapping 
+        WHERE brandId = '$brandId' 
+        LIMIT 1
+    ";
+    $materialResult = $conn->query($materialSql);
+    $hasMaterial = ($materialResult && $materialResult->num_rows > 0);
+
+    echo json_encode([
+      "item" => $hasItem,
+      "material" => $hasMaterial
+    ]);
+  }
+
 
 
 }

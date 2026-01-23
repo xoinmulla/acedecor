@@ -56,5 +56,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // else if($_SERVER["REQUEST_METHOD"] == "GET"){
 //     DBPricingIssues::getFollowUpByItemId($_GET['id']);
 // }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // ✅ DELETE
+  if (!empty($_POST['deletePricingIssueId'])) {
+    DBPricingIssues::delete(
+      Sanitization::test_input($_POST['deletePricingIssueId'])
+    );
+    exit;
+  }
+
+  // ✅ UPDATE
+  if (!empty($_POST['PricingIssueId'])) {
+    $follow = new PricingIssues();
+    $follow->set_PricingIssuesId(
+      Sanitization::test_input($_POST["PricingIssueId"])
+    );
+    $follow->set_POID(
+      Sanitization::test_input($_POST["PricingPOID"])
+    );
+    $follow->set_Status(
+      Sanitization::test_input($_POST["editedPricestatus"])
+    );
+    DBPricingIssues::update($follow);
+    exit;
+  }
+
+  // ✅ INSERT
+  $follow = new PricingIssues();
+  $follow->set_ItemName(Sanitization::test_input($_POST["editedPriceItemName"]));
+  $follow->set_SupplierName(Sanitization::test_input($_POST["editedPriceSupplierName"]));
+  $follow->set_InvoiceNo(Sanitization::test_input($_POST["invoiceNo"]));
+  $follow->set_POID(Sanitization::test_input($_POST["PricingPOID"]));
+  $follow->set_Status(Sanitization::test_input($_POST["editedPricestatus"]));
+  DBPricingIssues::insert($follow);
+}
 
 ?>

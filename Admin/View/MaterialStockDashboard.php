@@ -8,34 +8,36 @@ require_once("../Model/material_stocksModel.php");
 
 ?>
 <style>
-#editedPOlineMaterialTable {
-    height: 200px;
-    display: inline-block;
-    width: 100%;
-    overflow: auto;
-}
+    #editedPOlineMaterialTable {
+        height: 200px;
+        display: inline-block;
+        width: 100%;
+        overflow: auto;
+    }
 
-#editedPOlineMaterialTable thead {
-    background-color: grey;
-    color: whitesmoke;
-    position: sticky;
-    top: 0;
-}
+    #editedPOlineMaterialTable thead {
+        background-color: grey;
+        color: whitesmoke;
+        position: sticky;
+        top: 0;
+    }
 
-.pad {
-    padding-right: .5rem;
-}
+    .pad {
+        padding-right: .5rem;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Material Stock Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material List With Issues </h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                    List With Issues </h6>
             </div>
-            
+
         </div>
     </div>
     <div class="card-body">
@@ -73,9 +75,9 @@ require_once("../Model/material_stocksModel.php");
                         </thead>
                         <tbody>
                             <?php
-                    $stockList = DBMaterialStock::getMaterialStockList();
-                    foreach ($stockList as $stockObj) {
-                        echo "<tr>
+                            $stockList = DBMaterialStock::getMaterialStockList();
+                            foreach ($stockList as $stockObj) {
+                                echo "<tr>
                         <td style='display:none'>" . $stockObj->get_StockId() . "</td>
                         <td style='display:none'>" . $stockObj->get_MaterialId() . "</td>
                         <td>" . $stockObj->getMaterialname() . "</td>
@@ -99,7 +101,7 @@ require_once("../Model/material_stocksModel.php");
                             data-toggle='modal' 
                             data-target='#editIssuesModal' 
                             role='button' 
-                            data-id='".$stockObj->get_MaterialId()."'>
+                            data-id='" . $stockObj->get_MaterialId() . "'>
                             <i class='fas fa-user-edit'></i> 
                                 Edit
                            </button>
@@ -126,8 +128,8 @@ require_once("../Model/material_stocksModel.php");
                         
                    </td>
                        </tr>";
-                    }
-                    ?>
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -144,8 +146,7 @@ require_once("../Model/material_stocksModel.php");
                                 <th>Invoice No</th>
                                 <th>Supplier</th>
                                 <th>Name</th>
-                                <th>MRP</th>
-                                <th>Received Price</th>
+                                <th>Rate / Item</th>
                                 <th>Paid Price</th>
                                 <th>Status</th>
                                 <th>Action</th>
@@ -153,55 +154,58 @@ require_once("../Model/material_stocksModel.php");
                         </thead>
                         <tbody>
                             <?php
-                    $MaterialList = DBMaterialStock::getallMaterialsWithHighPrices();
-                    foreach ($MaterialList as $Materials) {
-                        echo "<tr><td style='display:none'>" . $Materials->get_MaterialId() . "</td>
-                        <td style='display:none'>" . $Materials->getPricingIssues_Id() . "</td>
-                        <td>" . $Materials->getPOcode() . "</td>
-                        <td>" . $Materials->get_InvoiceNo() . "</td>
-                        <td >" . $Materials->get_SupplierName() . "</td>
-                        <td >" . $Materials->getMaterialname() . "</td>
-                        <td >" . $Materials->get_price() . "</td>
-                        <td> " . $Materials->get_LineMaterialPrice() . "</td>
-                        <td style='background-color:red;color:black'>" . $Materials->get_ReceivedQtyAmt() . "</td>
-                        <td>" . $Materials->getStatus() . "</td>
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#editPricingIssuesModal' 
-                            role='button' 
-                            data-id='".$Materials->get_MaterialId()."'>
-                            <i class='fas fa-user-edit'></i> 
-                                Edit
-                           </button>
+                            $MaterialList = DBMaterialStock::getallMaterialsWithHighPrices();
 
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deletePricingIssuesModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $Materials->get_MaterialId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete 
-                          </button>
-                        </div>
-                    </div>     
-                        
-                   </td>
-                       </tr>";
-                    }
-                    ?>
+                            foreach ($MaterialList as $Materials):
+
+                                $rate = (float) $Materials->get_price();
+                                $paid = (float) $Materials->get_ReceivedQtyAmt();
+
+                                $class = ($paid > $rate) ? 'bg-danger' : 'bg-success';
+                                ?>
+                                <tr>
+                                    <td style="display:none"><?= $Materials->get_MaterialId(); ?></td>
+                                    <td style="display:none"><?= $Materials->getPricingIssues_Id(); ?></td>
+
+                                    <td><?= $Materials->getPOcode(); ?></td>
+                                    <td><?= $Materials->get_InvoiceNo(); ?></td>
+                                    <td><?= $Materials->get_SupplierName(); ?></td>
+                                    <td><?= $Materials->getMaterialname(); ?></td>
+
+                                    <td><?= number_format($rate, 2); ?></td>
+
+                                    <td class="<?= $class; ?>" style="color:black">
+                                        <?= number_format($paid, 2); ?>
+                                    </td>
+
+                                    <td><?= $Materials->getStatus(); ?></td>
+
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button"
+                                                data-toggle="dropdown">
+                                                Actions
+                                            </button>
+
+                                            <div class="dropdown-menu">
+                                                <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                    data-target="#editPricingIssuesModal"
+                                                    data-id="<?= $Materials->get_MaterialId(); ?>">
+                                                    <i class="fas fa-user-edit"></i> Edit
+                                                </button>
+
+                                                <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                    data-target="#deletePricingIssuesModal"
+                                                    data-id="<?= $Materials->get_MaterialId(); ?>">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
                         </tbody>
+
 
                     </table>
                 </div>
@@ -209,6 +213,7 @@ require_once("../Model/material_stocksModel.php");
         </div>
     </div>
 </div>
+
 <?php include('footer.php'); ?>
 
 <div class="modal fade" id=editIssuesModal tabindex=-1 role=dialog aria-hidden=true>
@@ -225,8 +230,8 @@ require_once("../Model/material_stocksModel.php");
                         <div class="row">
                             <label class="col-md-4 text-right">Material Name <span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="editedMaterialName" id="editedMaterialName" class="form-control"
-                                    readonly />
+                                <input type="text" name="editedMaterialName" id="editedMaterialName"
+                                    class="form-control" readonly />
                                 <input type="hidden" name="followupId" id="followupId" value="">
                                 <input type="hidden" name="POcode" id="POcode" value="">
                                 <input type="hidden" name="followupPOID" id="followupPOID" value="">
@@ -384,7 +389,7 @@ require_once("../Model/material_stocksModel.php");
                         </thead>
                         <tbody></tbody>
                     </table>
-                  
+
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-8">
@@ -425,140 +430,140 @@ require_once("../Model/material_stocksModel.php");
 </div>
 
 <script>
-$(document).ready(function() {
-    $('#IssuesfollowupModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#followupMaterialId').val(rowid);
-        var POID = 0;
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/MatIssues_followupController.php/?id=" +
-            rowid + "&POID=" + POID;
-        $.getJSON(contactUrl, function(data) {
-            $("#Issuesfollowuptable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#Issuesfollowuptable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.followupPOID
-                }));
+    $(document).ready(function () {
+        $('#IssuesfollowupModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#followupMaterialId').val(rowid);
+            var POID = 0;
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/MatIssues_followupController.php/?id=" +
+                rowid + "&POID=" + POID;
+            $.getJSON(contactUrl, function (data) {
+                $("#Issuesfollowuptable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#Issuesfollowuptable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.followupPOID
+                        }));
 
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_by
-                }));
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_comments
-                }));
-                $('#Issuesfollowuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.followup_on
-                }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_by
+                        }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_comments
+                        }));
+                    $('#Issuesfollowuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.followup_on
+                        }));
+                });
             });
         });
-    });
 
-    $('#AllocateModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#followupMaterialId').val(rowid);
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/allocateMaterialsController.php/?id=" +
-            rowid;
-        $.getJSON(contactUrl, function(data) {
-            $("#Allocationtable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#Allocationtable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.followupMaterialId
-                }));
+        $('#AllocateModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#followupMaterialId').val(rowid);
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/allocateMaterialsController.php/?id=" +
+                rowid;
+            $.getJSON(contactUrl, function (data) {
+                $("#Allocationtable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#Allocationtable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.followupMaterialId
+                        }));
 
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.CustomerName
-                }));
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.ProjectCode
-                }));
-                $('#Allocationtable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AllocatedQty
-                }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.CustomerName
+                        }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.ProjectCode
+                        }));
+                    $('#Allocationtable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AllocatedQty
+                        }));
+                });
             });
         });
-    });
 
 
-    $('#editedIssues_form').submit(function(event) {
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/MatIssues_followupcontroller.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
+        $('#editedIssues_form').submit(function (event) {
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/MatIssues_followupcontroller.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
         });
-    });
 
-    $('#editedPricingIssues_form').submit(function(event) {
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/MatPricingIssueController.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
+        $('#editedPricingIssues_form').submit(function (event) {
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/MatPricingIssueController.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
         });
+
+
+        var dataTable = $('#quote_table').DataTable({});
+        var nEditing = null;
+
+        var dataTable = $('#priceissue_table').DataTable({});
+        var nEditing = null;
+
+        var dataTable = $('#material_table').DataTable({});
+        var nEditing = null;
+        $('#quote_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+            $('#id').val(this.cells[0].innerHTML);
+            $('#POcode').val(this.cells[1].innerHTML);
+            $('#followupPOID').val(this.cells[3].innerHTML);
+            $('#PricingPOID').val(this.cells[1].innerHTML);
+            $('#MaterialId').val(this.cells[1].innerHTML);
+            $('#purchaseddate').val(this.cells[2].innerHTML);
+            $('#POtype').val(this.cells[3].innerHTML);
+            $('#supplier').val(this.cells[4].innerHTML);
+            $('#editedMaterialName').val(this.cells[2].innerHTML);
+            $('#editedPriceMaterialName').val(this.cells[4].innerHTML);
+            $('#displaySupplierName').val(this.cells[2].innerHTML);
+            $('#editedPriceSupplierName').val(this.cells[3].innerHTML);
+            $('#followupId').val(this.cells[6].innerHTML);
+            $('#invoiceNo').val(this.cells[2].innerHTML);
+
+        });
+        $('#priceissue_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+
+            $('#POcode').val(this.cells[2].innerHTML);
+            $('#PricingPOID').val(this.cells[2].innerHTML);
+            $('#editedPriceMaterialName').val(this.cells[5].innerHTML.replace('&amp;', '&'));
+            $('#editedPriceSupplierName').val(this.cells[4].innerHTML);
+            $('#invoiceNo').val(this.cells[3].innerHTML);
+            $('#PricingIssueId').val(this.cells[1].innerHTML);
+        });
+
+
+
     });
-
-
-    var dataTable = $('#quote_table').DataTable({});
-    var nEditing = null;
-
-    var dataTable = $('#priceissue_table').DataTable({});
-    var nEditing = null;
-
-    var dataTable = $('#material_table').DataTable({});
-    var nEditing = null;
-    $('#quote_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-        $('#id').val(this.cells[0].innerHTML);
-        $('#POcode').val(this.cells[1].innerHTML);
-        $('#followupPOID').val(this.cells[3].innerHTML);
-        $('#PricingPOID').val(this.cells[1].innerHTML);
-        $('#MaterialId').val(this.cells[1].innerHTML);
-        $('#purchaseddate').val(this.cells[2].innerHTML);
-        $('#POtype').val(this.cells[3].innerHTML);
-        $('#supplier').val(this.cells[4].innerHTML);
-        $('#editedMaterialName').val(this.cells[2].innerHTML);
-        $('#editedPriceMaterialName').val(this.cells[4].innerHTML);
-        $('#displaySupplierName').val(this.cells[2].innerHTML);
-        $('#editedPriceSupplierName').val(this.cells[3].innerHTML);
-        $('#followupId').val(this.cells[6].innerHTML);
-        $('#invoiceNo').val(this.cells[2].innerHTML);
-
-    });
-    $('#priceissue_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-
-        $('#POcode').val(this.cells[2].innerHTML);
-        $('#PricingPOID').val(this.cells[2].innerHTML);
-        $('#editedPriceMaterialName').val(this.cells[5].innerHTML.replace('&amp;', '&'));
-        $('#editedPriceSupplierName').val(this.cells[4].innerHTML);
-        $('#invoiceNo').val(this.cells[3].innerHTML);
-        $('#PricingIssueId').val(this.cells[1].innerHTML);
-    });
-
-
-
-});
 </script>

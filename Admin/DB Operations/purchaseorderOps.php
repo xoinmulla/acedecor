@@ -176,6 +176,7 @@ GROUP BY PO.Id";
     PO.SupplierId AS SupplierId, 
     CO.item_compname AS SupplierName,
     CO.item_compAddress AS SupplierAddress,
+    CO.item_compLocation AS SupplierLocation,   
     SUM(PLI.TotalAmt) AS TotalAmt,
     (TEMP.PaidAmt) AS PaidAmt,
     TEMP.PaymentMode AS PaymentMode,
@@ -213,6 +214,7 @@ GROUP BY PO.Id";
         $purchase->set_supplier($row["SupplierId"]);
         $purchase->setSupplierName($row["SupplierName"]);
         $purchase->setSupplierAddress($row["SupplierAddress"]);
+        $purchase->setSupplierLocation($row["SupplierLocation"]);
         $purchase->set_totalAmount($row["TotalAmt"]);
         $purchase->set_paidAmount($row["PaidAmt"]);
         $purchase->set_purchaseddate($row["PurchasedDate"]);

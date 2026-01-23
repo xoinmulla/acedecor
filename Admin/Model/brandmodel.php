@@ -1,13 +1,23 @@
 <?php
-class Brand  implements JsonSerializable
+class Brand implements JsonSerializable
 {
     private $brand_id;
     private $brand_name;
     private $isMapped;
     private $brand_modifiedby;
     private $brand_createdby;
-    private $inputtype_list =[];
+    private $inputtype_list = [];
     private $table_name = "brands";
+    private $isUsedInPO;
+    public function set_isUsedInPO($v)
+    {
+        $this->isUsedInPO = $v;
+    }
+    public function get_isUsedInPO()
+    {
+        return $this->isUsedInPO;
+    }
+
 
     function set_inputTypeList($list)
     {
@@ -22,7 +32,7 @@ class Brand  implements JsonSerializable
 
     function set_isMapped($isMapped)
     {
-        $this->isMapped= $isMapped;
+        $this->isMapped = $isMapped;
     }
     function get_isMapped()
     {
@@ -31,7 +41,7 @@ class Brand  implements JsonSerializable
 
     function set_brandid($brandid)
     {
-        $this->brand_id= $brandid;
+        $this->brand_id = $brandid;
     }
     function get_brandid()
     {
@@ -49,7 +59,7 @@ class Brand  implements JsonSerializable
 
     function set_brandcreatedby($brandcreatedby)
     {
-        $this->brand_createdby= $brandcreatedby;
+        $this->brand_createdby = $brandcreatedby;
     }
     function get_brandcreatedby()
     {
@@ -58,7 +68,7 @@ class Brand  implements JsonSerializable
 
     function set_brandmodifiedby($brandmodifiedby)
     {
-        $this->brand_modifiedby= $brandmodifiedby;
+        $this->brand_modifiedby = $brandmodifiedby;
     }
     function get_brandmodifiedby()
     {
@@ -69,13 +79,14 @@ class Brand  implements JsonSerializable
     public function jsonSerialize()
     {
         return [
-            
-                'brandid' => $this->brand_id,
-                'brandname' => $this->brand_name,
-                'isMapped' =>$this->isMapped,
-                'brandmodifiedby' =>$this->brand_modifiedby,
-                'brandcreatedby' =>$this->brand_createdby,
-                'list' =>$this->inputtype_list,
+
+            'brandid' => $this->brand_id,
+            'brandname' => $this->brand_name,
+            'isMapped' => $this->isMapped,
+            'brandmodifiedby' => $this->brand_modifiedby,
+            'brandcreatedby' => $this->brand_createdby,
+            'list' => $this->inputtype_list,
+            'isUsedInPO' => $this->isUsedInPO
         ];
     }
 }

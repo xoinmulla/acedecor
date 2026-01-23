@@ -59,9 +59,8 @@ require_once("../Model/purchaseModel.php");
                                         <label>Inventory <span class="text-danger">*</span></label>
                                         <select id="inventoryType" name="inventoryType" class="form-select" required>
                                             <option value="" hidden>-- Select --</option>
-                                            <option value="item">Item</option>
-                                            <option value="material">Material</option>
                                         </select>
+
                                     </div>
 
                                 </div>
@@ -209,12 +208,46 @@ include "footer.php";
         });
     }
     $('#brands').on('change', function () {
-        let brandName = $('#brands option:selected').text();
+
+        const brandId = this.value;
+        const brandName = $('#brands option:selected').text();
         $('#selectedBrandName').val(brandName);
 
-        $('#inventoryType').val('');
+        // reset dependent fields
         $('#itemCategory, #itemsubCategory, #itemid').empty();
+
+        const $inventory = $('#inventoryType');
+        $inventory.empty().append('<option value="" hidden>-- Select --</option>');
+
+        if (!brandId) return;
+
+        const url = config.developmentPath +
+            "/Admin/Controller/brandcontroller.php?action=inventoryTypes&brandId=" + brandId;
+
+        $.getJSON(url)
+            .done(function (res) {
+
+                console.log("Inventory mapping:", res);
+
+                const $inventory = $('#inventoryType');
+                $inventory.empty().append('<option value="" hidden>-- Select --</option>');
+
+                // 🔒 BUSINESS RULE OVERRIDE
+                if (res.item === true) {
+                    $inventory.append('<option value="item">Item</option>');
+                }
+
+                if (res.material === true) {
+                    $inventory.append('<option value="material">Material</option>');
+                }
+
+
+                // ❌ IGNORE material if item exists
+            });
+
     });
+
+
 
 
     $('#itemCategory').on('change', function () {
@@ -335,7 +368,7 @@ include "footer.php";
                     append($(document.createElement('td')).prop({
                         innerHTML: formData['selectedItemName']
                     }));
-                    
+
                 $('#lineItemTable tr:last').
                     append($(document.createElement('td')).prop({
                         innerHTML: formData['selectedBrandName']

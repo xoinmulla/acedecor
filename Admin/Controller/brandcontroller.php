@@ -121,8 +121,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         DBbrand::selectbrandsbasedonMatcatId(Sanitization::test_input($_GET['matcatId']));
     } else if (isset($_GET['InputId'])) {
         DBbrand::selectbrandsbasedonInputTypeId(Sanitization::test_input($_GET['InputId']));
-    } else {
-        DBbrand::selectbrands();
+    } else if (isset($_GET['action']) && $_GET['action'] === 'inventoryTypes' && isset($_GET['brandId'])) {
+        header('Content-Type: application/json');
+        DBbrand::getInventoryTypesByBrand(
+            Sanitization::test_input($_GET['brandId'])
+        );
+        exit;
     }
+
+} else {
+    DBbrand::selectbrands();
 }
 ?>

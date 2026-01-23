@@ -85,85 +85,95 @@ require_once("../Model/item_companydetailsmodel.php");
                 <tbody>
                     <?php
                     $itemcompdetailslist = DBitemcompdetails::getallitemcompdetails();
+
                     foreach ($itemcompdetailslist as $itemcompdetails) {
-                        echo "<tr><td>" . $itemcompdetails->get_itemcompname() . "</td>
-                        <td>" . $itemcompdetails->get_itemcompgstin() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompcontactname() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompcontactno() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompaddress() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcomplocation() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompaccno() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompaccname() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompaccifsc() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompaccmicr() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcompdescription() . "</td>
-                        <td style='display:none'>" . $itemcompdetails->get_itemcomplogo() . "</td>
-                        <td><div class='accordion' id='accordionExample'>
-                        <div class='accordion-item'>
-                          <h2 class='accordion-header' id='headingOne'>
-                            <button class='accordion-button' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-" . $itemcompdetails->get_itemcompid() . "' aria-expanded='true' aria-controls='collapseOne'>
-                              Bank Details
-                            </button>
-                          </h2>
-                          <div id='collapse-" . $itemcompdetails->get_itemcompid() . "' class='accordion-collapse collapse' aria-labelledby='headingOne' data-bs-parent='#accordionExample'>
-                            <div class='accordion-body'>
-                            <ul style='margin:0px; list-style:none;padding:0px'>
-                            <li>Account Name :" . $itemcompdetails->get_itemcompaccname() . "</li>
-                            <li>Account Number : " . $itemcompdetails->get_itemcompaccno() . "</li>
-                            <li>IFSC Code :" . $itemcompdetails->get_itemcompaccifsc() . "</li>
-                            <li>MICR Code :" . $itemcompdetails->get_itemcompaccmicr() . "</li>
-                            </ul>
-                            </div>
-                          </div>
-                        </div>
-                        </div>
-                        
-                     
-                      </td>
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#edititemcompdetailsModal' 
-                            role='button' 
-                            data-id='" . $itemcompdetails->get_itemcompid() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                Edit Supplier
-                           </button>
-                           <a class='btn btn-primary dropdown-item' href='supplierContactView.php?id=" . $itemcompdetails->get_itemcompid() . "' role='button'>
-                           <i class='fas fa-phone-alt'></i>
-                            Supplier Contact
-                            </a>
-                           <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#detailsCompanyModal' 
-                            role='button' data-id='" . $itemcompdetails->get_itemcompid() . "'> 
-                            <i class='fas fa-info-circle'></i>
-                               Supplier Info
-                            </button>
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deleteCompanyModal' 
-                           name='delete_button' 
-                           role='button' data-id='" . $itemcompdetails->get_itemcompid() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete Supplier
-                          </button>
-                        </div>
-                    </div>
-                </td></tr>";
-                    }
-                    ?>
+
+                        // ✅ DEFINE VARIABLE PROPERLY
+                        $supplierId = $itemcompdetails->get_itemcompid();
+                        $isUsedInPO = DBitemcompdetails::isSupplierUsedInPO($supplierId);
+                        ?>
+                        <tr>
+                            <td><?= $itemcompdetails->get_itemcompname(); ?></td>
+                            <td><?= $itemcompdetails->get_itemcompgstin(); ?></td>
+
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompcontactname(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompcontactno(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompaddress(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcomplocation(); ?></td>
+
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompaccno(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompaccname(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompaccifsc(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompaccmicr(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcompdescription(); ?></td>
+                            <td style="display:none"><?= $itemcompdetails->get_itemcomplogo(); ?></td>
+
+                            <td>
+                                <!-- Bank details accordion (unchanged) -->
+                                <div class="accordion" id="accordion-<?= $supplierId ?>">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapse-<?= $supplierId ?>">
+                                                Bank Details
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-<?= $supplierId ?>" class="accordion-collapse collapse">
+                                            <div class="accordion-body">
+                                                <ul style="list-style:none;padding:0">
+                                                    <li>Account Name: <?= $itemcompdetails->get_itemcompaccname(); ?></li>
+                                                    <li>Account Number: <?= $itemcompdetails->get_itemcompaccno(); ?></li>
+                                                    <li>IFSC Code: <?= $itemcompdetails->get_itemcompaccifsc(); ?></li>
+                                                    <li>MICR Code: <?= $itemcompdetails->get_itemcompaccmicr(); ?></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+
+                                    <div class="dropdown-menu">
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#edititemcompdetailsModal" data-id="<?= $supplierId ?>">
+                                            <i class="fas fa-user-edit"></i> Edit Supplier
+                                        </button>
+
+                                        <a class="btn btn-primary dropdown-item"
+                                            href="supplierContactView.php?id=<?= $supplierId ?>">
+                                            <i class="fas fa-phone-alt"></i> Supplier Contact
+                                        </a>
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#detailsCompanyModal" data-id="<?= $supplierId ?>">
+                                            <i class="fas fa-info-circle"></i> Supplier Info
+                                        </button>
+
+                                        <?php if ($isUsedInPO) { ?>
+                                            <button class="btn btn-secondary dropdown-item" disabled
+                                                title="Cannot delete. Supplier already used in Purchase Orders">
+                                                <i class="fas fa-trash-alt"></i> Delete Supplier
+                                            </button>
+                                        <?php } else { ?>
+                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                data-target="#deleteCompanyModal" data-id="<?= $supplierId ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Supplier
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
+
             </table>
         </div>
     </div>
@@ -900,36 +910,43 @@ require_once("../Model/item_companydetailsmodel.php");
             var rowid = $(e.relatedTarget).data('id');
             $('#itemcompid').val(rowid);
             $('#editedcheckboxes').empty();
-            var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php?id=" + $(
-                '#itemcompid').val();
-            $.getJSON(fetchsubcaturl, function (data) {
-                $.each(data, function (index, value) {
-                    if (value.isMapped == 0) {
-                        checked = false;
-                    } else {
-                        checked = true;
-                    }
-                    $('#editedcheckboxes').append(
-                        $(document.createElement('li')).prop({
-                            class: 'form-check form-switch'
-                        }).append(
-                            $(document.createElement('input')).prop({
-                                class: 'form-check-input me-1',
-                                id: 'editedmyCheckBox_' + value.brandid,
-                                name: 'brand_list[]',
-                                checked: checked,
-                                value: value.brandid,
-                                type: 'checkbox',
-                                checked: value.isMapped ? "checked" : ""
 
-                            })).append(
-                                $(document.createElement('label')).prop({
-                                    for: 'editedmyCheckBox_' + value.brandid
-                                }).html(value.brandname)
-                            ).append(document.createElement('br')));
+            var fetchsubcaturl =
+                config.developmentPath +
+                "/Admin/Controller/brandcontroller.php?id=" + rowid;
+
+            $.getJSON(fetchsubcaturl, function (data) {
+
+                $.each(data, function (index, value) {
+
+                    var isFrozen = value.isUsedInPO === true;
+
+                    var $checkbox = $('<input>', {
+                        type: 'checkbox',
+                        class: 'form-check-input me-1',
+                        id: 'editedmyCheckBox_' + value.brandid,
+                        name: 'brand_list[]',
+                        value: value.brandid,
+                        checked: value.isMapped ? true : false,
+                        disabled: isFrozen
+                    });
+
+                    var $label = $('<label>', {
+                        for: 'editedmyCheckBox_' + value.brandid,
+                        class: isFrozen ? 'text-muted' : ''
+                    }).text(
+                        value.brandname + (isFrozen ? ' (In Use)' : '')
+                    );
+
+                    var $li = $('<li>', {
+                        class: 'form-check form-switch'
+                    }).append($checkbox).append($label);
+
+                    $('#editedcheckboxes').append($li);
                 });
             });
         });
+
 
         var dataTable = $('#itemcompdetails_table').DataTable({});
         var nEditing = null;
