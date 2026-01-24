@@ -161,7 +161,6 @@ if (
     $e->setType('Expense');
     $e->setCategory('Suppliers');
     $e->setSupplierId($_POST['supplier_id'] ?? null);
-    $e->setPoId($_POST['po_id'] ?? null);
     $e->setAmount($_POST['amount']);
     $e->setExpenseDate($_POST['expense_date']);
     $e->setPaymentType($_POST['payment_type']);

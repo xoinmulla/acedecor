@@ -477,29 +477,36 @@ class DBbrand
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
-    // ✅ ITEM inventory check (brand → item category mapping)
-    $itemSql = "
-        SELECT 1 
-        FROM brand_category_mapping 
-        WHERE brandId = '$brandId' 
-        LIMIT 1
-    ";
-    $itemResult = $conn->query($itemSql);
-    $hasItem = ($itemResult && $itemResult->num_rows > 0);
+    $item = false;
+    $material = false;
 
-    // ✅ MATERIAL inventory check (brand → material category mapping)
-    $materialSql = "
-        SELECT 1 
-        FROM brand_matcat_mapping 
-        WHERE brandId = '$brandId' 
-        LIMIT 1
+    $sql = "
+        SELECT I.InputType
+        FROM inputtype I
+        JOIN inputtype_brand_mapping IBM 
+            ON IBM.InputTypeId = I.InputTypeId
+        WHERE IBM.brandId = ?
     ";
-    $materialResult = $conn->query($materialSql);
-    $hasMaterial = ($materialResult && $materialResult->num_rows > 0);
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $brandId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+      $type = strtolower(trim($row['InputType']));
+
+      if ($type === 'item') {
+        $item = true;
+      }
+      if ($type === 'material') {
+        $material = true;
+      }
+    }
 
     echo json_encode([
-      "item" => $hasItem,
-      "material" => $hasMaterial
+      "item" => $item,
+      "material" => $material
     ]);
   }
 

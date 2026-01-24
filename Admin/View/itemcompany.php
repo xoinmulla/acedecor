@@ -801,7 +801,7 @@ require_once("../Model/item_companydetailsmodel.php");
             </div>
         </form>
     </div>
-</div>
+</div> 
 <script>
     $(document).ready(function () {
         var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php";

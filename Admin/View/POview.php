@@ -486,7 +486,7 @@ require_once("../Model/purchaseModel.php");
         </form>
     </div>
 </div>
-
+ 
 <script>
     $(document).ready(function () {
         // var waterMarked = false;

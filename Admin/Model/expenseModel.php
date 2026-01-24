@@ -13,6 +13,19 @@ class Expense
 
     private $project_id;
 
+    private $supplier_id;
+
+    public function setSupplierId($supplier_id)
+    {
+        $this->supplier_id = $supplier_id;
+    }
+
+    public function getSupplierId()
+    {
+        return $this->supplier_id;
+    }
+
+
     public function setProjectId($project_id)
     {
         $this->project_id = $project_id;

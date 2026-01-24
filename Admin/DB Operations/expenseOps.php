@@ -206,6 +206,37 @@ class DBExpense
         return $stmt->get_result()->fetch_assoc()['total'] ?? 0;
     }
 
+    public static function insertSupplierExpense(Expense $e)
+    {
+        $db = ConnectDb::getInstance()->getConnection();
+
+        $sql = "
+        INSERT INTO expense
+        (
+            type,
+            category,
+            supplier_id,
+            amount,
+            expense_date,
+            payment_type,
+            notes
+        )
+        VALUES
+        (
+            '{$e->getType()}',
+            '{$e->getCategory()}',
+            '{$e->getSupplierId()}',
+            '{$e->getAmount()}',
+            '{$e->getExpenseDate()}',
+            '{$e->getPaymentType()}',
+            '{$e->getNotes()}'
+        )
+    ";
+
+        error_log($sql);
+
+        return $db->query($sql);
+    }
 
 
 }
