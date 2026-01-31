@@ -100,11 +100,27 @@ if (
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["action"] !== "project_income") {
-    if ($_POST["action"] == 'credit') {
-        $admit = new Payment();
-        $admit->set_paymentid(Sanitization::test_input($_POST['id']));
-        $admit->set_creditdiscount(Sanitization::test_input($_POST["paidAmount"]));
-        DBpayment::creditdiscount($admit);
+    error_log('POST action: ' . $_POST['action']);
+    if ($_POST['action'] === 'credit') {
+        error_log('POST action: ' . $_POST['action']);
+        $custId = $_POST['custId'] ?? null;
+        $pending = $_POST['pendingAmount'] ?? null;
+
+        if (!$custId || $pending === null) {
+            error_log($custId === null ? 'custId is null' : 'custId: ' . $custId);
+            error_log($pending === null ? 'pendingAmount is null' : 'pendingAmount: ' . $pending);
+            error_log('Invalid data for credit discount');
+            echo json_encode(['status' => 'error', 'message' => 'Invalid data']);
+            exit;
+        }
+
+        DBpayment::creditdiscountByCustomer($custId, $pending);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Credit discount applied successfully'
+        ]);
+        exit;
     } else if (isset($_POST["paidamt"]) == 0) {
         $admit = new Payment();
         $admit->setQuoteCode(Sanitization::test_input($_POST["quoteid"]));
@@ -158,7 +174,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["action"] !== "project_income
         }
         DBpayment::update($admit);
     }
-    header("location:../View/customerpaymentView.php");
+    if (!$isAjax) {
+        header("location:../View/customerpaymentView.php");
+        exit;
+    }
+
 }
 
 // if (
@@ -198,6 +218,23 @@ if (
     exit;
 }
 
+if (
+    isset($_GET['action']) &&
+    $_GET['action'] === 'getCustomerInfo'
+) {
+    $custId = $_GET['custid'] ?? null;
+
+    if (!$custId) {
+        echo json_encode(['error' => 'Customer ID missing']);
+        exit;
+    }
+
+    $customer = DBpayment::getCustomerInfoById($custId);
+
+    header('Content-Type: application/json');
+    echo json_encode($customer);
+    exit;
+}
 
 
 if (isset($_GET['action']) && $_GET['action'] === 'getQuotationTotal') {

@@ -142,6 +142,38 @@ IFNULL(E.total_expense, 0) AS Expenditure
 
         return $customerList;
     }
+    public static function getCustomerInfoById($custId)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "
+        SELECT 
+            customerCode,
+            customerName,
+            customerContactNumber,
+            customerCity
+        FROM customer
+        WHERE customerCode = ?
+        LIMIT 1
+    ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $custId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($row = $result->fetch_assoc()) {
+            return [
+                'custid' => $row['customerCode'],
+                'custname' => $row['customerName'],
+                'custcontactnumber' => $row['customerContactNumber'],
+                'customerCity' => $row['customerCity']
+            ];
+        }
+
+        return [];
+    }
 
     public static function paymentcollection($viewObj)
     {
@@ -244,28 +276,21 @@ IFNULL(E.total_expense, 0) AS Expenditure
         }
     }
 
-    public static function creditdiscount($creditObj)
+    public static function creditdiscountByCustomer($custId, $discount)
     {
-        $db = ConnectDb::getInstance();
-        $connectionObj = $db->getConnection();
-        $sql = "UPDATE customerpaymentinfo SET creditDiscount='" . $creditObj->get_creditdiscount() . "' 
-                WHERE payment_id='" . $creditObj->get_paymentid() . "' ";
-        error_log($sql);
-        if ($connectionObj->query($sql) === true) {
-            $sql = "UPDATE customerpaymentinfo
-                    SET paid_amount = 0
-                    WHERE quotation_id = ?
-                    ";
-            error_log($sql);
-            if ($connectionObj->query($sql) === true) {
+        $conn = ConnectDb::getInstance()->getConnection();
 
-            } else {
-                echo "Error: " . $sql . "<br>" . $connectionObj->error;
-            }
-        } else {
-            echo "Error: " . $sql . "<br>" . $connectionObj->error;
-        }
+        $sql = "
+        UPDATE customerpaymentinfo
+        SET creditDiscount = IFNULL(creditDiscount,0) + ?
+        WHERE customer_id = ?
+    ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ds", $discount, $custId);
+        $stmt->execute();
     }
+
 
     public static function getQuotePaymentSummary($quoteid)
     {

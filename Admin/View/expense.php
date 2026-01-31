@@ -244,12 +244,17 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                         <i class='fas fa-rupee-sign'></i> Payment Updates
                     </button>
 
-                    <button class='btn btn-danger dropdown-item'
-                            data-toggle='modal'
-                            data-target='#CreditdiscountModal'
-                            data-id='" . $customer->get_custid() . "'>
-                        <i class='fas fa-percentage'></i> Credit Discount
-                    </button>
+                   <button
+    class='btn btn-danger dropdown-item credit-discount-btn'
+    data-toggle='modal'
+    data-target='#CreditdiscountModal'
+    data-custid='" . $customer->get_custid() . "'
+    data-pending='" . $customer->get_pendingamt() . "'
+>
+    <i class='fas fa-percentage'></i> Credit Discount
+</button>
+
+
 
 <button class='btn btn-primary dropdown-item view-transaction'
         data-custid='" . $customer->get_custid() . "'>
@@ -317,8 +322,9 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="3">
-                                                                    Address :<span
-                                                                        id="transactioncustomerAddress"></span>
+                                                                    Location :<span
+                                                                        id="transactioncustomerLocation"></span>
+
 
                                                                 </td>
                                                                 <td colspan="3">
@@ -601,9 +607,10 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                         <p class="lead">
                                             Are you sure. Would you like to credit discount.
                                         </p>
+                                        <input type="hidden" id="cd_custId" name="custId">
+                                        <input type="hidden" id="cd_pendingAmount" name="pendingAmount">
 
-                                        <input type="hidden" name="paymentId" id="paymentId" value="">
-                                        <input type="hidden" name="paidAmount" id="paidAmount" value="">
+
                                     </div>
                                     <div class="modal-footer">
                                         <input type="hidden" name="hidden_id" id="hidden_id" />
@@ -642,13 +649,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th style="width:60px;">S.No</th>
-                                        <th>Date</th>
                                         <th>Employee</th>
                                         <th>Amount (₹)</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Remarks</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -657,11 +659,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                     $serial = 1;
                                     foreach ($payments as $p): ?>
                                         <tr>
-                                            <td><?= $serial++; ?></td>
-                                            <td><?= $p['payment_date']; ?></td>
                                             <td><?= htmlspecialchars($p['emp_name']); ?></td>
-                                            <td>₹<?= number_format($p['amount'], 2); ?></td>
-                                            <td><?= htmlspecialchars($p['payment_type']); ?></td>
                                             <td>
                                                 <?php if ($p['status'] == 'Paid'): ?>
                                                     <span class="badge badge-success">Paid</span>
@@ -669,7 +667,6 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <span class="badge badge-warning text-dark">Pending</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td><?= nl2br(htmlspecialchars($p['remarks'])); ?></td>
                                             <td>
                                                 <div class="dropdown">
                                                     <button class="btn btn-secondary dropdown-toggle" type="button"
@@ -1176,34 +1173,21 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                         </tr>
                                                         <tr>
                                                             <td colspan="3">
-                                                                Supplier Name :<span
+                                                                Supplier Name :- <span
                                                                     id="transactionsuppliername"></span>
                                                             </td>
                                                             <td colspan="3">
-                                                                PO Code : <span id="transactionPOcode"></span>
+                                                                Location :- <span id="transactionLocation"></span>
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td colspan="3">
-                                                                Address : <span id="transactionsupplierAddress"></span>
 
-                                                            </td>
                                                             <td colspan="3">
-                                                                Date :
+                                                                Date :-
                                                                 <?php echo $date = date('d/m/Y '); ?>
                                                             </td>
                                                         </tr>
-                                                        <tr>
-                                                            <td colspan="3">
 
-
-                                                            </td>
-                                                            <td colspan="3">
-
-                                                                Total Amount : <span id="transactiontotalamt"></span>
-                                                            </td>
-                                                            <div id="POcode" style="display:none"></div>
-                                                        </tr>
                                                         <tr>
                                                             <th style="text-align:center" colspan="1">Sl</th>
                                                             <th style="text-align:center">Payment Date</th>
@@ -2040,6 +2024,16 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
     <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     <script>
+        let CD_CUST_ID = null;
+        let CD_PENDING = null;
+
+        $(document).on('click', '.credit-discount-btn', function () {
+            CD_CUST_ID = $(this).data('custid');
+            CD_PENDING = $(this).data('pending');
+
+            console.log('Captured on click:', CD_CUST_ID, CD_PENDING);
+        });
+
         console.count('EXPENSE JS LOADED');
         let seBasePaid = 0;
 
@@ -2091,13 +2085,13 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 $('#transactioncustname').text(this.cells[2].innerHTML);
                 $('#custcontactno').val(this.cells[3].innerHTML);
                 $('#transactioncustcontactno').text(this.cells[3].innerHTML);
-                $('#transactioncustomerAddress').text(this.cells[4].innerHTML);
                 $('#totalamt').val(this.cells[8].innerHTML);
                 $('#transactiontotalamt').text(this.cells[7].innerHTML);
                 $('#paidamt').val(this.cells[9].innerHTML);
                 $('#paidAmount').val(this.cells[9].innerHTML);
                 $('#pendingamt').val(this.cells[10].innerHTML);
                 $('#quoteid').val(this.cells[7].innerHTML);
+
             });
             $('#Supplier_table tbody').on('click', 'tr', function () {
 
@@ -2260,23 +2254,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 window.open(config.developmentPath + '/Admin/pdfs/customerpayment/' + fileName.trim() + '.pdf');
             });
 
-            $('#creditDiscount_form').submit(function (event) {
-                event.preventDefault();
-                $.ajax({
-                    type: "POST",
-                    url: config.developmentPath + "/Admin/Controller/customerpaymentcontroller.php/",
-                    data: {
-                        paidAmount: $('#paidAmount').val(),
-                        id: $('#paymentId').val(),
-                        action: 'credit'
-                    },
-                    success: function (data) {
-                        $('#message').html(data);
-                        $('#Customer_table').DataTable().ajax?.reload?.();
-                        setTimeout(function () { $('#message').html(''); }, 5000);
-                    }
-                });
-            });
+
 
             // ===== DUE AMOUNT (Add & Edit modals) =====
             // $(document).on("change", 'select[name="emp_id"], input[name="payment_date"]', function () {
@@ -2756,7 +2734,15 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     alert('Customer ID missing');
                     return;
                 }
-
+                $.getJSON('../Controller/customerpaymentcontroller.php', {
+                    action: 'getCustomerInfo',
+                    custid: custId
+                }, function (res) {
+                    $('#transactioncustomerLocation').text(res.customerCity || '-');
+                    $('#transactioncustname').text(res.custname);
+                    $('#transactioncustcontactno').text(res.custcontactnumber);
+                    $('#transactioncustcode').text(res.custid);
+                });
                 const tbody = $('#Transactiontable tbody');
                 tbody.empty();
 
@@ -2766,6 +2752,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     dataType: 'json',
                     data: { custid: custId },
                     success: function (data) {
+
+
 
                         if (!data || data.length === 0) {
                             tbody.append(`<tr><td colspan="5" class="text-center">No Transactions</td></tr>`);
@@ -2868,18 +2856,22 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
 
             });
-            console.log('CONFIG IS', typeof config);
 
             $(document).on('click', '.view-supplier-transaction', function () {
-                const supplierId = $(this).attr('data-supplierid'); // ✅ FIX
 
-                console.log('Supplier ID:', supplierId);
+                const supplierId = $(this).data('supplierid');
 
-                if (!supplierId) {
-                    alert('Supplier ID missing');
-                    return;
-                }
+                // 1️⃣ Fetch supplier MASTER data (correct source)
+                $.getJSON('../Controller/supplierExpenseController.php', {
+                    action: 'supplier_summary',
+                    supplier_id: supplierId
+                }, function (res) {
 
+                    $('#transactionsuppliername').text(res.item_compName || '-');
+                    $('#transactionLocation').text(res.item_compLocation || '-');
+                });
+
+                // 2️⃣ Load transaction list (existing logic – unchanged)
                 const tbody = $('#SupplierTransaction tbody');
                 tbody.empty();
 
@@ -2916,12 +2908,10 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                         $('#sup_pending').text(lastPending);
                         $('#sup_totalpaidAmount').text(totalPaid.toFixed(2));
-
                         $('#supplierTransactionModal').modal('show');
                     }
                 );
             });
-
 
 
             var dataTable = $('#Customer_table').DataTable({
@@ -3112,6 +3102,42 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     ,
                     error: function () {
                         alert('Error saving supplier expense');
+                    }
+                });
+            });
+
+            $('#CreditdiscountModal').on('show.bs.modal', function (e) {
+                const btn = $(e.relatedTarget);
+
+                const custId = btn.data('custid');
+                const pending = btn.data('pending');
+
+                // store on modal
+                $(this).data('custid', custId);
+                $(this).data('pending', pending);
+
+                console.log('CD custId:', custId);
+                console.log('CD pending:', pending);
+            });
+
+
+            $('#creditDiscount_form').on('submit', function (e) {
+                e.preventDefault();
+
+                // force values
+                $('#cd_custId').val(CD_CUST_ID);
+                $('#cd_pendingAmount').val(CD_PENDING);
+
+                console.log('Submitting:', CD_CUST_ID, CD_PENDING);
+
+                $.ajax({
+                    type: "POST",
+                    url: "../Controller/customerpaymentcontroller.php",
+                    dataType: "json",
+                    data: $(this).serialize() + '&action=credit',
+                    success: function (res) {
+                        alert(res.message);
+                        if (res.status === 'success') location.reload();
                     }
                 });
             });

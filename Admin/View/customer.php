@@ -610,7 +610,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="displaycustomerCity">Place</label>
+                                        <label for="displaycustomerCity">Location</label>
                                     </div>
                                     <div class="col-8">
                                         <p class="card-title" id="displaycustomerCity"></p>

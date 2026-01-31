@@ -137,19 +137,55 @@ $employees = DBEmployee::readAll();
             </select>
           </div>
 
-          <div class="col-md-6">
-            <label class="form-label">Salary Type</label>
-            <select name="salary_type" class="form-select">
-              <option value="Daily" <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Daily')?'selected':''; ?>>Daily</option>
-              <option value="Weekly" <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Weekly')?'selected':''; ?>>Weekly</option>
-              <option value="Monthly" <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Monthly')?'selected':''; ?>>Monthly</option>
-            </select>
-          </div>
+          <div class="row g-3">
+  <!-- Working Hours -->
+  <div class="col-md-3">
+    <label class="form-label">Working Hours</label>
+    <input type="number" name="working_hours" class="form-control"
+           step="0.5"
+           value="<?php echo $editEmp['working_hours'] ?? ''; ?>">
+  </div>
 
-          <div class="col-md-6">
-            <label class="form-label">Salary Amount (₹)</label>
-            <input type="number" name="salary_amount" class="form-control" step="0.01" value="<?php echo $editEmp['salary_amount'] ?? ''; ?>">
-          </div>
+  <!-- Salary Type -->
+  <div class="col-md-3">
+    <label class="form-label">Salary Type</label>
+    <select name="salary_type" class="form-select">
+      <option value="Daily"   <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Daily')?'selected':''; ?>>Daily</option>
+      <option value="Weekly"  <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Weekly')?'selected':''; ?>>Weekly</option>
+      <option value="Monthly" <?php echo (isset($editEmp['salary_type']) && $editEmp['salary_type']=='Monthly')?'selected':''; ?>>Monthly</option>
+    </select>
+  </div>
+
+  <!-- Salary Amount -->
+  <div class="col-md-3">
+    <label class="form-label">Salary Amount (₹)</label>
+    <input type="number" name="salary_amount" class="form-control"
+           step="0.01"
+           value="<?php echo $editEmp['salary_amount'] ?? ''; ?>">
+  </div>
+
+  <!-- Hourly -->
+  <div class="col-md-3">
+    
+
+    <div class="form-check mb-1">
+      
+      <input class="form-check-input" type="checkbox" id="is_hourly"
+             name="is_hourly"
+             <?php echo (!empty($editEmp['hourly_rate'])) ? 'checked' : ''; ?>>
+             <label class="form-label d-block">Hourly</label>
+      
+    </div>
+
+    <input type="number" name="hourly_rate" id="hourly_rate"
+           class="form-control"
+           step="0.01"
+           placeholder="₹ per hour"
+           value="<?php echo $editEmp['hourly_rate'] ?? ''; ?>"
+           <?php echo (empty($editEmp['hourly_rate'])) ? 'disabled' : ''; ?>>
+  </div>
+</div>
+
 
           <div class="col-md-6">
             <label class="form-label">Photo</label>
@@ -337,6 +373,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const collapse = bootstrap.Collapse.getOrCreateInstance(form);
     collapse.toggle();
   });
+});
+document.addEventListener("DOMContentLoaded", function () {
+  const hourlyCheckbox = document.getElementById("is_hourly");
+  const hourlyInput = document.getElementById("hourly_rate");
+
+  if (hourlyCheckbox) {
+    hourlyCheckbox.addEventListener("change", function () {
+      hourlyInput.disabled = !this.checked;
+      if (!this.checked) {
+        hourlyInput.value = "";
+      }
+    });
+  }
 });
 </script>
 </body>
