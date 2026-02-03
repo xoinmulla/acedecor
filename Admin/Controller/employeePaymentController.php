@@ -17,37 +17,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'fetch' && isset($_GET['id']))
     exit;
 }
 
-/**
- * ------------------------------
- * 2️⃣ GET DUE AMOUNT (AJAX)
- * ------------------------------
- */
-if (isset($_GET['action']) && $_GET['action'] === 'getDue' && isset($_GET['emp_id'])) {
-    header('Content-Type: application/json');
-
-    $emp_id = (int) $_GET['emp_id'];
-    $month = $_GET['month'] ?? (
-        isset($_GET['date']) ? substr($_GET['date'], 0, 7) : date('Y-m')
-    );
-
-    $due = DBEmployeePayment::getEmployeeDue($emp_id, $month);
-    echo json_encode(['due' => $due]);
-    exit;
-}
-/**
- * ------------------------------
- *  New: GET TOTAL DUE (All Time)
- * ------------------------------
- */
-if (isset($_GET['action']) && $_GET['action'] === 'getTotalDue' && isset($_GET['emp_id'])) {
-    header('Content-Type: application/json');
-
-    $emp_id = (int) $_GET['emp_id'];
-    $due = DBEmployeePayment::getTotalDue($emp_id);
-
-    echo json_encode(['due' => $due]);
-    exit;
-}
 
 /**
  * ------------------------------
@@ -81,12 +50,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $p->setRemarks($_POST['remarks'] ?? '');
 
         if ($action === 'add') {
+
             DBEmployeePayment::insert($p);
-            header("Location: ../View/expense.php?success=1#employee");
+
+            // 🔹 ALSO INSERT INTO EXPENSE TABLE
+            require_once "../DB Operations/expenseOps.php";
+            require_once "../Model/expenseModel.php";
+
+            $e = new Expense();
+            $e->setType('Expense');
+            $e->setCategory('Employee');
+            $e->setAmount($p->getAmount());
+            $e->setExpenseDate($p->getPaymentDate());
+            $e->setPaymentType($p->getPaymentType());
+            $e->setNotes('Employee Salary Payment');
+
+            DBExpense::insertEmployeeExpense($e);
+
+            echo json_encode(['status' => 'success']);
             exit;
         } elseif ($action === 'update') {
             DBEmployeePayment::update($p);
-            header("Location: ../View/expense.php?updated=1#employee");
+            echo json_encode(['status' => 'success']);
             exit;
         }
     }
@@ -107,4 +92,26 @@ if (isset($_GET['delete'])) {
     header("Location: ../View/expense.php?deleted=1#employee");
     exit;
 }
+require_once "../DB Operations/monthlyReportOps.php";
+
+if (isset($_GET['action']) && $_GET['action'] === 'getEmployeeSummary') {
+    header('Content-Type: application/json');
+
+    if (!empty($_GET['emp_id'])) {
+        $s = DBMonthlyReport::getEmployeeSummary((int) $_GET['emp_id']);
+
+        echo json_encode([
+            'total_amount' => $s['total_amount'],
+            'paid_amount' => $s['paid_amount'],
+            'balance' => $s['balance']
+        ]);
+
+    } else {
+        echo json_encode(DBEmployeePayment::getEmployeeSummary());
+    }
+    exit;
+}
+
+
+
 

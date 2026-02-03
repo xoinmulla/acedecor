@@ -17,12 +17,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $emp->setSalaryAmount($_POST['salary_amount']);
         $emp->setWeeklyOffDay($_POST['weekly_off_day']);
         $emp->setNotes($_POST['notes']);
+        $emp->setWorkingHours($_POST['working_hours'] ?? 8);
+        // ✅ Hourly handling
+        if (isset($_POST['is_hourly']) && $_POST['is_hourly'] == 'on') {
+            $emp->setHourlyRate($_POST['hourly_rate'] ?? null);
+        } else {
+            $emp->setHourlyRate(null);
+        }
+
 
         // ✅ Photo upload (unchanged)
         $photoPath = $_POST['old_photo'] ?? "";
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
             $targetDir = "../uploads/employee/";
-            if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
+            if (!file_exists($targetDir))
+                mkdir($targetDir, 0777, true);
             $photoName = time() . "_" . basename($_FILES['photo']['name']);
             $targetFile = $targetDir . $photoName;
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFile)) {

@@ -26,13 +26,18 @@ class DBEmployee
         $notes = $e->getNotes();
         $photo = $e->getPhoto();
         $weekly_off_day = $e->getWeeklyOffDay();
+        $working_hours = $e->getWorkingHours();
+        $hourly_rate = $e->getHourlyRate();
+
+
 
         $stmt = $conn->prepare("INSERT INTO employee 
-            (name, designation, contact, email, address, doj, salary_type, salary_amount, notes, photo, weekly_off_day)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+(name, designation, contact, email, address, doj, salary_type, salary_amount, hourly_rate, working_hours, notes, photo, weekly_off_day)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
 
         $stmt->bind_param(
-            "sssssssdsss",
+            "sssssssddisss",
             $name,
             $designation,
             $contact,
@@ -41,6 +46,8 @@ class DBEmployee
             $doj,
             $salary_type,
             $salary_amount,
+            $hourly_rate,
+            $working_hours,
             $notes,
             $photo,
             $weekly_off_day
@@ -68,6 +75,8 @@ class DBEmployee
         $notes = $e->getNotes();
         $photo = $e->getPhoto();
         $weekly_off_day = $e->getWeeklyOffDay();
+        $working_hours = $e->getWorkingHours();
+        $hourly_rate = $e->getHourlyRate();
 
         $stmt = $conn->prepare("UPDATE employee SET 
             name=?, 
@@ -78,13 +87,15 @@ class DBEmployee
             doj=?, 
             salary_type=?, 
             salary_amount=?, 
+            hourly_rate=?, 
+            working_hours=?, 
             notes=?, 
             photo=?, 
             weekly_off_day=? 
             WHERE id=?");
 
         $stmt->bind_param(
-            "sssssssdsssi",
+            "sssssssddisssi",
             $name,
             $designation,
             $contact,
@@ -93,6 +104,8 @@ class DBEmployee
             $doj,
             $salary_type,
             $salary_amount,
+            $hourly_rate,
+            $working_hours,
             $notes,
             $photo,
             $weekly_off_day,

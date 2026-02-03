@@ -14,58 +14,158 @@ class Employee implements JsonSerializable
     private $photo;
     private $createdOn;
     private $weekly_off_day;
+    private $working_hours;
+    private $hourly_rate;
+
+    public function setHourlyRate($rate)
+    {
+        $this->hourly_rate = $rate;
+    }
+    public function getHourlyRate()
+    {
+        return $this->hourly_rate;
+    }
+
+    // --- Working Hours ---
+    public function setWorkingHours($hours)
+    {
+        $this->working_hours = $hours;
+    }
+
+    public function getWorkingHours()
+    {
+        return $this->working_hours;
+    }
 
     // --- Weekly Off Day ---
-    public function getWeeklyOffDay() { return $this->weekly_off_day; }
-    public function setWeeklyOffDay($weekly_off_day) { $this->weekly_off_day = $weekly_off_day; }
+    public function getWeeklyOffDay()
+    {
+        return $this->weekly_off_day;
+    }
+    public function setWeeklyOffDay($weekly_off_day)
+    {
+        $this->weekly_off_day = $weekly_off_day;
+    }
 
     // --- ID ---
-    public function getId() { return $this->id; }
-    public function setId($id) { $this->id = $id; }
+    public function getId()
+    {
+        return $this->id;
+    }
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
 
     // --- Name ---
-    public function getName() { return $this->name; }
-    public function setName($name) { $this->name = $name; }
+    public function getName()
+    {
+        return $this->name;
+    }
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
     // --- Designation ---
-    public function getDesignation() { return $this->designation; }
-    public function setDesignation($designation) { $this->designation = $designation; }
+    public function getDesignation()
+    {
+        return $this->designation;
+    }
+    public function setDesignation($designation)
+    {
+        $this->designation = $designation;
+    }
 
     // --- Contact ---
-    public function getContact() { return $this->contact; }
-    public function setContact($contact) { $this->contact = $contact; }
+    public function getContact()
+    {
+        return $this->contact;
+    }
+    public function setContact($contact)
+    {
+        $this->contact = $contact;
+    }
 
     // --- Email ---
-    public function getEmail() { return $this->email; }
-    public function setEmail($email) { $this->email = $email; }
+    public function getEmail()
+    {
+        return $this->email;
+    }
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    }
 
     // --- ✅ Address ---
-    public function getAddress() { return $this->address; }
-    public function setAddress($address) { $this->address = $address; }
+    public function getAddress()
+    {
+        return $this->address;
+    }
+    public function setAddress($address)
+    {
+        $this->address = $address;
+    }
 
     // --- DOJ ---
-    public function getDoj() { return $this->doj; }
-    public function setDoj($doj) { $this->doj = $doj; }
+    public function getDoj()
+    {
+        return $this->doj;
+    }
+    public function setDoj($doj)
+    {
+        $this->doj = $doj;
+    }
 
     // --- Salary Type ---
-    public function getSalaryType() { return $this->salaryType; }
-    public function setSalaryType($salaryType) { $this->salaryType = $salaryType; }
+    public function getSalaryType()
+    {
+        return $this->salaryType;
+    }
+    public function setSalaryType($salaryType)
+    {
+        $this->salaryType = $salaryType;
+    }
 
     // --- Salary Amount ---
-    public function getSalaryAmount() { return $this->salaryAmount; }
-    public function setSalaryAmount($salaryAmount) { $this->salaryAmount = $salaryAmount; }
+    public function getSalaryAmount()
+    {
+        return $this->salaryAmount;
+    }
+    public function setSalaryAmount($salaryAmount)
+    {
+        $this->salaryAmount = $salaryAmount;
+    }
 
     // --- Notes ---
-    public function getNotes() { return $this->notes; }
-    public function setNotes($notes) { $this->notes = $notes; }
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+    }
 
     // --- Photo ---
-    public function getPhoto() { return $this->photo; }
-    public function setPhoto($photo) { $this->photo = $photo; }
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+    }
 
     // --- Created On ---
-    public function getCreatedOn() { return $this->createdOn; }
-    public function setCreatedOn($createdOn) { $this->createdOn = $createdOn; }
+    public function getCreatedOn()
+    {
+        return $this->createdOn;
+    }
+    public function setCreatedOn($createdOn)
+    {
+        $this->createdOn = $createdOn;
+    }
 
     public function jsonSerialize(): mixed
     {

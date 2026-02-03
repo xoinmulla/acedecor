@@ -1,6 +1,6 @@
 <?php
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 
 
 require_once "../Model/customerpaymentmodel.php";
@@ -29,8 +29,12 @@ if (
     try {
         $pay = new Payment();
 
-        $quoteId = trim(Sanitization::test_input($_POST["quoteid"]));
+        $quoteId = isset($_POST["quoteid"])
+            ? trim(Sanitization::test_input($_POST["quoteid"]))
+            : null;
+
         $pay->setQuoteCode($quoteId);
+
         $pay->set_custid(Sanitization::test_input($_POST["custid"]));
         $pay->set_custname(Sanitization::test_input($_POST["custname"]));
 
@@ -51,6 +55,7 @@ if (
 
         // ================= ADD TO EXPENSE TABLE (PROJECT INCOME) =================
         $expense = new Expense();
+        $expense->setCategory('Customer');
 
         $expense->setSubcategoryId(0);                 // Projects (no subcategory)
         $expense->setSubcategoryName('Projects');
@@ -64,10 +69,8 @@ if (
 
 
         if ($isAjax) {
-            $summary = DBpayment::getProjectPaymentSummary(
-                $_POST['quoteid'],
-                $_POST['custid']
-            );
+            $summary = DBpayment::getCustomerApprovedProjectSummary($_POST['custid']);
+
 
 
             echo json_encode([

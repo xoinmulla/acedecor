@@ -200,6 +200,72 @@ class DBMonthlyReport
 
         return $total_due;
     }
+    // ================= EMPLOYEE SALARY SUMMARY (ALL TIME) =================
+    public static function getEmployeeSummary($emp_id)
+    {
+        $conn = self::getConn();
+
+        // 1️⃣ TOTAL DUE (attendance-based, all months)
+        $att_q = $conn->prepare("
+        SELECT DISTINCT DATE_FORMAT(date,'%Y-%m') AS month
+        FROM attendance
+        WHERE emp_id=?
+    ");
+        $att_q->bind_param("i", $emp_id);
+        $att_q->execute();
+        $months = $att_q->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $total_due = 0;
+        foreach ($months as $m) {
+            $month = $m['month'];
+            $reports = self::getReport($month);
+            foreach ($reports as $r) {
+                if ($r->emp_id == $emp_id) {
+                    $total_due += $r->due_amount;
+                }
+            }
+        }
+
+        // 2️⃣ TOTAL PAID (ALL payments, NO date filter)
+        $pay_q = $conn->prepare("
+        SELECT COALESCE(SUM(amount),0) AS paid
+        FROM employee_payment
+        WHERE emp_id=?
+    ");
+        $pay_q->bind_param("i", $emp_id);
+        $pay_q->execute();
+        $total_paid = (float) $pay_q->get_result()->fetch_assoc()['paid'];
+
+        return [
+            'total_amount' => round($total_due, 2),
+            'paid_amount' => round($total_paid, 2),
+            'balance' => round($total_due - $total_paid, 2)
+        ];
+    }
+
+    // ================= EMPLOYEE SUMMARY (ALL EMPLOYEES | ALL TIME) =================
+    public static function getAllEmployeeSummary()
+    {
+        $conn = self::getConn();
+        $employees = $conn->query("SELECT id, name FROM employee")->fetch_all(MYSQLI_ASSOC);
+
+        $result = [];
+
+        foreach ($employees as $emp) {
+            $summary = self::getEmployeeSummary($emp['id']);
+
+            $result[] = [
+                'emp_id' => $emp['id'],
+                'emp_name' => $emp['name'],
+                'total_amount' => $summary['total_amount'],
+                'paid_amount' => $summary['paid_amount'],
+                'balance' => $summary['balance'],
+            ];
+
+        }
+
+        return $result;
+    }
 
 }
 ?>

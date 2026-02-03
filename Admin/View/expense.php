@@ -15,9 +15,9 @@ require_once("../DB Operations/projectOps.php");
 require_once("../DB Operations/supplierpaymentOps.php");
 
 $employees = DBEmployee::readAll();
-$payments = DBEmployeePayment::readAll();
+$payments = DBEmployeePayment::getEmployeeSummary();
 $expenses = DBExpense::readAll();
-$generalSubcategories = DBGeneralSubcategory::getAll(); // 🔥 THIS WAS MISSING
+$generalSubcategories = DBGeneralSubcategory::getAll();
 $approvedCustomers = DBpayment::getCustomersWithApprovedQuotes();
 $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 ?>
@@ -80,7 +80,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Category</th>
-                                <th>Subcategory</th>
+                                <!-- <th>Subcategory</th> -->
                                 <th>Amount (₹)</th>
                                 <th>Payment Mode</th>
                                 <th>Notes</th>
@@ -95,14 +95,24 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 $typeRaw = $exp['type'] ?? '';
                                 $type = trim($typeRaw);
 
+                                // ✅ Infer type if missing
                                 if ($type === '') {
-                                    $type = 'N/A';
-                                    $badgeClass = 'bg-secondary';
-                                } elseif ($type === 'Income') {
-                                    $badgeClass = 'bg-success';
-                                } else {
-                                    $badgeClass = 'bg-danger';
+                                    if (strtolower($catName) === 'customer') {
+                                        $type = 'Income';
+                                    } else {
+                                        $type = 'Expense';
+                                    }
                                 }
+
+                                // Badge color
+                                if ($type === 'Income') {
+                                    $badgeClass = 'bg-success';
+                                } elseif ($type === 'Expense') {
+                                    $badgeClass = 'bg-danger';
+                                } else {
+                                    $badgeClass = 'bg-secondary';
+                                }
+
 
                                 $subcategory = 'N/A';
 
@@ -127,7 +137,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                     </td>
 
                                     <td><?= $catName; ?></td>
-                                    <td><?= $subcategory; ?></td>
+                                    <!-- <td><?= $subcategory; ?></td> -->
 
 
                                     <td>₹<?= number_format($exp['amount'], 2); ?></td>
@@ -650,51 +660,16 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 <thead>
                                     <tr>
                                         <th>Employee</th>
-                                        <th>Amount (₹)</th>
-                                        <th>Actions</th>
+                                        <th>Due (₹)</th>
+                                        <th>Paid (₹)</th>
+                                        <th>Balance (₹)</th>
+                                        <!-- <th>Actions</th> -->
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <?php
-                                    $serial = 1;
-                                    foreach ($payments as $p): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($p['emp_name']); ?></td>
-                                            <td>
-                                                <?php if ($p['status'] == 'Paid'): ?>
-                                                    <span class="badge badge-success">Paid</span>
-                                                <?php else: ?>
-                                                    <span class="badge badge-warning text-dark">Pending</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <div class="dropdown">
-                                                    <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                        data-toggle="dropdown" aria-expanded="false">
-                                                        Actions
-                                                    </button>
-                                                    <div class="dropdown-menu">
-                                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                                            data-target="#editPaymentModal" data-id="<?= $p['id']; ?>">
-                                                            <i class="fas fa-edit"></i> Edit
-                                                        </button>
-                                                        <button class="btn btn-danger dropdown-item delete-btn"
-                                                            data-toggle="modal" data-target="#deletePaymentModal"
-                                                            data-id="<?= $p['id']; ?>">
-                                                            <i class="fas fa-trash-alt"></i> Delete
-                                                        </button>
+                                <tbody id="employeePaymentBody"></tbody>
 
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                    <?php if (empty($payments)): ?>
-                                        <tr>
-                                            <td colspan="8" class="text-center text-muted">No payments found.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
+
+
                             </table>
                         </div>
                     </div>
@@ -1490,7 +1465,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
     <!-- ===================== SALARY EXPENSE MODAL ===================== -->
     <div class="modal fade" id="salaryExpenseModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <form method="POST" action="../Controller/employeePaymentController.php">
+            <form id="employeePaymentForm">
+
                 <input type="hidden" name="action" value="add">
                 <input type="hidden" name="type" id="salary_expense_type">
                 <div class="modal-content shadow-lg rounded-4">
@@ -1551,7 +1527,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 <label class="form-label fw-medium">Status</label>
                                 <select name="status" class="form-select form-select-lg">
                                     <option>Paid</option>
-                                    <option>Pending</option>
+                                    <!-- <option>Pending</option> -->
                                 </select>
                             </div>
 
@@ -1577,6 +1553,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
             </form>
         </div>
     </div>
+    <!-- ===================== PROJECT INCOME MODAL ===================== -->
     <div class="modal fade" id="projectIncomeModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <form method="POST" action="../Controller/customerpaymentcontroller.php">
@@ -1748,6 +1725,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
             </form>
         </div>
     </div>
+    <!-- ===================== PROJECT EXPENSE MODAL ===================== -->
     <div class="modal fade" id="projectExpenseModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <form id="projectExpenseForm" method="POST" action="../Controller/expenseController.php">
@@ -1902,6 +1880,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
             </form>
         </div>
     </div>
+    <!-- ===================== SUPPLIER EXPENSE MODAL ===================== -->
     <div class="modal fade" id="supplierExpenseModal" tabindex="-1">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <form id="supplierExpenseForm" method="POST" action="../Controller/expenseController.php">
@@ -2044,6 +2023,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 order: [[0, "desc"]],
                 columnDefs: [{ orderable: false, targets: [6] }]
             });
+
 
             // Category -> Type (Add)
             const addCat = document.getElementById("addCategorySelect");
@@ -2290,13 +2270,13 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     const month = (payDate.val() || new Date().toISOString().slice(0, 10)).slice(0, 7);
 
-                    $.getJSON('../Controller/employeePaymentController.php',
-                        { action: 'getDue', emp_id: empId, month: month },
-                        function (data) {
-                            const v = parseFloat(data.due);
-                            dueField.val(isFinite(v) ? '₹ ' + v.toFixed(2) : '₹ 0.00');
-                        }
-                    );
+                    // $.getJSON('../Controller/employeePaymentController.php',
+                    //     { action: 'getDue', emp_id: empId, month: month },
+                    //     function (data) {
+                    //         const v = parseFloat(data.due);
+                    //         dueField.val(isFinite(v) ? '₹ ' + v.toFixed(2) : '₹ 0.00');
+                    //     }
+                    // );
                 }
 
                 empSelect.off('change').on('change', updateDue);
@@ -3142,6 +3122,103 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 });
             });
 
+            // ================= EMPLOYEE DUE AMOUNT (FIXED) =================
+            $(document).on('change', 'select[name="emp_id"]', function () {
+                const empId = $(this).val();
+                const modal = $('#salaryExpenseModal');
+
+                if (!empId) return;
+
+                $.getJSON('../Controller/employeePaymentController.php', {
+                    action: 'getEmployeeSummary',
+                    emp_id: empId
+                }, function (res) {
+
+                    // ✅ Show due amount only
+                    modal.find('input[name="due_amount"]').val('₹ ' + res.balance.toFixed(2));
+
+                    // ❌ DO NOT auto-fill amount
+                    modal.find('input[name="amount"]').val('');
+                });
+            });
+
+            function loadEmployeePaymentTable() {
+                $.getJSON('../Controller/employeePaymentController.php', {
+                    action: 'getEmployeeSummary'
+                }, function (data) {
+
+                    const tbody = $('#employeePaymentBody');
+                    tbody.empty();
+
+                    data.forEach(row => {
+                        tbody.append(`
+                <tr>
+                    <td>${row.emp_name}</td>
+                    <td>₹ ${row.total_amount.toFixed(2)}</td>
+                    <td class="text-success">₹ ${row.paid_amount.toFixed(2)}</td>
+                    <td class="${row.balance <= 0 ? 'text-success' : 'text-danger'}">
+                        ₹ ${row.balance.toFixed(2)}
+                    </td>
+                </tr>
+            `);
+                    });
+
+                    // ✅ INIT DATATABLE AFTER ROWS ARE ADDED
+                    initEmployeePaymentDataTable();
+                });
+            }
+
+
+            // load on page open
+            $(document).ready(loadEmployeePaymentTable);
+
+            // reload after payment added
+            $('#salaryExpenseModal form').on('submit', function () {
+                setTimeout(loadEmployeePaymentTable, 500);
+            });
+            $('#employeePaymentForm').on('submit', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '../Controller/employeePaymentController.php',
+                    type: 'POST',
+                    data: $(this).serialize() + '&action=add',
+                    success: function () {
+
+                        // ✅ close modal
+                        $('#addPaymentModal').modal('hide');
+
+                        // ✅ reload employee table
+                        loadEmployeePaymentTable();
+
+                        // ✅ reset form
+                        $('#employeePaymentForm')[0].reset();
+
+                        alert('Payment added successfully');
+                    },
+                    error: function (xhr) {
+                        console.error(xhr.responseText);
+                        alert('Failed to add payment');
+                    }
+                });
+            });
+            let employeePaymentDT = null;
+
+            function initEmployeePaymentDataTable() {
+                if ($.fn.DataTable.isDataTable('#employee_payment_table')) {
+                    employeePaymentDT.destroy();
+                }
+
+                employeePaymentDT = $('#employee_payment_table').DataTable({
+                    pageLength: 10,
+                    lengthMenu: [5, 10, 25, 50],
+                    ordering: true,
+                    searching: true,
+                    info: true,
+                    responsive: true,
+                    order: [[1, "desc"]] // Due column
+                });
+            }
 
         });
     </script>

@@ -27,7 +27,8 @@ class DBExpense
         $notes = $e->getNotes();
         $type = $e->getType();
 
-        $category = $e->getType() === 'Income' ? 'Projects' : 'General';
+        $category = $e->getCategory();
+
 
         $stmt->bind_param(
             "sisdssss",
@@ -163,6 +164,26 @@ class DBExpense
             $payment_type,
             $notes,
             $type
+        );
+
+        return $stmt->execute();
+    }
+    public static function insertEmployeeExpense(Expense $e)
+    {
+        $conn = self::getConn();
+
+        $stmt = $conn->prepare("
+        INSERT INTO expense
+        (type, category, amount, expense_date, payment_type, notes)
+        VALUES ('Expense', 'Employee', ?, ?, ?, ?)
+    ");
+
+        $stmt->bind_param(
+            "dsss",
+            $e->getAmount(),
+            $e->getExpenseDate(),
+            $e->getPaymentType(),
+            $e->getNotes()
         );
 
         return $stmt->execute();
