@@ -74,11 +74,11 @@ if (session_status() === PHP_SESSION_NONE) {
                 <i class="fas fa-user-astronaut"></i>
                     <span>Customers Payment</span></a>
             </li> -->
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="supplierpaymentView.php">
                     <i class="fas fa-store-alt"></i>
                     <span>Suppliers Payment </span></a>
-            </li>
+            </li> -->
             <!-- <li class="nav-item">
                 <a class="nav-link" href="employeePayment.php?action=list">
                 <i class="fas fa-user-tie"></i>

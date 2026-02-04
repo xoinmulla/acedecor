@@ -109,14 +109,23 @@ $attendanceListPage = array_slice($attendanceList, $startIndex, $recordsPerPage)
             <div class="col-md-6">
               <label class="form-label">Employee</label>
               <select name="emp_id" id="empSelect" class="form-select" required>
-                <option value="">Select Employee</option>
-                <?php foreach ($employees as $emp): ?>
-                  <option value="<?php echo $emp['id']; ?>" data-hours="<?php echo $emp['working_hours']; ?>"
-                    data-hourly="<?php echo (!empty($emp['hourly_rate']) && $emp['hourly_rate'] > 0) ? 1 : 0; ?>">
-                    <?php echo htmlspecialchars($emp['name']); ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
+  <option value="">Select Employee</option>
+
+  <?php foreach ($employees as $emp): ?>
+    <?php
+      $selected = ($editAtt && $editAtt['emp_id'] == $emp['id']) ? 'selected' : '';
+    ?>
+    <option 
+      value="<?php echo $emp['id']; ?>"
+      data-hours="<?php echo $emp['working_hours']; ?>"
+      data-hourly="<?php echo (!empty($emp['hourly_rate']) && $emp['hourly_rate'] > 0) ? 1 : 0; ?>"
+      <?php echo $selected; ?>
+    >
+      <?php echo htmlspecialchars($emp['name']); ?>
+    </option>
+  <?php endforeach; ?>
+</select>
+
             </div>
 
             <div class="col-md-6">

@@ -164,9 +164,7 @@ if ($viewType === 'monthly') {
                     <div class="modal-body">
                       <div class="card shadow-sm">
                         <div class="card-body">
-                          <p><strong>Salary Type:</strong> <?= $r->salary_type ?> /
-                            <?= number_format($r->salary_amount, 2) ?>
-                          </p>
+                          
                           <!-- <p><strong>Rate (₹):</strong> </p> -->
                           <p><strong>Full Days:</strong> <?= $r->full_days ?></p>
                           <p><strong>Half Days:</strong> <?= $r->half_days ?></p>
@@ -175,6 +173,9 @@ if ($viewType === 'monthly') {
                           <p><strong>OT Hours:</strong> <?= number_format($r->ot_hours, 2) ?></p>
                           <p><strong>OT Pay (₹):</strong> ₹<?= number_format($r->ot_pay, 2) ?></p>
                           <hr>
+                          <p><strong>Salary Type:</strong> <?= $r->salary_type ?> /
+                            <?= number_format($r->salary_amount, 2) ?>
+                          </p>
                           <p><strong>Due (₹):</strong> ₹<?= number_format($r->due_amount, 2) ?></p>
                           <p><strong>Paid (₹):</strong> ₹<?= number_format($r->paid_amount, 2) ?></p>
                           <p><strong>Balance (₹):</strong>

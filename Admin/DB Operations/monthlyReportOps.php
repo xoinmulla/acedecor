@@ -205,7 +205,11 @@ class DBMonthlyReport
     {
         $conn = self::getConn();
 
-        // 1️⃣ TOTAL DUE (attendance-based, all months)
+        /* ===============================
+           1️⃣ TOTAL DUE (Attendance based)
+           =============================== */
+
+        // 🔹 Monthly-based due (fixed salary / OT / etc)
         $att_q = $conn->prepare("
         SELECT DISTINCT DATE_FORMAT(date,'%Y-%m') AS month
         FROM attendance
@@ -216,17 +220,41 @@ class DBMonthlyReport
         $months = $att_q->get_result()->fetch_all(MYSQLI_ASSOC);
 
         $total_due = 0;
+
         foreach ($months as $m) {
             $month = $m['month'];
             $reports = self::getReport($month);
+
             foreach ($reports as $r) {
                 if ($r->emp_id == $emp_id) {
-                    $total_due += $r->due_amount;
+                    $total_due += (float) $r->due_amount;
                 }
             }
         }
 
-        // 2️⃣ TOTAL PAID (ALL payments, NO date filter)
+        /* ===============================
+           2️⃣ HOURLY SALARY FROM ATTENDANCE
+           =============================== */
+
+        $hourlyQ = $conn->prepare("
+        SELECT 
+            COALESCE(SUM(a.worked_hours * e.hourly_rate), 0) AS total
+        FROM attendance a
+        JOIN employee e ON e.id = a.emp_id
+        WHERE a.emp_id = ?
+          AND e.hourly_rate > 0
+    ");
+        $hourlyQ->bind_param("i", $emp_id);
+        $hourlyQ->execute();
+        $hourlySalary = (float) $hourlyQ->get_result()->fetch_assoc()['total'];
+
+        // ✅ Add hourly salary to total due
+        $total_due += $hourlySalary;
+
+        /* ===============================
+           3️⃣ TOTAL PAID (All payments)
+           =============================== */
+
         $pay_q = $conn->prepare("
         SELECT COALESCE(SUM(amount),0) AS paid
         FROM employee_payment
@@ -236,12 +264,17 @@ class DBMonthlyReport
         $pay_q->execute();
         $total_paid = (float) $pay_q->get_result()->fetch_assoc()['paid'];
 
+        /* ===============================
+           4️⃣ FINAL SUMMARY
+           =============================== */
+
         return [
             'total_amount' => round($total_due, 2),
             'paid_amount' => round($total_paid, 2),
             'balance' => round($total_due - $total_paid, 2)
         ];
     }
+
 
     // ================= EMPLOYEE SUMMARY (ALL EMPLOYEES | ALL TIME) =================
     public static function getAllEmployeeSummary()

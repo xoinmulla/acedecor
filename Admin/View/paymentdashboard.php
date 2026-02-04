@@ -355,6 +355,13 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
         </li>
 
         <li class="nav-item">
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="">
+            <i class="fas fa-solid fa-money-check-dollar"></i>
+            <span>Profit & Loss</span>
+          </button>
+        </li>
+
+        <li class="nav-item">
           <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-ien">
             <i class="fas fa-chart-pie"></i>
             <span>IEN</span>
