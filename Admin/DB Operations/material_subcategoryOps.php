@@ -138,5 +138,19 @@ class DBMaterialsubcategory
                 </div>";
     }
   }
+  public static function canDelete($subCatId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $q = $conn->prepare("SELECT COUNT(*) FROM material WHERE SubCategory=?");
+    $q->bind_param("i", $subCatId);
+    $q->execute();
+    $q->bind_result($count);
+    $q->fetch();
+    $q->close();
+
+    return ($count == 0);
+  }
 
 }

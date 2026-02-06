@@ -259,5 +259,28 @@ class DBMaterialcategory
                 </div>";
     }
   }
+  public static function canDelete($materialcatId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    // check material
+    $q1 = $conn->prepare("SELECT COUNT(*) FROM material WHERE Category=?");
+    $q1->bind_param("i", $materialcatId);
+    $q1->execute();
+    $q1->bind_result($c1);
+    $q1->fetch();
+    $q1->close();
+
+    // check subcategory
+    $q2 = $conn->prepare("SELECT COUNT(*) FROM material_subcategory WHERE material_catId=?");
+    $q2->bind_param("i", $materialcatId);
+    $q2->execute();
+    $q2->bind_result($c2);
+    $q2->fetch();
+    $q2->close();
+
+    return ($c1 == 0 && $c2 == 0);
+  }
 
 }

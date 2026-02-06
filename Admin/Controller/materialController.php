@@ -35,6 +35,33 @@ if (isset($_GET['matInfoId'])) {
     DBmaterialdetails::getMaterialWithInwardHistory($matId);
 }
 
+/* ======================================================
+   CHECK MATERIAL DELETE POSSIBILITY (AJAX)
+====================================================== */
+if (isset($_GET['checkDelete']) && isset($_GET['id'])) {
+
+    $id = (int) $_GET['id'];
+
+    if (DBmaterialdetails::isUsedInQuotation($id)) {
+        echo json_encode([
+            "blocked" => true,
+            "message" => "Material is already used in Quotation"
+        ]);
+        exit;
+    }
+
+    if (DBmaterialdetails::isUsedInPO($id)) {
+        echo json_encode([
+            "blocked" => true,
+            "message" => "Material is already used in Purchase Order"
+        ]);
+        exit;
+    }
+
+    echo json_encode(["blocked" => false]);
+    exit;
+}
+
 
 /* ======================================================
    POST REQUESTS
@@ -110,44 +137,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // ---------- DELETE MATERIAL ----------
-    // Accept a few possible param names (id, materialId, materialid, hidden_id)
-    $deleteId = null;
-    if (isset($_POST['action']) && strtolower(trim($_POST['action'])) === 'delete') {
-        if (isset($_POST['id']) && $_POST['id'] !== '') {
-            $deleteId = (int) Sanitization::test_input($_POST['id']);
-        } elseif (isset($_POST['materialId']) && $_POST['materialId'] !== '') {
-            $deleteId = (int) Sanitization::test_input($_POST['materialId']);
-        } elseif (isset($_POST['materialid']) && $_POST['materialid'] !== '') {
-            $deleteId = (int) Sanitization::test_input($_POST['materialid']);
-        } elseif (isset($_POST['hidden_id']) && $_POST['hidden_id'] !== '') {
-            $deleteId = (int) Sanitization::test_input($_POST['hidden_id']);
+    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+
+        $id = (int) Sanitization::test_input($_POST['id']);
+
+        // 🔒 SAFETY CHECKS
+        if (DBmaterialdetails::isUsedInQuotation($id)) {
+            jsonResponse([
+                "status" => "blocked",
+                "message" => "❌ Cannot delete: Material is used in Quotation"
+            ]);
         }
 
-        if ($deleteId !== null) {
-            try {
-                DBmaterialdetails::delete($deleteId);
-                jsonResponse(["status" => "success", "message" => "Material deleted"]);
-            } catch (Exception $e) {
-                jsonResponse(["status" => "error", "message" => "Delete failed: " . $e->getMessage()], 500);
-            }
-        } else {
-            jsonResponse(["status" => "error", "message" => "No id provided for delete"], 400);
+        if (DBmaterialdetails::isUsedInPO($id)) {
+            jsonResponse([
+                "status" => "blocked",
+                "message" => "❌ Cannot delete: Material is used in Purchase Order"
+            ]);
         }
+
+        // ✅ Safe to delete
+        DBmaterialdetails::delete($id);
+        jsonResponse([
+            "status" => "success",
+            "message" => "Material deleted successfully"
+        ]);
     }
 
-    // Also allow forms that send materialId without action (older code variants)
-    if ((isset($_POST['materialId']) || isset($_POST['materialid'])) && !isset($_POST['editedmaterialname'])) {
-        // if this POST is intended for delete but missing 'action', treat it as delete request
-        $mid = isset($_POST['materialId']) ? (int) Sanitization::test_input($_POST['materialId']) : (int) Sanitization::test_input($_POST['materialid']);
-        if ($mid) {
-            try {
-                DBmaterialdetails::delete($mid);
-                jsonResponse(["status" => "success", "message" => "Material deleted"]);
-            } catch (Exception $e) {
-                jsonResponse(["status" => "error", "message" => "Delete failed: " . $e->getMessage()], 500);
-            }
-        }
-    }
 
     // ---------- INSERT MATERIAL ----------
     // If code reaches here, it is an insert request

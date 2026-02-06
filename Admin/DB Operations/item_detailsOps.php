@@ -120,16 +120,25 @@ class DBitemdetails
     I.item_totalMRP AS totalMRP,
 
     -- 🔒 DELETE-PROTECTION FLAG
-    CASE 
-        WHEN EXISTS (
-            SELECT 1
-            FROM quotelineitem qli
-            JOIN quotation_details qd ON qd.quoteid = qli.quoteId
-            WHERE qli.itemId = I.item_id
-              AND qd.quo_status = 'Approved'
-        )
-        THEN 1 ELSE 0
-    END AS IsUsedInApprovedQuotation
+    -- 🔒 USED IN ANY QUOTATION (ANY STATUS)
+CASE 
+    WHEN EXISTS (
+        SELECT 1
+        FROM quotelineitem qli
+        WHERE qli.itemId = I.item_id
+    )
+    THEN 1 ELSE 0
+END AS IsUsedInQuotation,
+-- 🔒 USED IN ANY PURCHASE ORDER
+CASE 
+    WHEN EXISTS (
+        SELECT 1
+        FROM purchaseorder_lineitem pli
+        WHERE pli.Item_id = I.item_id
+    )
+    THEN 1 ELSE 0
+END AS IsUsedInPO
+
 
 FROM item_details I
 JOIN item_category C ON I.item_catid = C.item_catid 
@@ -180,7 +189,8 @@ GROUP BY I.item_id";
         $view->set_itemDiscount($row["Discount"]);
         $view->set_itemPrice($row["Price"]);
         $view->set_itemTotalValue($row["TotalValue"]);
-        $view->set_isUsedInApprovedQuotation($row['IsUsedInApprovedQuotation']);
+        $view->set_isUsedInQuotation($row['IsUsedInQuotation']);
+        $view->set_isUsedInPO($row['IsUsedInPO']);
 
         array_push($itemdetailslist, $view);
       }
@@ -189,6 +199,31 @@ GROUP BY I.item_id";
     }
 
     return $itemdetailslist;
+  }
+  public static function isItemUsedInQuotation($itemId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare(
+      "SELECT COUNT(*) AS total FROM quotelineitem WHERE itemId = ?"
+    );
+    $stmt->bind_param("i", $itemId);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc()['total'] > 0;
+  }
+
+  public static function isItemUsedInPO($itemId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare(
+      "SELECT COUNT(*) AS total FROM purchaseorder_lineitem WHERE Item_id = ?"
+    );
+    $stmt->bind_param("i", $itemId);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc()['total'] > 0;
   }
 
   public static function getallItemdetailsbasedonID($Itemid)

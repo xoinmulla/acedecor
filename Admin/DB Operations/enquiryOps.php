@@ -26,7 +26,7 @@ class DBenq
         $enqModel->set_isCustomerCreated($row["isCustomerCreated"]);
         $enqModel->setStatus($row["enqStatus"]);
         // $enqModel->set_enqmodifiedby($row["enq_modifiedBy"]);
-        $enqModel->setCreatedDate(date('m/d/Y',strtotime($row["enq_createdOn"])));
+        $enqModel->setCreatedDate(date('m/d/Y', strtotime($row["enq_createdOn"])));
         $enqModel->set_interestList(DBenqCatMapping::getCategoryForEnq($row["enqid"]));
         array_push($enquiryList, $enqModel);
       }
@@ -59,17 +59,17 @@ class DBenq
       echo "0 results";
     }
     return $enquirylist;
-    
+
   }
   public static function insert($enqObj)
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "insert into enquiry_details (`enq_name`, `enq_email`, `enq_phone`,`enq_address`,`enq_country`) 
-                values ('" . $enqObj->get_enqname() . "','" . $enqObj->get_enqemail() . "','" . $enqObj->get_enqphone() . "','" . $enqObj->get_enqaddress() . "','" . $enqObj->getEnq_Country(). "')";
-                error_log($sql);
+                values ('" . $enqObj->get_enqname() . "','" . $enqObj->get_enqemail() . "','" . $enqObj->get_enqphone() . "','" . $enqObj->get_enqaddress() . "','" . $enqObj->getEnq_Country() . "')";
+    error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
-      $lastInsertedId =  $connectionObj->insert_id;
+      $lastInsertedId = $connectionObj->insert_id;
       foreach ($enqObj->get_interestList() as $interest) {
         $map = new enqCatMappingModel();
         $map->set_enqId($lastInsertedId);
@@ -81,63 +81,56 @@ class DBenq
     }
   }
 
-  public static function delete($enquiryObj)
+  public static function delete($enquiryId)
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
 
-    $sql = "DELETE FROM enq_cat_mapping WHERE enq_id='" . $enquiryObj . "'";
-    if ($connectionObj->query($sql) === TRUE) {
-      $sql = "DELETE from enquiry_details where enqid='" . $enquiryObj . "'";
-      error_log($sql);
-      if ($connectionObj->query($sql) === TRUE) {
-        $sql = "DELETE from customer where enq_id='" . $enquiryObj . "'";
-        error_log($sql);
-        if ($connectionObj->query($sql) === TRUE) {
-          $sql = "DELETE from enquiry_followups where followup_enq_id='" . $enquiryObj . "'";
-          error_log($sql);
-          if ($connectionObj->query($sql) === true) {
-          }else {
-            echo "Error: " . $sql . "<br>" . $connectionObj->error;
-          }
-          
-        }else {
-        echo "Error: " . $sql . "<br>" . $connectionObj->error;
-      }
+    // 🔒 SAFETY CHECK: Is customer already created?
+    $checkSql = "SELECT isCustomerCreated FROM enquiry_details WHERE enqid = '$enquiryId'";
+    $checkResult = $connectionObj->query($checkSql);
 
-      } else {
-        echo "Error: " . $sql . "<br>" . $connectionObj->error;
+    if ($row = $checkResult->fetch_assoc()) {
+      if ((int) $row['isCustomerCreated'] === 1) {
+        // ❌ Stop deletion
+        echo "Cannot delete enquiry. Customer already created.";
+        return false;
       }
-    } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
-   
+
+    // ✅ Safe to delete
+    $connectionObj->query("DELETE FROM enq_cat_mapping WHERE enq_id='$enquiryId'");
+    $connectionObj->query("DELETE FROM enquiry_followups WHERE followup_enq_id='$enquiryId'");
+    $connectionObj->query("DELETE FROM enquiry_details WHERE enqid='$enquiryId'");
+
+    return true;
   }
+
   public static function readById($id)
-{
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT * FROM enquiry_details WHERE enqid = '$id'";
     $result = $connectionObj->query($sql);
 
     if ($row = $result->fetch_assoc()) {
-        $enqModel = new Enquiry();
-        $enqModel->set_id($row["enqid"]);
-        $enqModel->set_enqname($row["enq_name"]);
-        $enqModel->set_enqemail($row["enq_email"]);
-        $enqModel->set_enqphone($row["enq_phone"]);
-        $enqModel->set_enqaddress($row["enq_address"]);
-        $enqModel->setEnq_Country($row["enq_country"]);
-        $enqModel->set_interestList(DBenqCatMapping::getCategoryForEnq($row["enqid"]));
-        return $enqModel;
+      $enqModel = new Enquiry();
+      $enqModel->set_id($row["enqid"]);
+      $enqModel->set_enqname($row["enq_name"]);
+      $enqModel->set_enqemail($row["enq_email"]);
+      $enqModel->set_enqphone($row["enq_phone"]);
+      $enqModel->set_enqaddress($row["enq_address"]);
+      $enqModel->setEnq_Country($row["enq_country"]);
+      $enqModel->set_interestList(DBenqCatMapping::getCategoryForEnq($row["enqid"]));
+      return $enqModel;
     }
 
     return null;
-}
+  }
 
 
-public static function update($enqObj)
-{
+  public static function update($enqObj)
+  {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "UPDATE enquiry_details 
@@ -152,11 +145,11 @@ public static function update($enqObj)
     // Update category mappings
     $connectionObj->query("DELETE FROM enq_cat_mapping WHERE enq_id = '" . $enqObj->get_id() . "'");
     foreach ($enqObj->get_interestList() as $interest) {
-        $map = new enqCatMappingModel();
-        $map->set_enqId($enqObj->get_id());
-        $map->set_catId($interest);
-        DBenqCatMapping::insert($map);
+      $map = new enqCatMappingModel();
+      $map->set_enqId($enqObj->get_id());
+      $map->set_catId($interest);
+      DBenqCatMapping::insert($map);
     }
-}
+  }
 
 }

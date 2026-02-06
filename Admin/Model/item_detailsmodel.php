@@ -49,6 +49,33 @@ class Item_Details implements JsonSerializable
     private $item_Amount;
     // 🔒 Flag: item used in approved quotation
     private $isUsedInApprovedQuotation = 0;
+    // 🔒 Flags
+    private $isUsedInQuotation = 0;
+    private $isUsedInPO = 0;
+
+    public function set_isUsedInQuotation($v)
+    {
+        $this->isUsedInQuotation = (int) $v;
+    }
+    public function get_isUsedInQuotation()
+    {
+        return $this->isUsedInQuotation;
+    }
+
+    public function set_isUsedInPO($v)
+    {
+        $this->isUsedInPO = (int) $v;
+    }
+    public function get_isUsedInPO()
+    {
+        return $this->isUsedInPO;
+    }
+
+    // ✅ FINAL DECIDER
+    public function isUsedAnywhere()
+    {
+        return ($this->isUsedInQuotation == 1 || $this->isUsedInPO == 1);
+    }
 
     public function set_isUsedInApprovedQuotation($value)
     {

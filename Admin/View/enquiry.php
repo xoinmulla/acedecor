@@ -18,7 +18,8 @@ require_once("../Model/enquirymodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Enquiry List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Enquiry
+                    List</h6>
             </div>
             <div class="col" align="right">
 
@@ -122,13 +123,15 @@ require_once("../Model/enquirymodel.php");
                                         Create Customer
                                    </button>
                                    <button class='btn btn-primary dropdown-item'
-                                   data-toggle='modal' 
-                                   data-target='#deleteEnquiryModal' 
-                                   role='button' 
-                                   data-id='" . $enquiry->get_id() . "'>
-                                    <i class='fas fa-trash-alt'></i>
-                                      Delete Enquiry
-                                  </button>
+    data-toggle='modal' 
+    data-target='#deleteEnquiryModal'
+    role='button'
+    data-id='" . $enquiry->get_id() . "'
+    " . ($enquiry->get_isCustomerCreated() == 1 ? "style='pointer-events:none;opacity:0.5;'" : "") . ">
+    <i class='fas fa-trash-alt'></i>
+    Delete Enquiry
+</button>
+
                                   <button class='btn btn-primary dropdown-item'
                                         data-toggle='modal' 
                                         data-target='#editEnquiryModal' 
@@ -335,7 +338,6 @@ require_once("../Model/enquirymodel.php");
         </form>
     </div>
 </div>
-<!-- Modal -->
 <div class="modal fade" id="enqModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-lg " role="document">
@@ -405,7 +407,6 @@ require_once("../Model/enquirymodel.php");
         </form>
     </div>
 </div>
-
 <div class="modal fade" id=enqcatModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="post" id="user_form" enctype="multipart/form-data"
@@ -459,7 +460,6 @@ require_once("../Model/enquirymodel.php");
         </form>
     </div>
 </div>
-
 <div class="modal fade" id="deleteEnquiryModal" tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_enquiry_form" enctype="multipart/form-data">
@@ -483,7 +483,6 @@ require_once("../Model/enquirymodel.php");
         </form>
     </div>
 </div>
-
 <div class="modal fade" id=infoEnquiryModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -894,68 +893,68 @@ require_once("../Model/enquirymodel.php");
         });
 
         // ==================== EDIT ENQUIRY ====================
-            $(function () {
-                // one-time binding for the edit modal
-                $('#editEnquiryModal').on('show.bs.modal', function (e) {
-                    console.log("Edit modal triggered");
+        $(function () {
+            // one-time binding for the edit modal
+            $('#editEnquiryModal').on('show.bs.modal', function (e) {
+                console.log("Edit modal triggered");
 
-                    const rowid = $(e.relatedTarget).data('id');
-                    console.log("Edit Row ID:", rowid);
-                    $('#edit_enqid').val(rowid);
+                const rowid = $(e.relatedTarget).data('id');
+                console.log("Edit Row ID:", rowid);
+                $('#edit_enqid').val(rowid);
 
-                    // 1) fetch enquiry values
-                    $.ajax({
-                        url: "../Controller/newenquiry.php",   // ✅ correct relative path
-                        type: "GET",
-                        data: { action: "fetch", id: rowid },
-                        dataType: "json",
-                        success: function (data) {
-                            if (data && !data.error) {
-                                // fill core fields
-                                $('#edit_name').val(data.name || "");
-                                $('#edit_email').val(data.email || "");
-                                $('#edit_phone').val(data.phone || "");
-                                $('#edit_address').val(data.address || "");
-                                $('#edit_country').val(data.country || "India");
+                // 1) fetch enquiry values
+                $.ajax({
+                    url: "../Controller/newenquiry.php",   // ✅ correct relative path
+                    type: "GET",
+                    data: { action: "fetch", id: rowid },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data && !data.error) {
+                            // fill core fields
+                            $('#edit_name').val(data.name || "");
+                            $('#edit_email').val(data.email || "");
+                            $('#edit_phone').val(data.phone || "");
+                            $('#edit_address').val(data.address || "");
+                            $('#edit_country').val(data.country || "India");
 
-                                // normalize interests returned by PHP (ids OR names)
-                                // Make a set for super-fast lookup
-                                const selected = new Set(
-                                    (data.interests || []).map(x => String(x).toLowerCase())
-                                );
+                            // normalize interests returned by PHP (ids OR names)
+                            // Make a set for super-fast lookup
+                            const selected = new Set(
+                                (data.interests || []).map(x => String(x).toLowerCase())
+                            );
 
-                                // 2) load categories, render checkboxes, pre-check matches
-                                $.getJSON("../Controller/enqcategoryController.php", function (categories) {
-                                    $('#edit_interestList').empty();
+                            // 2) load categories, render checkboxes, pre-check matches
+                            $.getJSON("../Controller/enqcategoryController.php", function (categories) {
+                                $('#edit_interestList').empty();
 
-                                    categories.forEach(cat => {
-                                        const idStr = String(cat.CatId).toLowerCase();
-                                        const nameStr = String(cat.catname).toLowerCase();
+                                categories.forEach(cat => {
+                                    const idStr = String(cat.CatId).toLowerCase();
+                                    const nameStr = String(cat.catname).toLowerCase();
 
-                                        // if PHP returned IDs -> match CatId; if it returned names -> match catname
-                                        const isChecked = selected.has(idStr) || selected.has(nameStr);
+                                    // if PHP returned IDs -> match CatId; if it returned names -> match catname
+                                    const isChecked = selected.has(idStr) || selected.has(nameStr);
 
-                                        const html = `
+                                    const html = `
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox"
                          name="interest_list[]" value="${cat.CatId}" ${isChecked ? 'checked' : ''}>
                   <label class="form-check-label">${cat.catname}</label>
                 </div>`;
-                                        $('#edit_interestList').append(html);
-                                    });
+                                    $('#edit_interestList').append(html);
                                 });
-                            } else {
-                                alert("Error loading enquiry: " + (data && data.error ? data.error : "Unknown error"));
-                            }
-                        },
-                        error: function (xhr, status, err) {
-                            console.error("AJAX Error:", status, err);
-                            alert("Could not load enquiry (HTTP " + xhr.status + "). Check the Network tab.");
+                            });
+                        } else {
+                            alert("Error loading enquiry: " + (data && data.error ? data.error : "Unknown error"));
                         }
-                    });
+                    },
+                    error: function (xhr, status, err) {
+                        console.error("AJAX Error:", status, err);
+                        alert("Could not load enquiry (HTTP " + xhr.status + "). Check the Network tab.");
+                    }
                 });
-});
+            });
+        });
 
 
-});
+    });
 </script>

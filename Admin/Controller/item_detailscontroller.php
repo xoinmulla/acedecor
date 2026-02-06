@@ -84,6 +84,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ]);
     exit();
   }
+  if (
+    DBitemdetails::isItemUsedInQuotation($itemId) ||
+    DBitemdetails::isItemUsedInPO($itemId)
+  ) {
+    echo json_encode([
+      "status" => "error",
+      "message" => "❌ Cannot delete item. Item is used in Quotation or Purchase Order."
+    ]);
+    exit();
+  }
 
 
   // ================== INSERT NEW ITEM ==================

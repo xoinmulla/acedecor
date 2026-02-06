@@ -28,6 +28,35 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
   <style>
+    /* ===== DONUT CHART ===== */
+    .donut {
+      --size: 140px;
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background:
+        conic-gradient(var(--color) calc(var(--value)*1%), #e5e7eb 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .donut::before {
+      content: "";
+      position: absolute;
+      width: 70%;
+      height: 70%;
+      background: #fff;
+      border-radius: 50%;
+    }
+
+    .donut span {
+      position: relative;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
     /* ===================== ROOT THEME ===================== */
     :root {
       --primary: #2563eb;
@@ -355,8 +384,8 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
         </li>
 
         <li class="nav-item">
-          <button class="nav-link" data-bs-toggle="pill" data-bs-target="">
-            <i class="fas fa-solid fa-money-check-dollar"></i>
+          <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-pl">
+            <i class="fas fa-money-check-dollar"></i>
             <span>Profit & Loss</span>
           </button>
         </li>
@@ -490,6 +519,131 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
 
 
     </div>
+    <div class="tab-pane fade" id="tab-pl">
+      <?php
+      $plIncome = DBDashboard::getPLIncome();
+      $plExpense = DBDashboard::getPLExpenses();
+      $plNet = DBDashboard::getPLNetProfit();
+
+      $incomePercent = ($plIncome['sales'] > 0)
+        ? ($plIncome['net_income'] / $plIncome['sales']) * 100
+        : 0;
+
+      $expensePercent = ($plIncome['net_income'] > 0)
+        ? ($plExpense['total'] / $plIncome['net_income']) * 100
+        : 0;
+      ?>
+
+      <div class="row g-4">
+
+        <!-- ================= INCOME CARD ================= -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <h5 class="mb-3 fw-bold text-primary">INCOME</h5>
+
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1">Sales (Quoted Value)</p>
+                <h5>₹<?= number_format($plIncome['sales'], 2) ?></h5>
+
+                <p class="mb-1 mt-3 text-danger">
+                  Less: Discount / Waiver
+                </p>
+                <h6 class="text-danger">
+                  ₹<?= number_format($plIncome['discount'], 2) ?>
+                </h6>
+
+                <hr>
+                <h5 class="fw-bold text-success">
+                  Net Operating Income<br>
+                  ₹<?= number_format($plIncome['net_income'], 2) ?>
+                </h5>
+              </div>
+
+              <div class="donut" style="--value:<?= round($incomePercent) ?>; --color:#2563eb">
+                <span>₹<?= number_format($plIncome['net_income'] / 1000, 1) ?>K</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= NET PROFIT CARD ================= -->
+        <div class="col-lg-6">
+          <div class="chart-card text-center">
+            <h5 class="fw-bold text-success mb-3">NET PROFIT</h5>
+
+            <h1 class="fw-bold text-success">
+              ₹<?= number_format($plNet['net_profit'], 2) ?>
+            </h1>
+
+            <p class="text-muted">
+              Accrual Basis Profit
+            </p>
+
+            <div class="progress mt-4" style="height:10px">
+              <div class="progress-bar bg-success"
+                style="width:<?= min(100, round(($plNet['net_profit'] / $plIncome['sales']) * 100)) ?>%">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= EXPENSE CARD ================= -->
+        <div class="col-lg-6">
+          <div class="chart-card">
+            <h5 class="mb-3 fw-bold text-danger">EXPENSES</h5>
+
+            <div class="d-flex align-items-center justify-content-between">
+              <div>
+                <p class="mb-1">Expenses Paid</p>
+                <h6>₹<?= number_format($plExpense['paid'], 2) ?></h6>
+
+                <p class="mb-1 mt-3">Payable (Employee)</p>
+                <h6>₹<?= number_format($plExpense['payable'], 2) ?></h6>
+
+                <hr>
+                <h5 class="fw-bold text-warning">
+                  Total Expenses<br>
+                  ₹<?= number_format($plExpense['total'], 2) ?>
+                </h5>
+              </div>
+
+              <div class="donut" style="--value:<?= round($expensePercent) ?>; --color:#dc2626">
+                <span>₹<?= number_format($plExpense['total'] / 1000, 1) ?>K</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= SUMMARY CARDS ================= -->
+        <div class="col-lg-6">
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="stat-card">
+                <i class="fa-solid fa-arrow-up stat-icon text-success"></i>
+                <div class="stat-title">Total Income</div>
+                <div class="stat-value text-success">
+                  ₹<?= number_format($plIncome['net_income'], 2) ?>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="stat-card">
+                <i class="fa-solid fa-arrow-down stat-icon text-danger"></i>
+                <div class="stat-title">Total Expenses</div>
+                <div class="stat-value text-danger">
+                  ₹<?= number_format($plExpense['total'], 2) ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
   </div>
   <script>
     document.querySelectorAll('button[data-bs-toggle="pill"]').forEach(tab => {

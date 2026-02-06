@@ -127,7 +127,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Customer List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Customer
+                    List</h6>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#Modal>
@@ -161,108 +162,104 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 <tbody>
                     <?php
                     $customerList = DBcustomer::getAllcustomer();
-                    foreach ($customerList as $customer) {
-                        echo "<tr><td>" . $customer->getCustomerCode() . "</td>
-                        <td>" . $customer->get_customerName() . "</td>
-                        <td>" . $customer->get_customerDov() . "</td>
-                        <td>" . $customer->get_customerCity() . "</td>
-                        <td>";
-                        foreach ($customer->getListOfEnq() as $interest) {
 
-                            echo '<li class="">' . $interest . '</li>';
-                        }
-                        echo "</td>";
-    echo "<td>";
-    ?>
-    <ul class="mb-0">
-    <?php
-    $quotes = DBcustomer::getQuotationSummaryByCustomer(
-        $customer->get_customerId()
-    );
+                    foreach ($customerList as $customer):
 
-    if (!empty($quotes)) {
-        foreach ($quotes as $q) {
-            echo "<li>{$q['name']} - {$q['count']}</li>";
-        }
-    } else {
-        echo "<span class='text-muted'>No Quotation</span>";
-    }
-    ?>
-    </ul>
-    <?php
-    echo "</td>";
+                        // ✅ define once per row
+                        $hasQuote = ($customer->getQuotationCount() > 0);
+                        ?>
+                        <tr>
+                            <td><?= $customer->getCustomerCode(); ?></td>
+                            <td><?= $customer->get_customerName(); ?></td>
+                            <td><?= $customer->get_customerDov(); ?></td>
+                            <td><?= $customer->get_customerCity(); ?></td>
 
-                        echo "<td style='display:none'>" . $customer->get_customerPhone() . "</td>
-                        <td style='display:none'>" . $customer->get_customerEmail() . "</td>
-                        <td style='display:none'>" . $customer->get_customerAddress() . "</td>
-                        <td style='display:none'>" . $customer->get_customerState() . "</td>
-                        <td style='display:none'>" . $customer->get_enqId() . "</td>
-                        <td style='display:none'>" . $customer->getCustomerCountry() . "</td>
-                        <td><div class='dropdown'>
-                                <button class='btn btn-secondary dropdown-toggle' 
-                                type='button' 
-                                id='dropdownMenu2' 
-                                data-toggle='dropdown' 
-                               
-                                aria-expanded='false'>
-                                Actions
-                                </button>
-                                <div class='dropdown-menu' 
-                                aria-labelledby='dropdownMenu2'>
-                                    <button class='btn btn-primary dropdown-item'
-                                     data-toggle='modal' 
-                                     data-target='#editCustomerModal' 
-                                     role='button' 
-                                     data-id='" . $customer->get_customerId() . "'> 
-                                        <i class='fas fa-user-edit'></i>
-                                         Edit Customer
+                            <!-- Enquiry -->
+                            <td>
+                                <ul class="mb-0">
+                                    <?php foreach ($customer->getListOfEnq() as $interest): ?>
+                                        <li><?= $interest; ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </td>
+
+                            <!-- Quote Generated -->
+                            <td>
+                                <ul class="mb-0">
+                                    <?php
+                                    $quotes = DBcustomer::getQuotationSummaryByCustomer($customer->get_customerId());
+                                    if (!empty($quotes)):
+                                        foreach ($quotes as $q):
+                                            ?>
+                                            <li><?= $q['name']; ?> - <?= $q['count']; ?></li>
+                                            <?php
+                                        endforeach;
+                                    else:
+                                        echo "<span class='text-muted'>No Quotation</span>";
+                                    endif;
+                                    ?>
+                                </ul>
+                            </td>
+
+                            <!-- Hidden fields -->
+                            <td style="display:none"><?= $customer->get_customerPhone(); ?></td>
+                            <td style="display:none"><?= $customer->get_customerEmail(); ?></td>
+                            <td style="display:none"><?= $customer->get_customerAddress(); ?></td>
+                            <td style="display:none"><?= $customer->get_customerState(); ?></td>
+                            <td style="display:none"><?= $customer->get_enqId(); ?></td>
+                            <td style="display:none"><?= $customer->getCustomerCountry(); ?></td>
+
+                            <!-- Actions -->
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
                                     </button>
-                                    <button class='btn btn-primary dropdown-item'
-                                    data-toggle='modal' 
-                                    data-target='#infoCustomerModal' 
-                                    role='button' 
-                                    data-id='" . $customer->get_customerId() . "'> 
-                                    <i class='fas fa-info'></i>
-                                        Customer Info
-                                   </button>
-                                   
-                                   <a class='btn btn-primary dropdown-item'
-                                   href='design.php?id=" . $customer->get_customerId() . "' role='button'> 
-                                   <i class='fas fa-file-image'></i>
-                                       Designs
-                                  </a>
-                                   <button class='btn btn-primary dropdown-item'
-                                   data-toggle='modal' 
-                                   data-target='#quoteModal' 
-                                   role='button' 
-                                   data-id='" . $customer->get_customerId() . "'> 
-                                   <i class='fab fa-linkedin-in'></i>
-                                      Inputs
-                                  </button>
-                                   
-                                  <button class='btn btn-primary dropdown-item'
-                                  data-toggle='modal' 
-                                  data-target='#optiModal' 
-                                  role='button' 
-                                  data-id='" . $customer->get_customerId() . "'> 
-                                  <i class='fas fa-ankh'></i>
-                                     Opti
-                                 </button>
 
-                                    <button class='btn btn-danger dropdown-item' 
-                                    data-toggle='modal'
-                                    data-target='#deleteUserModal' 
-                                    name='delete_button' 
-                                    role='button' 
-                                    data-id='" . $customer->get_customerId() . "'>
-                                        <i class='fas fa-trash-alt'></i>
-                                        Delete Customer
-                                    </button>
+                                    <div class="dropdown-menu">
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#editCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
+                                            <i class="fas fa-user-edit"></i> Edit Customer
+                                        </button>
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#infoCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
+                                            <i class="fas fa-info"></i> Customer Info
+                                        </button>
+
+                                        <a class="btn btn-primary dropdown-item"
+                                            href="design.php?id=<?= $customer->get_customerId(); ?>">
+                                            <i class="fas fa-file-image"></i> Designs
+                                        </a>
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#quoteModal" data-id="<?= $customer->get_customerId(); ?>">
+                                            <i class="fab fa-linkedin-in"></i> Inputs
+                                        </button>
+
+                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                            data-target="#optiModal" data-id="<?= $customer->get_customerId(); ?>">
+                                            <i class="fas fa-ankh"></i> Opti
+                                        </button>
+
+                                        <div class="dropdown-divider"></div>
+
+                                        <?php if ($hasQuote): ?>
+                                            <button class="btn btn-danger dropdown-item disabled" disabled
+                                                title="Customer has quotation(s). Deletion not allowed">
+                                                <i class="fas fa-trash-alt"></i> Delete Customer
+                                            </button>
+                                        <?php else: ?>
+                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                data-target="#deleteUserModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Customer
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                            </div>
-                      </td></tr>";
-                    }
-                    ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

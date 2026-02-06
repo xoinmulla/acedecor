@@ -246,6 +246,11 @@ class DBcustomer
 
     public static function delete($customerId)
     {
+        // ❌ BLOCK deletion if quotation exists
+        if (self::hasQuotation($customerId)) {
+            error_log("Delete blocked: Customer $customerId has quotations");
+            return false;
+        }
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
         $custcode = DBcustomer::selectcustomerbasedonId($customerId);
@@ -291,4 +296,19 @@ class DBcustomer
         }
         error_log($sql);
     }
+
+    public static function hasQuotation($customerId)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        $sql = "SELECT COUNT(*) as total FROM quotation_details WHERE customerId = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $customerId);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_assoc();
+
+        return ($res['total'] > 0);
+    }
+
 }

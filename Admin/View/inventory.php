@@ -110,8 +110,11 @@ require_once("../Model/item_detailsmodel.php");
         border-bottom: none;
     }
 </style>
+
 <!-- DataTales Example -->
+
 <span id="message"></span>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
@@ -169,12 +172,16 @@ require_once("../Model/item_detailsmodel.php");
                         <tr>
                             <td><?= $itemdetails->get_itemname(); ?></td>
                             <td><?= $itemdetails->get_itemdescription(); ?></td>
+
                             <td style="display:none"><?= $itemdetails->get_itemcatid(); ?></td>
                             <td><?= $itemdetails->get_itemcategoryname(); ?></td>
+
                             <td style="display:none"><?= $itemdetails->get_itemsubcatid(); ?></td>
                             <td><?= $itemdetails->get_itemsubcategoryname(); ?></td>
+
                             <td style="display:none"><?= $itemdetails->get_itemcompid(); ?></td>
                             <td><?= $itemdetails->get_itemCompanyname(); ?></td>
+
                             <td style="display:none"><?= $itemdetails->get_itemhsncode(); ?></td>
                             <td style="display:none"><?= $itemdetails->get_itemarticleno(); ?></td>
                             <td style="display:none"><?= $itemdetails->get_packingunit(); ?></td>
@@ -189,6 +196,7 @@ require_once("../Model/item_detailsmodel.php");
                             <td style="display:none"><?= $itemdetails->get_itemunitFactorId(); ?></td>
                             <td style="display:none"><?= $itemdetails->get_itemtotalMRP(); ?></td>
                             <td style="display:none"><?= $itemdetails->get_itemDiscount(); ?></td>
+
                             <td><?= $itemdetails->get_itemPrice(); ?></td>
                             <td><?= $itemdetails->get_ReceivedQty(); ?></td>
                             <td><?= $itemdetails->get_AllocatedQty(); ?></td>
@@ -212,9 +220,9 @@ require_once("../Model/item_detailsmodel.php");
                                             <i class="fas fa-user-edit"></i> Edit Item
                                         </button>
 
-                                        <?php if ($itemdetails->get_isUsedInApprovedQuotation()) { ?>
+                                        <?php if ($itemdetails->isUsedAnywhere()) { ?>
                                             <button class="btn btn-secondary dropdown-item" disabled
-                                                title="Item used in approved quotation">
+                                                title="Item is used in Quotation or Purchase Order">
                                                 <i class="fas fa-lock"></i> Delete Item
                                             </button>
                                         <?php } else { ?>
@@ -228,8 +236,8 @@ require_once("../Model/item_detailsmodel.php");
                             </td>
                         </tr>
                     <?php } ?>
-
                 </tbody>
+
             </table>
         </div>
     </div>

@@ -395,6 +395,64 @@ class DBDashboard
 
         return mysqli_query($conn, $sql);
     }
+    public static function getPLIncome()
+    {
+        $conn = ConnectDb::getInstance()->getConnection();
+
+        $sql = "
+        SELECT
+            COALESCE(SUM(total_amount),0) AS sales,
+            COALESCE(SUM(creditDiscount),0) AS discount
+        FROM customerpaymentinfo
+    ";
+
+        $res = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($res);
+
+        return [
+            'sales' => (float) $row['sales'],
+            'discount' => (float) $row['discount'],
+            'net_income' => (float) $row['sales'] - (float) $row['discount']
+        ];
+    }
+    public static function getPLExpensePaid()
+    {
+        $conn = ConnectDb::getInstance()->getConnection();
+
+        $sql = "
+        SELECT COALESCE(SUM(amount),0) AS total
+        FROM expense
+        WHERE type = 'Expense'
+    ";
+
+        $res = mysqli_query($conn, $sql);
+        return (float) (mysqli_fetch_assoc($res)['total'] ?? 0);
+    }
+    public static function getPLEmployeeAccrual()
+    {
+        $row = self::EmployeeBalanceAmount();
+        return (float) ($row['total'] ?? 0);
+    }
+    public static function getPLExpenses()
+    {
+        $paid = self::getPLExpensePaid();
+        $employee = self::getPLEmployeeAccrual();
+
+        return [
+            'paid' => $paid,
+            'payable' => $employee,
+            'total' => $paid + $employee
+        ];
+    }
+    public static function getPLNetProfit()
+    {
+        $income = self::getPLIncome();
+        $expense = self::getPLExpenses();
+
+        return [
+            'net_profit' => $income['net_income'] - $expense['total']
+        ];
+    }
 
 
 }

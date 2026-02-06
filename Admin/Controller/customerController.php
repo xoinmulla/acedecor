@@ -35,7 +35,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     error_log($customerCode);
     DBcustomer::update($customer);
   } else if ($_POST["action"] == 'delete') {
+
+    if (DBcustomer::hasQuotation($_POST["id"])) {
+        $_SESSION['error'] = "Cannot delete customer. Quotation already exists.";
+        header("location:../View/customer.php");
+        exit;
+    }
+
     DBcustomer::delete($_POST["id"]);
+
   } else {
     $customer = new customer();
     $customer->set_customerName(Sanitization::test_input($_POST["customerName"]));

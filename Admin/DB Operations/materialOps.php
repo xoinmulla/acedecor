@@ -59,7 +59,6 @@ class DBmaterialdetails
     error_log($sql);
     $conn->query($sql);
   }
-
   /* ======================================================
      SELECT MATERIAL LIST
   ====================================================== */
@@ -69,90 +68,109 @@ class DBmaterialdetails
     $conn = $db->getConnection();
 
     $sql = "SELECT 
-            M.Material_Id AS MaterialId,
-            M.Material_Name AS MaterialName,
-            M.Material_Description AS MaterialDescription,
+    M.Material_Id AS MaterialId,
+    M.Material_Name AS MaterialName,
+    M.Material_Description AS MaterialDescription,
 
-            -- Category
-            M.Category AS CategoryId,
-            C.material_catName AS CategoryName,
+    -- Category
+    M.Category AS CategoryId,
+    C.material_catName AS CategoryName,
 
-            -- Subcategory
-            M.SubCategory AS SubCategoryId,
-            SC.material_subcatName AS SubCategoryName,
+    -- Subcategory
+    M.SubCategory AS SubCategoryId,
+    SC.material_subcatName AS SubCategoryName,
 
-            -- Brand
-            M.Brand AS BrandId,
-            B.brand_name AS BrandName,
+    -- Brand
+    M.Brand AS BrandId,
+    B.brand_name AS BrandName,
 
-            -- Codes
-            M.Material_Code AS MaterialCode,
+    -- Codes
+    M.Material_Code AS MaterialCode,
 
-            -- Units
-            M.Mat_Unit AS UnitId,
-            U.unitName as UnitName,
+    -- Units
+    M.Mat_Unit AS UnitId,
+    U.unitName AS UnitName,
 
-            -- Unit Factor
-            M.Mat_factor as UnitFactorId,
-            UF.unitFactor as UnitFactor,
+    -- Unit Factor
+    M.Mat_factor AS UnitFactorId,
+    UF.unitFactor AS UnitFactor,
 
-            -- Thickness
-            M.Mat_Thickness as ThicknessId,
-            T.Thickness as ThicknessName,
+    -- Thickness
+    M.Mat_Thickness AS ThicknessId,
+    T.Thickness AS ThicknessName,
 
-            -- Grains
-            M.Mat_Grains as GrainsId,
-            R.sides as GrainsName,
+    -- Grains
+    M.Mat_Grains AS GrainsId,
+    R.sides AS GrainsName,
 
-            -- Image
-            M.Mat_Image as MaterialImage,
+    -- Image
+    M.Mat_Image AS MaterialImage,
 
-            -- Numbers
-            M.Mat_Qty as Qty,
-            M.Mat_HSNCode as HSNCode,
-            M.Mat_SPU as SPU,
-            M.Mat_MRP as MRP,
-            M.Mat_GST as GST,
-            M.Mat_TotalMRP as TotalMRP,
-            M.Mat_PPMRP as PPMRP,
-            M.MaterialDiscount as Discount,
-            M.MaterialPrice as Price,
-            M.MaterialTotalValue as TotalValue,
+    -- Numbers
+    M.Mat_Qty AS Qty,
+    M.Mat_HSNCode AS HSNCode,
+    M.Mat_SPU AS SPU,
+    M.Mat_MRP AS MRP,
+    M.Mat_GST AS GST,
+    M.Mat_TotalMRP AS TotalMRP,
+    M.Mat_PPMRP AS PPMRP,
+    M.MaterialDiscount AS Discount,
+    M.MaterialPrice AS Price,
+    M.MaterialTotalValue AS TotalValue,
 
-            -- Allocation
-            SUM(A.AllocatedQty) as AllocatedQty,
+    -- Allocation
+    SUM(A.AllocatedQty) AS AllocatedQty,
 
-            -- Stocks
-            TEMP.ReceivedQty as InwardedQty,
+    -- Stocks
+    TEMP.ReceivedQty AS InwardedQty,
 
-            CASE 
-                WHEN SUM(A.AllocatedQty) IS NOT NULL 
-                    THEN TEMP.ReceivedQty - SUM(A.AllocatedQty)
-                ELSE TEMP.ReceivedQty
-            END AS AvailableQty
+    -- Available Qty
+CASE 
+    WHEN SUM(A.AllocatedQty) IS NOT NULL 
+        THEN TEMP.ReceivedQty - SUM(A.AllocatedQty)
+    ELSE TEMP.ReceivedQty
+END AS AvailableQty,
 
-        FROM material M
+-- Delete permission
+CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM quotelineitem Q
+        WHERE Q.itemId = M.Material_Id
+    )
+    OR EXISTS (
+        SELECT 1
+        FROM item_stock S2
+        WHERE S2.item_id = M.Material_Id
+    )
+    THEN 0
+    ELSE 1
+END AS CanDelete
 
-        LEFT JOIN material_category C ON M.Category = C.material_catId
-        LEFT JOIN material_subcategory SC ON M.SubCategory = SC.material_subcatId
 
-        LEFT JOIN (
-            SELECT 
-                item_id AS ItemId,
-                SUM(ReceivedQty) AS ReceivedQty
-            FROM item_stock
-            GROUP BY item_id
-        ) AS TEMP ON TEMP.ItemId = M.Material_Id
 
-        LEFT JOIN itemallocation A ON A.ItemId = M.Material_Id
+FROM material M
 
-        LEFT JOIN brands B        ON B.brand_id = M.Brand
-        LEFT JOIN thickness T     ON T.Thickness_Id = M.Mat_Thickness
-        LEFT JOIN units U         ON U.unitId = M.Mat_Unit
-        LEFT JOIN unitsfactor UF  ON UF.unitFactorId = M.Mat_factor
-        LEFT JOIN rotation R      ON R.rotationId = M.Mat_Grains
+LEFT JOIN material_category C ON M.Category = C.material_catId
+LEFT JOIN material_subcategory SC ON M.SubCategory = SC.material_subcatId
 
-        GROUP BY M.Material_Id";
+LEFT JOIN (
+    SELECT 
+        item_id AS ItemId,
+        SUM(ReceivedQty) AS ReceivedQty
+    FROM item_stock
+    GROUP BY item_id
+) AS TEMP ON TEMP.ItemId = M.Material_Id
+
+LEFT JOIN itemallocation A ON A.ItemId = M.Material_Id
+LEFT JOIN brands B        ON B.brand_id = M.Brand
+LEFT JOIN thickness T     ON T.Thickness_Id = M.Mat_Thickness
+LEFT JOIN units U         ON U.unitId = M.Mat_Unit
+LEFT JOIN unitsfactor UF  ON UF.unitFactorId = M.Mat_factor
+LEFT JOIN rotation R      ON R.rotationId = M.Mat_Grains
+
+GROUP BY M.Material_Id";
+
 
     $result = $conn->query($sql);
     $list = [];
@@ -202,13 +220,13 @@ class DBmaterialdetails
       $M->set_ReceivedQty($r['InwardedQty']);
       $M->setAllocatedQty($r['AllocatedQty']);
       $M->setAvailableQty($r['AvailableQty']);
+      $M->setCanDelete($r['CanDelete']);
 
       $list[] = $M;
     }
 
     return $list;
   }
-
   /* ======================================================
      UPDATE MATERIAL
   ====================================================== */
@@ -239,7 +257,6 @@ class DBmaterialdetails
     error_log($sql);
     $conn->query($sql);
   }
-
   /* ======================================================
      DELETE MATERIAL
   ====================================================== */
@@ -253,8 +270,6 @@ class DBmaterialdetails
 
     $conn->query($sql);
   }
-
-
 
   public static function getallMaterialdetailsbasedonIDforstocks($Matid)
   {
@@ -558,7 +573,6 @@ class DBmaterialdetails
     exit;
   }
 
-
   public static function selectMaterialbasedonThicknessId($thicknessId, $catId, $subcatId, $brandId)
   {
     $db = ConnectDb::getInstance();
@@ -616,8 +630,6 @@ class DBmaterialdetails
       echo json_encode($materialdetailslist);
     }
   }
-
-
 
   // public static function delete($itemObj)
   // {
@@ -705,6 +717,39 @@ class DBmaterialdetails
     exit;
   }
 
+  /* ======================================================
+     CHECK MATERIAL USAGE
+  ====================================================== */
+
+  public static function isUsedInQuotation($materialId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "SELECT COUNT(*) AS total 
+            FROM quotelineitem 
+            WHERE item_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $materialId);
+    $stmt->execute();
+
+    return intval($stmt->get_result()->fetch_assoc()['total']) > 0;
+  }
+
+  public static function isUsedInPO($materialId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "SELECT COUNT(*) AS total 
+            FROM item_stock 
+            WHERE item_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $materialId);
+    $stmt->execute();
+
+    return intval($stmt->get_result()->fetch_assoc()['total']) > 0;
+  }
 
 
 }

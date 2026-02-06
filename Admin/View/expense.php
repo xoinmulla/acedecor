@@ -1403,11 +1403,10 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Category</label>
-                                <select name="category" id="editCategorySelect" class="form-select" required>
-                                    <option value="">Select Category</option>
-
-                                </select>
+                                <input type="text" id="editCategoryField" class="form-control bg-light" readonly>
+                                <input type="hidden" name="category" id="editCategoryHidden">
                             </div>
+
                             <div class="col-md-4">
                                 <label class="form-label">Type</label>
                                 <input type="text" id="editCategoryType" name="category_type"
@@ -3235,6 +3234,28 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 alert('✅ Payment updated successfully');
             } else if (window.location.search.includes('deleted=1')) {
                 alert('✅ Payment deleted successfully');
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.edit-btn')) {
+                const btn = e.target.closest('.edit-btn');
+
+                document.getElementById('editExpenseId').value = btn.dataset.id;
+                document.getElementById('editExpenseDate').value = btn.dataset.date;
+
+                // Category (readonly)
+                document.getElementById('editCategoryField').value = btn.dataset.category;
+                document.getElementById('editCategoryHidden').value = btn.dataset.category;
+
+                // Type (readonly)
+                document.getElementById('editCategoryType').value = btn.dataset.type;
+
+                // Editable fields
+                document.getElementById('editAmountField').value = btn.dataset.amount;
+                document.getElementById('editPaymentType').value = btn.dataset.payment;
+                document.getElementById('editNotes').value = btn.dataset.notes;
             }
         });
     </script>

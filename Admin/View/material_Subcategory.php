@@ -7,11 +7,13 @@ require_once("../Model/material_subcategoryModel.php");
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
+
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material SubCategory</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                    SubCategory</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle="modal" data-target="#materialsubcatModal">
@@ -37,46 +39,63 @@ require_once("../Model/material_subcategoryModel.php");
                     $materialsubcatlist = DBMaterialsubcategory::getallmatsubcategory();
                     if (is_array($materialsubcatlist) || is_object($materialsubcatlist)) {
                         foreach ($materialsubcatlist as $materialsubcat) {
+
+                            // ✅ check once per row
+                            $canDelete = DBMaterialsubcategory::canDelete(
+                                $materialsubcat->get_materialsubcatId()
+                            );
+
                             echo "<tr>
-                            <td style='display:none'>" . $materialsubcat->get_materialcatId() . "</td>
-                            <td>" . htmlspecialchars($materialsubcat->get_materialcatName()) . "</td>
-                            <td>" . htmlspecialchars($materialsubcat->get_materialsubcatName()) . "</td>
-                            <td>" . htmlspecialchars($materialsubcat->get_materialsubcaDescription()) . "</td>
-                            <td>
-                                <div class='dropdown'>
-                                    <button class='btn btn-secondary dropdown-toggle' 
-                                            type='button' 
-                                            data-toggle='dropdown' 
-                                            aria-expanded='false'>
-                                        Actions
-                                    </button>
-                                    <div class='dropdown-menu'>
-                                        <button class='btn btn-primary dropdown-item'
-                                                data-toggle='modal' 
-                                                data-target='#editmaterialsubcatModal' 
-                                                role='button' 
-                                                data-id='" . $materialsubcat->get_materialsubcatId() . "'>
-                                            <i class='fas fa-user-edit'></i> Edit SubCategory
-                                        </button>
-                                        <button class='btn btn-danger dropdown-item'
-                                                data-toggle='modal'
-                                                data-target='#deleteSubCategoryModal'
-                                                role='button'
-                                                data-id='" . $materialsubcat->get_materialsubcatId() . "'>
-                                            <i class='fas fa-trash-alt'></i> Delete SubCategory
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                            </tr>";
+            <td style='display:none'>" . $materialsubcat->get_materialcatId() . "</td>
+            <td>" . htmlspecialchars($materialsubcat->get_materialcatName()) . "</td>
+            <td>" . htmlspecialchars($materialsubcat->get_materialsubcatName()) . "</td>
+            <td>" . htmlspecialchars($materialsubcat->get_materialsubcaDescription()) . "</td>
+            <td>
+                <div class='dropdown'>
+                    <button class='btn btn-secondary dropdown-toggle'
+                        type='button'
+                        data-toggle='dropdown'>
+                        Actions
+                    </button>
+
+                    <div class='dropdown-menu'>
+                        <button class='btn btn-primary dropdown-item'
+                            data-toggle='modal'
+                            data-target='#editmaterialsubcatModal'
+                            data-id='" . $materialsubcat->get_materialsubcatId() . "'>
+                            <i class='fas fa-user-edit'></i> Edit SubCategory
+                        </button>";
+
+                            // 🔴 DELETE (conditionally disabled)
+                            if ($canDelete) {
+                                echo "<button class='btn btn-danger dropdown-item'
+                data-toggle='modal'
+                data-target='#deleteSubCategoryModal'
+                data-id='" . $materialsubcat->get_materialsubcatId() . "'>
+                <i class='fas fa-trash-alt'></i> Delete SubCategory
+            </button>";
+                            } else {
+                                echo "<button class='btn btn-danger dropdown-item'
+                disabled
+                title='Cannot delete: Materials are linked'>
+                <i class='fas fa-trash-alt'></i> Delete SubCategory
+            </button>";
+                            }
+
+                            echo "</div>
+                </div>
+            </td>
+        </tr>";
                         }
                     }
                     ?>
                 </tbody>
+
             </table>
         </div>
     </div>
 </div>
+
 <?php include('footer.php'); ?>
 
 <!-- ADD Modal -->

@@ -170,109 +170,100 @@ require_once("../Model/materialModel.php");
                 <tbody>
                     <?php
                     $materialdetailslist = DBmaterialdetails::getallMaterialdetails();
+
                     foreach ($materialdetailslist as $material) {
 
                         $id = $material->get_MaterialId();
 
+                        // 🔐 DELETE BUTTON LOGIC
+                        if ($material->getCanDelete()) {
+                            $deleteAction = "
+            <button class='dropdown-item text-danger'
+                data-toggle='modal'
+                data-target='#deleteMaterialModal'
+                data-id='{$id}'>
+                Delete Material
+            </button>";
+                        } else {
+                            $deleteAction = "
+            <button class='dropdown-item text-muted' disabled
+                title='Material is used in Quotation or Purchase Order'>
+                Cannot Delete
+            </button>";
+                        }
+
                         echo "
-                        <tr>
-                            <td style='display:none'>{$id}</td>
-                            <td>{$material->get_MaterialName()}</td>
-                            <td>{$material->get_MaterialThickness()}</td>
-                            <td>{$material->get_MaterialDescription()}</td>
+    <tr>
+        <td style='display:none'>{$id}</td>
+        <td>{$material->get_MaterialName()}</td>
+        <td>{$material->get_MaterialThickness()}</td>
+        <td>{$material->get_MaterialDescription()}</td>
 
-                            <td style='display:none'>{$material->get_Category()}</td>
-                            <td>{$material->get_CategoryName()}</td>
+        <td style='display:none'>{$material->get_Category()}</td>
+        <td>{$material->get_CategoryName()}</td>
 
-                            <td style='display:none'>{$material->get_SubCategory()}</td>
-                            <td>{$material->get_subCategoryName()}</td>
+        <td style='display:none'>{$material->get_SubCategory()}</td>
+        <td>{$material->get_SubCategoryName()}</td>
 
-                            <td style='display:none'>{$material->get_Brand()}</td>
-                            <td>{$material->get_BrandName()}</td>
+        <td style='display:none'>{$material->get_Brand()}</td>
+        <td>{$material->get_BrandName()}</td>
 
-                            <td style='display:none'>{$material->get_MaterialImage()}</td>
-                            <td style='display:none'>{$material->get_MaterialUnit()}</td>
-                            <td style='display:none'>{$material->get_MaterialUnitFactorId()}</td>
+        <td style='display:none'>{$material->get_MaterialImage()}</td>
+        <td style='display:none'>{$material->get_MaterialUnit()}</td>
+        <td style='display:none'>{$material->get_MaterialUnitFactorId()}</td>
 
-                            <td style='display:none'>{$material->get_MaterialCode()}</td>
-                            <td style='display:none'>{$material->get_MaterialHSNcode()}</td>
-                            <td style='display:none'>{$material->get_MaterialSPU()}</td>
-                            <td style='display:none'>{$material->get_MaterialQty()}</td>
-                            <td style='display:none'>{$material->get_MaterialMRP()}</td>
-                            <td style='display:none'>{$material->get_MaterialPPMRP()}</td>
-                            <td style='display:none'>{$material->get_MaterialGST()}</td>
-                            <td style='display:none'>{$material->get_MaterialTotalMRP()}</td>
-                            <td style='display:none'>{$material->get_MaterialUnitId()}</td>
-                            <td style='display:none'>{$material->get_MaterialDiscount()}</td>
-                            <td style='display:none'>{$material->get_MaterialPrice()}</td>
-                            <td style='display:none'>{$material->get_MaterialTotalValue()}</td>
+        <td style='display:none'>{$material->get_MaterialCode()}</td>
+        <td style='display:none'>{$material->get_MaterialHSNcode()}</td>
+        <td style='display:none'>{$material->get_MaterialSPU()}</td>
+        <td style='display:none'>{$material->get_MaterialQty()}</td>
+        <td style='display:none'>{$material->get_MaterialMRP()}</td>
+        <td style='display:none'>{$material->get_MaterialPPMRP()}</td>
+        <td style='display:none'>{$material->get_MaterialGST()}</td>
+        <td style='display:none'>{$material->get_MaterialTotalMRP()}</td>
+        <td style='display:none'>{$material->get_MaterialUnitId()}</td>
+        <td style='display:none'>{$material->get_MaterialDiscount()}</td>
+        <td style='display:none'>{$material->get_MaterialPrice()}</td>
+        <td style='display:none'>{$material->get_MaterialTotalValue()}</td>
 
-                            <td>{$material->get_ReceivedQty()}</td>
-                            <td>{$material->getAllocatedQty()}</td>
-                            <td>{$material->getAvailableQty()}</td>
+        <td>{$material->get_ReceivedQty()}</td>
+        <td>{$material->getAllocatedQty()}</td>
+        <td>{$material->getAvailableQty()}</td>
 
-                            <td style='display:none'>{$material->get_MaterialThicknessID()}</td>
-                            <td style='display:none'>{$material->get_MaterialGrainsId()}</td>
+        <td style='display:none'>{$material->get_MaterialThicknessID()}</td>
+        <td style='display:none'>{$material->get_MaterialGrainsId()}</td>
 
-                            <td>
-                                <div class='dropdown'>
-                                    <button class='btn btn-secondary dropdown-toggle' type='button' data-toggle='dropdown'>Actions</button>
-                                    <div class='dropdown-menu'>
+        <td>
+            <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle'
+                    type='button' data-toggle='dropdown'>
+                    Actions
+                </button>
+                <div class='dropdown-menu'>
 
-                                        <button class='dropdown-item'
-                                            data-toggle='modal'
-                                            data-target='#detailsItemModal'
-                                            data-id='{$id}'>
-                                            Material Info
-                                        </button>
+                    <button class='dropdown-item'
+                        data-toggle='modal'
+                        data-target='#detailsItemModal'
+                        data-id='{$id}'>
+                        Material Info
+                    </button>
 
-                                        <button class='dropdown-item'
-                                            data-toggle='modal'
-                                            data-target='#edititemdetailsModal'
+                    <button class='dropdown-item'
+                        data-toggle='modal'
+                        data-target='#edititemdetailsModal'
+                        data-id='{$id}'>
+                        Edit Material
+                    </button>
 
-                                            data-id='{$id}'
-                                            data-name='{$material->get_MaterialName()}'
-                                            data-desc='{$material->get_MaterialDescription()}'
+                    {$deleteAction}
 
-                                            data-cat='{$material->get_Category()}'
-                                            data-subcat='{$material->get_SubCategory()}'
-                                            data-brand='{$material->get_Brand()}'
-
-                                            data-unit='{$material->get_MaterialUnitId()}'
-                                            data-factor='{$material->get_MaterialUnitFactorId()}'
-
-                                            data-thickness='{$material->get_MaterialThicknessID()}'
-                                            data-grains='{$material->get_MaterialGrainsId()}'
-
-                                            data-code='{$material->get_MaterialCode()}'
-                                            data-hsn='{$material->get_MaterialHSNcode()}'
-                                            data-spu='{$material->get_MaterialSPU()}'
-                                            data-qty='{$material->get_MaterialQty()}'
-                                            data-mrp='{$material->get_MaterialMRP()}'
-                                            data-gst='{$material->get_MaterialGST()}'
-                                            data-discount='{$material->get_MaterialDiscount()}'
-                                            data-price='{$material->get_MaterialPrice()}'
-                                            data-total='{$material->get_MaterialTotalValue()}'
-
-                                            data-image='{$material->get_MaterialImage()}'
-                                        >
-                                            Edit Material
-                                        </button>
-
-                                        <button class='dropdown-item'
-                                            data-toggle='modal'
-                                            data-target='#deleteMaterialModal'
-                                            data-id='{$id}'>
-                                            Delete Material
-                                        </button>
-
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>";
+                </div>
+            </div>
+        </td>
+    </tr>";
                     }
                     ?>
                 </tbody>
+
 
             </table>
         </div>
@@ -2397,9 +2388,31 @@ require_once("../Model/materialModel.php");
         });
 
         $('#deleteMaterialModal').on('show.bs.modal', function (e) {
-            var id = $(e.relatedTarget).data('id');
-            $('#deleteMaterialId').val(id);
+
+            const matId = $(e.relatedTarget).data('id');
+            $('#deleteMaterialId').val(matId);
+
+            const $confirmBtn = $(this).find("button[type='submit']");
+            const $msg = $(this).find(".modal-body .text-danger");
+
+            // reset
+            $confirmBtn.prop("disabled", false);
+            $msg.remove();
+
+            $.getJSON(
+                "../Controller/materialController.php?checkDelete=1&id=" + matId,
+                function (res) {
+
+                    if (res.blocked) {
+                        $confirmBtn.prop("disabled", true);
+                        $('.modal-body').append(
+                            `<p class="text-danger mt-2">${res.message}</p>`
+                        );
+                    }
+                }
+            );
         });
+
 
         $('#delete_material_form').on('submit', function (e) {
             e.preventDefault();

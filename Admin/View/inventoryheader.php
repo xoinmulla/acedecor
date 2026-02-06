@@ -67,11 +67,11 @@ include('session.php');
                     <span>Materials</span></a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="products.php">
                     <i class="fab fa-product-hunt"></i>
                     <span>Products</span></a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="itemstocklist.php">
                     <i class="fas fa-user-astronaut"></i>
