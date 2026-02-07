@@ -393,8 +393,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                                 <input type="hidden" name="cust_modifiedby"
                                                                     id="modifiedby" class="form-control" required
                                                                     value="<?php echo $_SESSION['login_user']; ?>" />
-                                                                <input type="hidden" id="custId"
-                                                                    value="<?php echo $customer->get_custid(); ?>" />
+                                                                <input type="hidden" id="custId" name="custId" value="">
+
                                                             </div>
                                                         </div>
                                                         <input type="submit" name="submit" id="printPDF"
@@ -2708,11 +2708,12 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 e.preventDefault();
 
                 const custId = $(this).data('custid');
+                if (!custId) return;
 
-                if (!custId) {
-                    alert('Customer ID missing');
-                    return;
-                }
+                // store for PDF / reuse
+                $('#custId').val(custId);
+
+                // load customer info
                 $.getJSON('../Controller/customerpaymentcontroller.php', {
                     action: 'getCustomerInfo',
                     custid: custId
@@ -2722,55 +2723,45 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     $('#transactioncustcontactno').text(res.custcontactnumber);
                     $('#transactioncustcode').text(res.custid);
                 });
+
                 const tbody = $('#Transactiontable tbody');
                 tbody.empty();
 
-                $.ajax({
-                    url: '../Controller/customerpaymentController.php',
-                    type: 'GET',
-                    dataType: 'json',
-                    data: { custid: custId },
-                    success: function (data) {
+                $.getJSON('../Controller/customerpaymentController.php', {
+                    custid: custId
+                }, function (data) {
 
-
-
-                        if (!data || data.length === 0) {
-                            tbody.append(`<tr><td colspan="5" class="text-center">No Transactions</td></tr>`);
-                            $('#TransactionModal').modal('show');
-                            return;
-                        }
-
-                        let totalPaid = 0;
-                        let totalAmount = 0;
-
-                        data.forEach((row, index) => {
-                            const paid = Number(row.receivedamt) || 0;
-
-                            if (index === 0) {
-                                totalAmount = Number(row.totalamt) || 0;
-                            }
-
-                            tbody.append(`
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${row.modifieddate}</td>
-                        <td>${row.paymentmode}</td>
-                        <td>${(totalAmount - totalPaid).toFixed(2)}</td>
-                        <td>${paid.toFixed(2)}</td>
-                    </tr>
-                `);
-
-                            totalPaid += paid;
-                        });
-
-                        $('#totalpaidAmount').text(totalPaid.toFixed(2));
-                        $('#pending').text((totalAmount - totalPaid).toFixed(2));
-
+                    if (!data || data.length === 0) {
+                        tbody.append('<tr><td colspan="5" class="text-center">No Transactions</td></tr>');
                         $('#TransactionModal').modal('show');
+                        return;
                     }
+
+                    let totalPaid = 0;
+                    let totalAmount = Number(data[0].totalamt) || 0;
+
+                    data.forEach((row, i) => {
+                        const paid = Number(row.receivedamt) || 0;
+
+                        tbody.append(`
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${row.modifieddate}</td>
+                    <td>${row.paymentmode}</td>
+                    <td>${(totalAmount - totalPaid).toFixed(2)}</td>
+                    <td>${paid.toFixed(2)}</td>
+                </tr>
+            `);
+
+                        totalPaid += paid;
+                    });
+
+                    $('#cust_totalpaidAmount').text(totalPaid.toFixed(2));
+                    $('#cust_pending').text((totalAmount - totalPaid).toFixed(2));
+
+                    $('#TransactionModal').modal('show');
                 });
             });
-
 
 
             function loadCustomerExpenditure(custId) {

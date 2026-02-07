@@ -740,7 +740,9 @@ require_once("../Model/enquirymodel.php");
             $('#confirmModal').removeAttr('role');
         });
         debugger;
-        var fetchsubcaturl = config.developmentPath + "/Admin/Controller/enqcategoryController.php";
+        var fetchsubcaturl = config.developmentPath +
+            "/Admin/Controller/enqcategoryController.php?type=enquiry";
+
         $.getJSON(fetchsubcaturl, function (data) {
             $.each(data, function (index, value) {
                 debugger;

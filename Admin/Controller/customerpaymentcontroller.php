@@ -15,6 +15,18 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     ini_set('display_errors', 0);
     error_reporting(E_ALL);
 }
+if ($_GET['action'] === 'checkQuotePaymentLock') {
+
+    $quoteCode = $_GET['quoteCode'] ?? '';
+    $customerCode = $_GET['customerCode'] ?? '';
+
+    $locked = DBpayment::isQuotePaymentLocked($quoteCode, $customerCode);
+
+    echo json_encode(['locked' => $locked]);
+    exit;
+}
+
+
 
 // Detect AJAX
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) &&

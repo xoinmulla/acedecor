@@ -782,6 +782,38 @@ require_once("../Model/quotationModel.php");
             var rowid = $(e.relatedTarget).data('id');
 
             $('#quoteid').val(rowid);
+            const button = $(e.relatedTarget);   // Edit button
+            const row = button.closest('tr');    // ✅ Correct row
+
+            const quoteCode = row.find('td:eq(4)').text().trim();
+            const customerCode = row.find('td:eq(1)').text().trim();
+
+            // Safety check
+            if (!quoteCode || !customerCode) {
+                console.warn('Missing quoteCode or customerCode');
+                return;
+            }
+
+            $.getJSON(
+                config.developmentPath +
+                "/Admin/Controller/customerpaymentcontroller.php",
+                {
+                    action: "checkQuotePaymentLock",
+                    quoteCode: quoteCode,
+                    customerCode: customerCode
+                },
+                function (res) {
+                    if (res.locked === true) {
+                        $('#editedStatus')
+                            .prop('disabled', true)
+                            .addClass('bg-light');
+                    } else {
+                        $('#editedStatus')
+                            .prop('disabled', false)
+                            .removeClass('bg-light');
+                    }
+                }
+            );
             $('#editLineItem').attr('href', 'lineItemView.php?id=' + rowid);
 
             // ▼ Decide API based on InputType

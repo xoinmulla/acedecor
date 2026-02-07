@@ -103,6 +103,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
     } else if (isset($_POST['quoteid'])) {
+        // 🔐 Prevent status change if payment exists
+        if (DBpayment::isQuotePaymentLocked($_POST['quoteCode'])) {
+
+            // Allow updates EXCEPT quoteStatus
+            unset($_POST['quoteStatus']);
+        }
+
         $quotation = new Quotation();
         $quotation->set_quoteId($_POST['quoteid']);
         $quotation->setUnitId(Sanitization::test_input($_POST['unit']));
@@ -116,6 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quotation->set_quoteComments(Sanitization::test_input($_POST['quoteComments']));
         $quotation->set_modifiedby(Sanitization::test_input($_POST['modifiedby']));
         DBQuotation::update($quotation);
+        if ($_POST['quoteStatus'] != 'Approved') {
+            DBproject::updateStatusByQuoteCode(
+                $_POST['quoteCode'],
+                'Pending'
+            );
+        }
+
         if ($_POST['quoteStatus'] == 'Approved') {
             $project = new Project();
 

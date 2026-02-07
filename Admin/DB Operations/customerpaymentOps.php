@@ -515,7 +515,29 @@ WHERE quotation_id = ?
 
         echo json_encode($list);
     }
+    public static function isQuotePaymentLocked($quoteCode, $customerCode = null)
+    {
+        if (!$customerCode) {
+            return false; // no customer → don’t lock
+        }
 
+        $conn = ConnectDb::getInstance()->getConnection();
+
+        $sql = "
+        SELECT COUNT(*) AS cnt
+        FROM customerpaymentinfo
+        WHERE customer_id = ?
+          AND received_amount > 0
+    ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $customerCode);
+        $stmt->execute();
+
+        $result = $stmt->get_result()->fetch_assoc();
+
+        return ($result['cnt'] > 0);
+    }
 
 }
 

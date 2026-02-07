@@ -4,6 +4,14 @@ include('enquirynavigation.php');
 require_once("../DB Operations/enq_categoryOps.php");
 require_once("../Model/enq_categorymodel.php");
 ?>
+<?php if (!empty($_SESSION['error'])): ?>
+    <div class="alert alert-danger alert-dismissible fade show">
+        <?= $_SESSION['error'];
+        unset($_SESSION['error']); ?>
+        <button class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+<?php endif; ?>
+
 <h1 class="h3 mb-4 text-gray-800">Enquiry Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
@@ -34,47 +42,59 @@ require_once("../Model/enq_categorymodel.php");
                 <tbody>
                     <?php
                     $enqcatlist = DBcategory::selectAllForDisplay();
-                    ;
+
                     foreach ($enqcatlist as $enqcat) {
+
+                        // 🔒 check if category is used in enquiry
+                        $isUsed = DBcategory::isCategoryUsed($enqcat->get_catid());
+
                         echo "<tr>
-        <td>" . $enqcat->get_catname() . "</td>
-        <td>" . $enqcat->get_catType() . "</td>
-
+        <td>{$enqcat->get_catname()}</td>
+        <td>{$enqcat->get_catType()}</td>
         <td>
-        <div class='dropdown'>
-        <button class='btn btn-secondary dropdown-toggle' 
-        type='button' 
-        id='dropdownMenu2' 
-        data-toggle='dropdown' 
-        aria-expanded='false'>
-        Actions
-        </button>
-        <div class='dropdown-menu' aria-labelledby='dropdownMenu2'>
-        
-            <button class='btn btn-primary dropdown-item'
-                data-toggle='modal' 
-                data-target='#editEnqcatModal' 
-                role='button' 
-                data-id='" . $enqcat->get_catid() . "'
-                data-type='" . $enqcat->get_catType() . "'>
-                <i class='fas fa-user-edit'></i> Edit Category
-            </button>
+            <div class='dropdown'>
+                <button class='btn btn-secondary dropdown-toggle'
+                    type='button'
+                    data-toggle='dropdown'
+                    aria-expanded='false'>
+                    Actions
+                </button>
+                <div class='dropdown-menu'>
 
-            <button class='btn btn-primary dropdown-item'
-                data-toggle='modal' 
-                data-target='#confirmModal' 
-                role='button' 
-                data-id='" . $enqcat->get_catid() . "'>
-                <i class='fas fa-trash-alt'></i> Delete Category
-            </button>
+                    <button class='btn btn-primary dropdown-item'
+                        data-toggle='modal'
+                        data-target='#editEnqcatModal'
+                        data-id='{$enqcat->get_catid()}'
+                        data-type='{$enqcat->get_catType()}'>
+                        <i class='fas fa-user-edit'></i> Edit Category
+                    </button>";
 
-        </div>
-        </div>
-        </td></tr>";
+                        // 🔥 DELETE BUTTON CONDITION
+                        if ($isUsed) {
+                            echo "
+                    <button class='btn btn-secondary dropdown-item' disabled
+                        title='Category is already used in enquiries'>
+                        <i class='fas fa-lock'></i> Delete Disabled
+                    </button>";
+                        } else {
+                            echo "
+                    <button class='btn btn-danger dropdown-item'
+                        data-toggle='modal'
+                        data-target='#confirmModal'
+                        data-id='{$enqcat->get_catid()}'>
+                        <i class='fas fa-trash-alt'></i> Delete Category
+                    </button>";
+                        }
+
+                        echo "
+                </div>
+            </div>
+        </td>
+    </tr>";
                     }
-
                     ?>
                 </tbody>
+
             </table>
         </div>
     </div>
@@ -118,9 +138,9 @@ require_once("../Model/enq_categorymodel.php");
                                     </button>
                                     <ul class="dropdown-menu" id="enqcatTypeDropdown">
                                         <li><a class="dropdown-item enqcat-type-item" href="#"
-                                            data-value="Design">Design</a></li>
+                                                data-value="Design">Design</a></li>
                                         <li><a class="dropdown-item enqcat-type-item" href="#"
-                                            data-value="Enquiry Category">Enquiry</a></li>
+                                                data-value="Enquiry Category">Enquiry</a></li>
                                     </ul>
 
                                 </div>

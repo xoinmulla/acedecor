@@ -55,11 +55,11 @@
             </li>
 
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="POprojects.php">
                     <i class='fab fa-quora'></i>
                     <span> PO Based on Project</span></a>
-            </li>
+            </li> -->
             <li class="nav-item">
                 <a class="nav-link" href="expense.php?action=list">
                     <i class="fas fa-calendar-check"></i>

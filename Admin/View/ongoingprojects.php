@@ -88,7 +88,7 @@ require_once("../Model/projectModel.php");
                            href='../View/ItemAllocation.php?id=".$project->get_projectId()."'>
                           <i class='fas fa-tasks'></i>Project Allocation</a> 
                            
-                           <button class='btn btn-primary dropdown-item'
+                           <!--<button class='btn btn-primary dropdown-item'
                            data-toggle='modal' 
                            data-target='#deleteprojectsModal' 
                            name='delete_button' 
@@ -96,7 +96,7 @@ require_once("../Model/projectModel.php");
                            data-id='" . $project->get_projectId() . "'>
                             <i class='fas fa-trash-alt'></i>
                               Delete project
-                          </button>
+                          </button>-->
                         </div>
                     </div>
                         

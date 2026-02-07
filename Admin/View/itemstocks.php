@@ -73,11 +73,11 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                     </div>
 
 
-                    <div class="col">
+                    <!--<div class="col">
                         <label>Paid Amount :
                             ₹<span> ' . $purchaseOrder->get_paidAmount() . ' </span>
                         </label>
-                    </div>
+                    </div>-->
                     <div class="col">
                          <label>Total Qty Raised :
                              <span> ' . $purchaseOrder->getTotalQuantity() . ' </span>

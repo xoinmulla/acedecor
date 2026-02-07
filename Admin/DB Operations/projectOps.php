@@ -177,67 +177,79 @@ class DBproject
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT 
-    C.customerName as customerName,
-    C.customerCode as customerCode,
-    C.customerCity as customerCity,
-    P.projectId as projectId,
-    P.projectCode as projectCode,
-    P.project_status as projectStatus,
-    Q.quoteCode as quoteCode,
-    Q.quoteId as quoteId,
-    Q.quo_type as quo_type,
-    Q.quantity as quantity,
-    Q.quoteValue as quoteValue,
-    Q.enqCatId as enqCatId,
-    U.unitId as unitId,
-    U.unitName as unitName,
-    EC.enq_cat_name as EnqCatname,
-    Q.quoteCode as quoteCode,
-    Q.modifiedon as modifiedon,
-    Q.inputType as InputType,
-     DATEDIFF(CURDATE(),Q.modifiedon) AS DateDiff
-     FROM `projects` as P
-     JOIN `customer`  C on C.customerCode=P.custId
-     JOIN `quotation_details`  Q on Q.quoteCode=P.quoteId
-     JOIN enquiry_category AS EC ON EC.enq_catid=Q.enqCatId
-     LEFT JOIN units AS U ON U.unitId=Q.unitId
-     where P.project_status='In Progress'
 
-     ";
+    $sql = "SELECT 
+        C.customerName as customerName,
+        C.customerCode as customerCode,
+        C.customerCity as customerCity,
+        P.projectId as projectId,
+        P.projectCode as projectCode,
+        P.project_status as projectStatus,
+
+        Q.quoteCode as quoteCode,
+        Q.quoteId as quoteId,
+        Q.quo_type as quo_type,
+        Q.quantity as quantity,
+        Q.quoteValue as quoteValue,
+        Q.enqCatId as enqCatId,
+        Q.quo_status as quo_status,
+        Q.modifiedon as modifiedon,
+        Q.inputType as InputType,
+
+        U.unitId as unitId,
+        U.unitName as unitName,
+        EC.enq_cat_name as EnqCatname,
+
+        DATEDIFF(CURDATE(), Q.modifiedon) AS DateDiff
+
+    FROM projects P
+    JOIN customer C ON C.customerCode = P.custId
+    JOIN quotation_details Q ON Q.quoteCode = P.quoteId
+    JOIN enquiry_category EC ON EC.enq_catid = Q.enqCatId
+    LEFT JOIN units U ON U.unitId = Q.unitId
+
+    WHERE 
+        P.project_status = 'In Progress'
+        AND Q.quo_status = 'Approved'
+    ";
 
     $result = $connectionObj->query($sql);
-    $count = mysqli_num_rows($result);
     $projectList = [];
-    if ($count > 0) {
-      while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        $project = new Project();
-        $project->set_projectId($row['projectId']);
-        $project->set_projectCode($row['projectCode']);
-        $project->set_custName($row['customerName']);
-        $project->set_custid($row['customerCode']);
-        $project->set_customerCity($row['customerCity']);
-        $project->set_quoteid($row["quoteCode"]);
-        $project->set_quoteType($row["quo_type"]);
-        $project->set_quotecode($row['quoteCode']);
-        $project->set_quoteamt($row['quoteValue']);
-        $project->setQuantity($row['quantity']);
-        $project->setUnitId($row['unitId']);
-        $project->setUnitName($row['unitName']);
-        $project->setEnqCatName($row["EnqCatname"]);
-        $project->setCatId($row["enqCatId"]);
-        $project->set_projectstatus($row["projectStatus"]);
-        $project->setDOA(date('Y-m-d', strtotime($row["modifiedon"])));
-        $project->setDayCount($row["DateDiff"]);
-        $project->setInputType($row["InputType"]);
-        array_push($projectList, $project);
-      }
 
-    } else {
-      // echo "0 results";
+    while ($row = mysqli_fetch_assoc($result)) {
+      $project = new Project();
+      $project->set_projectId($row['projectId']);
+      $project->set_projectCode($row['projectCode']);
+      $project->set_custName($row['customerName']);
+      $project->set_custid($row['customerCode']);
+      $project->set_quoteid($row['quoteCode']);
+      $project->set_quotecode($row['quoteCode']);
+      $project->set_quoteType($row['quo_type']);
+      $project->set_quoteamt($row['quoteValue']);
+      $project->setQuantity($row['quantity']);
+      $project->setUnitId($row['unitId']);
+      $project->setUnitName($row['unitName']);
+      $project->setEnqCatName($row['EnqCatname']);
+      $project->setCatId($row['enqCatId']);
+      $project->set_projectstatus($row['projectStatus']);
+      $project->setDOA(date('Y-m-d', strtotime($row['modifiedon'])));
+      $project->setDayCount($row['DateDiff']);
+      $project->setInputType($row['InputType']);
+
+      $projectList[] = $project;
     }
+
     return $projectList;
   }
+  public static function updateStatusByQuoteCode($quoteCode, $status)
+  {
+    $db = ConnectDb::getInstance()->getConnection();
+    $sql = "UPDATE projects 
+            SET project_status = '$status' 
+            WHERE quoteId = '$quoteCode'";
+    $db->query($sql);
+  }
+
   public static function getCustomersWithApprovedQuotes()
   {
     $db = ConnectDb::getInstance()->getConnection();

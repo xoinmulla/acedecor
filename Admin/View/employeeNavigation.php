@@ -65,12 +65,12 @@
             </a>
         </li>
         
-         <li class="nav-item">
+         <!-- <li class="nav-item">
             <a class="nav-link" href="monthlyReport.php?action=list">
                 <i class="fas fa-atlas"></i>
                 <span>Monthly Reports</span>
             </a>
-        </li>
+        </li> -->
         <li class="nav-item">
             <a class="nav-link" href="attendanceReport.php?action=list">
                 <i class="fas fa-atlas"></i>
