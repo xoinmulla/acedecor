@@ -2,6 +2,19 @@
 require "../Model/item_stocksmodel.php";
 require "../Utilities/Sanitization.php";
 include "../DB Operations/item_stocksOps.php";
+
+if (isset($_POST['inlineEdit'])) {
+    DBitemstock::updateInwardRow(
+        $_POST['StockId'],
+        $_POST['ReceivedQty'],
+        $_POST['ReceivedQtyAmt'],
+        $_POST['BalanceQty']
+    );
+    echo json_encode(['status' => 'success']);
+    exit;
+}
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     error_log("hiii");
     if (isset($_POST['StockId']) != '') {

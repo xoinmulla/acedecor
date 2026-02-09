@@ -1,7 +1,8 @@
 <?php
-ob_start();
-error_reporting(0);
-ini_set('display_errors', 0);
+ob_clean();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 require "../Model/materialModel.php";
 require "../Utilities/Sanitization.php";
@@ -31,36 +32,38 @@ function jsonResponse($data = [], $httpCode = 200)
    FETCH MATERIAL INFO BY ID (GET)
 ====================================================== */
 if (isset($_GET['matInfoId'])) {
-    $matId = (int) $_GET['matInfoId'];
-    DBmaterialdetails::getMaterialWithInwardHistory($matId);
+    DBmaterialdetails::getMaterialWithInwardHistory((int) $_GET['matInfoId']);
+    return;
 }
+
 
 /* ======================================================
    CHECK MATERIAL DELETE POSSIBILITY (AJAX)
 ====================================================== */
-if (isset($_GET['checkDelete']) && isset($_GET['id'])) {
+if (isset($_GET['checkDelete'], $_GET['id'])) {
 
     $id = (int) $_GET['id'];
 
     if (DBmaterialdetails::isUsedInQuotation($id)) {
-        echo json_encode([
+        jsonResponse([
             "blocked" => true,
             "message" => "Material is already used in Quotation"
         ]);
-        exit;
+        return;
     }
 
     if (DBmaterialdetails::isUsedInPO($id)) {
-        echo json_encode([
+        jsonResponse([
             "blocked" => true,
             "message" => "Material is already used in Purchase Order"
         ]);
-        exit;
+        return;
     }
 
-    echo json_encode(["blocked" => false]);
-    exit;
+    jsonResponse(["blocked" => false]);
+    return;
 }
+
 
 
 /* ======================================================
@@ -139,14 +142,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // ---------- DELETE MATERIAL ----------
     if (isset($_POST['action']) && $_POST['action'] === 'delete') {
 
-        $id = (int) Sanitization::test_input($_POST['id']);
+        $id = (int) $_POST['id'];
 
-        // 🔒 SAFETY CHECKS
         if (DBmaterialdetails::isUsedInQuotation($id)) {
             jsonResponse([
                 "status" => "blocked",
                 "message" => "❌ Cannot delete: Material is used in Quotation"
             ]);
+            return;
         }
 
         if (DBmaterialdetails::isUsedInPO($id)) {
@@ -154,15 +157,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "status" => "blocked",
                 "message" => "❌ Cannot delete: Material is used in Purchase Order"
             ]);
+            return;
         }
 
-        // ✅ Safe to delete
         DBmaterialdetails::delete($id);
+
         jsonResponse([
             "status" => "success",
             "message" => "Material deleted successfully"
         ]);
+        return; // 🔥 THIS WAS MISSING
     }
+
 
 
     // ---------- INSERT MATERIAL ----------
@@ -225,31 +231,51 @@ if (isset($_GET['infomatid'])) {
 /* ======================================================
    GET Requests (filtered selects) — safe checks
 ====================================================== */
+// if ($_SERVER["REQUEST_METHOD"] === "GET" && empty($_GET)) {
+//     $thicknessId = isset($_GET['thicknessId']) ? (int) $_GET['thicknessId'] : 0;
+//     $catId = isset($_GET['catId']) ? (int) $_GET['catId'] : 0;
+//     $subcatId = isset($_GET['subcatId']) ? (int) $_GET['subcatId'] : 0;
+//     $brandId = isset($_GET['brandId']) ? (int) $_GET['brandId'] : 0;
+//     $matId = isset($_GET['matId']) ? (int) $_GET['matId'] : 0;
+
+//     if ($thicknessId !== 0 && $catId !== 0 && $subcatId !== 0 && $brandId !== 0) {
+//         DBmaterialdetails::selectMaterialbasedonThicknessId($thicknessId, $catId, $subcatId, $brandId);
+//         exit;
+//     }
+
+//     if ($catId !== 0 && $subcatId !== 0 && $brandId !== 0 && $thicknessId === 0) {
+//         DBmaterialdetails::selectMaterialbasedonBrandCatSubcatId($catId, $subcatId, $brandId);
+//         exit;
+//     }
+
+//     // FULL MATERIAL DETAILS FOR QUOTATION
+//     if ($matId !== 0) {
+//         DBmaterialdetails::getMaterialFullDetailsById($matId);
+//         exit;
+//     }
+
+
+//     DBmaterialdetails::selectmaterial();
+//     exit;
+// }
+
+/* ======================================================
+   GET: MATERIAL LIST FOR PURCHASE ORDER
+====================================================== */
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
-    $thicknessId = isset($_GET['thicknessId']) ? (int) $_GET['thicknessId'] : 0;
+
     $catId = isset($_GET['catId']) ? (int) $_GET['catId'] : 0;
     $subcatId = isset($_GET['subcatId']) ? (int) $_GET['subcatId'] : 0;
     $brandId = isset($_GET['brandId']) ? (int) $_GET['brandId'] : 0;
-    $matId = isset($_GET['matId']) ? (int) $_GET['matId'] : 0;
 
-    if ($thicknessId !== 0 && $catId !== 0 && $subcatId !== 0 && $brandId !== 0) {
-        DBmaterialdetails::selectMaterialbasedonThicknessId($thicknessId, $catId, $subcatId, $brandId);
+    if ($catId && $subcatId && $brandId) {
+        DBmaterialdetails::selectMaterialbasedonBrandCatSubcatId(
+            $catId,
+            $subcatId,
+            $brandId
+        );
         exit;
     }
-
-    if ($catId !== 0 && $subcatId !== 0 && $brandId !== 0 && $thicknessId === 0) {
-        DBmaterialdetails::selectMaterialbasedonBrandCatSubcatId($catId, $subcatId, $brandId);
-        exit;
-    }
-
-    // FULL MATERIAL DETAILS FOR QUOTATION
-    if ($matId !== 0) {
-        DBmaterialdetails::getMaterialFullDetailsById($matId);
-        exit;
-    }
-
-
-    DBmaterialdetails::selectmaterial();
-    exit;
 }
+
 ?>

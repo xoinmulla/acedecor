@@ -268,7 +268,9 @@ GROUP BY M.Material_Id";
     $sql = "DELETE FROM material WHERE Material_Id = '$id'";
     error_log($sql);
 
-    $conn->query($sql);
+    if (!$conn->query($sql)) {
+      throw new Exception($conn->error);
+    }
   }
 
   public static function getallMaterialdetailsbasedonIDforstocks($Matid)
@@ -376,7 +378,7 @@ GROUP BY M.Material_Id";
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT M.Material_Id  AS MaterialId,
-    M.Material_Name AS Material_Name,
+    M.Material_Name AS MaterialName,
     M.Material_Description AS Material_Description,
     M.Category AS CategoryId,
     MC.material_catName AS CategoryName,
@@ -387,7 +389,7 @@ GROUP BY M.Material_Id";
     B.brand_id AS BrandId,
     M.Mat_HSNCode AS HSNcode,
     M.Mat_Image AS MaterialImage,
-    M.Material_Code AS Material_Code,
+    M.Material_Code AS MaterialCode,
     M.Mat_Qty AS Size,
     M.Mat_SPU AS PackingUnit,
     M.Mat_MRP AS MRP,
@@ -413,10 +415,10 @@ GROUP BY M.Material_Id";
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new Material_Details();
         $view->set_MaterialId($row['MaterialId']);
-        $view->set_MaterialName($row['Material_Name']);
+        $view->set_MaterialName($row['MaterialName']);
         $view->set_MaterialPPMRP($row['PPMRP']);
         $view->set_MaterialGST($row['GST']);
-        $view->set_MaterialCode($row['Material_Code']);
+        $view->set_MaterialCode($row['MaterialCode']);
         $view->set_MaterialImage($row['MaterialImage']);
         $view->set_MaterialUnitFactor($row['unitFactor']);
         array_push($materialdetailslist, $view);
@@ -431,7 +433,7 @@ GROUP BY M.Material_Id";
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT M.Material_Id AS MaterialId,
-    M.Material_Name AS Material_Name,
+    M.Material_Name AS MaterialName,
     M.Material_Description AS Material_Description,
     M.Category AS CategoryId,
     MC.material_catName AS CategoryName,
@@ -442,7 +444,7 @@ GROUP BY M.Material_Id";
     B.brand_id AS BrandId,
     M.Mat_HSNCode AS HSNcode,
     M.Mat_Image AS MaterialImage,
-    M.Material_Code AS Material_Code,
+    M.Material_Code AS MaterialCode,
     M.Mat_Qty AS Size,
     M.Mat_SPU AS PackingUnit,
     M.Mat_MRP AS MRP,
@@ -479,10 +481,10 @@ GROUP BY M.Material_Id";
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new Material_Details();
         $view->set_MaterialId($row['MaterialId']);
-        $view->set_MaterialName($row['Material_Name']);
+        $view->set_MaterialName($row['MaterialName']);
         $view->set_MaterialPPMRP($row['PPMRP']);
         $view->set_MaterialGST($row['GST']);
-        $view->set_MaterialCode($row['Material_Code']);
+        $view->set_MaterialCode($row['MaterialCode']);
         $view->set_MaterialImage($row['MaterialImage']);
         $view->set_MaterialUnitFactor($row['unitFactor']);
         $view->setPOcode($row["POcode"]);
@@ -578,7 +580,7 @@ GROUP BY M.Material_Id";
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
     $sql = "SELECT M.Material_Id  AS MaterialId,
-    M.Material_Name AS Material_Name,
+    M.Material_Name AS MaterialName,
     M.Material_Description AS Material_Description,
     M.Category AS CategoryId,
     MC.material_catName AS CategoryName,
@@ -591,7 +593,7 @@ GROUP BY M.Material_Id";
     M.Mat_Thickness as ThicknessId,
     M.Mat_HSNCode AS HSNcode,
     M.Mat_Image AS MaterialImage,
-    M.Material_Code AS Material_Code,
+    M.Material_Code AS MaterialCode,
     M.Mat_Qty AS Size,
     M.Mat_SPU AS PackingUnit,
     M.Mat_MRP AS MRP,
@@ -618,10 +620,10 @@ GROUP BY M.Material_Id";
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $view = new Material_Details();
         $view->set_MaterialId($row['MaterialId']);
-        $view->set_MaterialName($row['Material_Name']);
+        $view->set_MaterialName($row['MaterialName']);
         $view->set_MaterialPPMRP($row['PPMRP']);
         $view->set_MaterialGST($row['GST']);
-        $view->set_MaterialCode($row['Material_Code']);
+        $view->set_MaterialCode($row['MaterialCode']);
         $view->set_MaterialImage($row['MaterialImage']);
         $view->set_MaterialUnitFactor($row['unitFactor']);
         array_push($materialdetailslist, $view);
@@ -728,13 +730,14 @@ GROUP BY M.Material_Id";
 
     $sql = "SELECT COUNT(*) AS total 
             FROM quotelineitem 
-            WHERE item_id = ?";
+            WHERE itemId = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $materialId);
     $stmt->execute();
 
     return intval($stmt->get_result()->fetch_assoc()['total']) > 0;
   }
+
 
   public static function isUsedInPO($materialId)
   {

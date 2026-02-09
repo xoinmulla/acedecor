@@ -939,11 +939,22 @@ require_once("../Model/quotationModel.php");
 
         // });
         $('#inputListModal').on('show.bs.modal', function (e) {
-            var rowid = $(e.relatedTarget).data('id');
-            let projId = 0;
+            const button = $(e.relatedTarget);     // Input List button
+            const row = button.closest('tr');      // Parent table row
+
+            const rowid = button.data('id');
+
+            // ✅ SAFELY get InputType from row cells
+            const inputType = row.children('td').eq(21).text().trim();
+
+            console.log("InputType from row =", inputType);
+
             $('#quoteid').val(rowid);
+            $('#InputType').text(inputType);
+
             reloadloadItemTable(rowid);
         });
+
 
 
         $('#orderinputListModal').on('show.bs.modal', function (e) {
@@ -1095,95 +1106,44 @@ require_once("../Model/quotationModel.php");
         });
 
         function reloadloadItemTable(rowid) {
-            debugger;
-            let projId = 0;
-            if ($('#InputType').text() == 1) {
-                var uniturl = config.developmentPath +
-                    "/Admin/Controller/itemListController.php?id=" + rowid + "&projId=" + projId;
-                $.getJSON(uniturl, function (data) {
-                    console.log("Line items data:", data);
+            const uniturl = config.developmentPath +
+                "/Admin/Controller/boqLineItemController.php?id=" + rowid;
 
-                    $("#lineItemTable").find("tr:gt(0)").remove();
-                    $.each(data, function (index, value) {
-                        $('#lineItemTable tbody').
-                            append($(document.createElement('tr')).prop({
-                                id: value.lineItemId
+            $.getJSON(uniturl, function (data) {
 
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).append($(document
-                                .createElement(
-                                    'img'))
-                                .prop({
-                                    src: "../img/items/" + value.image,
-                                    style: "width:100px; height:100px",
-                                    class: 'img-fluid'
-                                })));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Name
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Brand
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Description
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.itemquantity
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Units
-                            }));
-                    });
+                console.log("BOQ Combined Data:", data);
+
+                $("#lineItemTable tbody").empty();
+
+                $.each(data, function (index, value) {
+
+                    const name = value.Name ?? '';
+                    const brand = value.Brand ?? '';
+                    const desc = value.Description ?? '';
+                    const qty = value.Quantity ?? value.itemquantity ?? 0;
+                    const unit = value.Units ?? '';
+
+                    // 🔥 Decide image folder per row
+                    const imgFolder = (value.Type == "1") ? "items" : "materials";
+                    const img = value.Image ?? '';
+
+                    $("#lineItemTable tbody").append(`
+                <tr>
+                    <td>
+                        <img src="../img/${imgFolder}/${img}"
+                             style="width:100px;height:100px"
+                             class="img-fluid"
+                             onerror="this.src='../img/no-image.png'">
+                    </td>
+                    <td>${name}</td>
+                    <td>${brand}</td>
+                    <td>${desc}</td>
+                    <td>${qty}</td>
+                    <td>${unit}</td>
+                </tr>
+            `);
                 });
-            } else {
-                var uniturl = config.developmentPath +
-                    "/Admin/Controller/materialListController.php?id=" + rowid + "&projId=" + projId;
-                $.getJSON(uniturl, function (data) {
-                    $("#lineItemTable").find("tr:gt(0)").remove();
-                    $.each(data, function (index, value) {
-                        $('#lineItemTable tbody').
-                            append($(document.createElement('tr')).prop({
-                                id: value.lineItemId
-
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).append($(document
-                                .createElement(
-                                    'img'))
-                                .prop({
-                                    src: "../img/items/" + value.image,
-                                    style: "width:100px; height:100px",
-                                    class: 'img-fluid'
-                                })));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Name
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Brand
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Description
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.itemquantity
-                            }));
-                        $('#lineItemTable tr:last').
-                            append($(document.createElement('td')).prop({
-                                innerHTML: value.Units
-                            }));
-                    });
-                });
-            }
+            });
         }
 
 

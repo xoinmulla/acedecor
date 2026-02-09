@@ -250,6 +250,24 @@ GROUP BY
     return $ItemList;
   }
 
+  public static function updateInwardRow($stockId, $qty, $amt, $balance)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "
+        UPDATE item_stock 
+        SET 
+            ReceivedQty = ?,
+            ReceivedQtyAmt = ?,
+            BalanceQty = ?
+        WHERE item_stockid = ?
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
+    $stmt->execute();
+  }
 
 
   public static function viewinwarddetailsbasedonID($id, $PurchaseId, $inventoryType)
@@ -261,11 +279,13 @@ GROUP BY
 
       $sql = "
             SELECT 
-                s.modifiedOn,
-                s.ReceivedQty,
-                s.ReceivedQtyAmt,
-                s.InvoiceNo,
-                d.item_Price AS price
+    s.item_stockid,
+    s.modifiedOn,
+    s.ReceivedQty,
+    s.ReceivedQtyAmt,
+    s.InvoiceNo,
+    d.item_Price AS price
+
             FROM item_stock s
             INNER JOIN item_details d ON d.item_id = s.item_id
             WHERE s.POID = '$PurchaseId'

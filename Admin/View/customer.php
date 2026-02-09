@@ -237,10 +237,10 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                             <i class="fab fa-linkedin-in"></i> Inputs
                                         </button>
 
-                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                        <!-- <button class="btn btn-primary dropdown-item" data-toggle="modal"
                                             data-target="#optiModal" data-id="<?= $customer->get_customerId(); ?>">
                                             <i class="fas fa-ankh"></i> Opti
-                                        </button>
+                                        </button> -->
 
                                         <div class="dropdown-divider"></div>
 
@@ -1057,7 +1057,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createQuote">Add Item</button>
+                    <button type="button" class="btn btn-primary" id="createQuote">Add</button>
                     <button type="submit" class="btn btn-primary" id="createQuote">Create Quote</button>
                 </div>
             </div>
@@ -1633,6 +1633,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
         var sumTotalValue = 0;
         var sumCompanyPrice = 0;
         var sumTradeValue = 0;
+        var quantityDetails = [];
+
         var itemDetails = [];
         var materialDetails = [];
         $('#createQuote').click(function () {
@@ -2598,13 +2600,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         $('#discount2').val("");
                         $('#itemppMRP').val("");
                         $('#GST').val("");
-                        mappItemPrice(itemDetails[i].itemppMRP,
-                            itemDetails[i].itemGST,
-                            itemDetails[i].itemname,
-                            itemDetails[i].unitFactor,
-                            itemDetails[i].itemarticleNo,
-                            itemDetails[i].itemimage,
-                        );
+                        fetchCompanyValues(this.value);
+
                     }
                     var url = config.developmentPath +
                         "/Admin/Controller/item_stockscontroller.php?ItemCode=" + $('#itemarticleNo').val();
@@ -2629,7 +2626,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 let matId = this.value;
 
                 $.getJSON(
-                    config.developmentPath + "/Admin/Controller/materialController.php?matId=" + matId,
+                    config.developmentPath + "/Admin/Controller/materialController.php?infomatid=" + matId,
                     function (mat) {
 
                         if (!mat || !mat.length) return;
@@ -2650,15 +2647,15 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             parseFloat(r.MaterialSPU || 1)
                         );
 
-                        $.getJSON(
-                            config.developmentPath +
-                            "/Admin/Controller/item_stockscontroller.php?ItemCode=" + r.MaterialCode,
-                            function (stock) {
-                                if (stock?.length) {
-                                    mapquantityDetails(stock[0].ReceivedQtyAmt);
-                                }
-                            }
-                        );
+                        // $.getJSON(
+                        //     config.developmentPath +
+                        //     "/Admin/Controller/item_stockscontroller.php?ItemCode=" + r.MaterialCode,
+                        //     function (stock) {
+                        //         if (stock?.length) {
+                        //             mapquantityDetails(stock[0].ReceivedQtyAmt);
+                        //         }
+                        //     }
+                        // );
                     }
                 );
             }
@@ -2862,25 +2859,48 @@ require_once("../Model/enq_cat_mappingmodel.php");
         // });
 
         function mappMaterialPrice(
-            price, gst, name, unitFactor, materialcode, materialimage,
-            discount, companyPrice, totalValue, spu
+            mrp,
+            gst,
+            name,
+            unitFactor,
+            materialcode,
+            materialimage,
+            discount,
+            companyPrice,   // NET PRICE
+            totalValue,
+            spu
         ) {
-            $('#itemppMRP').val(price.toFixed(2));
+            mrp = Number(mrp) || 0;
+            gst = Number(gst) || 18;
+            unitFactor = Number(unitFactor) || 1;
+            spu = Number(spu) || 1;
+
+            $('#itemppMRP').val(mrp.toFixed(2));
             $('#GST').val(gst.toFixed(2));
             $('#selectedItemName').val(name);
             $('#unitFactor').val(unitFactor);
+            $('#spu').val(spu);
+
             $('#itemarticleNo').val(materialcode);
             $('#itemimage').val(materialimage);
 
-            $('#companyDiscount').val(discount.toFixed(2));
-            $('#companyPrice').val(companyPrice.toFixed(2));
-            $('#companyPrice').data('base', companyPrice);
+            // ✅ Company Price = Net Price (per piece)
+            const companyBase = Number(companyPrice) || 0;
+            $('#companyPrice')
+                .val(companyBase.toFixed(2))
+                .data('base', companyBase);
 
-            $('spu').val(spu);
-            $('#totalValue').val(totalValue.toFixed(2));
-            $('#totalValue').data('base', totalValue);
-            $('#totalValue').data('spu', spu);
+            $('#companyDiscount').val(discount ? Number(discount).toFixed(2) : '0.00');
+
+            // 🔥🔥🔥 ADD THIS BLOCK (THIS IS THE FIX)
+            const baseTotalValue = companyBase * spu;   // same as material.php
+            $('#totalValue')
+                .val(baseTotalValue.toFixed(2))
+                .data('base', baseTotalValue)
+                .data('spu', spu);
         }
+
+
         function resetMaterialFields() {
             $('#itemquantity').val("");
             $('#totalAmount').val("");

@@ -247,12 +247,40 @@ require_once("../Model/materialModel.php");
                         Material Info
                     </button>
 
-                    <button class='dropdown-item'
-                        data-toggle='modal'
-                        data-target='#edititemdetailsModal'
-                        data-id='{$id}'>
-                        Edit Material
-                    </button>
+                   <button class='dropdown-item'
+                       data-toggle='modal'
+                       data-target='#edititemdetailsModal'
+
+    data-id='" . $material->get_MaterialId() . "'
+    data-name='" . htmlspecialchars($material->get_MaterialName()) . "'
+    data-desc='" . htmlspecialchars($material->get_MaterialDescription()) . "'
+
+    data-cat='" . $material->get_Category() . "'
+    data-subcat='" . $material->get_SubCategory() . "'
+    data-brand='" . $material->get_Brand() . "'
+
+    data-unit='" . $material->get_MaterialUnitId() . "'
+    data-factor='" . $material->get_MaterialUnitFactorId() . "'
+
+    data-code='" . $material->get_MaterialCode() . "'
+    data-hsn='" . $material->get_MaterialHSNcode() . "'
+
+    data-qty='" . $material->get_MaterialQty() . "'
+    data-spu='" . $material->get_MaterialSPU() . "'
+    data-mrp='" . $material->get_MaterialMRP() . "'
+    data-gst='" . $material->get_MaterialGST() . "'
+    data-discount='" . $material->get_MaterialDiscount() . "'
+
+    data-price='" . $material->get_MaterialPrice() . "'
+    data-total='" . $material->get_MaterialTotalValue() . "'
+
+    data-thickness='" . $material->get_MaterialThicknessID() . "'
+    data-grains='" . $material->get_MaterialGrainsId() . "'
+
+    data-image='" . $material->get_MaterialImage() . "'>
+    Edit Material
+</button>
+
 
                     {$deleteAction}
 
@@ -1557,7 +1585,7 @@ require_once("../Model/materialModel.php");
 
         // ---------- Edit modal open handler (material) ----------
         $('#edititemdetailsModal').on('show.bs.modal', function (e) {
-
+            debugger; //
             const btn = $(e.relatedTarget); // clicked action button
 
             $('#materialid').val(btn.data('id'));
@@ -1719,6 +1747,7 @@ require_once("../Model/materialModel.php");
 
         // ---------- Edited material submit ----------
         $('#editeditemdetails_form').on('submit', function (e) {
+            debugger;
             e.preventDefault();
             const formData = new FormData(this);
             $.ajax({
@@ -2140,26 +2169,26 @@ require_once("../Model/materialModel.php");
             }).fail(() => console.error("Failed to populate additemCategory"));
         });
 
-        $('#deleteItemModal').on('show.bs.modal', function (e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#deleteitemid').val(rowid);
-        });
+        // $('#deleteItemModal').on('show.bs.modal', function (e) {
+        //     var rowid = $(e.relatedTarget).data('id');
+        //     $('#deleteitemid').val(rowid);
+        // });
 
-        $('#deletebutton').click(function () {
-            $.ajax({
-                url: baseCtrl + "/item_detailscontroller.php",
-                method: "POST",
-                data: { id: $('#deleteitemid').val(), action: 'delete' },
-                success: function (data) {
-                    $('#message').html(data);
-                    // safeReloadTable('#item_table');
-                    setTimeout(function () { $('#message').html(''); }, 5000);
-                },
-                error: function (xhr, status, err) {
-                    console.error("Delete item failed:", status, err);
-                }
-            });
-        });
+        // $('#deletebutton').click(function () {
+        //     $.ajax({
+        //         url: baseCtrl + "/item_detailscontroller.php",
+        //         method: "POST",
+        //         data: { id: $('#deleteitemid').val(), action: 'delete' },
+        //         success: function (data) {
+        //             $('#message').html(data);
+        //             // safeReloadTable('#item_table');
+        //             setTimeout(function () { $('#message').html(''); }, 5000);
+        //         },
+        //         error: function (xhr, status, err) {
+        //             console.error("Delete item failed:", status, err);
+        //         }
+        //     });
+        // });
 
         $('#addMaterialCategoryForm').on('submit', function (event) {
             debugger;
@@ -2414,30 +2443,29 @@ require_once("../Model/materialModel.php");
         });
 
 
-        $('#delete_material_form').on('submit', function (e) {
-            e.preventDefault();
+        $(document).off('submit.materialDelete')
+            .on('submit.materialDelete', '#delete_material_form', function (e) {
 
-            $.ajax({
-                url: baseCtrl + "/materialController.php",
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function (res) {
-                    try {
-                        var json = parseJsonSafe(res);
+                e.preventDefault();
+
+                $.ajax({
+                    url: baseCtrl + "/materialController.php",
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    dataType: "json",   // 👈 add this
+                    success: function (json) {
                         if (json.status === "success") {
                             alert("Material deleted successfully!");
                             location.reload();
                         }
-                    } catch (err) {
-                        console.log("Server response:", res);
+                    },
+                    error: function (xhr, status, err) {
+                        console.error("Delete material failed:", status, err);
                     }
-                },
-                error: function (xhr, status, err) {
-                    console.error("Delete material failed:", status, err);
-                }
-            });
+                });
 
-        });
+
+            });
 
     }); // end document ready
 </script>

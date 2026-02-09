@@ -36,7 +36,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
             </div>
             <div class="col"></div>
-        </div> </br></br>
+        </div>
         <div id="printTable">
             <?php {
                 $POListItem = DBPOLineItem::getLineItemByPurchaseIdForOrder($id);
@@ -415,7 +415,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                                                 <th style="text-align:center">Rate/Item</th>
                                                 <th style="text-align:center">Received Qty</th>
                                                 <th style="text-align:center">Received Qty Amt</th>
-
+                                                <th style="text-align:center">Action</th>
 
                                             </tr>
                                         </thead>
@@ -446,6 +446,52 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
             </div>
         </div>
     </div>
+    <div class="modal fade" id="inlineEditModal" tabindex="-1">
+        <div class="modal-dialog">
+            <form id="inlineEditForm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Inward Entry</h5>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <input type="hidden" id="inlineStockId">
+
+                        <div class="mb-2">
+                            <label>Invoice Number</label>
+                            <input type="text" id="inlineInvoice" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Quantity Received</label>
+                            <input type="number" id="inlineQty" class="form-control">
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Total Amt of Quantity Received</label>
+                            <input type="number" id="inlineAmt" class="form-control">
+                        </div>
+
+                        <div class="mb-2">
+                            <label>GST</label>
+                            <input type="text" id="inlineGST" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-2">
+                            <label>Balance Quantity</label>
+                            <input type="number" id="inlineBalance" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 </form>
 
@@ -456,6 +502,8 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
     </script>
 
 <script>
+    let PO_RAISED_QTY = 0;
+
     var pricechange = [];
 
     // function editItem(POlineitemId) {
@@ -581,15 +629,18 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
             $('#GST').val(btn.data('gst') ?? 0);
 
             // 🔥 FETCH GST NOW
-            fetchGST(btn.data('itemid'), btn.data('inventory'));
+            fetchGST(
+                btn.data('itemid'),
+                btn.data('inventory'),
+                '#GST'
+            );
             console.log("GST fetch →", {
                 id: btn.data('itemid'),
                 inventory: btn.data('inventory')
             });
 
         });
-        function fetchGST(itemId, inventoryType) {
-            debugger;
+        function fetchGST(itemId, inventoryType, targetInput) {
 
             if (!itemId || !inventoryType) return;
 
@@ -602,7 +653,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 },
                 function (res) {
                     console.log("GST RESPONSE:", res);
-                    $('#GST').val(res.GST ?? 0);
+                    $(targetInput).val(res.GST ?? 0);
                 }
             );
         }
@@ -610,9 +661,16 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
 
 
+
         $('#inwardDetailsModal').on('show.bs.modal', function (e) {
 
-            const btn = $(e.relatedTarget);
+            const btn = $(e.relatedTarget);   // ✅ FIRST declare btn
+
+            PO_RAISED_QTY = btn.closest('tr')
+                .find('[id^="quantity_"]')
+                .text();
+
+            PO_RAISED_QTY = parseInt(PO_RAISED_QTY) || 0;
 
             const itemId = btn.data('itemid');
             const poId = btn.data('poid');
@@ -623,25 +681,24 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 return;
             }
 
-            const inwardUrl = config.developmentPath +
+            const inwardUrl =
+                config.developmentPath +
                 "/Admin/Controller/item_stockscontroller.php" +
                 "?id=" + itemId +
                 "&POID=" + poId +
                 "&inventoryType=" + inventoryType;
 
-            console.log("Inward URL:", inwardUrl); // ✅ DEBUG
+            console.log("Inward URL:", inwardUrl);
 
             $.getJSON(inwardUrl, function (data) {
 
                 console.log("Inward data:", data);
 
-                let count = 1;
                 $('#SupplierTransaction tbody').empty();
 
                 $.each(data, function (index, value) {
 
                     let perUnitAmt = 0;
-
                     if (parseFloat(value.ReceivedQty) > 0) {
                         perUnitAmt = (
                             parseFloat(value.ReceivedQtyAmt) /
@@ -650,28 +707,39 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                     }
 
                     let rate = parseFloat(value.price) || 0;
-
                     let classvalue = (rate > 0 && perUnitAmt > rate)
                         ? "bg-danger"
                         : "bg-success";
 
-
                     $('#SupplierTransaction tbody').append(`
-        <tr>
-            <td>${index + 1}</td>
-            <td>${value.modifiedOn}</td>
-            <td>${value.InvoiceNo}</td>
-            <td>${value.price}</td>
-            <td>${value.ReceivedQty}</td>
-            <td class="${classvalue}" style="color:black">
-                ${perUnitAmt}
-            </td>
-        </tr>
-    `);
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${value.modifiedOn}</td>
+                  <td>${value.InvoiceNo}</td>
+                  <td>${value.price}</td>
+                  <td>${value.ReceivedQty}</td>
+                  <td class="${classvalue}" style="color:black">
+                      ${perUnitAmt}
+                  </td>
+                  <td>
+                    <button 
+                      class="btn btn-sm btn-primary inline-edit-btn"
+                      data-stockid="${value.item_stockid}"
+                      data-invoice="${value.InvoiceNo}"
+                      data-qty="${value.ReceivedQty}"
+                      data-amt="${value.ReceivedQtyAmt}"
+                      data-itemid="${itemId}"
+                      data-inventory="${inventoryType}"
+                      data-raisedqty="${PO_RAISED_QTY}">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                  </td>
+                </tr>
+            `);
                 });
-
             });
         });
+
 
 
         // $('#lineItem_table tbody tr').each(function() {
@@ -891,6 +959,70 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
 
 
+        let PO_RAISED_QTY = 0;
+
+        $(document).on('click', '.inline-edit-btn', function () {
+
+            const btn = $(this);
+
+            $('#inlineStockId').val(btn.data('stockid'));
+            $('#inlineInvoice').val(btn.data('invoice'));
+            $('#inlineQty').val(btn.data('qty'));
+            $('#inlineAmt').val(btn.data('amt'));
+
+            PO_RAISED_QTY = btn.data('raisedqty');
+
+            // ✅ Correct GST fetch
+            fetchGST(
+                btn.data('itemid'),
+                btn.data('inventory'),
+                '#inlineGST'
+            );
+
+
+            $('#inlineEditModal').modal('show');
+        });
+
+        $('#inlineQty').on('input change keyup', function () {
+
+            let received = Number(this.value);
+            let originalQty = Number(PO_RAISED_QTY);
+
+            if (isNaN(received) || received < 0) {
+                $('#inlineBalance').val(originalQty);
+                return;
+            }
+
+            if (received > originalQty) {
+                this.value = originalQty;
+                $('#inlineBalance').val(0);
+                return;
+            }
+
+            $('#inlineBalance').val(originalQty - received);
+        });
+
+
+        $('#inlineEditForm').submit(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/item_stockscontroller.php",
+                data: {
+                    inlineEdit: 1,
+                    StockId: $('#inlineStockId').val(),
+                    ReceivedQty: $('#inlineQty').val(),
+                    ReceivedQtyAmt: $('#inlineAmt').val(),
+                    BalanceQty: $('#inlineBalance').val()
+                },
+                dataType: "json",
+                success: function () {
+                    $('#inlineEditModal').modal('hide');
+                    $('#inwardDetailsModal').modal('hide');
+                }
+            });
+        });
 
 
 

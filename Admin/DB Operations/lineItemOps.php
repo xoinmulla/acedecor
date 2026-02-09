@@ -75,124 +75,61 @@ class DBLineItem
   public static function getLineItemByQuoteId($quoteId)
   {
     $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
+    $conn = $db->getConnection();
 
-    // ✅ Combined query: Material + Item
     $sql = "
-    SELECT 
-    QLI.lineItemId AS lineItemId,
-    QLI.itemId AS Id,
+
+-- 🔹 ITEMS
+SELECT 
+    QLI.lineItemId,
+    QLI.InputType AS Type,
     I.item_image AS Image,
     I.item_name AS Name,
-    I.item_catid As Itemcatid,
-    I.item_subcatid As Itemsubcatid,
-    I.item_ArticleNo as Itemcode,
-    C.item_catName AS CategoryName,
-    Q.quoteCode as quoteCode,
-    SC.item_subcatName AS SubCategoryName,
-    B.brand_name AS Brand, 
+    B.brand_name AS Brand,
     I.item_description AS Description,
     QLI.quantity AS Quantity,
-    U.unitName AS Units,
-    QLI.discount1 AS CompanyDiscount,
-    QLI.amount AS CompanyPrice,
-    QLI.discount1Amt as DiscountAmt,
-    QLI.totalAmount AS TotalAmount,
-    QLI.totalPrice AS TradePrice,
-    QLI.GST AS GST,
-    QLI.inputType as Type,
-    IP.InputType as InputTypeName,
-    QLI.totalValue as totalValue,
-    QLI.value as Value,
-    UF.unitFactor AS unitFactor,
-    I.item_pp_MRP AS MRP
-FROM `quotelineitem` AS QLI 
-JOIN `item_details` AS I ON QLI.InputName=I.item_name 
-JOIN item_category C ON I.item_catid=C.item_catid 
-JOIN item_subcategory SC ON I.item_subcatid=SC.item_subcatid 
-JOIN `brands` AS B ON I.item_compid=B.brand_id 
-JOIN units AS U ON U.unitId=I.item_unit
-JOIN unitsfactor UF ON UF.unitFactorId=I.item_unitFactor
-JOIN inputtype IP on IP.InputTypeId=QLI.inputType
-JOIN quotation_details Q on Q.quoteId=QLI.quoteId
-WHERE QLI.quoteId=$quoteId
+    U.unitName AS Units
+FROM quotelineitem QLI
+JOIN item_details I 
+    ON QLI.itemId = I.item_id AND QLI.InputType = 1
+JOIN brands B ON I.item_compid = B.brand_id
+JOIN units U ON I.item_unit = U.unitId
+WHERE QLI.quoteId = $quoteId
 
 UNION ALL
 
+-- 🔹 MATERIALS
 SELECT 
-    QLI.lineItemId AS lineItemId,
-    QLI.itemId AS Id,
+    QLI.lineItemId,
+    QLI.InputType AS Type,
     M.Mat_Image AS Image,
     M.Material_Name AS Name,
-    M.Category As Matcatid,
-    M.SubCategory As Matsubcatid,
-    M.Material_Code as Itemcode,
-    C.material_catName AS CategoryName,
-    Q.quoteCode as quoteCode,
-    SC.material_subcatName AS SubCategoryName,
-    B.brand_name AS Brand, 
+    B.brand_name AS Brand,
     M.Material_Description AS Description,
     QLI.quantity AS Quantity,
-    U.unitName AS Units,
-    QLI.discount1 AS CompanyDiscount,
-    QLI.amount AS CompanyPrice,
-    QLI.discount1Amt as DiscountAmt,
-    QLI.totalAmount AS TotalAmount,
-    QLI.totalPrice AS TradePrice,
-    QLI.GST AS GST,
-    QLI.inputType as Type,
-    IP.InputType as InputTypeName,
-    QLI.totalValue as totalValue,
-    QLI.value as Value,
-    UF.unitFactor AS unitFactor,
-    M.Mat_PPMRP AS MRP
-FROM `quotelineitem` AS QLI 
-JOIN `material` AS M ON QLI.InputName=M.Material_Name
-JOIN material_category C ON M.Category=C.material_catId 
-JOIN material_subcategory SC ON M.SubCategory=SC.material_subcatId 
-JOIN `brands` AS B ON M.Brand=B.brand_id 
-JOIN units AS U ON U.unitId=M.Mat_Unit
-JOIN unitsfactor UF ON UF.unitFactorId=M.Mat_factor
-JOIN inputtype IP on IP.InputTypeId=QLI.inputType
-JOIN quotation_details Q on Q.quoteId=QLI.quoteId
-WHERE QLI.quoteId=$quoteId
+    U.unitName AS Units
+FROM quotelineitem QLI
+JOIN material M 
+    ON QLI.itemId = M.Material_Id AND QLI.InputType = 2
+JOIN brands B ON M.Brand = B.brand_id
+JOIN units U ON M.Mat_Unit = U.unitId
+WHERE QLI.quoteId = $quoteId
+
 ORDER BY lineItemId ASC
-    ";
+";
 
     error_log($sql);
-    $result = $connectionObj->query($sql);
-    $count = mysqli_num_rows($result);
+    $result = $conn->query($sql);
 
-    $itemList = [];
-    if ($count > 0) {
-      while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        $item = new lineItem();
-        $item->set_lineItemId($row["lineItemId"]);
-        $item->set_itemid($row["Id"]);
-        $item->setImage($row["Image"]);
-        $item->setName($row["Name"]);
-        $item->setBrand($row["Brand"]);
-        $item->setDescription($row["Description"]);
-        $item->set_itemquantity($row["Quantity"]);
-        $item->setUnits($row["Units"]);
-        $item->set_discount1(isset($row["Discount"]) ? $row["Discount"] : null);
-        $item->set_totalAmount(isset($row["TotalAmount"]) ? $row["TotalAmount"] : null);
-        $item->set_totalPrice(isset($row["TradePrice"]) ? $row["TradePrice"] : null);
-        $item->set_totalValue(isset($row["TotalValue"]) ? $row["TotalValue"] : null);
-        $item->set_companyPrice(isset($row["CompanyPrice"]) ? $row["CompanyPrice"] : null);
-        $item->set_quoteValue(isset($row["QuoteValue"]) ? $row["QuoteValue"] : null);
-        $item->set_GST(isset($row["GST"]) ? $row["GST"] : null);
-        $item->set_inputType(isset($row["InputType"]) ? $row["InputType"] : null);
-        $item->set_companyDiscount(isset($row['CompanyDiscount']) ? $row['CompanyDiscount'] : null);
-        $item->set_companyPrice(isset($row['CompanyPrice']) ? $row['CompanyPrice'] : null);
-
-        array_push($itemList, $item);
-      }
+    $data = [];
+    while ($row = $result->fetch_assoc()) {
+      $data[] = $row;
     }
 
     header('Content-Type: application/json');
-    echo json_encode($itemList);
+    echo json_encode($data, JSON_NUMERIC_CHECK);
   }
+
 
   public static function getMaterialLineItemByQuoteId($quoteId)
   {
@@ -232,7 +169,7 @@ ORDER BY lineItemId ASC
         "itemId" => $row["itemId"],
         "Name" => $row["Name"],
         "image" => $row["image"],
-        "brand" => $row["brand"],
+        "Brand" => $row["brand"],
         "itemquantity" => floatval($row["itemquantity"]),
         "discount1" => floatval($row["discount1"]),
         "GST" => floatval($row["GST"]),
