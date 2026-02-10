@@ -243,7 +243,7 @@ $id = $_GET['id'];
             action="../Controller/lineItemController.php">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Line Item Details</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add Line Item / Material Details</h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body ">
@@ -418,7 +418,7 @@ $id = $_GET['id'];
         <form class="" method="POST" id="edit_form" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Line Item Details</h5>
+                    <h5 class="modal-title">Line Item / Material Details </h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -710,7 +710,7 @@ $id = $_GET['id'];
             $('#hiddenDiscount1Amt').val((companyTotal * (tDis / 100)).toFixed(2));
             $('#hiddenGSTAmount').val($('#GSTAmount').val() || "0");
         }
-        
+
         $('#itemquantity, #editTradeDiscount, #GST').on('keyup change', function () {
             editCalculateAmount();
         });
@@ -730,7 +730,7 @@ $id = $_GET['id'];
                     const cDisc = parseFloat(r.itemDiscount || 0);
                     const cPrice = parseFloat(r.itemPrice || 0);
                     const tVal = parseFloat(r.itemTotalValue || 0);
-                    const spu = parseFloat(r.itemSPU || 0);
+                    const spu = parseFloat(r.spu || r.item_PackingUnit || 1);
                     const uFact = parseFloat(r.unitFactor || 1);
 
                     $('#additemppMRP').val(mrp.toFixed(2));
@@ -776,7 +776,8 @@ $id = $_GET['id'];
                     $('#editCompanyPrice').data('base', parseFloat(r.itemPrice));
                     $('#totalPrice').data('base', parseFloat(r.itemTotalValue));
                     $('#unitFactor').val(parseFloat(r.unitFactor));
-                    $('#totalPrice').data('spu', parseFloat(r.itemSPU));
+                    $('#totalPrice').data('spu', parseFloat(r.spu || r.item_PackingUnit || 1));
+
 
                     console.log("Edit Modal Base Values:", r);
 
@@ -784,77 +785,94 @@ $id = $_GET['id'];
                 }
             );
         }
-        function fetchMaterialValuesForEditModal(matId) {
-            $.getJSON(
-                config.developmentPath + "/Admin/Controller/materialController.php?matId=" + matId,
-                function (data) {
-                    if (!data || !data.length) return;
-
-                    const r = data[0];
-
-                    $('#itemppMRP').val(parseFloat(r.MaterialPPMRP).toFixed(2));
-                    $('#GST').val(parseFloat(r.MaterialGST).toFixed(2));
-                    $('#editCompanyDiscount').val(parseFloat(r.MaterialCompanyDiscount).toFixed(2));
-
-                    $('#editCompanyPrice').data('base', parseFloat(r.MaterialCompanyPrice));
-                    $('#totalPrice').data('base', parseFloat(r.MaterialTotalValue));
-                    $('#unitFactor').val(parseFloat(r.MaterialUnitFactor));
-                    $('#totalPrice').data('spu', parseFloat(r.MaterialSPU));
-
-                    console.log("Edit Material Base Values:", r);
-
-                    editCalculateAmount();
-                }
-            );
-        }
-
-
-
-        // ✅ ADD THIS FUNCTION - For Materials (Same as AddModal)
         function fetchMaterialValuesForLineItem(matId) {
             $.getJSON(
-                config.developmentPath + "/Admin/Controller/materialController.php?matId=" + matId,
+                config.developmentPath + "/Admin/Controller/materialController.php?infomatid=" + matId,
                 function (data) {
                     if (!data || !data.length) return;
 
                     const r = data[0];
 
                     const mrp = parseFloat(r.MaterialPPMRP || 0);
-                    const gst = parseFloat(r.MaterialGST || 18);
+                    const gst = parseFloat(r.MaterialGST || 0);
                     const cDisc = parseFloat(r.MaterialCompanyDiscount || 0);
                     const cPrice = parseFloat(r.MaterialCompanyPrice || 0);
                     const tVal = parseFloat(r.MaterialTotalValue || 0);
                     const spu = parseFloat(r.MaterialSPU || 1);
                     const uFact = parseFloat(r.MaterialUnitFactor || 1);
 
+                    $('#addunitFactor').val(uFact);
                     $('#additemppMRP').val(mrp.toFixed(2));
                     $('#addGST').val(gst.toFixed(2));
                     $('#addCompanyDiscount').val(cDisc.toFixed(2));
-                    $('#addCompanyPrice').val(cPrice.toFixed(2));
-                    $('#addCompanyPrice').data('base', cPrice);
-                    $('#addTotalValue').val(tVal.toFixed(2));
 
-                    // ✅ Store SPU and base values for calculations
-                    $('#addTotalValue').data('base', tVal);
-                    $('#addTotalValue').data('spu', spu);
+                    $('#addCompanyPrice')
+                        .val(cPrice.toFixed(2))
+                        .data('base', cPrice);
 
-                    console.log('Line Item Material - Base values set:', {
-                        companyBase: cPrice,
-                        totalValueBase: tVal,
-                        spu: spu
-                    });
+                    $('#addTotalValue')
+                        .val(tVal.toFixed(2))
+                        .data('base', tVal)
+                        .data('spu', spu);
 
-                    const qty = parseFloat($('#additemquantity').val()) || 0;
-                    const totalAmount = mrp * qty * uFact;
-                    $('#addtotalAmount').val(totalAmount.toFixed(2));
+                    const qty = Number($('#additemquantity').val()) || 0;
+                    $('#addtotalAmount').val((mrp * qty * uFact).toFixed(2));
 
                     $('#addTradePrice').val(cPrice.toFixed(2));
 
-                    // Trigger calculation
                     addcalculateAmount();
                 }
             );
         }
+
+
+
+
+        // ✅ ADD THIS FUNCTION - For Materials (Same as AddModal)
+        // function fetchMaterialValuesForLineItem(matId) {
+        //     $.getJSON(
+        //         config.developmentPath + "/Admin/Controller/materialController.php?matId=" + matId,
+        //         function (data) {
+        //             if (!data || !data.length) return;
+
+        //             const r = data[0];
+
+        //             const mrp = parseFloat(r.MaterialPPMRP || 0);
+        //             const gst = parseFloat(r.MaterialGST || 18);
+        //             const cDisc = parseFloat(r.MaterialCompanyDiscount || 0);
+        //             const cPrice = parseFloat(r.MaterialCompanyPrice || 0);
+        //             const tVal = parseFloat(r.MaterialTotalValue || 0);
+        //             const spu = parseFloat(r.Mat_SPU || r.spu || 1);
+        //             const uFact = parseFloat(r.MaterialUnitFactor || 1);
+
+        //             $('#additemppMRP').val(mrp.toFixed(2));
+        //             $('#addGST').val(gst.toFixed(2));
+        //             $('#addCompanyDiscount').val(cDisc.toFixed(2));
+        //             $('#addCompanyPrice').val(cPrice.toFixed(2));
+        //             $('#addCompanyPrice').data('base', cPrice);
+        //             $('#addTotalValue').val(tVal.toFixed(2));
+
+        //             // ✅ Store SPU and base values for calculations
+        //             $('#addTotalValue').data('base', tVal);
+        //             $('#addTotalValue').data('spu', spu);
+
+        //             console.log('Line Item Material - Base values set:', {
+        //                 companyBase: cPrice,
+        //                 totalValueBase: tVal,
+        //                 spu: spu
+        //             });
+
+        //             const qty = parseFloat($('#additemquantity').val()) || 0;
+        //             const totalAmount = mrp * qty * uFact;
+        //             $('#addtotalAmount').val(totalAmount.toFixed(2));
+
+        //             $('#addTradePrice').val(cPrice.toFixed(2));
+
+        //             // Trigger calculation
+        //             addcalculateAmount();
+        //         }
+        //     );
+        // }
 
         function mappItemPrice(price, gst, name, unitFactor, compDisc) {
             $('#additemppMRP').val(price);
@@ -1244,6 +1262,50 @@ $id = $_GET['id'];
             $('#additemid').empty();
             setItemlist($('#editeditemCategory').val(), this.value);
         });
+        function fetchMaterialValuesForEditModal(matId) {
+            $.getJSON(
+                config.developmentPath + "/Admin/Controller/materialController.php?infomatid=" + matId,
+                function (data) {
+                    if (!data || !data.length) return;
+
+                    const r = data[0];
+
+                    const mrp = parseFloat(r.MaterialPPMRP || 0);
+                    const gst = parseFloat(r.MaterialGST || 0);
+                    const cDisc = parseFloat(r.MaterialCompanyDiscount || 0);
+                    const cPrice = parseFloat(r.MaterialCompanyPrice || 0);
+                    const tVal = parseFloat(r.MaterialTotalValue || 0);
+                    const spu = parseFloat(r.MaterialSPU || 1);
+                    const uFact = parseFloat(r.MaterialUnitFactor || 1);
+
+                    // 🔹 Populate EDIT modal fields
+                    $('#itemppMRP').val(mrp.toFixed(2));
+                    $('#GST').val(gst.toFixed(2));
+                    $('#editCompanyDiscount').val(cDisc.toFixed(2));
+                    $('#unitFactor').val(uFact);
+
+                    // 🔹 Store base values (CRITICAL – used by editCalculateAmount)
+                    $('#editCompanyPrice')
+                        .val(cPrice.toFixed(2))
+                        .data('base', cPrice);
+
+                    $('#totalPrice')
+                        .val(tVal.toFixed(2))
+                        .data('base', tVal)
+                        .data('spu', spu);
+
+                    console.log("Edit Material Base Values:", {
+                        companyBase: cPrice,
+                        totalValueBase: tVal,
+                        spu: spu,
+                        unitFactor: uFact
+                    });
+
+                    // 🔁 Recalculate after data load
+                    editCalculateAmount();
+                }
+            );
+        }
 
     });
 </script>

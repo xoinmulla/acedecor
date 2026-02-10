@@ -103,24 +103,34 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     if (isset($_GET['id'])) {
         DBsupplierBrandMapping::getMappedBrands($_GET['id']);
+        exit;
     } else if (isset($_GET['catId'], $_GET['InputId'])) {
         DBcategoryBrandMapping::getMappedBrands($_GET['catId'], $_GET['InputId']);
+        exit;
     } else if (isset($_GET['matcatId'], $_GET['InputId'])) {
         DBMatcategoryBrandMapping::getMappedBrands($_GET['matcatId'], $_GET['InputId']);
+        exit;
     } else if (isset($_GET['inputId'])) {
         DBInputTypeBrandMapping::getMappedInputType($_GET['inputId']);
+        exit;
     } else if (isset($_GET['projId'])) {
         DBbrand::selectbrandsbasedonProjId(Sanitization::test_input($_GET['projId']));
+        exit;
     } else if (isset($_GET['itemId'])) {
         DBbrand::selectbrandsbasedonItemId(Sanitization::test_input($_GET['itemId']));
+        exit;
     } else if (isset($_GET['categoryId'])) {
         DBbrand::selectbrandsbasedonCategoryId(Sanitization::test_input($_GET['categoryId']));
+        exit;
     } else if (isset($_GET['supplierId'])) {
         DBbrand::selectbrandsbasedonSupplierId(Sanitization::test_input($_GET['supplierId']));
+        exit;
     } else if (isset($_GET['matcatId'])) {
         DBbrand::selectbrandsbasedonMatcatId(Sanitization::test_input($_GET['matcatId']));
+        exit;
     } else if (isset($_GET['InputId'])) {
         DBbrand::selectbrandsbasedonInputTypeId(Sanitization::test_input($_GET['InputId']));
+        exit;
     } else if (isset($_GET['action']) && $_GET['action'] === 'inventoryTypes' && isset($_GET['brandId'])) {
         header('Content-Type: application/json');
         DBbrand::getInventoryTypesByBrand(
@@ -129,7 +139,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         exit;
     }
 
-} else {
+    // ✅ ONLY ADDITION — SAFE DEFAULT (NO PARAMS)
+    header('Content-Type: application/json');
     DBbrand::selectbrands();
+    exit;
 }
+
 ?>

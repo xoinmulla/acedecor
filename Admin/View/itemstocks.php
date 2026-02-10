@@ -957,31 +957,42 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
         });
 
-
-
-        let PO_RAISED_QTY = 0;
-
-        $(document).on('click', '.inline-edit-btn', function () {
+        $(document).off('click', '.inline-edit-btn').on('click', '.inline-edit-btn', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
 
             const btn = $(this);
 
+            // Store values FIRST
             $('#inlineStockId').val(btn.data('stockid'));
             $('#inlineInvoice').val(btn.data('invoice'));
             $('#inlineQty').val(btn.data('qty'));
             $('#inlineAmt').val(btn.data('amt'));
 
-            PO_RAISED_QTY = btn.data('raisedqty');
+            PO_RAISED_QTY = Number(btn.data('raisedqty')) || 0;
 
-            // ✅ Correct GST fetch
             fetchGST(
                 btn.data('itemid'),
                 btn.data('inventory'),
                 '#inlineGST'
             );
 
+            // 🔥 Wait for inward modal to close completely
+            $('#inwardDetailsModal').one('hidden.bs.modal', function () {
+                $('#inlineEditModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+            });
 
-            $('#inlineEditModal').modal('show');
+            // Close parent modal LAST
+            $('#inwardDetailsModal').modal('hide');
         });
+
+        $('#inlineEditModal').on('shown.bs.modal', function () {
+            $(this).find('input:first').focus();
+        });
+
 
         $('#inlineQty').on('input change keyup', function () {
 
@@ -1005,12 +1016,13 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
         $('#inlineEditForm').submit(function (e) {
             e.preventDefault();
-
+            console.log("INLINE EDIT SUBMIT FIRED");
             $.ajax({
                 type: "POST",
                 url: config.developmentPath + "/Admin/Controller/item_stockscontroller.php",
                 data: {
                     inlineEdit: 1,
+                    inventoryType: $('#inventoryType').val(),   // 🔥 ADD THIS
                     StockId: $('#inlineStockId').val(),
                     ReceivedQty: $('#inlineQty').val(),
                     ReceivedQtyAmt: $('#inlineAmt').val(),
@@ -1023,8 +1035,6 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 }
             });
         });
-
-
 
     });
 </script>

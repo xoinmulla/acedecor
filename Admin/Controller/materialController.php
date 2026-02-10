@@ -40,6 +40,9 @@ if (isset($_GET['matInfoId'])) {
 /* ======================================================
    CHECK MATERIAL DELETE POSSIBILITY (AJAX)
 ====================================================== */
+/* ======================================================
+   CHECK MATERIAL DELETE POSSIBILITY (AJAX)
+====================================================== */
 if (isset($_GET['checkDelete'], $_GET['id'])) {
 
     $id = (int) $_GET['id'];
@@ -47,22 +50,30 @@ if (isset($_GET['checkDelete'], $_GET['id'])) {
     if (DBmaterialdetails::isUsedInQuotation($id)) {
         jsonResponse([
             "blocked" => true,
-            "message" => "Material is already used in Quotation"
+            "message" => "❌ Cannot delete: Material is used in Quotation"
         ]);
-        return;
     }
 
     if (DBmaterialdetails::isUsedInPO($id)) {
         jsonResponse([
             "blocked" => true,
-            "message" => "Material is already used in Purchase Order"
+            "message" => "❌ Cannot delete: Material is used in Purchase Order"
         ]);
-        return;
     }
 
-    jsonResponse(["blocked" => false]);
-    return;
+    if (DBmaterialdetails::getPendingPOQty($id) > 0) {
+        jsonResponse([
+            "blocked" => true,
+            "message" => "❌ Cannot delete: Material has pending Purchase Orders"
+        ]);
+    }
+
+    // ✅ ONLY CHECK — NEVER DELETE HERE
+    jsonResponse([
+        "blocked" => false
+    ]);
 }
+
 
 
 
@@ -140,34 +151,39 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // ---------- DELETE MATERIAL ----------
-    if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+    /* ======================================================
+    DELETE MATERIAL (POST ONLY)
+ ====================================================== */
+    if (
+        $_SERVER["REQUEST_METHOD"] === "POST"
+        && isset($_POST['action'])
+        && $_POST['action'] === 'delete'
+    ) {
 
         $id = (int) $_POST['id'];
 
         if (DBmaterialdetails::isUsedInQuotation($id)) {
             jsonResponse([
-                "status" => "blocked",
-                "message" => "❌ Cannot delete: Material is used in Quotation"
+                "blocked" => true,
+                "message" => "❌ Material is already used in Quotation"
             ]);
-            return;
         }
 
         if (DBmaterialdetails::isUsedInPO($id)) {
             jsonResponse([
-                "status" => "blocked",
-                "message" => "❌ Cannot delete: Material is used in Purchase Order"
+                "blocked" => true,
+                "message" => "❌ Material is already used in Purchase Order"
             ]);
-            return;
         }
 
-        DBmaterialdetails::delete($id);
+        DBmaterialdetails::delete($id);   // ✅ DELETE ONLY HERE
 
         jsonResponse([
             "status" => "success",
             "message" => "Material deleted successfully"
         ]);
-        return; // 🔥 THIS WAS MISSING
     }
+
 
 
 

@@ -137,16 +137,16 @@ CASE
         SELECT 1
         FROM quotelineitem Q
         WHERE Q.itemId = M.Material_Id
+          AND Q.InputType = 2   -- ✅ MATERIAL
     )
     OR EXISTS (
         SELECT 1
-        FROM item_stock S2
-        WHERE S2.item_id = M.Material_Id
+        FROM purchaseorder_lineitem POL
+        WHERE POL.item_id = M.Material_Id
     )
     THEN 0
     ELSE 1
 END AS CanDelete
-
 
 
 FROM material M
@@ -728,9 +728,11 @@ GROUP BY M.Material_Id";
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
-    $sql = "SELECT COUNT(*) AS total 
-            FROM quotelineitem 
-            WHERE itemId = ?";
+    $sql = "SELECT COUNT(*) AS total
+            FROM quotelineitem
+            WHERE itemId = ?
+              AND InputType = 2";   // ✅ MATERIAL ONLY
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $materialId);
     $stmt->execute();
@@ -739,19 +741,43 @@ GROUP BY M.Material_Id";
   }
 
 
+
   public static function isUsedInPO($materialId)
   {
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
-    $sql = "SELECT COUNT(*) AS total 
-            FROM item_stock 
-            WHERE item_id = ?";
+    $sql = "SELECT COUNT(*) AS total
+            FROM purchaseorder_lineitem
+            WHERE item_id = ?";   // ✅ DIRECT PO LINK
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $materialId);
     $stmt->execute();
 
     return intval($stmt->get_result()->fetch_assoc()['total']) > 0;
+  }
+
+  public static function getPendingPOQty($materialId)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $sql = "
+        SELECT COALESCE(SUM(PLI.Quantity), 0) AS PendingQty
+        FROM purchaseorder_lineitem PLI
+        JOIN purchase_order PO ON PO.Id = PLI.POID
+        WHERE 
+            PLI.Item_id = ?
+            AND PO.Status = 0
+    ";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $materialId);
+    $stmt->execute();
+
+    $row = $stmt->get_result()->fetch_assoc();
+    return (int) $row['PendingQty'];
   }
 
 

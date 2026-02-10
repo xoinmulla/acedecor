@@ -178,12 +178,13 @@ require_once("../Model/materialModel.php");
                         // 🔐 DELETE BUTTON LOGIC
                         if ($material->getCanDelete()) {
                             $deleteAction = "
-            <button class='dropdown-item text-danger'
-                data-toggle='modal'
-                data-target='#deleteMaterialModal'
-                data-id='{$id}'>
-                Delete Material
-            </button>";
+<button type='button' class='dropdown-item'
+    data-toggle='modal'
+    data-target='#deleteMaterialModal'
+    data-id='{$id}'>
+    Delete Material
+</button>";
+
                         } else {
                             $deleteAction = "
             <button class='dropdown-item text-muted' disabled
@@ -801,7 +802,7 @@ require_once("../Model/materialModel.php");
 </div>
 <div class="modal fade" id="deleteMaterialModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" id="delete_material_form" action="../Controller/materialController.php">
+        <form method="POST" id="delete_material_form">
             <div class="modal-content">
 
                 <div class="modal-header">
@@ -820,7 +821,10 @@ require_once("../Model/materialModel.php");
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Confirm</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteMaterial">
+                        Confirm
+                    </button>
+
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
 
@@ -2443,29 +2447,55 @@ require_once("../Model/materialModel.php");
         });
 
 
-        $(document).off('submit.materialDelete')
-            .on('submit.materialDelete', '#delete_material_form', function (e) {
+        $('#confirmDeleteMaterial').off('click').on('click', function () {
 
-                e.preventDefault();
+            const $btn = $(this);
+            $btn.prop('disabled', true);
 
-                $.ajax({
-                    url: baseCtrl + "/materialController.php",
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    dataType: "json",   // 👈 add this
-                    success: function (json) {
-                        if (json.status === "success") {
-                            alert("Material deleted successfully!");
-                            location.reload();
-                        }
-                    },
-                    error: function (xhr, status, err) {
-                        console.error("Delete material failed:", status, err);
+            $.ajax({
+                url: baseCtrl + "/materialController.php",
+                type: "POST",
+                data: $('#delete_material_form').serialize(),
+                dataType: "json",
+                success: function (json) {
+                    if (json.status === "success") {
+                        alert("Material deleted successfully!");
+                        location.reload();
+                    } else {
+                        alert(json.message || "Delete failed");
+                        $btn.prop('disabled', false);
                     }
-                });
-
-
+                },
+                error: function () {
+                    alert("Server error during delete");
+                    $btn.prop('disabled', false);
+                }
             });
+        });
+        const MATERIAL_INPUT_TYPE = 2;
+
+        $.getJSON(
+            config.developmentPath + "/Admin/Controller/brandcontroller.php?InputId=" + MATERIAL_INPUT_TYPE,
+            function (data) {
+                $('#checkboxes').empty();
+
+                $.each(data, function (index, value) {
+                    $('#checkboxes').append(`
+        <li class="form-check form-switch px-3">
+          <input class="form-check-input me-1"
+                 name="brand_list[]"
+                 value="${value.brandid}"
+                 type="checkbox"
+                 id="brand_${value.brandid}">
+          <label for="brand_${value.brandid}">
+            ${value.brandname}
+          </label>
+        </li>
+      `);
+                });
+            }
+        );
+
 
     }); // end document ready
 </script>

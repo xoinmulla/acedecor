@@ -113,7 +113,7 @@ require_once("../Model/item_companydetailsmodel.php");
                                 <div class="accordion" id="accordion-<?= $supplierId ?>">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
-                                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                            <button class="accordion-button" type="button" data-toggle="collapse"
                                                 data-bs-target="#collapse-<?= $supplierId ?>">
                                                 Bank Details
                                             </button>
@@ -203,7 +203,7 @@ require_once("../Model/item_companydetailsmodel.php");
                                         </button>
                                         <button type="button"
                                             class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                            data-toggle="dropdown" aria-expanded="false">
                                             <span class="visually-hidden">Toggle Dropright</span>
                                         </button>
                                         <ul class="dropdown-menu" id="checkboxes">
@@ -396,7 +396,7 @@ require_once("../Model/item_companydetailsmodel.php");
                                         </button>
                                         <button type="button"
                                             class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                            data-bs-toggle="dropdown" aria-expanded="false" id="editedBrand">
+                                            data-toggle="dropdown" aria-expanded="false" id="editedBrand">
                                             <span class="visually-hidden">Toggle Dropright</span>
                                         </button>
                                         <ul class="dropdown-menu" id="editedcheckboxes">
@@ -801,27 +801,28 @@ require_once("../Model/item_companydetailsmodel.php");
             </div>
         </form>
     </div>
-</div> 
+</div>
 <script>
     $(document).ready(function () {
         var fetchsubcaturl = config.developmentPath + "/Admin/Controller/brandcontroller.php";
         $.getJSON(fetchsubcaturl, function (data) {
             $.each(data, function (index, value) {
                 $('#checkboxes').append(
-                    $(document.createElement('li')).prop({
-                        class: 'form-check form-switch'
-                    }).append(
-                        $(document.createElement('input')).prop({
+                    $('<li>', { class: 'form-check form-switch px-2' }).append(
+                        $('<input>', {
                             class: 'form-check-input me-1',
-                            id: 'myCheckBox',
+                            id: 'brand_' + value.brandid,
                             name: 'brand_list[]',
                             value: value.brandid,
                             type: 'checkbox'
-                        })).append(
-                            $(document.createElement('label')).prop({
-                                for: 'myCheckBox'
-                            }).html(value.brandname)
-                        ).append(document.createElement('br')));
+                        }),
+                        $('<label>', {
+                            for: 'brand_' + value.brandid,
+                            class: 'form-check-label'
+                        }).text(value.brandname)
+                    )
+                );
+
             });
         });
 

@@ -71,7 +71,6 @@ class DBLineItem
     }
   }
 
-
   public static function getLineItemByQuoteId($quoteId)
   {
     $db = ConnectDb::getInstance();
@@ -130,7 +129,6 @@ ORDER BY lineItemId ASC
     echo json_encode($data, JSON_NUMERIC_CHECK);
   }
 
-
   public static function getMaterialLineItemByQuoteId($quoteId)
   {
     $db = ConnectDb::getInstance();
@@ -183,7 +181,6 @@ ORDER BY lineItemId ASC
     header('Content-Type: application/json');
     echo json_encode($data, JSON_NUMERIC_CHECK);
   }
-
 
   public static function getLineItemByProjectId($projectId)
   {
@@ -391,7 +388,6 @@ ORDER BY lineItemId ASC
     header('Content-Type: application/json');
     echo json_encode($data, JSON_NUMERIC_CHECK);
   }
-
 
   public static function getLineItemByQuoteIdForOrder($quoteId)
   {
@@ -679,7 +675,6 @@ ORDER BY lineItemId ASC
     echo json_encode($itemList);
   }
 
-
   public static function getAllquotations()
   {
     $db = ConnectDb::getInstance();
@@ -726,7 +721,6 @@ ORDER BY lineItemId ASC
       return false;
     }
   }
-
 
   public static function delete($lineItemObj)
   {

@@ -4,15 +4,33 @@ require "../Utilities/Sanitization.php";
 include "../DB Operations/item_stocksOps.php";
 
 if (isset($_POST['inlineEdit'])) {
-    DBitemstock::updateInwardRow(
-        $_POST['StockId'],
-        $_POST['ReceivedQty'],
-        $_POST['ReceivedQtyAmt'],
-        $_POST['BalanceQty']
-    );
+
+    $stockId = $_POST['StockId'];
+    $qty = $_POST['ReceivedQty'];
+    $amt = $_POST['ReceivedQtyAmt'];
+    $balance = $_POST['BalanceQty'];
+    $type = $_POST['inventoryType'] ?? 'item';
+
+    if ($type === 'item') {
+        DBitemstock::updateItemInwardRow(
+            $stockId,
+            $qty,
+            $amt,
+            $balance
+        );
+    } else if ($type === 'material') {
+        DBitemstock::updateMaterialInwardRow(
+            $stockId,
+            $qty,
+            $amt,
+            $balance
+        );
+    }
+
     echo json_encode(['status' => 'success']);
     exit;
 }
+
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -70,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stock->set_ReceivedQtyAmt(Sanitization::test_input($_POST["ReceivedQtyAmt"]));
         $stock->set_GST(Sanitization::test_input($_POST["GST"]));
         $stock->set_BalanceQty(Sanitization::test_input($_POST["BalanceQty"]));
-        
+
         DBitemstock::insert($stock);
     }
     // error_log($value['StockId']);

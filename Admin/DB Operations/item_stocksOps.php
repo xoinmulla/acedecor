@@ -269,6 +269,32 @@ GROUP BY
     $stmt->execute();
   }
 
+  public static function updateItemInwardRow($stockId, $qty, $amt, $balance)
+  {
+    $db = ConnectDb::getInstance()->getConnection();
+
+    $sql = "UPDATE item_stock
+            SET ReceivedQty = ?,
+                ReceivedQtyAmt = ?,
+                BalanceQty = ?
+            WHERE item_stockid = ?";
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$qty, $amt, $balance, $stockId]);
+  }
+  public static function updateMaterialInwardRow($stockId, $qty, $amt, $balance)
+  {
+    $db = ConnectDb::getInstance()->getConnection();
+
+    $sql = "UPDATE material_stock
+            SET ReceivedQty = ?,
+                ReceivedQtyAmt = ?,
+                BalanceQty = ?
+            WHERE material_stockid = ?";
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute([$qty, $amt, $balance, $stockId]);
+  }
 
   public static function viewinwarddetailsbasedonID($id, $PurchaseId, $inventoryType)
   {
