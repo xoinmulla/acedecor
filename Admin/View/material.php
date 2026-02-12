@@ -339,7 +339,21 @@ require_once("../Model/materialModel.php");
                             </div>
                         </div>
                     </div>
-
+                    <!-- Brand (Company) -->
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
+                            <div class="col-md-5">
+                                <select id="company" class="form-select" required name="company">
+                                </select>
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
+                                    <i class="fas fa-plus-circle"></i> Brand
+                                </a>
+                            </div> -->
+                        </div>
+                    </div>
                     <!-- Category / Add Category Button-->
                     <div class="form-group">
                         <div class="row">
@@ -370,21 +384,7 @@ require_once("../Model/materialModel.php");
                         </div>
                     </div>
 
-                    <!-- Brand (Company) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
-                            <div class="col-md-5">
-                                <select id="company" class="form-select" required name="company">
-                                </select>
-                            </div>
-                            <!-- <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
-                                    <i class="fas fa-plus-circle"></i> Brand
-                                </a>
-                            </div> -->
-                        </div>
-                    </div>
+
 
                     <!-- Material Code -->
                     <div class="form-group">
@@ -1470,13 +1470,83 @@ require_once("../Model/materialModel.php");
             }).fail(function () { console.error("Failed to load brands for cat", catId); });
         }
 
-        $('#materialCategory').on('change', function () {
-            $('#materialsubCategory').empty();
-            $('#company').empty(); // correct brand dropdown
+        // $('#materialCategory').on('change', function () {
+        //     $('#materialsubCategory').empty();
+        //     $('#company').empty(); // correct brand dropdown
 
-            matSetSubCategory('#materialsubCategory', this.value);
-            matSetBrand('#company', this.value); // FIXED
+        //     matSetSubCategory('#materialsubCategory', this.value);
+        //     matSetBrand('#company', this.value); // FIXED
+        // });
+        $('#company').on('change', function () {
+
+            let brandId = $(this).val();
+
+            $('#materialCategory').empty();
+            $('#materialsubCategory').empty();
+
+            if (!brandId) return;
+
+            $.getJSON(
+                config.developmentPath + "/Admin/Controller/material_CategoryController.php?brandId=" + brandId,
+                function (data) {
+
+                    $('#materialCategory')
+                        .append('<option hidden disabled selected>-- select category --</option>');
+
+                    $.each(data, function (i, v) {
+                        $('#materialCategory').append(
+                            `<option value="${v.materialcatId}">${v.materialCatname}</option>`
+                        );
+                    });
+                }
+            );
         });
+
+        $('#materialCategory').on('change', function () {
+
+            let catId = $(this).val();
+
+            $('#materialsubCategory').empty();
+
+            if (!catId) return;
+
+            $.getJSON(
+                config.developmentPath + "/Admin/Controller/material_SubcategoryController.php?catId=" + catId,
+                function (data) {
+
+                    $('#materialsubCategory')
+                        .append('<option hidden disabled selected>-- select subcategory --</option>');
+
+                    $.each(data, function (i, v) {
+                        $('#materialsubCategory').append(
+                            `<option value="${v.materialsubcatId}">${v.materialsubcatName}</option>`
+                        );
+                    });
+                }
+            );
+        });
+        function loadMaterialBrands() {
+
+            $('#company').empty()
+                .append('<option hidden disabled selected>-- select brand --</option>');
+
+            $.getJSON(
+                config.developmentPath + "/Admin/Controller/brandcontroller.php?InputId=2",
+                function (data) {
+
+                    $.each(data, function (i, v) {
+                        $('#company').append(
+                            `<option value="${v.brandid}">${v.brandname}</option>`
+                        );
+                    });
+
+                }
+            );
+        }
+        $('#itemdetailsModal').on('show.bs.modal', function () {
+            loadMaterialBrands();
+        });
+
 
 
         $('#editedmaterialCategory').on('change', function () {

@@ -84,16 +84,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ]);
     exit();
   }
-  if (
-    DBitemdetails::isItemUsedInQuotation($itemId) ||
-    DBitemdetails::isItemUsedInPO($itemId)
-  ) {
+  // ================== DELETE ITEM ==================
+  if (isset($_POST["action"]) && $_POST["action"] == 'delete') {
+
+    $itemId = intval($_POST['id']);
+
+    // 🚫 BLOCK DELETE IF USED ANYWHERE
+    if (
+      DBitemdetails::isItemUsedInApprovedQuotation($itemId) ||
+      DBitemdetails::isItemUsedInQuotation($itemId) ||
+      DBitemdetails::isItemUsedInPO($itemId)
+    ) {
+      echo json_encode([
+        "status" => "error",
+        "message" => "❌ Cannot delete item. It is used in Quotation or Purchase Order."
+      ]);
+      exit();
+    }
+
+    DBitemdetails::delete($itemId);
+
     echo json_encode([
-      "status" => "error",
-      "message" => "❌ Cannot delete item. Item is used in Quotation or Purchase Order."
+      "status" => "success",
+      "message" => "Item deleted successfully"
     ]);
     exit();
   }
+
 
 
   // ================== INSERT NEW ITEM ==================

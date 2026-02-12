@@ -273,6 +273,20 @@ require_once("../Model/item_detailsmodel.php");
                     </div>
                     <div class="form-group">
                         <div class="row">
+                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
+                            <div class="col-md-8">
+                                <select id="company" class="form-select" required name="company">
+                                </select>
+                            </div>
+                            <!-- <div class="col-md-3">
+                                <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
+                                    <i class="fas fa-plus-circle"></i> Brand
+                                </a>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
                             <label class="col-md-4 text-right">Item Category<span class="text-danger">*</span></label>
                             <div class="col-md-5">
                                 <select id="itemCategory" class="form-select" required name="itemCategory">
@@ -309,20 +323,7 @@ require_once("../Model/item_detailsmodel.php");
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
-                            <div class="col-md-5">
-                                <select id="company" class="form-select" required name="company">
-                                </select>
-                            </div>
-                            <!-- <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
-                                    <i class="fas fa-plus-circle"></i> Brand
-                                </a>
-                            </div> -->
-                        </div>
-                    </div>
+
 
                     <div class="form-group">
                         <div class="row">
@@ -1133,6 +1134,14 @@ require_once("../Model/item_detailsmodel.php");
         </form>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        if (window.location.hash === '#itemdetailsModal') {
+            $('#itemdetailsModal').modal('show');
+        }
+    });
+</script>
+
 
 <script>
     $(document).ready(function () {
@@ -1792,25 +1801,25 @@ require_once("../Model/item_detailsmodel.php");
 
 
 
-        var url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
-        let catId = 0;
-        $.getJSON(url, function (data) {
-            $('#itemCategory').append(
-                '<option hidden disabled selected value>-- select an option --</option>'
-            );
-            $.each(data, function (index, value) {
+        // var url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
+        // let catId = 0;
+        // $.getJSON(url, function (data) {
+        //     $('#itemCategory').append(
+        //         '<option hidden disabled selected value>-- select an option --</option>'
+        //     );
+        //     $.each(data, function (index, value) {
 
-                $('#itemCategory').append('<option  value="' + value.itemcatid +
-                    '">' +
-                    value
-                        .itemcatname + '</option>');
-                $('#editeditemCategory').append('<option  value="' + value
-                    .itemcatid +
-                    '">' + value
-                        .itemcatname + '</option>');
+        //         $('#itemCategory').append('<option  value="' + value.itemcatid +
+        //             '">' +
+        //             value
+        //                 .itemcatname + '</option>');
+        //         $('#editeditemCategory').append('<option  value="' + value
+        //             .itemcatid +
+        //             '">' + value
+        //                 .itemcatname + '</option>');
 
-            });
-        });
+        //     });
+        // });
 
         function setSubCategory(catId) {
             var fetchsubcaturl = config.developmentPath +
@@ -1869,39 +1878,115 @@ require_once("../Model/item_detailsmodel.php");
             });
         });
 
+        // $('#itemCategory').on('change', function () {
+
+        //     debugger;
+        //     $('#subCategory').empty();
+        //     $('#company').empty();
+        //     fetchsubcaturl =
+        //         config.developmentPath +
+        //         "/Admin/Controller/item_subcategorycontroller.php/?catId=" + this
+        //             .value;
+        //     $.getJSON(fetchsubcaturl, function (data) {
+        //         $.each(data, function (index, value) {
+        //             // APPEND OR INSERT DATA TO SELECT ELEMENT.
+        //             $('#subCategory').append(
+        //                 '<option hidden disabled selected value>-- select an option --</option>'
+        //             );
+        //             $('#subCategory').append('<option value="' + value.itemsubcatid +
+        //                 '">' +
+        //                 value
+        //                     .itemsubcatname + '</option>');
+        //         });
+        //     });
+        //     var fetchcompany = config.developmentPath + "/Admin/Controller/brandcontroller.php?categoryId=" + this
+        //         .value;
+        //     $.getJSON(fetchcompany, function (data) {
+        //         $.each(data, function (index, value) {
+        //             $('#company').append(
+        //                 '<option hidden disabled selected value>-- select an option --</option>'
+        //             );
+        //             $('#company').append('<option value="' + value.brandid + '">' + value
+        //                 .brandname + '</option>');
+        //             $('#editedcompany').append('<option value="' + value.brandid + '">' + value
+        //                 .brandname + '</option>');
+        //         });
+        //     });
+        // });
+        // =======================================
+        // BRAND → LOAD CATEGORIES
+        // =======================================
+        $('#company').on('change', function () {
+
+            let brandId = this.value;
+
+            $('#itemCategory').empty();
+            $('#subCategory').empty();
+
+            if (!brandId) return;
+
+            let url = config.developmentPath +
+                "/Admin/Controller/item_categorycontroller.php?brandId=" + brandId;
+
+            $.getJSON(url, function (data) {
+
+                $('#itemCategory')
+                    .append('<option hidden disabled selected value>-- select category --</option>');
+
+                if (!data || data.length === 0) {
+                    alert("No categories mapped to this brand.");
+                    return;
+                }
+
+                $.each(data, function (index, value) {
+                    $('#itemCategory').append(
+                        `<option value="${value.itemcatid}">
+                    ${value.itemcatname}
+                 </option>`
+                    );
+                });
+
+            });
+        });
+        // =======================================
+        // LOAD BRANDS WHEN ITEM MODAL OPENS
+        // =======================================
+        $('#itemdetailsModal').on('show.bs.modal', function () {
+            reloadBrandListSimple();   // Load all brands first
+        });
+        // =======================================
+        // CATEGORY → LOAD SUBCATEGORY (ADD MODAL)
+        // =======================================
         $('#itemCategory').on('change', function () {
 
-            debugger;
+            let catId = this.value;
+
             $('#subCategory').empty();
-            $('#company').empty();
-            fetchsubcaturl =
+
+            if (!catId) return;
+
+            let fetchsubcaturl =
                 config.developmentPath +
-                "/Admin/Controller/item_subcategorycontroller.php/?catId=" + this
-                    .value;
+                "/Admin/Controller/item_subcategorycontroller.php/?catId=" + catId;
+
             $.getJSON(fetchsubcaturl, function (data) {
+
+                $('#subCategory')
+                    .append('<option hidden disabled selected value>-- select subcategory --</option>');
+
+                if (!data || data.length === 0) {
+                    alert("No subcategories found.");
+                    return;
+                }
+
                 $.each(data, function (index, value) {
-                    // APPEND OR INSERT DATA TO SELECT ELEMENT.
                     $('#subCategory').append(
-                        '<option hidden disabled selected value>-- select an option --</option>'
+                        `<option value="${value.itemsubcatid}">
+                    ${value.itemsubcatname}
+                 </option>`
                     );
-                    $('#subCategory').append('<option value="' + value.itemsubcatid +
-                        '">' +
-                        value
-                            .itemsubcatname + '</option>');
                 });
-            });
-            var fetchcompany = config.developmentPath + "/Admin/Controller/brandcontroller.php?categoryId=" + this
-                .value;
-            $.getJSON(fetchcompany, function (data) {
-                $.each(data, function (index, value) {
-                    $('#company').append(
-                        '<option hidden disabled selected value>-- select an option --</option>'
-                    );
-                    $('#company').append('<option value="' + value.brandid + '">' + value
-                        .brandname + '</option>');
-                    $('#editedcompany').append('<option value="' + value.brandid + '">' + value
-                        .brandname + '</option>');
-                });
+
             });
         });
 
@@ -2183,13 +2268,5 @@ require_once("../Model/item_detailsmodel.php");
         }
 
 
-    });
-</script>
-
-<script>
-    $(document).ready(function () {
-        if (window.location.hash === '#itemdetailsModal') {
-            $('#itemdetailsModal').modal('show');
-        }
     });
 </script>

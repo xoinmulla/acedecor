@@ -1358,7 +1358,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                         </div>
                                     </div>
 
-                                    <table class="table table-bordered" id="lineItemTable" width="100%" cellspacing="0">
+                                    <table class="table table-bordered" id="" width="100%" cellspacing="0">
                                         <thead>
                                             <tr>
                                                 <th rowspan="2">CL-Id</th>
@@ -1637,7 +1637,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
         var itemDetails = [];
         var materialDetails = [];
-        $('#createQuote').click(function () {
+        $('#createQuote').on('click', function () {
             const f = $('#quote_form').serializeJSON();
 
             // guard
@@ -1720,15 +1720,30 @@ require_once("../Model/enq_cat_mappingmodel.php");
             const rowId = Date.now(); // or use Math.random() for uniqueness
 
             const rowPayload = {
-                id: rowId, // ✅ Always set an ID
+                id: rowId,
                 typeText,
                 code: f['itemarticleNo'] || '',
                 name: f['selectedItemName'] || '',
-                qty, mrp, gst, cDis, tDis, tAmt, cPri, tVal, tPri,
+                qty,
+                mrp,
+                gst,
+                cDis,
+                tDis,
+                tAmt,
+                cPri,          // current total company price
+                tVal,          // current total value
+                tPri,
                 ref: refValue,
                 note: f['quoteNote'] || '',
-                img: src
+                img: src,
+
+                // ✅ ADD THESE (DO NOT REMOVE ANYTHING ABOVE)
+                unitFactor: Number($('#unitFactor').val()) || 1,
+                spu: Number($('#spu').val()) || 1,
+                companyBase: Number($('#companyPrice').data('base')) || 0,
+                baseTotalValue: Number($('#totalValue').data('base')) || 0
             };
+
             $tr.data('rowPayload', rowPayload);  // 🔹 Save this item’s data to the row itself
 
 
@@ -1742,16 +1757,17 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
             // Update totals
             // Update all summary totals
-            sumTotalAmount += tAmt;
-            sumCompanyPrice += cPri;
-            sumTotalValue += tVal;
-            sumTradeValue += tPri;
+            // sumTotalAmount += tAmt;
+            // sumCompanyPrice += cPri;
+            // sumTotalValue += tVal;
+            // sumTradeValue += tPri;
 
-            // ✅ Update summary input display
-            $('#sumTotalAmount').val(sumTotalAmount.toFixed(2));
-            $('#sumCompanyPrice').val(sumCompanyPrice.toFixed(2));
-            $('#sumTotalValue').val(sumTotalValue.toFixed(2));
-            $('#sumTradeValue').val(sumTradeValue.toFixed(2));
+            // // ✅ Update summary input display
+            // $('#sumTotalAmount').val(sumTotalAmount.toFixed(2));
+            // $('#sumCompanyPrice').val(sumCompanyPrice.toFixed(2));
+            // $('#sumTotalValue').val(sumTotalValue.toFixed(2));
+            // $('#sumTradeValue').val(sumTradeValue.toFixed(2));
+            recalcTotals();
 
             // 🧩 Keep Quote Value blank until admin enters it manually
             $('#quoteValue').val('');
@@ -1901,6 +1917,35 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 }
             });
         }
+
+        function recalcTotals() {
+            debugger;
+            const rows = $('#lineItemTable tbody tr').toArray();
+            console.log("Real Row count:", rows.length);
+
+            let sumTotalAmount = 0;
+            let sumCompanyPrice = 0;
+            let sumTotalValue = 0;
+            let sumTradeValue = 0;
+
+            for (let i = 0; i < rows.length; i++) {
+
+                const payload = $(rows[i]).data('rowPayload');
+                if (!payload) continue;   // Skip rows without payload
+
+                sumTotalAmount += Number(payload.tAmt || 0);
+                sumCompanyPrice += Number(payload.cPri || 0);
+                sumTotalValue += Number(payload.tVal || 0);
+                sumTradeValue += Number(payload.tPri || 0);
+            }
+
+            $('#sumTotalAmount').val(sumTotalAmount.toFixed(2));
+            $('#sumCompanyPrice').val(sumCompanyPrice.toFixed(2));
+            $('#sumTotalValue').val(sumTotalValue.toFixed(2));
+            $('#sumTradeValue').val(sumTradeValue.toFixed(2));
+        }
+
+
         // ✅ Resets all quotation item fields to blank
         function resetQuotationFields() {
             $('#itemquantity').val('');
@@ -1918,7 +1963,6 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#itemarticleNo').val('');
             $('#itemimage').val('');
             $('#unitFactor').val('');
-            $('#sumTotalAmount, #sumCompanyPrice, #sumTotalValue, #sumTradeValue, #quoteValue').val('');
         }
 
         $('#infoCustomerModal').on('show.bs.modal', function (e) {
@@ -2580,7 +2624,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#GST').val("");
             $('#tradequoteReferencePrice').val('');
             $('#quoteNote').val('');
-            $("#lineItemTable").find("tr:gt(0)").remove();
+            $('#lineItemTable tbody').empty();
         });
 
         $('#itemid').on('change', function (e) {
@@ -3095,11 +3139,66 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         // 6: MRP, 7: GST, 8: Company Discount, 9: Trade Discount,
                         // 10: Total Amount, 11: Company Price, 12: Total Value, 13: Trade Price, 14: Action
                         if (ROW_BEING_EDITED && ROW_BEING_EDITED.length) {
-                            ROW_BEING_EDITED.find('td:eq(0)').text(newRef);                    // REF
-                            ROW_BEING_EDITED.find('td:eq(5)').text(newQty);                    // Quantity
-                            ROW_BEING_EDITED.find('td:eq(9)').text(Number(newDisc || 0).toFixed(2)); // Trade Discount
-                            ROW_BEING_EDITED.find('td:eq(13)').text(newTP);                    // Trade Price
+
+                            const payload = ROW_BEING_EDITED.data('rowPayload') || {};
+
+                            const mrp = Number(payload.mrp || 0);
+                            const gst = Number(payload.gst || 0);
+                            const unitFactor = Number(payload.unitFactor || 1);
+                            const companyBase = Number(payload.companyBase || 0);   // ✅ per-piece base
+                            const baseTotalValue = Number(payload.baseTotalValue || 0);  // ✅ base from DB
+                            const spu = Number(payload.spu || 1);
+
+
+                            const qty = Number(newQty || 0);
+                            const tDis = Number(newDisc || 0);
+
+                            // 1️⃣ Total Amount
+                            const totalAmount = mrp * qty * unitFactor;
+
+                            // 2️⃣ Company Price
+                            const companyTotal = companyBase * qty;
+
+                            // 3️⃣ Trade Price
+                            let perPieceTrade = companyBase;
+                            if (tDis > 0) {
+                                const discounted = mrp - (mrp * (tDis / 100));
+                                perPieceTrade = discounted + (discounted * (gst / 100));
+                            }
+                            const tradeTotal = perPieceTrade * qty * unitFactor;
+
+                            // 4️⃣ Total Value (SPU logic)
+                            let totalValue = 0;
+
+                            if (spu > 0 && qty > 0) {
+                                totalValue = baseTotalValue * Math.ceil(qty / spu);
+                            } else {
+                                totalValue = baseTotalValue * qty;
+                            }
+
+
+                            // 🔥 Update row cells
+                            ROW_BEING_EDITED.find('td:eq(0)').text(newRef);                          // REF
+                            ROW_BEING_EDITED.find('td:eq(5)').text(qty);                             // Quantity
+                            ROW_BEING_EDITED.find('td:eq(9)').text(tDis.toFixed(2));                 // Trade Discount
+                            ROW_BEING_EDITED.find('td:eq(10)').text(totalAmount.toFixed(2));         // Total Amount
+                            ROW_BEING_EDITED.find('td:eq(11)').text(companyTotal.toFixed(2));        // Company Price
+                            ROW_BEING_EDITED.find('td:eq(12)').text(totalValue.toFixed(2));          // Total Value
+                            ROW_BEING_EDITED.find('td:eq(13)').text(tradeTotal.toFixed(2));          // Trade Price
+
+                            // 🔥 Update payload stored in row
+                            payload.qty = qty;
+                            payload.tDis = tDis;
+                            payload.tPri = tradeTotal;
+                            payload.tAmt = totalAmount;
+                            payload.cPri = companyTotal;
+                            payload.tVal = totalValue;
+                            payload.ref = newRef;
+                            payload.note = quoteNote;
+
+                            ROW_BEING_EDITED.data('rowPayload', payload);
                         }
+
                         // 🧩 Update stored payload data for Info modal
                         // 🧩 Update stored payload data for Info modal
                         const payload = ROW_BEING_EDITED.data('rowPayload') || {};
