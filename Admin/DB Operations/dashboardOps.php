@@ -79,9 +79,10 @@ class DBDashboard
         $conn = $db->getConnection();
 
         $query = "
-        SELECT COUNT(*) AS total
+        SELECT COUNT(DISTINCT P.custId) AS total
         FROM projects P
-        JOIN quotation_details Q ON P.quoteId = Q.quoteCode
+        JOIN quotation_details Q 
+            ON P.quoteId = Q.quoteCode
         WHERE P.project_status = 'Completed'
           AND Q.quo_status = 'Approved'
     ";
@@ -90,6 +91,7 @@ class DBDashboard
         return mysqli_fetch_assoc($result);
     }
 
+
     public static function PendingProjects()
     {
         $db = ConnectDb::getInstance();
@@ -97,14 +99,14 @@ class DBDashboard
 
         $query = "
         SELECT COUNT(*) AS total
-        FROM projects P
-        JOIN quotation_details Q ON P.quoteId = Q.quoteCode
-        WHERE Q.quo_status IN ('Pending', 'Rejected')
+        FROM projects
+        WHERE project_status = 'Pending'
     ";
 
         $result = mysqli_query($conn, $query);
         return mysqli_fetch_assoc($result);
     }
+
 
     public static function Totalsuppliers()
     {

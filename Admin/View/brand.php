@@ -27,7 +27,8 @@ require_once("../Model/brandmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Brands List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Brands
+                    List</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#brandModal>
@@ -392,11 +393,10 @@ require_once("../Model/brandmodel.php");
             var fetchinputtypeurl = config.developmentPath + "/Admin/Controller/inputTypeController.php?brandId=" + rowid;
             $.getJSON(fetchinputtypeurl, function (data) {
                 $.each(data, function (index, value) {
-                    if (value.isMapped == 0) {
-                        checked = false;
-                    } else {
-                        checked = true;
-                    }
+                    let checked = value.isMapped === true || value.isUsed === true;
+                    let disabled = value.isUsed === true;
+
+
                     $('#editcheckboxes').append(
                         $('<li>', { class: 'form-check form-switch' }).append(
                             $('<input>', {
@@ -404,9 +404,11 @@ require_once("../Model/brandmodel.php");
                                 id: 'editedmyCheckBox_' + value.InputTypeId,
                                 name: 'inputtype_list[]',
                                 checked: checked,
+                                disabled: disabled,
                                 value: value.InputTypeId,
                                 type: 'checkbox'
                             })
+
                         ).append(
                             $('<label>', {
                                 for: 'editedmyCheckBox_' + value.InputTypeId

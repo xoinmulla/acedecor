@@ -360,21 +360,6 @@ $mainprojects = DBDashboard::MainProjects();
                     </div>
 
                     <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                        <div class="dashboard-card bg-completed">
-                            <div class="dashboard-icon">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="dashboard-title">Completed Projects</div>
-                            <div class="dashboard-value">
-                                <?php echo $completedprojects['total']; ?>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="row mb-3 p-4">
-
-                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                         <div class="dashboard-card bg-main">
                             <div class="dashboard-icon">
                                 <i class="fas fa-project-diagram"></i>
@@ -385,6 +370,11 @@ $mainprojects = DBDashboard::MainProjects();
                             </div>
                         </div>
                     </div>
+
+                </div>
+                <div class="row mb-3 p-4">
+
+
 
                     <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                         <a href="ongoingprojects.php" class="card-link">
@@ -413,7 +403,17 @@ $mainprojects = DBDashboard::MainProjects();
                             </div>
                         </a>
                     </div>
-
+                    <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                        <div class="dashboard-card bg-completed">
+                            <div class="dashboard-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="dashboard-title">Completed Projects</div>
+                            <div class="dashboard-value">
+                                <?php echo $completedprojects['total']; ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>

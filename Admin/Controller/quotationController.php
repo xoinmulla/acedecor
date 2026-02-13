@@ -123,12 +123,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quotation->set_quoteComments(Sanitization::test_input($_POST['quoteComments']));
         $quotation->set_modifiedby(Sanitization::test_input($_POST['modifiedby']));
         DBQuotation::update($quotation);
-        if ($_POST['quoteStatus'] != 'Approved') {
+        // Only update project if it already exists AND status is Approved
+        if ($_POST['quoteStatus'] == 'Approved') {
+
             DBproject::updateStatusByQuoteCode(
                 $_POST['quoteCode'],
-                'Pending'
+                'In Progress'
             );
+
         }
+
 
         if ($_POST['quoteStatus'] == 'Approved') {
             $project = new Project();

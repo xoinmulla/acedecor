@@ -22,6 +22,83 @@ require_once("../Model/quotationModel.php");
     .pad {
         padding-right: .5rem;
     }
+
+    .boq-wrapper {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
+
+    .boq-header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    .company-block h2 {
+        margin: 0;
+        font-weight: bold;
+    }
+
+    .company-block p {
+        margin: 5px 0 0;
+        font-size: 13px;
+    }
+
+    .boq-title h3 {
+        margin: 0;
+        text-align: right;
+        font-weight: bold;
+    }
+
+    .boq-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .boq-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .boq-table th {
+        background: #343a40;
+        color: #fff;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .boq-table td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .boq-table img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+    }
+
+    .boq-footer {
+        margin-top: 40px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .signature .sign-line {
+        margin-top: 40px;
+        width: 200px;
+        border-bottom: 1px solid #000;
+    }
+
+    .thank-you {
+        align-self: flex-end;
+        font-style: italic;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Customer Management</h1>
 <!-- DataTales Example -->
@@ -574,30 +651,35 @@ require_once("../Model/quotationModel.php");
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <div id="printtopdf">
-                        <div class="card">
-                            <table class="table table-borderless">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            Customer Name :<span id='customerName'></span>
-                                        </td>
-                                        <td>
-                                            Customer Id : <span id='customerCode'></span>
-                                        </td>
-                                        <td>
-                                            Quote Id : <span id='listquoteCode'></span>
-                                        </td>
-                                        <td style='display:none'>
-                                            <span id="Input">InputType :</span> <span id='InputType'></span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <div id="printtopdf" class="boq-wrapper">
+
+                        <!-- Company Header -->
+                        <div class="boq-header">
+                            <div class="company-block">
+                                <h2>ACE DECORS</h2>
+                                <p>
+                                    Dharwad, Karnataka <br>
+                                    Phone: +91-9742268112 | +91-9742367112 <br>
+                                    Email: sales@acedecors.co.in
+                                </p>
+                            </div>
+
+                            <div class="boq-title">
+                                <h3>BOQ (Bill Of Quantity)</h3>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <table class="table table-bordered" id="lineItemTable" width="100%" cellspacing="0">
-                                <thead class="table-dark">
+
+                        <!-- Customer Info -->
+                        <div class="boq-info">
+                            <div><strong>Customer Name:</strong> <span id="customerName"></span></div>
+                            <div><strong>Customer Id:</strong> <span id="customerCode"></span></div>
+                            <div><strong>Quote Id:</strong> <span id="listquoteCode"></span></div>
+                        </div>
+
+                        <!-- Line Item Table -->
+                        <div class="boq-table-wrapper">
+                            <table class="boq-table" id="lineItemTable">
+                                <thead>
                                     <tr>
                                         <th>Image</th>
                                         <th>Name</th>
@@ -607,16 +689,24 @@ require_once("../Model/quotationModel.php");
                                         <th>Unit</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-
-
-                                </tbody>
-                                <tfoot>
-
-                                </tfoot>
+                                <tbody></tbody>
                             </table>
                         </div>
+
+                        <!-- Footer -->
+                        <div class="boq-footer">
+                            <div class="signature">
+                                <p>Authorized Signature</p>
+                                <div class="sign-line"></div>
+                            </div>
+
+                            <div class="thank-you">
+                                <p>Thank you for your business!</p>
+                            </div>
+                        </div>
+
                     </div>
+
                     <div class="form-group">
                         <div class="row">
                             <input type="hidden" name="createdby" id="createdby" class="form-control" required
@@ -627,13 +717,14 @@ require_once("../Model/quotationModel.php");
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <div class="form-check form-switch">
+                    <!-- <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
                         <label class="form-check-label" for="flexSwitchCheckDefault">Water Mark</label>
-                    </div>
+                    </div> -->
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
-                    <input type="submit" name="submit" id="PDF" class="btn btn-success" value="Save AS PDF" />
+                    <input type="submit" id="wqPdfBtn" class="btn btn-success" value="WQ - PDF" />
+                    <input type="submit" id="woqPdfBtn" class="btn btn-primary" value="WOQ - PDF" />
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -732,32 +823,116 @@ require_once("../Model/quotationModel.php");
                 waterMarked = false;
             }
         })
+        let printType = "WQ"; // default
+
+        // Detect which button was clicked
+        $('#wqPdfBtn').on('click', function () {
+            printType = "WQ";
+        });
+
+        $('#woqPdfBtn').on('click', function () {
+            printType = "WOQ";
+        });
+
         $('#itemListForm').submit(function (e) {
             e.preventDefault();
 
-            var content = document.getElementById("printtopdf").outerHTML;
-            var fileName = $('#customerCode').text() + $('#listquoteCode').text();
+            var originalContent = document.getElementById("printtopdf");
+            var clonedContent = originalContent.cloneNode(true);
 
-            var printWindow = window.open("", "", "width=900,height=700");
+            // 🔵 If WOQ selected → remove Quantity & Unit
+            if (printType === "WOQ") {
+
+                // Change title
+                clonedContent.querySelector(".boq-title h3").innerText =
+                    "BOQ (Bill of Quantity)";
+
+                var table = clonedContent.querySelector("#lineItemTable");
+
+                if (table) {
+                    // Remove header columns (Unit = 5, Quantity = 4)
+                    table.querySelectorAll("thead tr th")[5]?.remove();
+                    table.querySelectorAll("thead tr th")[4]?.remove();
+
+                    // Remove body columns
+                    table.querySelectorAll("tbody tr").forEach(function (row) {
+                        row.children[5]?.remove();
+                        row.children[4]?.remove();
+                    });
+                }
+            }
+
+            var printWindow = window.open("", "", "width=1000,height=800");
+
             printWindow.document.write(`
         <html>
         <head>
-            <title>Print PDF</title>
+            <title>${printType}</title>
             <style>
-                body { font-family: Arial; padding: 15px; }
-                img { width:100px; height:100px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid #333; padding: 8px; text-align:center; }
+                body { font-family: Arial; padding: 30px; }
+
+                table { width:100%; border-collapse: collapse; }
+
+                th {
+                    background:#343a40;
+                    color:white;
+                    padding:10px;
+                }
+
+                td {
+                    border:1px solid #000;
+                    padding:8px;
+                    text-align:center;
+                }
+
+                img {
+                    width:80px;
+                    height:80px;
+                    object-fit:contain;
+                }
+
+                .boq-header {
+                    display:flex;
+                    justify-content:space-between;
+                    border-bottom:2px solid #000;
+                    padding-bottom:10px;
+                    margin-bottom:20px;
+                }
+
+                .boq-info {
+                    display:flex;
+                    justify-content:space-between;
+                    margin-bottom:20px;
+                }
+
+                .boq-footer {
+                    margin-top:40px;
+                    display:flex;
+                    justify-content:space-between;
+                }
+
+                .sign-line {
+                    margin-top:40px;
+                    width:200px;
+                    border-bottom:1px solid #000;
+                }
+
+                @media print {
+                    body { margin:0; }
+                }
             </style>
         </head>
         <body>
-            ${content}
+            ${clonedContent.outerHTML}
         </body>
         </html>
     `);
+
             printWindow.document.close();
-            printWindow.print();  // You can choose “Save as PDF” in print dialog
+            printWindow.print();
         });
+
+
 
         $('#orderListForm').submit(function (e) {
             var content = $('#orderprinttopdf').html();

@@ -1990,38 +1990,38 @@ require_once("../Model/item_detailsmodel.php");
             });
         });
 
-        $('#editeditemCategory').on('change', function () {
-            debugger;
-            $('#editedsubCategory').empty();
-            fetchsubcaturl =
-                config.developmentPath +
-                "/Admin/Controller/item_subcategorycontroller.php/?catId=" + this
-                    .value;
+        // $('#editeditemCategory').on('change', function () {
+        //     debugger;
+        //     $('#editedsubCategory').empty();
+        //     fetchsubcaturl =
+        //         config.developmentPath +
+        //         "/Admin/Controller/item_subcategorycontroller.php/?catId=" + this
+        //             .value;
 
-            $.getJSON(fetchsubcaturl, function (data) {
-                $.each(data, function (index, value) {
-                    // APPEND OR INSERT DATA TO SELECT ELEMENT.
-                    $('#editedsubCategory').append('<option value="' + value
-                        .itemsubcatid +
-                        '">' +
-                        value
-                            .itemsubcatname + '</option>');
-                });
-            });
-            var fetchcompany = config.developmentPath + "/Admin/Controller/brandcontroller.php?categoryId=" + this
-                .value;
-            $.getJSON(fetchcompany, function (data) {
-                $.each(data, function (index, value) {
-                    $('#company').append(
-                        '<option hidden disabled selected value>-- select an option --</option>'
-                    );
-                    $('#company').append('<option value="' + value.brandid + '">' + value
-                        .brandname + '</option>');
-                    $('#editedcompany').append('<option value="' + value.brandid + '">' + value
-                        .brandname + '</option>');
-                });
-            });
-        });
+        //     $.getJSON(fetchsubcaturl, function (data) {
+        //         $.each(data, function (index, value) {
+        //             // APPEND OR INSERT DATA TO SELECT ELEMENT.
+        //             $('#editedsubCategory').append('<option value="' + value
+        //                 .itemsubcatid +
+        //                 '">' +
+        //                 value
+        //                     .itemsubcatname + '</option>');
+        //         });
+        //     });
+        //     var fetchcompany = config.developmentPath + "/Admin/Controller/brandcontroller.php?categoryId=" + this
+        //         .value;
+        //     $.getJSON(fetchcompany, function (data) {
+        //         $.each(data, function (index, value) {
+        //             $('#company').append(
+        //                 '<option hidden disabled selected value>-- select an option --</option>'
+        //             );
+        //             $('#company').append('<option value="' + value.brandid + '">' + value
+        //                 .brandname + '</option>');
+        //             $('#editedcompany').append('<option value="' + value.brandid + '">' + value
+        //                 .brandname + '</option>');
+        //         });
+        //     });
+        // });
 
         $('#itemsubcatModal').on('show.bs.modal', function (e) {
             $('#additemCategory').empty();
@@ -2258,14 +2258,34 @@ require_once("../Model/item_detailsmodel.php");
 
         // ✅ Function to reload brand list
         function reloadBrandListSimple() {
-            $('#company').empty().append('<option hidden disabled selected value>-- select brand --</option>');
-            var fetchcompany = config.developmentPath + "/Admin/Controller/brandcontroller.php";
+
+            const InputType = 1;   // 🔥 Confirm: 1 = Item in your inputtype table
+
+            $('#company')
+                .empty()
+                .append('<option hidden disabled selected value>-- select brand --</option>');
+
+            const fetchcompany =
+                config.developmentPath +
+                "/Admin/Controller/brandcontroller.php?InputId=" + InputType;
+
             $.getJSON(fetchcompany, function (data) {
+
+                if (!data || data.length === 0) {
+                    alert("No brands mapped to Item.");
+                    return;
+                }
+
                 $.each(data, function (index, value) {
-                    $('#company').append('<option value="' + value.brandid + '">' + value.brandname + '</option>');
+                    $('#company').append(
+                        `<option value="${value.brandid}">
+                    ${value.brandname}
+                </option>`
+                    );
                 });
             });
         }
+
 
 
     });
