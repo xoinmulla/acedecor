@@ -342,13 +342,14 @@ SELECT QLI.lineItemId AS lineItemId,
        QLI.amount AS companyPrice,
        QLI.totalValue AS totalValue,
        QLI.totalPrice AS totalPrice
-FROM `quotelineitem` AS QLI
-JOIN `item_details` AS I ON QLI.InputName = I.item_name
-JOIN `brands` AS B ON I.item_compid = B.brand_id
-JOIN `units` AS U ON U.unitId = I.item_unit
+FROM quotelineitem AS QLI
+JOIN item_details AS I ON QLI.itemId = I.item_id
+JOIN brands AS B ON I.item_compid = B.brand_id
+JOIN units AS U ON U.unitId = I.item_unit
 WHERE QLI.quoteId = $quoteId
-ORDER BY lineItemId ASC
+ORDER BY QLI.lineItemId ASC
 ";
+
 
     error_log($sql);
 

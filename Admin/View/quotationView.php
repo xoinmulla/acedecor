@@ -811,7 +811,7 @@ require_once("../Model/quotationModel.php");
         </form>
     </div>
 </div>
-<script>
+<script>    
     $(document).ready(function () {
         var waterMarked = false;
         $('#flexSwitchCheckDefault').on('click', function (e) {
@@ -963,6 +963,13 @@ require_once("../Model/quotationModel.php");
             const quoteCode = row.find('td:eq(4)').text().trim();
             const customerCode = row.find('td:eq(1)').text().trim();
 
+            const inputType = row.children('td').eq(21).text().trim();
+            console.log("Detected InputType:", inputType);
+
+            let apiFile = (inputType === "1")
+                ? "itemListController.php"
+                : "materialListController.php";
+            // 🔥 FIX ENDS HERE
             // Safety check
             if (!quoteCode || !customerCode) {
                 console.warn('Missing quoteCode or customerCode');
@@ -992,9 +999,7 @@ require_once("../Model/quotationModel.php");
             $('#editLineItem').attr('href', 'lineItemView.php?id=' + rowid);
 
             // ▼ Decide API based on InputType
-            let apiFile = ($('#InputType').text().trim() == "1")
-                ? "itemListController.php"
-                : "materialListController.php";
+
 
             var uniturl = config.developmentPath +
                 "/Admin/Controller/" + apiFile + "?id=" + rowid + "&projId=" + projId;
@@ -1006,6 +1011,7 @@ require_once("../Model/quotationModel.php");
             $('#editedlineItemTable tbody').empty();
 
             $.getJSON(uniturl, function (data) {
+                console.log("EDIT MODAL DATA:", data); // keep for checking
 
                 $.each(data, function (index, value) {
                     const name = value.Name ?? "";

@@ -230,10 +230,11 @@ class DBQuotation
             Q.quo_createdon AS dateOfQuote,
             Q.enqCatId AS enqCatId,
             Q.quoteValue AS quoteValue,
+            Q.quo_status AS quo_status,   -- ✅ ADDED THIS
             E.enq_cat_name AS enqCatName
         FROM quotation_details Q 
-        JOIN enquiry_category E ON E.enq_catid=Q.enqCatId
-        WHERE Q.customerId=" . $custId;
+        JOIN enquiry_category E ON E.enq_catid = Q.enqCatId
+        WHERE Q.customerId = " . $custId;
 
     $result = $connectionObj->query($sql);
     $quodetails = [];
@@ -246,12 +247,15 @@ class DBQuotation
         $quotation->setDOQ(date('d/m/Y', strtotime($row['dateOfQuote'])));
         $quotation->setEnqCatName($row['enqCatName']);
         $quotation->setQuoteValue($row['quoteValue']);
+        $quotation->set_quoteStatus($row['quo_status']); // ✅ ADD THIS
+
         array_push($quodetails, $quotation);
       }
     }
 
     return $quodetails;
   }
+
 
 
   public static function getQuotationsForPrint($id)

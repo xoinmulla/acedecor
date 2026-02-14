@@ -692,13 +692,18 @@ $id = $_GET['id'];
             const companyTotal = companyBase * qty;
             $('#editCompanyPrice').val(companyTotal.toFixed(2));
 
-            let tradePricePerPiece = mrp;
+            // 3️⃣ Trade Price (MATCHING REFERENCE MODAL)
+
+            let tradeTotal = companyTotal;   // ✅ default → same as company price
+
             if (tDis > 0) {
                 const discounted = mrp - (mrp * (tDis / 100));
-                tradePricePerPiece = discounted + (discounted * (gst / 100));
+                const perPieceTrade = discounted + (discounted * (gst / 100));
+                tradeTotal = perPieceTrade * qty * uFac;
             }
-            const tradeTotal = tradePricePerPiece * qty;
+
             $('#editTradePrice').val(tradeTotal.toFixed(2));
+
 
             const baseTotalValue = Number($('#totalPrice').data('base')) || 0;
             const spu = Number($('#totalPrice').data('spu')) || 1;

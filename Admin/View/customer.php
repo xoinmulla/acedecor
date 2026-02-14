@@ -640,6 +640,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                             <th>Date</th>
                                             <th>Description </th>
                                             <th>Quote Value</th>
+                                            <th>Quote Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -1993,6 +1994,22 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     $('#quotationdetails_table tr:last')
                         .append($('<td/>').html(value.quoteValue));
 
+                    let status = value.quoteStatus;
+
+                    let badge = '';
+
+                    if (status === 'Approved') {
+                        badge = '<span class="badge bg-success">Approved</span>';
+                    } else if (status === 'pending') {
+                        badge = '<span class="badge bg-warning text-dark">Pending</span>';
+                    } else if (status === 'rejected') {
+                        badge = '<span class="badge bg-danger">Rejected</span>';
+                    }
+
+                    $('#quotationdetails_table tr:last')
+                        .append($('<td/>').html(badge));
+
+
                 });
                 console.log(data);
             });
@@ -3133,11 +3150,6 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         const newDisc = $('#editTradeDiscount').val();
                         const newTP = parseFloat($('#editTradePrice').val() || 0).toFixed(2);
 
-                        // Update the row cells in the quotation modal table
-                        // Column index map in your table:
-                        // 0: REF, 1: Image, 2: Type, 3: Code, 4: Name, 5: Quantity,
-                        // 6: MRP, 7: GST, 8: Company Discount, 9: Trade Discount,
-                        // 10: Total Amount, 11: Company Price, 12: Total Value, 13: Trade Price, 14: Action
                         if (ROW_BEING_EDITED && ROW_BEING_EDITED.length) {
 
                             const payload = ROW_BEING_EDITED.data('rowPayload') || {};

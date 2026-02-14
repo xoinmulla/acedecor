@@ -366,14 +366,18 @@ class DBDashboard
         $conn = $db->getConnection();
 
         $query = "
-        SELECT COUNT(DISTINCT custId) AS total
-        FROM projects
-        WHERE project_status = 'In Progress'
+        SELECT COUNT(*) AS total
+        FROM projects P
+        JOIN quotation_details Q 
+            ON P.quoteId = Q.quoteCode
+        WHERE P.project_status = 'In Progress'
+          AND Q.quo_status = 'Approved'
     ";
 
         $result = mysqli_query($conn, $query);
         return mysqli_fetch_assoc($result);
     }
+
     public static function CustomerFinancialGraph()
     {
         $db = ConnectDb::getInstance();
