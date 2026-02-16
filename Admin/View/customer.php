@@ -1449,8 +1449,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createQuote">Add Item</button>
-                    <button type="submit" class="btn btn-primary" id="createQuote">Create Quote</button>
+                    <button type="button" class="btn btn-primary" id="">Add Item</button>
+                    <button type="submit" class="btn btn-primary" id="">Create Quote</button>
                 </div>
             </div>
         </form>
@@ -1639,7 +1639,9 @@ require_once("../Model/enq_cat_mappingmodel.php");
         var itemDetails = [];
         var materialDetails = [];
         $('#createQuote').on('click', function () {
+            debugger;
             const f = $('#quote_form').serializeJSON();
+            console.log(f);
 
             // guard
             const qty = parseFloat(f['itemquantity'] || 0);
@@ -1719,7 +1721,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             // 15) Action dropdown
             // ✅ FIX — assign temporary unique ID until DB assigns one
             const rowId = Date.now(); // or use Math.random() for uniqueness
-
+            f.id = rowId;   // 🔥 VERY IMPORTANT — store ID inside customers array
             const rowPayload = {
                 id: rowId,
                 typeText,
@@ -2016,7 +2018,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#quote_form').submit(function (event) {
-            //debugger;
+            debugger;
             customers[0].quoteValue = $('#quoteValue').val();
             console.log(customers[0]);
             $.ajax({
@@ -3114,7 +3116,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         // ✅ Unified Save button handler — only keep this one
-        $('#updateLineItemBtn').off('click').on('click', function () {
+        $('#updateLineItemBtn').on('click', function () {
+            debugger;
             const id = $('#editLineItemId').val();
             const itemquantity = $('#editItemQty').val();
             const tradeDiscount = $('#editTradeDiscount').val();
@@ -3209,6 +3212,24 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             payload.note = quoteNote;
 
                             ROW_BEING_EDITED.data('rowPayload', payload);
+
+                            for (let i = 0; i < customers.length; i++) {
+
+                                if (customers[i].id == id) {
+
+                                    customers[i].itemquantity = qty;
+                                    customers[i].tradeDiscount = tDis;
+                                    customers[i].tradePrice = tradeTotal;
+                                    customers[i].totalAmount = totalAmount;
+                                    customers[i].companyPrice = companyTotal;
+                                    customers[i].totalValue = totalValue;
+                                    customers[i].quoteReference = newRef;
+                                    customers[i].quoteNote = quoteNote;
+
+                                    console.log("✅ Updated customers array item:", customers[i]);
+                                    break;
+                                }
+                            }
                         }
 
                         // 🧩 Update stored payload data for Info modal
@@ -3220,6 +3241,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         payload.tPri = Number($('#editTradePrice').val() || 0);   // ← store as NUMBER
                         payload.note = $('#editNote').val();
                         ROW_BEING_EDITED.data('rowPayload', payload);
+
 
 
                         // 🧩 If Info modal is open, update its content live

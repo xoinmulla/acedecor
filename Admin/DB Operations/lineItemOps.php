@@ -722,7 +722,7 @@ ORDER BY QLI.lineItemId ASC
       return false;
     }
   }
-
+ 
   public static function delete($lineItemObj)
   {
     $db = ConnectDb::getInstance();

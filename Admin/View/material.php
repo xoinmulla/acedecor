@@ -2184,15 +2184,7 @@ require_once("../Model/materialModel.php");
             }).fail(() => console.error("Failed to load unit factors on unit change"));
         });
 
-        $('#editedunit').on('change', function () {
-            $('#editedunitFactor').empty();
-            unitFactorurl = baseCtrl + "/unitFactorController.php?unitId=" + this.value;
-            $.getJSON(unitFactorurl, function (data) {
-                $.each(data, function (index, value) {
-                    $('#editedunitFactor').append('<option value="' + value.unitFactor + '">' + value.unitFactor + '</option>');
-                });
-            }).fail(() => console.error("Failed to load edited unit factors on change"));
-        });
+        
 
         $('#itemCategory').on('change', function () {
             $('#subCategory').empty();

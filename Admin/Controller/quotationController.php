@@ -59,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $gst = floatval($value['GST'] ?? 0);
 
             $lineItem->set_itemquantity($qty);
+            error_log("QTY: $qty, MRP: $mrp, GST: $gst");
             $lineItem->set_ppMRP($mrp);
 
             // totals coming from customer quote modal

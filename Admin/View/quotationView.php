@@ -624,6 +624,7 @@ require_once("../Model/quotationModel.php");
                                             <th>Date</th>
                                             <th>Description </th>
                                             <th>Quote Value</th>
+                                            <th>Quote Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -731,7 +732,6 @@ require_once("../Model/quotationModel.php");
         </form>
     </div>
 </div>
-
 <!-- <div class="modal fade" id=projectModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-lg">
         <form class="" method="POST" id="customer_form" enctype="multipart/form-data"
@@ -811,7 +811,7 @@ require_once("../Model/quotationModel.php");
         </form>
     </div>
 </div>
-<script>    
+<script>
     $(document).ready(function () {
         var waterMarked = false;
         $('#flexSwitchCheckDefault').on('click', function (e) {
@@ -1339,14 +1339,28 @@ require_once("../Model/quotationModel.php");
                 $("#quotationdetails_table").find("tr:gt(0)").remove();
 
                 $.each(data, function (index, value) {
+                    let statusBadge = '';
+
+                    if (value.quoteStatus === "Approved") {
+                        statusBadge = `<span class="badge badge-success">Approved</span>`;
+                    } else if (value.quoteStatus === "Pending") {
+                        statusBadge = `<span class="badge badge-warning">Pending</span>`;
+                    } else if (value.quoteStatus === "Rejected") {
+                        statusBadge = `<span class="badge badge-danger">Rejected</span>`;
+                    } else {
+                        statusBadge = value.quoteStatus;
+                    }
+
                     $('#quotationdetails_table tbody').append(
                         $("<tr>").append(
                             $("<td>").text(value.QuoteCode),
                             $("<td>").text(value.DOQ),
                             $("<td>").text(value.EnqCatName),
-                            $("<td>").text(value.quoteValue)  // ✔ shows now
+                            $("<td>").text(value.quoteValue),
+                            $("<td>").html(statusBadge)
                         )
                     );
+
                 });
             });
         });

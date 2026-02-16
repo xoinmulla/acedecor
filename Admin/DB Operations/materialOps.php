@@ -236,27 +236,39 @@ GROUP BY M.Material_Id";
     $conn = $db->getConnection();
 
     $sql = "UPDATE material SET
-            Material_Name       = '{$M->get_MaterialName()}',
-            Material_Description= '{$M->get_MaterialDescription()}',
-            Brand               = '{$M->get_Brand()}',
-            Material_Code       = '{$M->get_MaterialCode()}',
-            Category            = '{$M->get_Category()}',
-            SubCategory         = '{$M->get_SubCategory()}',
-            Mat_Unit            = '{$M->get_MaterialUnitId()}',
-            Mat_factor          = '{$M->get_MaterialUnitFactorId()}',
-            Mat_Image           = '{$M->get_MaterialImage()}',
-            Mat_Grains          = '{$M->get_MaterialGrainsId()}',
-            Mat_modifiedBy      = '{$M->get_materialmodifiedby()}',
-            Mat_createdBy       = '{$M->get_materialcreatedby()}',
-            MaterialDiscount    = '{$M->get_MaterialDiscount()}',
-            MaterialAmount       = '{$M->get_MaterialAmount()}',
-            MaterialPrice       = '{$M->get_MaterialPrice()}',
-            MaterialTotalValue  = '{$M->get_MaterialTotalValue()}'
-        WHERE Material_Id = {$M->get_MaterialId()}";
+        Material_Name        = '{$M->get_MaterialName()}',
+        Material_Description = '{$M->get_MaterialDescription()}',
+        Brand                = '{$M->get_Brand()}',
+        Material_Code        = '{$M->get_MaterialCode()}',
+        Category             = '{$M->get_Category()}',
+        SubCategory          = '{$M->get_SubCategory()}',
+        Mat_Unit             = '{$M->get_MaterialUnitId()}',
+        Mat_factor           = '{$M->get_MaterialUnitFactorId()}',
+        Mat_Image            = '{$M->get_MaterialImage()}',
+        Mat_Grains           = '{$M->get_MaterialGrainsId()}',
+        
+        Mat_Qty              = '{$M->get_MaterialQty()}',
+        Mat_SPU              = '{$M->get_MaterialSPU()}',
+        Mat_MRP              = '{$M->get_MaterialMRP()}',
+        Mat_GST              = '{$M->get_MaterialGST()}',
+        Mat_HSNCode          = '{$M->get_MaterialHSNcode()}',
+
+        MaterialDiscount     = '{$M->get_MaterialDiscount()}',
+        MaterialAmount       = '{$M->get_MaterialAmount()}',
+        MaterialPrice        = '{$M->get_MaterialPrice()}',
+        MaterialTotalValue   = '{$M->get_MaterialTotalValue()}',
+        Mat_modifiedBy       = NULL
+
+        WHERE Material_Id    = {$M->get_MaterialId()}";
 
     error_log($sql);
-    $conn->query($sql);
+
+    if (!$conn->query($sql)) {
+      throw new Exception($conn->error);
+    }
   }
+
+
   /* ======================================================
      DELETE MATERIAL
   ====================================================== */

@@ -127,6 +127,7 @@ class DBQuotation
             WHERE lineItemId = ?";
 
     $stmt = $connectionObj->prepare($sql);
+    error_log("UPDATE LINE ITEM SQL: " . $sql);
     $stmt->bind_param(
       "dddi",
       $data['itemquantity'],   // numeric (quantity)
