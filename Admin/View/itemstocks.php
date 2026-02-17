@@ -452,7 +452,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Edit Inward Entry</h5>
-                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                        <button class="btn-close" data-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body">
@@ -465,12 +465,12 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
                         <div class="mb-2">
                             <label>Quantity Received</label>
-                            <input type="number" id="inlineQty" class="form-control">
+                            <input type="text" inputmode="decimal" id="inlineQty" class="form-control">
                         </div>
 
                         <div class="mb-2">
                             <label>Total Amt of Quantity Received</label>
-                            <input type="number" id="inlineAmt" class="form-control">
+                            <input type="text" inputmode="decimal" id="inlineAmt" class="form-control">
                         </div>
 
                         <div class="mb-2">
@@ -486,7 +486,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Save</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </form>
@@ -659,11 +659,13 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
         }
 
 
-
-
+        // 🔥 Prevent mouse scroll changing number inputs
+        $('#inlineQty, #inlineAmt').on('wheel', function (e) {
+            e.preventDefault();
+        });
 
         $('#inwardDetailsModal').on('show.bs.modal', function (e) {
-
+            console.log("Inward Details Modal triggered", e);
             const btn = $(e.relatedTarget);   // ✅ FIRST declare btn
 
             PO_RAISED_QTY = btn.closest('tr')
@@ -958,16 +960,17 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
         });
 
         $(document).off('click', '.inline-edit-btn').on('click', '.inline-edit-btn', function (e) {
+
             e.preventDefault();
             e.stopPropagation();
 
             const btn = $(this);
 
-            // Store values FIRST
             $('#inlineStockId').val(btn.data('stockid'));
             $('#inlineInvoice').val(btn.data('invoice'));
             $('#inlineQty').val(btn.data('qty'));
             $('#inlineAmt').val(btn.data('amt'));
+            $('#inventoryType').val(btn.data('inventory'));
 
             PO_RAISED_QTY = Number(btn.data('raisedqty')) || 0;
 
@@ -977,17 +980,16 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 '#inlineGST'
             );
 
-            // 🔥 Wait for inward modal to close completely
-            $('#inwardDetailsModal').one('hidden.bs.modal', function () {
-                $('#inlineEditModal').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-            });
-
-            // Close parent modal LAST
+            // 🔥 Just hide first modal
             $('#inwardDetailsModal').modal('hide');
+
+            // 🔥 Open second modal AFTER small delay
+            setTimeout(function () {
+                $('#inlineEditModal').modal('show');
+            }, 400);
+
         });
+
 
         $('#inlineEditModal').on('shown.bs.modal', function () {
             $(this).find('input:first').focus();
@@ -1015,6 +1017,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 
 
         $('#inlineEditForm').submit(function (e) {
+            debugger;
             e.preventDefault();
             console.log("INLINE EDIT SUBMIT FIRED");
             $.ajax({
@@ -1031,7 +1034,6 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 dataType: "json",
                 success: function () {
                     $('#inlineEditModal').modal('hide');
-                    $('#inwardDetailsModal').modal('hide');
                 }
             });
         });

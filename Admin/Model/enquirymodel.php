@@ -12,6 +12,34 @@ class Enquiry
     private $status;
     private $interest_list = [];
     private $createdDate;
+
+    private $enq_city;
+
+    private $enq_state;
+
+    public function setEnq_State($state)
+    {
+        $this->enq_state = $state;
+    }
+
+    public function getEnq_State()
+    {
+        return $this->enq_state;
+    }
+
+
+    public function set_enqcity($city)
+    {
+        $this->enq_city = $city;
+    }
+
+    public function get_enqcity()
+    {
+        return $this->enq_city;
+    }
+
+
+
     // private $enq_preffered_contact_mode;
 
     private $table_name = "enquiry_details";
@@ -109,7 +137,7 @@ class Enquiry
 
     /**
      * Get the value of createdDate
-     */ 
+     */
     public function getCreatedDate()
     {
         return $this->createdDate;
@@ -119,7 +147,7 @@ class Enquiry
      * Set the value of createdDate
      *
      * @return  self
-     */ 
+     */
     public function setCreatedDate($createdDate)
     {
         $this->createdDate = $createdDate;
@@ -129,7 +157,7 @@ class Enquiry
 
     /**
      * Get the value of status
-     */ 
+     */
     public function getStatus()
     {
         return $this->status;
@@ -139,7 +167,7 @@ class Enquiry
      * Set the value of status
      *
      * @return  self
-     */ 
+     */
     public function setStatus($status)
     {
         $this->status = $status;
@@ -147,7 +175,7 @@ class Enquiry
         return $this;
     }
 
-   
+
     public function getEnq_Country()
     {
         return $this->enq_Country;

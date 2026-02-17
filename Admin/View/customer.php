@@ -524,6 +524,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Looking For</label>
+                        <div id="editCustomerInterestList"></div>
+                    </div>
+
 
                     <div class="col-md-8">
                         <input type="hidden" name="createdby" id="createdby" class="form-control" required
@@ -532,6 +537,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             value="<?php echo $_SESSION['login_user']; ?>" />
                     </div>
                 </div>
+                <input type="hidden" id="editedEnqId" name="editedEnqId">
+
 
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
@@ -607,7 +614,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="displaycustomerCity">Location</label>
+                                        <label for="displaycustomerCity">City</label>
                                     </div>
                                     <div class="col-8">
                                         <p class="card-title" id="displaycustomerCity"></p>
@@ -2538,9 +2545,48 @@ require_once("../Model/enq_cat_mappingmodel.php");
         $('#customerDov')
             .val(datetoday);
         $('#editCustomerModal').on('show.bs.modal', function (e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#editedcustomerId').val(rowid);
+
+            const button = $(e.relatedTarget);
+            const customerId = button.data('id');
+            $('#editedcustomerId').val(customerId);
+
+            const enqId = $('#editedEnqId').val();
+            if (!enqId) return;
+
+            $.getJSON("../Controller/enqcategoryController.php?type=enquiry", function (categories) {
+
+                $('#editCustomerInterestList').empty();
+
+                $.getJSON("../Controller/enqcategorymappingController.php?enq_id=" + enqId, function (selected) {
+
+                    console.log("Selected mapping:", selected);
+
+                    // 🔥 FIXED HERE
+                    const selectedIds = selected.map(x => String(x.catId));
+
+                    categories.forEach(cat => {
+
+                        const catId = String(cat.CatId);
+                        const isChecked = selectedIds.includes(catId);
+
+                        const html = `
+                <div class="form-check">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="interest_list[]"
+                           value="${catId}"
+                           ${isChecked ? 'checked' : ''}>
+                    <label class="form-check-label">${cat.catname}</label>
+                </div>`;
+
+                        $('#editCustomerInterestList').append(html);
+                    });
+                });
+            });
         });
+
+
+
         var dataTable = $('#Customer_table').DataTable({});
         var nEditing = null;
 
@@ -3002,6 +3048,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#quotecustomerState').val(this.cells[9].innerHTML);
             $('#quotecustomerDov').val(this.cells[2].innerHTML);
             $('#quoteenqId').val(this.cells[10].innerHTML);
+            $('#editedEnqId').val(this.cells[10].innerHTML);
             $('#quotecustomerCode').val(this.cells[0].innerHTML);
             $('#opticustomerName').val(this.cells[1].innerHTML);
             $('#opticustomerPhone').val(this.cells[6].innerHTML);
@@ -3018,7 +3065,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
         });
 
         $('#editedCustomer_form').submit(function (event) {
+            event.preventDefault();   // 🔥 ADD THIS
+
             var formData = new FormData(this);
+            console.log("Submitting customerId:", formData.get("customerId"));
+
             $.ajax({
                 type: "POST",
                 url: config.developmentPath +
@@ -3027,7 +3078,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 processData: false,
                 contentType: false
             }).done(function (data) {
-                console.log(data);
+                $('#message').html(data);
+                // dataTable.ajax.reload();
+                setTimeout(function () {
+                    $('#message').html('');
+                }, 100);
             });
         });
 

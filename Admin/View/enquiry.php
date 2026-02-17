@@ -306,6 +306,15 @@ require_once("../Model/enquirymodel.php");
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-4 text-right">City <span class="">*</span></label>
+                            <div class="col-md-8">
+                                <input type="text" name="city" id="city" class="form-control" maxlength="150"
+                                    style="text-transform: capitalize;" required />
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="form-group">
                         <div class="row">
@@ -314,6 +323,46 @@ require_once("../Model/enquirymodel.php");
                             <div class="col-md-8">
                                 <select id="selectedCountry" name="SelectCountry" class="form-select">
                                     <option value="India">India</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-4 text-right">State <span class="">*</span></label>
+                            <div class="col-md-8">
+                                <select name="SelectState" id="state" class="form-control" required>
+                                    <option value="">Select State</option>
+                                    <option>ANDHRA PRADESH</option>
+                                    <option>ARUNACHAL PRADESH</option>
+                                    <option>ASSAM</option>
+                                    <option>BIHAR</option>
+                                    <option>CHANDIGARH</option>
+                                    <option>CHHATTISGARH</option>
+                                    <option>DELHI</option>
+                                    <option>GOA</option>
+                                    <option>GUJARAT</option>
+                                    <option>HARYANA</option>
+                                    <option>HIMACHAL PRADESH</option>
+                                    <option>JHARKHAND</option>
+                                    <option>KARNATAKA</option>
+                                    <option>KERALA</option>
+                                    <option>MADHYA PRADESH</option>
+                                    <option>MAHARASHTRA</option>
+                                    <option>MANIPUR</option>
+                                    <option>MEGHALAYA</option>
+                                    <option>MIZORAM</option>
+                                    <option>NAGALAND</option>
+                                    <option>ODISHA</option>
+                                    <option>PUNJAB</option>
+                                    <option>RAJASTHAN</option>
+                                    <option>SIKKIM</option>
+                                    <option>TAMIL NADU</option>
+                                    <option>TELANGANA</option>
+                                    <option>TRIPURA</option>
+                                    <option>UTTAR PRADESH</option>
+                                    <option>UTTARAKHAND</option>
+                                    <option>WEST BENGAL</option>
                                 </select>
                             </div>
                         </div>
@@ -543,6 +592,31 @@ require_once("../Model/enquirymodel.php");
                                         <p class="card-title" id="displaycustomerCountry"></p>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="displaycustomerCity">City</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="card-title" id="displaycustomerCity"></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="displaycustomerState">State</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="card-title" id="displaycustomerState"></p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="displaycustomerLooking">Looking For</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <p class="card-title" id="displaycustomerLooking"></p>
+                                    </div>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -582,6 +656,48 @@ require_once("../Model/enquirymodel.php");
                         <label>Address *</label>
                         <input type="text" class="form-control" name="address" id="edit_address" required>
                     </div>
+                    <div class="form-group mb-2">
+                        <label>City *</label>
+                        <input type="text" class="form-control" name="city" id="edit_city" required>
+                    </div>
+
+                    <div class="form-group mb-2">
+                        <label>State *</label>
+                        <select class="form-select" name="SelectState" id="edit_state" required>
+                            <option value="">Select State</option>
+                            <option>ANDHRA PRADESH</option>
+                            <option>ARUNACHAL PRADESH</option>
+                            <option>ASSAM</option>
+                            <option>BIHAR</option>
+                            <option>CHANDIGARH</option>
+                            <option>CHHATTISGARH</option>
+                            <option>DELHI</option>
+                            <option>GOA</option>
+                            <option>GUJARAT</option>
+                            <option>HARYANA</option>
+                            <option>HIMACHAL PRADESH</option>
+                            <option>JHARKHAND</option>
+                            <option>KARNATAKA</option>
+                            <option>KERALA</option>
+                            <option>MADHYA PRADESH</option>
+                            <option>MAHARASHTRA</option>
+                            <option>MANIPUR</option>
+                            <option>MEGHALAYA</option>
+                            <option>MIZORAM</option>
+                            <option>NAGALAND</option>
+                            <option>ODISHA</option>
+                            <option>PUNJAB</option>
+                            <option>RAJASTHAN</option>
+                            <option>SIKKIM</option>
+                            <option>TAMIL NADU</option>
+                            <option>TELANGANA</option>
+                            <option>TRIPURA</option>
+                            <option>UTTAR PRADESH</option>
+                            <option>UTTARAKHAND</option>
+                            <option>WEST BENGAL</option>
+                        </select>
+                    </div>
+
                     <div class="form-group mb-2">
                         <label>Country *</label>
                         <select class="form-select" name="SelectCountry" id="edit_country">
@@ -839,38 +955,65 @@ require_once("../Model/enquirymodel.php");
                 console.log(data);
             });
         });
-        $('#enquiry_table tbody').on('click', 'tr', function () {
-            debugger;
-            /* Get the row as a parent of the link that was clicked on */
-            $('#customerName').val(this.cells[0].innerHTML);
-            $('#customerPhone').val(this.cells[3].innerHTML);
-            $('#customerEmail').val(this.cells[6].innerHTML);
-            $('#customerAddress').val(this.cells[1].innerHTML);
+        $('#infoEnquiryModal').on('show.bs.modal', function (e) {
 
-            $('#displaycustomerName').text(this.cells[0].innerHTML);
-            $('#displaycustomerPhone').text(this.cells[3].innerHTML);
-            $('#displaycustomerEmail').text(this.cells[6].innerHTML);
-            $('#displaycustomerAddress').text(this.cells[1].innerHTML);
-            $('#displaycustomerDov').text(this.cells[4].innerHTML);
-            $('#displaycustomerCountry').text(this.cells[2].innerHTML);
+            var rowid = $(e.relatedTarget).data('id');
 
+            $.ajax({
+                url: "../Controller/newenquiry.php",
+                type: "GET",
+                data: { action: "fetch", id: rowid },
+                dataType: "json",
+                success: function (data) {
+                    console.log("Created Date from DB:", data.created_date);
 
+                    $('#displaycustomerName').text(data.name);
+                    $('#displaycustomerDov').text(data.created_date);
+                    $('#displaycustomerEmail').text(data.email);
+                    $('#displaycustomerPhone').text(data.phone);
+                    $('#displaycustomerAddress').text(data.address);
+                    $('#displaycustomerCity').text(data.city);
+                    $('#displaycustomerState').text(data.state);
+                    $('#displaycustomerCountry').text(data.country);
+
+                    // convert interest array to readable text
+                    if (data.interests && data.interests.length > 0) {
+                        $('#displaycustomerLooking').text(data.interests.join(", "));
+                    } else {
+                        $('#displaycustomerLooking').text("Not Specified");
+                    }
+                }
+            });
         });
 
+
         $('#customerModal').on('show.bs.modal', function (e) {
+
             var rowid = $(e.relatedTarget).data('id');
             $('#enqId').val(rowid);
 
             $.ajax({
-                cache: false,
-                type: 'GET',
-                url: config.developmentPath + "/Admin/Controller/customerController.php/",
-                data: 'id=' + rowid,
+
+                url: "../Controller/newenquiry.php",
+                type: "GET",
+                data: { action: "fetch", id: rowid },
+                dataType: "json",
                 success: function (data) {
+                    console.log("State from DB:", data.state);
+
+                    $('#customerName').val(data.name);
+                    $('#customerEmail').val(data.email);
+                    $('#customerAddress').val(data.address);
+                    $('#customerCity').val(data.city);   // ✅ THIS FIXES IT
+                    $('#customerState').val(data.state);
+                    $('#customerPhone').val(data.phone);
+                    $('#selectCountry').val(data.country);
 
                 }
             });
         });
+
+
 
         $('#deleteEnquiryModal').on('show.bs.modal', function (e) {
             var rowid = $(e.relatedTarget).data('id');
@@ -917,6 +1060,8 @@ require_once("../Model/enquirymodel.php");
                             $('#edit_email').val(data.email || "");
                             $('#edit_phone').val(data.phone || "");
                             $('#edit_address').val(data.address || "");
+                            $('#edit_city').val(data.city || "");
+                            $('#edit_state').val(data.state || "");
                             $('#edit_country').val(data.country || "India");
 
                             // normalize interests returned by PHP (ids OR names)
@@ -926,7 +1071,8 @@ require_once("../Model/enquirymodel.php");
                             );
 
                             // 2) load categories, render checkboxes, pre-check matches
-                            $.getJSON("../Controller/enqcategoryController.php", function (categories) {
+                            $.getJSON("../Controller/enqcategoryController.php?type=enquiry", function (categories) {
+
                                 $('#edit_interestList').empty();
 
                                 categories.forEach(cat => {

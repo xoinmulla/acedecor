@@ -7,7 +7,7 @@ include "../DB Operations/enquiryOps.php";
 if (isset($_GET['action']) && $_GET['action'] == 'fetch' && isset($_GET['id'])) {
     header('Content-Type: application/json');
 
-    $id = (int)$_GET['id'];
+    $id = (int) $_GET['id'];
     $enq = DBenq::readById($id);
 
     if ($enq) {
@@ -17,7 +17,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch' && isset($_GET['id'])) 
             "email" => $enq->get_enqemail(),
             "phone" => $enq->get_enqphone(),
             "address" => $enq->get_enqaddress(),
+            "city" => $enq->get_enqcity(),
+            "state" => $enq->getEnq_State(),
             "country" => $enq->getEnq_Country(),
+            "created_date" => $enq->getCreatedDate(),
             "interests" => $enq->get_interestList()
         ]);
     } else {
@@ -40,6 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     $enq->set_enqemail(Sanitization::test_input($_POST["email"]));
     $enq->set_enqphone(Sanitization::test_input($_POST["phone"]));
     $enq->set_enqaddress(Sanitization::test_input($_POST["address"]));
+    $enq->set_enqcity(Sanitization::test_input($_POST["city"]));
+    $enq->setEnq_State(Sanitization::test_input($_POST["SelectState"]));
     $enq->setEnq_Country(Sanitization::test_input($_POST["SelectCountry"]));
 
     if (!empty($_POST['interest_list'])) {
@@ -58,6 +63,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['action'])) {
     $enq->set_enqemail(Sanitization::test_input($_POST["email"]));
     $enq->set_enqphone(Sanitization::test_input($_POST["phone"]));
     $enq->set_enqaddress(Sanitization::test_input($_POST["address"]));
+    $enq->set_enqcity(Sanitization::test_input($_POST["city"]));
+    $enq->setEnq_State(Sanitization::test_input($_POST["SelectState"]));
     $enq->setEnq_Country(Sanitization::test_input($_POST["SelectCountry"]));
 
     if (!empty($_POST['interest_list'])) {

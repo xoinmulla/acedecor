@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 include('session.php');
 include('paymentNavigation.php');
 require_once("../DB Operations/expenseOps.php");
@@ -974,7 +978,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <div class="col-sm-12">
                                                         <input type="text" name="totalamt" id="sup_totalamt"
                                                             class="form-control" required data-parsley-trigger="keyup"
-                                                            value="<?php echo $supplier->get_totalamt() ?>" />
+                                                            value="" />
                                                     </div>
                                                 </div>
                                                 <br />
@@ -986,7 +990,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                         <input type="text" name="paidamt" id="sup_paidamt"
                                                             class="form-control" required data-parsley-trigger="keyup"
                                                             readonly
-                                                            value="<?php echo $supplier->get_receivedamt() ?>" />
+                                                            value="" />
                                                     </div>
                                                 </div>
                                                 <br />
@@ -1009,7 +1013,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                         <input type="text" name="pendingamt" id="sup_pendingamt"
                                                             class="form-control" required data-parsley-trigger="keyup"
                                                             readonly
-                                                            value="<?php echo $supplier->get_pendingamt() ?>" />
+                                                            value="" />
                                                     </div>
                                                 </div>
                                                 <br />
@@ -1199,7 +1203,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                                 class="form-control" required
                                                                 value="<?php echo $_SESSION['login_user']; ?>" />
                                                             <input type="hidden" id="sup_supplierId"
-                                                                value="<?php echo $supplier->get_supplierId(); ?>" />
+                                                                value="" />
                                                         </div>
                                                     </div>
                                                     <input type="submit" name="submit" id="PDF" class="btn btn-success"
@@ -3212,6 +3216,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
         });
     </script>
+
+
     <script>
         // Auto-open "Employee Payment" tab when redirected
         $(document).ready(function () {

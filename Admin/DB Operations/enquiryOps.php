@@ -65,8 +65,8 @@ class DBenq
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "insert into enquiry_details (`enq_name`, `enq_email`, `enq_phone`,`enq_address`,`enq_country`) 
-                values ('" . $enqObj->get_enqname() . "','" . $enqObj->get_enqemail() . "','" . $enqObj->get_enqphone() . "','" . $enqObj->get_enqaddress() . "','" . $enqObj->getEnq_Country() . "')";
+    $sql = "insert into enquiry_details (`enq_name`, `enq_email`, `enq_phone`,`enq_address`,`enq_city`,`enq_country`,`enq_state`) 
+                values ('" . $enqObj->get_enqname() . "','" . $enqObj->get_enqemail() . "','" . $enqObj->get_enqphone() . "','" . $enqObj->get_enqaddress() . "','" . $enqObj->get_enqcity() . "','" . $enqObj->getEnq_Country() . "','" . $enqObj->getEnq_State() . "')";
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
       $lastInsertedId = $connectionObj->insert_id;
@@ -120,7 +120,10 @@ class DBenq
       $enqModel->set_enqemail($row["enq_email"]);
       $enqModel->set_enqphone($row["enq_phone"]);
       $enqModel->set_enqaddress($row["enq_address"]);
+      $enqModel->set_enqcity($row["enq_city"]);
+      $enqModel->setEnq_State($row["enq_state"]);
       $enqModel->setEnq_Country($row["enq_country"]);
+      $enqModel->setCreatedDate(date('d-m-Y', strtotime($row["enq_createdOn"]))); // ✅ ADD THIS
       $enqModel->set_interestList(DBenqCatMapping::getCategoryForEnq($row["enqid"]));
       return $enqModel;
     }
@@ -130,26 +133,55 @@ class DBenq
 
 
   public static function update($enqObj)
-  {
+{
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
+
+    // 1️⃣ Update enquiry_details
     $sql = "UPDATE enquiry_details 
             SET enq_name = '" . $enqObj->get_enqname() . "',
                 enq_email = '" . $enqObj->get_enqemail() . "',
                 enq_phone = '" . $enqObj->get_enqphone() . "',
                 enq_address = '" . $enqObj->get_enqaddress() . "',
+                enq_city = '" . $enqObj->get_enqcity() . "',
+                enq_state = '" . $enqObj->getEnq_State() . "',
                 enq_country = '" . $enqObj->getEnq_Country() . "'
             WHERE enqid = '" . $enqObj->get_id() . "'";
     $connectionObj->query($sql);
 
-    // Update category mappings
-    $connectionObj->query("DELETE FROM enq_cat_mapping WHERE enq_id = '" . $enqObj->get_id() . "'");
-    foreach ($enqObj->get_interestList() as $interest) {
-      $map = new enqCatMappingModel();
-      $map->set_enqId($enqObj->get_id());
-      $map->set_catId($interest);
-      DBenqCatMapping::insert($map);
+    // 2️⃣ 🔥 NEW: Check if customer exists
+    $checkSql = "SELECT customerId FROM customer WHERE enq_id = '" . $enqObj->get_id() . "'";
+    $result = $connectionObj->query($checkSql);
+
+    if ($result && $result->num_rows > 0) {
+
+        $row = $result->fetch_assoc();
+        $customerId = $row['customerId'];
+
+        // 3️⃣ 🔥 Update customer table also
+        $updateCustomer = "UPDATE customer SET
+                customerName = '" . $enqObj->get_enqname() . "',
+                customerEmail = '" . $enqObj->get_enqemail() . "',
+                customerContactNumber = '" . $enqObj->get_enqphone() . "',
+                customerAddress = '" . $enqObj->get_enqaddress() . "',
+                customerCity = '" . $enqObj->get_enqcity() . "',
+                customerState = '" . $enqObj->getEnq_State() . "',
+                customerCountry = '" . $enqObj->getEnq_Country() . "'
+            WHERE customerId = '" . $customerId . "'";
+
+        $connectionObj->query($updateCustomer);
     }
-  }
+
+    // 4️⃣ Update category mapping
+    $connectionObj->query("DELETE FROM enq_cat_mapping WHERE enq_id = '" . $enqObj->get_id() . "'");
+
+    foreach ($enqObj->get_interestList() as $interest) {
+        $map = new enqCatMappingModel();
+        $map->set_enqId($enqObj->get_id());
+        $map->set_catId($interest);
+        DBenqCatMapping::insert($map);
+    }
+
+}
 
 }

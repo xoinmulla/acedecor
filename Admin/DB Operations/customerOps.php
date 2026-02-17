@@ -114,12 +114,16 @@ class DBcustomer
             "' WHERE customerId=" . $customer->get_customerId();
         error_log($sql);
         if ($connectionObj->query($sql) === TRUE) {
-            $sql = "UPDATE enquiry_details SET enq_name='" . $customer->get_customerName() . "',
-            enq_email='" . $customer->get_customerEmail() . "',
-            enq_address='" . $customer->get_customerAddress() . "',
-            enq_phone='" . $customer->get_customerPhone() . "',
-            enq_name='" . $customer->get_customerName() . "'
-             where enqid='" . $enqId->get_enqId() . "'";
+            $sql = "UPDATE enquiry_details SET 
+        enq_name='" . $customer->get_customerName() . "',
+        enq_email='" . $customer->get_customerEmail() . "',
+        enq_address='" . $customer->get_customerAddress() . "',
+        enq_phone='" . $customer->get_customerPhone() . "',
+        enq_city='" . $customer->get_customerCity() . "',
+        enq_state='" . $customer->get_customerState() . "',
+        enq_country='" . $customer->getCustomerCountry() . "'
+        WHERE enqid='" . $enqId->get_enqId() . "'";
+
             error_log($sql);
             if ($connectionObj->query($sql) === TRUE) {
             } else {
@@ -198,13 +202,13 @@ class DBcustomer
     {
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
-        $sql = "SELECT 	quoid FROM quotation_details where customerId='$id'";
+        $sql = "SELECT 	quoteid FROM quotation_details where customerId='$id'";
         $result = mysqli_query($db->getConnection(), $sql);
 
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
                 $customer = new customer();
-                $customer->setQuoteId($row["quoid"]);
+                $customer->setQuoteId($row["quoteid"]);
             }
         } else {
             echo "0 results";

@@ -271,7 +271,8 @@ GROUP BY
 
   public static function updateItemInwardRow($stockId, $qty, $amt, $balance)
   {
-    $db = ConnectDb::getInstance()->getConnection();
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
 
     $sql = "UPDATE item_stock
             SET ReceivedQty = ?,
@@ -279,22 +280,35 @@ GROUP BY
                 BalanceQty = ?
             WHERE item_stockid = ?";
 
-    $stmt = $db->prepare($sql);
-    $stmt->execute([$qty, $amt, $balance, $stockId]);
+    $stmt = $conn->prepare($sql);
+
+    // i = int, d = double
+    $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
+
+    $stmt->execute();
+
+    error_log("Rows affected: " . $stmt->affected_rows);
   }
+
+
   public static function updateMaterialInwardRow($stockId, $qty, $amt, $balance)
   {
-    $db = ConnectDb::getInstance()->getConnection();
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
 
-    $sql = "UPDATE material_stock
+    $sql = "UPDATE item_stock
             SET ReceivedQty = ?,
                 ReceivedQtyAmt = ?,
                 BalanceQty = ?
-            WHERE material_stockid = ?";
+            WHERE item_stockid = ?";
 
-    $stmt = $db->prepare($sql);
-    $stmt->execute([$qty, $amt, $balance, $stockId]);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
+    $stmt->execute();
+
+    error_log("Material Rows affected: " . $stmt->affected_rows);
   }
+
 
   public static function viewinwarddetailsbasedonID($id, $PurchaseId, $inventoryType)
   {
@@ -323,6 +337,7 @@ GROUP BY
 
       $sql = "
     SELECT 
+        s.item_stockid,
         s.modifiedOn,
         s.ReceivedQty,
         s.ReceivedQtyAmt,
