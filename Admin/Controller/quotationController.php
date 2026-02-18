@@ -19,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quotation->set_enqId(Sanitization::test_input($value[0]['enqId']));
         $quotation->setCatId(Sanitization::test_input($value[0]['enqCategory']));
         $quotation->set_customerId(Sanitization::test_input($value[0]['customerId']));
-        $quotation->set_quoteType(Sanitization::test_input($value[0]['quoteType']));
         $quotation->set_quoteStatus(Sanitization::test_input('pending'));
         $quotation->set_createdby(Sanitization::test_input($value[0]['createdby']));
         $quotation->set_modifiedby(Sanitization::test_input($value[0]['createdby']));
@@ -118,7 +117,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $quotation->set_customerName(Sanitization::test_input($_POST['customeName']));
         $quotation->setQuantity(Sanitization::test_input($_POST['quantity']));
         $quotation->setQuoteValue(Sanitization::test_input($_POST['QuoteAmount']));
-        $quotation->set_quoteType(Sanitization::test_input($_POST['quoteType']));
         $quotation->set_quoteStatus(Sanitization::test_input($_POST['quoteStatus']));
         $quotation->set_quoteDescription(Sanitization::test_input($_POST['quoteDescription']));
         $quotation->set_quoteComments(Sanitization::test_input($_POST['quoteComments']));

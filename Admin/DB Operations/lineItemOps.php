@@ -86,7 +86,13 @@ SELECT
     I.item_name AS Name,
     B.brand_name AS Brand,
     I.item_description AS Description,
-    QLI.quantity AS Quantity,
+    QLI.quantity AS itemquantity,
+    QLI.discount1 AS discount1,
+    QLI.GST AS GST,
+    QLI.totalAmount AS totalAmount,
+    QLI.amount AS companyPrice,
+    QLI.totalValue AS totalValue,
+    QLI.totalPrice AS totalPrice,
     U.unitName AS Units
 FROM quotelineitem QLI
 JOIN item_details I 
@@ -105,7 +111,13 @@ SELECT
     M.Material_Name AS Name,
     B.brand_name AS Brand,
     M.Material_Description AS Description,
-    QLI.quantity AS Quantity,
+    QLI.quantity AS itemquantity,
+    QLI.discount1 AS discount1,
+    QLI.GST AS GST,
+    QLI.totalAmount AS totalAmount,
+    QLI.amount AS companyPrice,
+    QLI.totalValue AS totalValue,
+    QLI.totalPrice AS totalPrice,
     U.unitName AS Units
 FROM quotelineitem QLI
 JOIN material M 
@@ -116,6 +128,7 @@ WHERE QLI.quoteId = $quoteId
 
 ORDER BY lineItemId ASC
 ";
+
 
     error_log($sql);
     $result = $conn->query($sql);
@@ -134,7 +147,8 @@ ORDER BY lineItemId ASC
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
-    $sql = "SELECT 
+    $sql = "
+    SELECT 
         QLI.lineItemId AS lineItemId,
         QLI.itemId AS itemId,
         M.Mat_Image AS image,
@@ -149,16 +163,17 @@ ORDER BY lineItemId ASC
         QLI.amount AS companyPrice,
         QLI.totalValue AS totalValue,
         QLI.GST AS GST
-    FROM `quotelineitem` AS QLI 
-    JOIN `material` AS M ON QLI.InputName = M.Material_Name
-    JOIN `brands` AS B ON M.Brand = B.brand_id
-    JOIN `units` AS U ON U.unitId = M.Mat_Unit
+    FROM quotelineitem AS QLI
+    JOIN material AS M 
+        ON QLI.itemId = M.Material_Id
+        AND QLI.InputType = 2
+    JOIN brands AS B ON M.Brand = B.brand_id
+    JOIN units AS U ON U.unitId = M.Mat_Unit
     WHERE QLI.quoteId = $quoteId
-    ORDER BY lineItemId ASC";
+    ORDER BY lineItemId ASC
+    ";
 
-    error_log($sql);
     $result = $conn->query($sql);
-
     $data = [];
 
     while ($row = $result->fetch_assoc()) {
@@ -173,7 +188,7 @@ ORDER BY lineItemId ASC
         "GST" => floatval($row["GST"]),
         "totalAmount" => floatval($row["totalAmount"]),
         "companyPrice" => floatval($row["companyPrice"]),
-        "totalValue" => floatval($row["totalValue"]), // ✅ correct value
+        "totalValue" => floatval($row["totalValue"]),
         "totalPrice" => floatval($row["totalPrice"])
       ];
     }
@@ -217,7 +232,7 @@ ORDER BY lineItemId ASC
         else '0' end as AllocatedStatus,
          PR.projectId as ProjectId
         FROM `quotelineitem` AS QLI 
-        JOIN `item_details` AS I ON QLI.InputName=I.item_name
+        JOIN `item_details` AS I ON QLI.itemId = I.item_id
         JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoteId 
         JOIN `brands` AS B ON I.item_compid=B.brand_id 
         JOIN units AS U ON U.unitId=I.item_unit
@@ -329,63 +344,68 @@ ORDER BY lineItemId ASC
     $conn = $db->getConnection();
 
     $sql = "
-SELECT QLI.lineItemId AS lineItemId,
-       I.item_image AS image,
-       I.item_name AS Name,
-       B.brand_name AS Brand,
-       I.item_description AS Description,
-       U.unitName AS Units,
-       QLI.quantity AS itemquantity,
-       QLI.discount1 AS discount1,
-       QLI.GST AS GST,
-       QLI.totalAmount AS totalAmount,
-       QLI.amount AS companyPrice,
-       QLI.totalValue AS totalValue,
-       QLI.totalPrice AS totalPrice
-FROM quotelineitem AS QLI
-JOIN item_details AS I ON QLI.itemId = I.item_id
-JOIN brands AS B ON I.item_compid = B.brand_id
-JOIN units AS U ON U.unitId = I.item_unit
-WHERE QLI.quoteId = $quoteId
-ORDER BY QLI.lineItemId ASC
-";
+    -- ITEMS
+    SELECT 
+        QLI.lineItemId,
+        I.item_image AS Image,
+        I.item_name AS Name,
+        B.brand_name AS Brand,
+        I.item_description AS Description,
+        U.unitName AS Units,
+        QLI.quantity AS itemquantity,
+        QLI.discount1 AS discount1,
+        QLI.GST AS GST,
+        QLI.totalAmount AS totalAmount,
+        QLI.amount AS companyPrice,
+        QLI.totalValue AS totalValue,
+        QLI.totalPrice AS totalPrice,
+        QLI.InputType AS Type
+    FROM quotelineitem QLI
+    JOIN item_details I 
+        ON QLI.itemId = I.item_id
+    JOIN brands B ON I.item_compid = B.brand_id
+    JOIN units U ON U.unitId = I.item_unit
+    WHERE QLI.quoteId = $quoteId
+    AND QLI.InputType = 1
 
+    UNION ALL
+
+    -- MATERIALS
+    SELECT 
+        QLI.lineItemId,
+        M.Mat_Image AS Image,
+        M.Material_Name AS Name,
+        B.brand_name AS Brand,
+        M.Material_Description AS Description,
+        U.unitName AS Units,
+        QLI.quantity AS itemquantity,
+        QLI.discount1 AS discount1,
+        QLI.GST AS GST,
+        QLI.totalAmount AS totalAmount,
+        QLI.amount AS companyPrice,
+        QLI.totalValue AS totalValue,
+        QLI.totalPrice AS totalPrice,
+        QLI.InputType AS Type
+    FROM quotelineitem QLI
+    JOIN material M 
+        ON QLI.itemId = M.Material_Id
+    JOIN brands B ON M.Brand = B.brand_id
+    JOIN units U ON U.unitId = M.Mat_Unit
+    WHERE QLI.quoteId = $quoteId
+    AND QLI.InputType = 2
+
+    ORDER BY lineItemId ASC
+    ";
 
     error_log($sql);
 
     $result = $conn->query($sql);
+
     $data = [];
-
     while ($row = $result->fetch_assoc()) {
-      $qty = floatval($row["itemquantity"]);       // quantity
-      $comp = floatval($row["companyPrice"]);       // company price
-      $tVal = floatval($row["totalValue"]);         // total value
-
-      if ($comp == 0 || $comp == null) {
-        $comp = $row["amount"] ?? 0;              // ✅ fallback to DB amount
-      }
-
-      if ($tVal == 0 || $tVal == null) {
-        $tVal = $comp * $qty;                     // ✅ calculate if missing
-      }
-
-      $data[] = [
-        "lineItemId" => $row["lineItemId"],
-        "image" => $row["image"],
-        "Name" => $row["Name"],
-        "Brand" => $row["Brand"],        // ✅ now included
-        "Description" => $row["Description"],  // ✅ now included
-        "Units" => $row["Units"],        // ✅ now included
-        "itemquantity" => floatval($row["itemquantity"] ?? 0),
-        "discount1" => floatval($row["discount1"] ?? 0),
-        "GST" => floatval($row["GST"] ?? 0),
-        "totalAmount" => floatval($row["totalAmount"] ?? 0),
-        "companyPrice" => floatval($row["companyPrice"] ?? 0),
-        "totalValue" => floatval($row["totalValue"] ?? 0),
-        "totalPrice" => floatval($row["totalPrice"] ?? 0)
-      ];
-
+      $data[] = $row;
     }
+
     header('Content-Type: application/json');
     echo json_encode($data, JSON_NUMERIC_CHECK);
   }
@@ -423,7 +443,7 @@ ORDER BY QLI.lineItemId ASC
     I.item_pp_MRP AS MRP
 
         FROM `quotelineitem` AS QLI 
-        JOIN `item_details` AS I ON QLI.InputName=I.item_name 
+        JOIN `item_details` AS I ON QLI.itemId = I.item_id
         JOIN item_category C ON I.item_catid=C.item_catid 
         JOIN item_subcategory SC ON I.item_subcatid=SC.item_subcatid 
         JOIN `brands` AS B ON I.item_compid=B.brand_id 
@@ -461,7 +481,7 @@ ORDER BY QLI.lineItemId ASC
         UF.unitFactor AS unitFactor,
         M.Mat_PPMRP AS MRP
         FROM `quotelineitem` AS QLI 
-        JOIN `material` AS M ON QLI.InputName=M.Material_Name
+        JOIN `material` AS M ON QLI.itemId = M.Material_Id
         JOIN material_category C ON M.Category=C.material_catId 
         JOIN material_subcategory SC ON M.SubCategory=SC.material_subcatId 
         JOIN `brands` AS B ON M.Brand=B.brand_id 
@@ -472,11 +492,15 @@ ORDER BY QLI.lineItemId ASC
         WHERE QLI.quoteId=" . $quoteId;
     error_log($sql);
     $result = $connectionObj->query($sql);
+    error_log("Rows returned: " . mysqli_num_rows($result));
+
     $count = mysqli_num_rows($result);
 
     $itemList = [];
     if ($count > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+        error_log("Fetched row lineItemId: " . $row["lineItemId"]);
+
         $item = new lineItem();
         $item->set_lineItemId($row["lineItemId"]);
         $item->set_itemid($row["Id"]);
@@ -722,7 +746,7 @@ ORDER BY QLI.lineItemId ASC
       return false;
     }
   }
- 
+
   public static function delete($lineItemObj)
   {
     $db = ConnectDb::getInstance();

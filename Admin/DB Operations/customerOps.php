@@ -65,7 +65,10 @@ class DBcustomer
         C.enq_id  as enq_id,
         Count(Q.quoteId) as QuotationCount
         FROM customer C
-        Left Join quotation_details Q on Q.customerId=C.customerId 
+        LEFT JOIN quotation_details Q 
+    ON Q.customerId = C.customerId 
+    AND Q.quo_status = 'Approved'
+
         group by customerId ";
         $result = $connectionObj->query($sql);
         $count = mysqli_num_rows($result);
@@ -306,7 +309,11 @@ class DBcustomer
         $db = ConnectDb::getInstance();
         $conn = $db->getConnection();
 
-        $sql = "SELECT COUNT(*) as total FROM quotation_details WHERE customerId = ?";
+        $sql = "SELECT COUNT(*) as total 
+            FROM quotation_details 
+            WHERE customerId = ? 
+            AND quo_status = 'Approved'";
+
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $customerId);
         $stmt->execute();
@@ -314,5 +321,6 @@ class DBcustomer
 
         return ($res['total'] > 0);
     }
+
 
 }

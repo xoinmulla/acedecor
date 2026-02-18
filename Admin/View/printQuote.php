@@ -56,11 +56,11 @@ function numberToWords($number)
             <table width="100%" cellspacing="0" cellpadding="5">
                 <tr>
                     <td width="70%">
-                        <h2 style="margin:0;">ACE DECORS</h2>
+                        <h2 style="margin:0;">ACE DECORS</h2><br>
                         <p style="margin:0;">
-                            Dharwad, Karnataka<br>
-                            Phone: +91-9742268112 | +91-9742367112<br>
-                            Email: info@acedecors.in
+                            Dharwad, Karnataka<br><br>
+                            Phone: +91-9742268112 | +91-9742367112<br><br>
+                            Email: sales@acedecors.co.in
                         </p>
                     </td>
                     <td width="30%" align="right">
@@ -169,12 +169,12 @@ function numberToWords($number)
             <table width="100%" cellspacing="0" cellpadding="5">
                 <tr>
                     <td width="70%">
-                        <h2 style="margin:0;">ACE DECORS</h2>
+                        <h2 style="margin:0;">ACE DECORS</h2><br>
                         <p style="margin:0;">
                             Manufacturers and Suppliers of Modular Kitchen, Wardrobe & Cabinets<br>
                             Dharwad, Karnataka<br>
                             +91 9742367112 | +91 9742268112<br>
-                            Email: acedecorsofficial@gmail.com, info@acedecors.in
+                            Email: sales@acedecors.co.in
                         </p>
                         <p style="margin:0;">GSTIN:29ABQFA0355B1ZM</p>
                     </td>
@@ -211,6 +211,7 @@ function numberToWords($number)
                     <th style="text-align:center;">Sl No.</th>
                     <th style="text-align:center;">Description</th>
                     <th style="text-align:center;">Qty</th>
+                    <th style="text-align:center;">Unit</th>
                     <th style="text-align:center;">Amount</th>
                 </tr>
 
@@ -221,8 +222,9 @@ function numberToWords($number)
                 foreach ($quotation as $quote) {
                     echo '<tr>
                 <td align="center">' . $count . '</td>
-                <td>' . $quote->getQuoteCode() . '</td>
+                <td>' . $quote->get_quoteDescription() . '</td>
                 <td align="center">' . $quote->getQuantity() . '</td>
+                <td align="center">' . $quote->getUnitName() . '</td>
                 <td align="right">' . $quote->getQuoteValue() . '</td>
             </tr>';
                     $count++;

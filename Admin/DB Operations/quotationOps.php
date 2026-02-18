@@ -73,9 +73,15 @@ class DBQuotation
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * FROM quotation_details AS Q
-            JOIN customer AS C ON C.customerId=Q.customerId
-            LEFT JOIN units AS U ON Q.unitId=U.unitId";
+    $sql = "SELECT Q.*, 
+               C.*, 
+               U.unitName, 
+               E.enq_cat_name
+        FROM quotation_details AS Q
+        JOIN customer AS C ON C.customerId = Q.customerId
+        LEFT JOIN units AS U ON Q.unitId = U.unitId
+        LEFT JOIN enquiry_category AS E ON E.enq_catid = Q.enqCatId";
+
     $result = $connectionObj->query($sql);
     $quotationList = [];
 
@@ -83,6 +89,7 @@ class DBQuotation
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $quotation = new Quotation();
         $quotation->setCatId($row["enqCatId"]);
+        $quotation->setEnqCatName($row['enq_cat_name']);
         $quotation->setInputType($row["inputType"]);
         $quotation->set_quoteId($row["quoteId"]);
         $quotation->set_quoteType($row["quo_type"]);
@@ -185,9 +192,11 @@ class DBQuotation
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * FROM quotation_details AS Q
+    $sql = "SELECT Q.*, C.*, U.unitName, E.enq_cat_name
+            FROM quotation_details AS Q
             JOIN customer AS C ON C.customerId=Q.customerId
             LEFT JOIN units AS U ON U.unitId=Q.unitId
+            LEFT JOIN enquiry_category AS E ON E.enq_catid = Q.enqCatId
             WHERE Q.quoteId=" . $id;
 
     $result = $connectionObj->query($sql);
@@ -198,6 +207,7 @@ class DBQuotation
         $quotation = new Quotation();
         $quotation->setCatId($row["enqCatId"]);
         $quotation->set_quoteId($row["quoteId"]);
+        $quotation->setEnqCatName($row['enq_cat_name']);
         $quotation->set_quoteType($row["quo_type"]);
         $quotation->set_quoteStatus($row["quo_status"]);
         $quotation->set_quoteComments($row["quo_comments"]);

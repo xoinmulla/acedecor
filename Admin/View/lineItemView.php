@@ -31,7 +31,7 @@ $id = $_GET['id'];
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Quotation Item List</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Quotation Info</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#AddModal data-id=<?php echo $id ?>>
@@ -41,7 +41,7 @@ $id = $_GET['id'];
         </div>
         <?php $quotationList = DBQuotation::getQuotations($id) ?>
         <fieldset>
-            <legend>Quote Info :</legend>
+            <legend></legend>
             <div class="row">
                 <div class="col">
                     <label>Customer Id :
@@ -54,47 +54,51 @@ $id = $_GET['id'];
                     </label>
                 </div>
                 <div class="col">
-                    <label>DOE :
-                        <span><?php echo $quotationList->getDOE() ?></span>
-                    </label>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
                     <label>Quote Id :
                         <span><?php echo $quotationList->getQuoteCode() ?></span>
                     </label>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <label>Quote For :
+                        <span><?php echo $quotationList->getEnqCatName() ?></span>
+                    </label>
+
                 </div>
                 <div class="col">
                     <label>Description :
                         <span><?php echo $quotationList->get_quoteDescription() ?></span>
                     </label>
                 </div>
-
                 <div class="col">
-                    <label>DOQ :
-                        <span><?php echo $quotationList->getDOQ() ?></span>
+                    <label>Quote Comments :
+                        <span>
+                            <?php echo $quotationList->get_quoteComments() ?>
+                        </span>
                     </label>
                 </div>
+
 
             </div>
             <div class="row">
                 <div class="col">
                     <label>Total Amount :
-                        <span id="displaySumTotalAmount"></span> <i class="fas fa-rupee-sign"></i>
+                        <i class="fas fa-rupee-sign"></i> <span id="displaySumTotalAmount"></span> 
                     </label>
                 </div>
 
                 <div class="col">
                     <label>Total Value :
-                        <span id="displaysumTotalValue"></span> <i class="fas fa-rupee-sign"></i>
+                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalValue"></span> 
 
                     </label>
                 </div>
 
                 <div class="col">
                     <label>Total Price :
-                        <span id="displaysumTotalPrice"></span> <i class="fas fa-rupee-sign"></i>
+                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalPrice"></span> 
 
                     </label>
                 </div>
@@ -104,13 +108,14 @@ $id = $_GET['id'];
             </div>
             <div class="row">
                 <div class="col">
-                    <label>Quote Type :
-                        <span><?php echo $quotationList->get_quoteType() ?></span>
+                    <label>DOQ :
+                        <span><?php echo $quotationList->getDOQ() ?></span>
                     </label>
                 </div>
+                
                 <div class="col">
                     <label>Quote Value :
-                        <span><?php echo $quotationList->getQuoteValue() ?> <i class="fas fa-rupee-sign"></i></span>
+                        <span><i class="fas fa-rupee-sign"></i> <?php echo $quotationList->getQuoteValue() ?> </span>
                         <a class='btn' id="quoteValue" class='btn btn-warning btn-small' role='button' data-toggle=modal
                             data-target=#QuotevalueModal><i class='fas fa-pencil-alt'></i></a>
                     </label>

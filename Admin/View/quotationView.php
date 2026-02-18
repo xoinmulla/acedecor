@@ -128,6 +128,7 @@ require_once("../Model/quotationModel.php");
                         <th>DOE</th>
                         <th>Quote Id</th>
                         <th>DOQ</th>
+                        <th>Quotation For</th>
                         <th>Quote Description</th>
                         <th style='display:none'>Quote Type</th>
                         <th>Quote Value.</th>
@@ -183,6 +184,7 @@ require_once("../Model/quotationModel.php");
         <td>{$quotationObj->getDOE()}</td>
         <td>{$quotationObj->getQuoteCode()}</td>
         <td>{$quotationObj->getDOQ()}</td>
+        <td>{$quotationObj->getEnqCatName()}</td>
         <td>{$quotationObj->get_quoteDescription()}</td>
         <td style='display:none'>{$quotationObj->get_quoteType()}</td>
         <td>{$quotationObj->getQuoteValue()}</td>
@@ -432,13 +434,18 @@ require_once("../Model/quotationModel.php");
 
                                 </select>
                             </div>
-                            <label class="col-md-2 text-right">Quote Type <span class="text-danger">*</span></label>
+                            <!-- <label class="col-md-2 text-right">Quote Type <span class="text-danger">*</span></label>
                             <div class="col-md-2">
                                 <select id="quoteType" class="form-select" required name="quoteType">
                                     <option value='General'>General</option>
                                     <option value='Bank'>Bank</option>
                                 </select>
+                            </div> -->
+                            <label class="col-md-2 text-right">Quotation For</label>
+                            <div class="col-md-2">
+                                <input type="text" id="editedQuotationFor" class="form-control" readonly />
                             </div>
+
                         </div>
                     </div>
 
@@ -963,12 +970,13 @@ require_once("../Model/quotationModel.php");
             const quoteCode = row.find('td:eq(4)').text().trim();
             const customerCode = row.find('td:eq(1)').text().trim();
 
-            const inputType = row.children('td').eq(21).text().trim();
-            console.log("Detected InputType:", inputType);
+            // const inputType = row.children('td').eq(22).text().trim();
 
-            let apiFile = (inputType === "1")
-                ? "itemListController.php"
-                : "materialListController.php";
+            // console.log("Detected InputType:", inputType);
+
+            // let apiFile = (inputType === "1")
+            //     ? "itemListController.php"
+            //     : "materialListController.php";
             // 🔥 FIX ENDS HERE
             // Safety check
             if (!quoteCode || !customerCode) {
@@ -1002,7 +1010,8 @@ require_once("../Model/quotationModel.php");
 
 
             var uniturl = config.developmentPath +
-                "/Admin/Controller/" + apiFile + "?id=" + rowid + "&projId=" + projId;
+                "/Admin/Controller/boqLineItemController.php?id=" + rowid;
+
 
             var sumTotalAmount = 0;
             var sumTotalPrice = 0;
@@ -1206,17 +1215,16 @@ require_once("../Model/quotationModel.php");
             $('#editedCustomerName').val(this.cells[2].innerHTML);
             $('#customerName').text(this.cells[2].innerHTML);
             $('#displaycustomerinfoCode').text(this.cells[1].innerHTML);
-            $('#editedQuoteType').val(this.cells[7].innerHTML);
-            $('#editedQuoteAmount').val(this.cells[8].innerHTML);
-            $('#editedStatus').val(this.cells[9].innerHTML);
-            $('#editedquoteDecription').val(this.cells[6].innerHTML);
-            $('#editedquoteComments').val(this.cells[10].innerHTML);
-            $('#quoteType').val(this.cells[7].innerHTML)
+            $('#editedQuotationFor').val(this.cells[6].innerHTML);
+            $('#editedQuoteAmount').val(this.cells[9].innerHTML);
+            $('#editedStatus').val(this.cells[10].innerHTML);
+            $('#editedquoteDecription').val(this.cells[7].innerHTML);
+            $('#editedquoteComments').val(this.cells[11].innerHTML);
             $('#customerCode').text(this.cells[1].innerHTML);
             $('#listquoteCode').text(this.cells[4].innerHTML);
-            $('#unitId').val(this.cells[11].innerHTML);
-            $('#unit').val(this.cells[13].innerHTML);
-            $('#quantity').val(this.cells[12].innerHTML);
+            $('#unitId').val(this.cells[12].innerHTML);   // unitId
+            $('#quantity').val(this.cells[13].innerHTML); // Quantity
+            $('#unit').val(this.cells[12].innerHTML);     // select by unitId
             $('#displaycustomerCode').text(this.cells[1].innerHTML);
             $('#projcustomerCode').val(this.cells[1].innerHTML);
             $('#displayquoteCode').text(this.cells[4].innerHTML);
