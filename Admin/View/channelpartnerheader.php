@@ -26,6 +26,178 @@
     <link rel="stylesheet" type="text/css" href="../vendor/parsley/parsley.css" />
 
     <link rel="stylesheet" type="text/css" href="../vendor/bootstrap-select/bootstrap-select.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #F3F6FB;
+            --sidebar-dark: #000000;
+            --sidebar-dark-2: #000000;
+            --accent-blue: #2563EB;
+            --accent-cyan: #06B6D4;
+            --text-light: rgb(218, 215, 215);
+            --card-bg: #ffffff;
+            --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --shadow-strong: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-main);
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 260px !important;
+            background: linear-gradient(180deg, var(--sidebar-dark), var(--sidebar-dark-2));
+            position: relative;
+            overflow: hidden;
+            box-shadow: 12px 0 40px rgba(0, 0, 0, 0.4);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Animated pattern */
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: transparent url("https://www.transparenttextures.com/patterns/inspiration-geometry.png") repeat;
+            animation: moveStars 60s linear infinite;
+            z-index: 0;
+        }
+
+        @keyframes moveStars {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 1000px 1000px;
+            }
+        }
+
+        /* Glow overlay */
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.25), transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.2), transparent 50%);
+            z-index: 0;
+        }
+
+        .sidebar * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Brand */
+        .sidebar-brand {
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 1px;
+            color: rgb(184, 184, 184) !important;
+            padding: 24px 0;
+        }
+
+        /* Nav */
+        .sidebar .nav-item {
+            margin: 6px 16px;
+        }
+
+        .sidebar .nav-link {
+            color: var(--text-light) !important;
+            padding: 14px 20px;
+            border-radius: 14px;
+            transition: all .3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 14px;
+            font-size: 17px;
+            transition: transform .3s ease;
+        }
+
+        /* Hover effect */
+        .sidebar .nav-link:hover {
+            background: rgba(0, 0, 0, 0.18);
+            color: #fff !important;
+            transform: translateX(6px);
+            box-shadow: 0 8px 25px rgb(0, 195, 255);
+        }
+
+        .sidebar .nav-link:hover i {
+            transform: scale(1.2);
+            color: var(--accent-cyan);
+        }
+
+        /* Active state */
+        .sidebar .nav-item.active .nav-link {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            color: #fff !important;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, .5);
+        }
+
+        /* Collapse */
+        .sidebar.toggled {
+            width: 95px !important;
+        }
+
+        .sidebar.toggled .nav-link span {
+            display: none;
+        }
+
+        .sidebar.toggled .nav-link i {
+            margin-right: 0;
+            font-size: 20px;
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            background: rgba(255, 255, 255, 0.85) !important;
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            margin: 20px;
+            padding: 14px 24px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* Dropdown */
+        .dropdown-menu {
+            border: none;
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .dropdown-item {
+            border-radius: 12px;
+            padding: 10px 15px;
+            transition: .3s;
+        }
+
+        .dropdown-item:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 10px;
+        }
+    </style>
 
 </head>
 
