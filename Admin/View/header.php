@@ -30,23 +30,23 @@ include('session.php');
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
 <style>
     :root {
         --bg-main: #F3F6FB;
-        --sidebar-dark:rgb(0, 0, 0);
-        --sidebar-dark-2:rgb(0, 0, 0);
+        --sidebar-dark: rgb(0, 0, 0);
+        --sidebar-dark-2: rgb(0, 0, 0);
         --accent-blue: #2563EB;
         --accent-cyan: #06B6D4;
-        --text-light:rgb(218, 215, 215);
+        --text-light: rgb(218, 215, 215);
         --card-bg: #ffffff;
         --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
         --shadow-strong: 0 25px 60px rgba(0, 0, 0, 0.15);
     }
 
     body {
-        font-family: 'Inter', sans-serif;
+        font-family: poppins, sans-serif;
         background: var(--bg-main);
     }
 
@@ -103,7 +103,7 @@ include('session.php');
         font-weight: 800;
         font-size: 22px;
         letter-spacing: 1px;
-        color:rgb(184, 184, 184) !important;
+        color: rgb(184, 184, 184) !important;
         padding: 24px 0;
     }
 
@@ -238,7 +238,6 @@ include('session.php');
         background: var(--accent-blue);
         border-radius: 10px;
     }
-    
 </style>
 
 

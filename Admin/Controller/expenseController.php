@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         error_log('SUB NAME = ' . ($_POST['subcategory_name'] ?? 'NULL'));
 
 
-        $e->setType($_POST['type'] ?? 'Expense');
+        $type = !empty($_POST['type']) ? $_POST['type'] : 'Expense';
+        $e->setType($type);
         $e->setCategory($_POST['category_type'] ?? 'General');
 
         if ($e->getCategory() === 'General') {
@@ -66,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $e = new Expense();
         $e->setId($_POST['id']);
 
-        $e->setType($_POST['type'] ?? 'Expense');
+        $type = !empty($_POST['type']) ? $_POST['type'] : 'Expense';
+        $e->setType($type);
         $e->setCategory($_POST['category_type'] ?? 'General');
 
         $e->setSubcategoryId($_POST['subcategory_id'] ?? null);
@@ -157,19 +159,35 @@ if (
     $_POST['action'] === 'add_supplier_expense'
 ) {
 
-    $e = new Expense();
-    $e->setType('Expense');
-    $e->setCategory('Suppliers');
-    $e->setSupplierId($_POST['supplier_id'] ?? null);
-    $e->setAmount($_POST['amount']);
-    $e->setExpenseDate($_POST['expense_date']);
-    $e->setPaymentType($_POST['payment_type']);
-    $e->setNotes($_POST['notes'] ?? '');
+    header('Content-Type: application/json');
 
-    DBExpense::insertSupplierExpense($e);
+    try {
 
-    echo json_encode(['status' => 'success']);
-    exit;
+        $e = new Expense();
+        $e->setType('Expense');
+        $e->setCategory('Suppliers');
+        $e->setSupplierId($_POST['supplier_id'] ?? null);
+        $e->setAmount($_POST['amount']);
+        $e->setExpenseDate($_POST['expense_date']);
+        $e->setPaymentType($_POST['payment_type']);
+        $e->setNotes($_POST['notes'] ?? '');
+
+        DBExpense::insertSupplierExpense($e);
+
+        echo json_encode([
+            'status' => 'success',
+            'message' => 'Supplier expense added successfully'
+        ]);
+        exit;
+
+    } catch (Exception $ex) {
+
+        echo json_encode([
+            'status' => 'error',
+            'message' => 'Failed to add supplier expense'
+        ]);
+        exit;
+    }
 }
 
 

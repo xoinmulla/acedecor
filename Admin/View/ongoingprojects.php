@@ -179,8 +179,8 @@ require_once("../Model/projectModel.php");
 
                             <label class="col-md-2 text-right">Quote Amount. <span class="text-danger">*</span></label>
                             <div class="col-md-2 input-group">
-                                <p id="QuoteAmount" class="pad"></p>
-                                <span class=""> <i class="fas fa-rupee-sign"></i></span>
+                                <span class=""> <i class="fas fa-rupee-sign"> </i> </span> 
+                                <p id="QuoteAmount" class="pad"> </p>
                             </div>
 
                         </div>
@@ -211,6 +211,11 @@ require_once("../Model/projectModel.php");
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="ProjIssues-tab" data-bs-toggle="tab"
+                                    data-bs-target="#ProjIssues" type="button" role="tab" aria-controls="issues"
+                                    aria-selected="false"><b>Issues</b></button>
+                            </li>
+                            <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="itemlist-tab" data-bs-toggle="tab"
                                     data-bs-target="#itemlist" type="button" role="tab" aria-controls="itemlist"
                                     aria-selected="true"><b>Item List</b></button>
@@ -228,11 +233,7 @@ require_once("../Model/projectModel.php");
                                     aria-selected="false"><b>Product List</b></button>
                             </li> -->
 
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="ProjIssues-tab" data-bs-toggle="tab"
-                                    data-bs-target="#ProjIssues" type="button" role="tab" aria-controls="issues"
-                                    aria-selected="false"><b>Issues</b></button>
-                            </li>
+
                         </ul>
                     </div>
                     <div class="tab-content" id="myTabContent">

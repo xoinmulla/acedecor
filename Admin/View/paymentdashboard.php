@@ -8,7 +8,9 @@ include('session.php');
 include "paymentnavigation.php";
 require_once "../DB Operations/dashboardOps.php";
 require_once "../DB Operations/customerpaymentOps.php";
+require_once "../DB Operations/supplierpaymentOps.php";
 
+$supplierChartData = DBsupplierpayment::getAllsupplierpayment();
 
 // ---- Financial Dashboard Data ---- //
 $totalIncome = DBDashboard::TotalIncome();
@@ -26,7 +28,8 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
     /* ===== DONUT CHART ===== */
     .donut {
@@ -71,7 +74,7 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
     /* ===================== PAGE ===================== */
     body {
       background: radial-gradient(circle at top left, #e0e7ff, #f8fafc);
-      font-family: "Inter", "Segoe UI", system-ui;
+      font-family: 'Poppins', sans-serif;
       color: #0f172a;
     }
 
@@ -317,24 +320,35 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
 
     // ✅ BAR CHART: Employee Salary (Paid vs Pending)
     function drawEmployeeBar() {
-      var data = google.visualization.arrayToDataTable([
-        ['Employee', 'Paid Amount', 'Pending Amount'],
-        <?php
-        $empData = DBDashboard::EmployeeSalaryDetails();
-        while ($row = mysqli_fetch_array($empData)) {
-          echo "['" . addslashes($row['name']) . "', " . intval($row['paid_amt']) . ", " . intval($row['pending_amt']) . "],";
-        }
-        ?>
-      ]);
 
-      var options = {
-        title: 'Employee Salary: Paid vs Pending',
-        legend: { position: 'bottom' },
-        bars: 'vertical',
-        colors: ['#198754', '#adb5bd'],
-        height: 400
-      };
-      new google.visualization.ColumnChart(document.getElementById('employee_bar_chart')).draw(data, options);
+      $.getJSON('../Controller/employeePaymentController.php', {
+        action: 'getEmployeeSummary'
+      }, function (data) {
+
+        let chartData = [['Employee', 'Paid Amount', 'Pending Amount']];
+
+        data.forEach(row => {
+          chartData.push([
+            row.emp_name,
+            parseFloat(row.paid_amount),
+            parseFloat(row.balance)
+          ]);
+        });
+
+        var googleData = google.visualization.arrayToDataTable(chartData);
+
+        var options = {
+          title: 'Employee Salary: Paid vs Pending',
+          legend: { position: 'bottom' },
+          bars: 'vertical',
+          colors: ['#198754', '#adb5bd'],
+          height: 400
+        };
+
+        new google.visualization.ColumnChart(
+          document.getElementById('employee_bar_chart')
+        ).draw(googleData, options);
+      });
     }
     function drawCustomerGraph() {
 
@@ -410,6 +424,8 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
             <span>Supplier’s Graph</span>
           </button>
         </li>
+
+
 
         <li class="nav-item">
           <button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-employee">
@@ -502,8 +518,12 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
       </div>
 
       <div class="tab-pane fade" id="tab-supplier">
-        <div class="alert alert-warning text-center fw-semibold">
-          📈 Supplier graph will be added here
+        <div class="chart-card">
+          <h5 class="text-center text-primary mb-3">
+            <i class="fa-solid fa-store me-2"></i>
+            Supplier Financial Overview
+          </h5>
+          <div id="supplierChart" style="height: 420px;"></div>
         </div>
       </div>
 
@@ -653,11 +673,53 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
         if (e.target.getAttribute('data-bs-target') === '#tab-customer') {
           drawCustomerGraph();
         }
+        if (e.target.getAttribute('data-bs-target') === '#tab-supplier') {
+          drawSupplierChart();
+        }
       });
     });
 
   </script>
 
+  <script>
+    google.charts.load('current', { packages: ['corechart'] });
+    google.charts.setOnLoadCallback(drawSupplierChart);
+
+    function drawSupplierChart() {
+
+      var data = google.visualization.arrayToDataTable([
+        ['Supplier', 'Total', 'Paid', 'Balance'],
+
+        <?php
+        foreach ($supplierChartData as $s) {
+          echo "['" . addslashes($s->get_suppliername()) . "', "
+            . floatval($s->get_totalamt()) . ", "
+            . floatval($s->get_paidamt()) . ", "
+            . floatval($s->get_pendingamt()) . "],";
+        }
+        ?>
+      ]);
+
+      var options = {
+        title: 'Supplier Payment Overview',
+        chartArea: { width: '60%' },
+        hAxis: {
+          title: 'Amount (₹)',
+          minValue: 0
+        },
+        vAxis: {
+          title: 'Supplier'
+        },
+        bars: 'horizontal'
+      };
+
+      var chart = new google.visualization.BarChart(
+        document.getElementById('supplierChart')
+      );
+
+      chart.draw(data, options);
+    }
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

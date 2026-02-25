@@ -9,6 +9,8 @@ include "employeeNavigation.php";
 require_once "../DB Operations/dbconnection.php";
 require_once "../DB Operations/monthlyReportOps.php"; // ✅ For accurate due logic
 
+$salaryPayData = DBMonthlyReport::getAllEmployeeSummary();
+
 $conn = ConnectDb::getInstance()->getConnection();
 
 // ---- Summary Cards ---- //
@@ -27,28 +29,28 @@ $attBreak = $conn->query("
 ");
 
 // ---- Accurate Due vs Payments (All Time) ---- //
-$salaryPayData = [];
-$employees = $conn->query("SELECT id, name FROM employee");
+// $salaryPayData = [];
+// $employees = $conn->query("SELECT id, name FROM employee");
 
-while ($emp = $employees->fetch_assoc()) {
-  $emp_id = $emp['id'];
-  $name = $emp['name'];
+// while ($emp = $employees->fetch_assoc()) {
+//   $emp_id = $emp['id'];
+//   $name = $emp['name'];
 
-  // Accurate due using Monthly Report logic
-  $due_amt = DBMonthlyReport::getDueAmountByEmployee($emp_id);
+//   // Accurate due using Monthly Report logic
+//   $due_amt = DBMonthlyReport::getDueAmountByEmployee($emp_id);
 
-  // Total paid across all time
-  $paid_q = $conn->prepare("SELECT COALESCE(SUM(amount),0) AS total_paid FROM employee_payment WHERE emp_id=?");
-  $paid_q->bind_param("i", $emp_id);
-  $paid_q->execute();
-  $paid_amt = $paid_q->get_result()->fetch_assoc()['total_paid'] ?? 0;
+//   // Total paid across all time
+//   $paid_q = $conn->prepare("SELECT COALESCE(SUM(amount),0) AS total_paid FROM employee_payment WHERE emp_id=?");
+//   $paid_q->bind_param("i", $emp_id);
+//   $paid_q->execute();
+//   $paid_amt = $paid_q->get_result()->fetch_assoc()['total_paid'] ?? 0;
 
-  $salaryPayData[] = [
-    'name' => $name,
-    'due_amt' => $due_amt,
-    'paid_amt' => $paid_amt
-  ];
-}
+//   $salaryPayData[] = [
+//     'name' => $name,
+//     'due_amt' => $due_amt,
+//     'paid_amt' => $paid_amt
+//   ];
+// }
 
 // ---- OT Trend ---- //
 $otTrend = $conn->query("
@@ -64,6 +66,8 @@ $otTrend = $conn->query("
   <title>Employee Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -85,7 +89,7 @@ $otTrend = $conn->query("
   <style>
     body {
       background: #f4f7fb;
-      font-family: "Segoe UI", Arial;
+      font-family: 'Poppins', sans-serif;
     }
 
     .dashboard-header {
@@ -278,7 +282,7 @@ $otTrend = $conn->query("
         ['Employee', 'Due Amount', 'Paid Amount'],
         <?php
         foreach ($salaryPayData as $r) {
-          echo "['{$r['name']}', {$r['due_amt']}, {$r['paid_amt']}],";
+          echo "['{$r['emp_name']}', {$r['total_amount']}, {$r['paid_amount']}],";
         }
         ?>
       ]);

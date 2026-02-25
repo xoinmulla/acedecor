@@ -205,54 +205,55 @@ class DBMonthlyReport
     {
         $conn = self::getConn();
 
+        // Get employee details
+        $empQ = $conn->prepare("
+        SELECT salary_amount, hourly_rate
+        FROM employee
+        WHERE id=?
+    ");
+        $empQ->bind_param("i", $emp_id);
+        $empQ->execute();
+        $emp = $empQ->get_result()->fetch_assoc();
+
+        if (!$emp) {
+            return [
+                'total_amount' => 0,
+                'paid_amount' => 0,
+                'balance' => 0
+            ];
+        }
+
+        $salary_amount = (float) $emp['salary_amount'];
+        $hourly_rate = (float) $emp['hourly_rate'];
+
         /* ===============================
-           1️⃣ TOTAL DUE (Attendance based)
+           1️⃣ Calculate Due From Attendance
            =============================== */
 
-        // 🔹 Monthly-based due (fixed salary / OT / etc)
-        $att_q = $conn->prepare("
-        SELECT DISTINCT DATE_FORMAT(date,'%Y-%m') AS month
+        $attQ = $conn->prepare("
+        SELECT status, worked_hours
         FROM attendance
         WHERE emp_id=?
     ");
-        $att_q->bind_param("i", $emp_id);
-        $att_q->execute();
-        $months = $att_q->get_result()->fetch_all(MYSQLI_ASSOC);
+        $attQ->bind_param("i", $emp_id);
+        $attQ->execute();
+        $attendance = $attQ->get_result()->fetch_all(MYSQLI_ASSOC);
 
         $total_due = 0;
 
-        foreach ($months as $m) {
-            $month = $m['month'];
-            $reports = self::getReport($month);
+        foreach ($attendance as $row) {
 
-            foreach ($reports as $r) {
-                if ($r->emp_id == $emp_id) {
-                    $total_due += (float) $r->due_amount;
-                }
+            if ($row['status'] === 'Hourly') {
+                $total_due += $row['worked_hours'] * $hourly_rate;
+            }
+
+            if ($row['status'] === 'Present') {
+                $total_due += $salary_amount;
             }
         }
 
         /* ===============================
-           2️⃣ HOURLY SALARY FROM ATTENDANCE
-           =============================== */
-
-        $hourlyQ = $conn->prepare("
-        SELECT 
-            COALESCE(SUM(a.worked_hours * e.hourly_rate), 0) AS total
-        FROM attendance a
-        JOIN employee e ON e.id = a.emp_id
-        WHERE a.emp_id = ?
-          AND e.hourly_rate > 0
-    ");
-        $hourlyQ->bind_param("i", $emp_id);
-        $hourlyQ->execute();
-        $hourlySalary = (float) $hourlyQ->get_result()->fetch_assoc()['total'];
-
-        // ✅ Add hourly salary to total due
-        $total_due += $hourlySalary;
-
-        /* ===============================
-           3️⃣ TOTAL PAID (All payments)
+           2️⃣ Total Paid
            =============================== */
 
         $pay_q = $conn->prepare("
@@ -263,10 +264,6 @@ class DBMonthlyReport
         $pay_q->bind_param("i", $emp_id);
         $pay_q->execute();
         $total_paid = (float) $pay_q->get_result()->fetch_assoc()['paid'];
-
-        /* ===============================
-           4️⃣ FINAL SUMMARY
-           =============================== */
 
         return [
             'total_amount' => round($total_due, 2),

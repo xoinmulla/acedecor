@@ -2023,15 +2023,26 @@ require_once("../Model/item_detailsmodel.php");
         //     });
         // });
 
-        $('#itemsubcatModal').on('show.bs.modal', function (e) {
+        $('#itemsubcatModal').on('show.bs.modal', function () {
+
             $('#additemCategory').empty();
+
+            const url = config.developmentPath +
+                "/Admin/Controller/item_categorycontroller.php";
+
             $.getJSON(url, function (data) {
+
+                $('#additemCategory')
+                    .append('<option hidden disabled selected value>-- select category --</option>');
+
                 $.each(data, function (index, value) {
-                    // APPEND OR INSERT DATA TO SELECT ELEMENT.
-                    $('#additemCategory').append('<option value="' + value.itemcatid +
-                        '">' + value
-                            .itemcatname + '</option>');
+                    $('#additemCategory').append(
+                        `<option value="${value.itemcatid}">
+                    ${value.itemcatname}
+                 </option>`
+                    );
                 });
+
             });
         });
 

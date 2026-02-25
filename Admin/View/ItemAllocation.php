@@ -120,11 +120,11 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                         aria-selected="true"><b>Material List</b></button>
                 </li>
 
-                <li class="nav-item" role="presentation">
+                <!-- <li class="nav-item" role="presentation">
                     <button class="nav-link" id="Allocateproducts-tab" data-bs-toggle="tab"
                         data-bs-target="#Allocateproducts" type="button" role="tab" aria-controls="products"
                         aria-selected="false"><b>Product List</b></button>
-                </li>
+                </li> -->
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="Allocateissues-tab" data-bs-toggle="tab"
                         data-bs-target="#Allocateissues" type="button" role="tab" aria-controls="issues"
@@ -148,8 +148,8 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                             <th>Quantity</th>
                             <th>Available Quantity</th>
                             <th>Unit</th>
-                            <th>PO Status</th>
-                            <th>Inward Status</th>
+                            <!-- <th>PO Status</th>
+                            <th>Inward Status</th> -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -165,8 +165,8 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                             <td>" . $item->get_itemquantity() . "</td>
                             <td >" . $item->get_AvailableQty() . "</td>
                             <td>" . $item->getUnits() . "</td>
-                            <td>" . $item->getPOStatus() . "</td>
-                            <td>" . $item->getInwardStatus() . "</td>
+                            <!--<td>" . $item->getPOStatus() . "</td>
+                            <td>" . $item->getInwardStatus() . "</td>-->
                             <td>
                             <button type='button' class='btn btn-secondary'";
                             if( $item->getAllocatedStatus() == 1 || $item->get_itemquantity() > $item->get_AvailableQty()) {
@@ -238,8 +238,8 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                                     <th>Quantity</th>
                                     <th>Available Quantity</th>
                                     <th>Unit</th>
-                                    <th>PO Status</th>
-                                    <th>Inward Status</th>
+                                    <!-- <th>PO Status</th>
+                                    <th>Inward Status</th> -->
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -255,8 +255,8 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                                             <td>" . $Mat->get_itemquantity() . "</td>
                                             <td >" . $Mat->get_AvailableQty() . "</td>
                                             <td>" . $Mat->getUnits() . "</td>
-                                            <td>" . $Mat->getPOStatus() . "</td>
-                                            <td>" . $Mat->getInwardStatus() . "</td>
+                                            <!--<td>" . $Mat->getPOStatus() . "</td>
+                                            <td>" . $Mat->getInwardStatus() . "</td>-->
                                             <td>
                                             <button type='button' class='btn btn-secondary'";
                                                 if( $Mat->getAllocatedStatus() == 1 || $Mat->get_itemquantity() > $Mat->get_AvailableQty()) {

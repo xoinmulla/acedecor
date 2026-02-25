@@ -251,12 +251,12 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 </button>
 
                 <div class='dropdown-menu'>
-                    <button class='btn btn-danger dropdown-item'
+                    <!-- <button class='btn btn-danger dropdown-item'
                             data-toggle='modal'
                             data-target='#paymentinfoModal'
                             data-id='" . $customer->get_custid() . "'>
                         <i class='fas fa-rupee-sign'></i> Payment Updates
-                    </button>
+                    </button>-->
 
                    <button
     class='btn btn-danger dropdown-item credit-discount-btn'
@@ -989,8 +989,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <div class="col-sm-12">
                                                         <input type="text" name="paidamt" id="sup_paidamt"
                                                             class="form-control" required data-parsley-trigger="keyup"
-                                                            readonly
-                                                            value="" />
+                                                            readonly value="" />
                                                     </div>
                                                 </div>
                                                 <br />
@@ -1012,8 +1011,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <div class="col-sm-12">
                                                         <input type="text" name="pendingamt" id="sup_pendingamt"
                                                             class="form-control" required data-parsley-trigger="keyup"
-                                                            readonly
-                                                            value="" />
+                                                            readonly value="" />
                                                     </div>
                                                 </div>
                                                 <br />
@@ -1202,8 +1200,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                             <input type="hidden" name="modifiedby" id="sup_modifiedby"
                                                                 class="form-control" required
                                                                 value="<?php echo $_SESSION['login_user']; ?>" />
-                                                            <input type="hidden" id="sup_supplierId"
-                                                                value="" />
+                                                            <input type="hidden" id="sup_supplierId" value="" />
                                                         </div>
                                                     </div>
                                                     <input type="submit" name="submit" id="PDF" class="btn btn-success"
@@ -1261,7 +1258,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                             <!-- Category -->
                             <div class="col-md-6">
                                 <label class="form-label fw-medium">Category</label>
-                                <select id="ae_category" class="form-select form-select-lg" required>
+                                <select id="ae_category" name="category_type" class="form-select form-select-lg"
+                                    required>
                                     <option value="">Select Category</option>
                                     <option value="projects">Customer</option>
                                 </select>
@@ -1896,7 +1894,9 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                         </h5>
                         <button class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-
+                    <div class="alert alert-success d-none" id="se_success_msg">
+                        Supplier expense added successfully
+                    </div>
                     <div class="modal-body">
                         <div class="row g-3">
 
@@ -3052,26 +3052,45 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     type: 'POST',
                     data: $(this).serialize(),
                     dataType: 'json',
-                    success: function () {
+                    success: function (res) {
 
-                        const sid = $('#se_supplier_id').val();
+                        if (res.status === 'success') {
 
-                        $.getJSON('../Controller/supplierExpenseController.php', {
-                            action: 'supplier_summary',
-                            supplier_id: sid
-                        }, function (res) {
+                            // 1️⃣ Show success message
+                            $('#se_success_msg')
+                                .removeClass('d-none')
+                                .hide()
+                                .fadeIn();
 
-                            $('#Supplier_table tbody tr').each(function () {
-                                if ($(this).find('td:eq(0)').text() == sid) {
-                                    $(this).find('td:eq(5)').text(res.total_amount);
-                                    $(this).find('td:eq(6)').text(res.paid_amount);
-                                    $(this).find('td:eq(7)').text(res.balance_amount);
-                                }
+                            // 2️⃣ Reset form fields
+                            $('#supplierExpenseForm')[0].reset();
+
+                            // 3️⃣ Refresh supplier summary
+                            const sid = $('#se_supplier_id').val();
+
+                            $.getJSON('../Controller/supplierExpenseController.php', {
+                                action: 'supplier_summary',
+                                supplier_id: sid
+                            }, function (res) {
+
+                                $('#Supplier_table tbody tr').each(function () {
+                                    if ($(this).find('td:eq(0)').text() == sid) {
+                                        $(this).find('td:eq(5)').text(res.total_amount);
+                                        $(this).find('td:eq(6)').text(res.paid_amount);
+                                        $(this).find('td:eq(7)').text(res.balance_amount);
+                                    }
+                                });
+
                             });
 
-                        });
+                            // 4️⃣ Auto hide after 3 seconds
+                            setTimeout(function () {
+                                $('#se_success_msg').fadeOut();
+                            }, 3000);
 
-                        $('#supplierExpenseModal').modal('hide');
+                        } else {
+                            alert(res.message || 'Something went wrong');
+                        }
                     }
                     ,
                     error: function () {

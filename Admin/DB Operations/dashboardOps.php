@@ -426,13 +426,16 @@ class DBDashboard
         $conn = ConnectDb::getInstance()->getConnection();
 
         $sql = "
-        SELECT COALESCE(SUM(amount),0) AS total
+        SELECT COALESCE(SUM(amount), 0) AS total
         FROM expense
         WHERE type = 'Expense'
     ";
 
-        $res = mysqli_query($conn, $sql);
-        return (float) (mysqli_fetch_assoc($res)['total'] ?? 0);
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($result);
+
+
+        return (float) $row['total'];
     }
     public static function getPLEmployeeAccrual()
     {
@@ -441,13 +444,51 @@ class DBDashboard
     }
     public static function getPLExpenses()
     {
-        $paid = self::getPLExpensePaid();
-        $employee = self::getPLEmployeeAccrual();
+        $conn = ConnectDb::getInstance()->getConnection();
+
+        // 1️⃣ Paid expenses (cash expense table only)
+        $sql = "
+        SELECT COALESCE(SUM(amount),0) AS total
+        FROM expense
+        WHERE type = 'Expense'
+    ";
+
+        $res = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($res);
+        $paid = (float) ($row['total'] ?? 0);
+
+        /* ===============================
+           2️⃣ REAL EMPLOYEE PAYABLE
+           =============================== */
+        require_once dirname(__FILE__, 2) . "/DB Operations/monthlyReportOps.php";
+
+        $employees = DBMonthlyReport::getAllEmployeeSummary();
+        $employeePayable = 0;
+
+        foreach ($employees as $emp) {
+            if ($emp['balance'] > 0) {
+                $employeePayable += $emp['balance'];
+            }
+        }
+
+        /* ===============================
+           3️⃣ REAL SUPPLIER PAYABLE
+           =============================== */
+        require_once dirname(__FILE__, 2) . "/DB Operations/supplierpaymentOps.php";
+
+        $suppliers = DBsupplierpayment::getAllsupplierpayment();
+        $supplierPayable = 0;
+
+        foreach ($suppliers as $sup) {
+            $supplierPayable += $sup->get_pendingamt();
+        }
+
+        $totalPayable = $employeePayable + $supplierPayable;
 
         return [
             'paid' => $paid,
-            'payable' => $employee,
-            'total' => $paid + $employee
+            'payable' => $totalPayable,
+            'total' => $paid + $totalPayable
         ];
     }
     public static function getPLNetProfit()

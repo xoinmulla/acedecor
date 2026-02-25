@@ -320,12 +320,12 @@ $mainprojects = DBDashboard::MainProjects();
         <ul class="nav nav-pills mb-4 p-4" id="dashboardTabs">
             <li class="nav-item">
                 <a class="nav-link active px-4 fw-bold" data-toggle="pill" href="#dashboardTab">
-                    <i class="fas fa-layer-group me-2"></i>Dashboard
+                    <i class="fas fa-layer-group me-2"></i> Dashboard
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link px-4 fw-bold" data-toggle="pill" href="#graphTab">
-                    <i class="fas fa-chart-line me-2"></i>Graphs
+                    <i class="fas fa-chart-line me-2"></i> Graphs
                 </a>
             </li>
         </ul>
