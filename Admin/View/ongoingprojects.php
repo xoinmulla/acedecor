@@ -211,12 +211,12 @@ require_once("../Model/projectModel.php");
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="ProjIssues-tab" data-bs-toggle="tab"
+                                <button class="nav-link active" id="ProjIssues-tab" data-bs-toggle="tab"
                                     data-bs-target="#ProjIssues" type="button" role="tab" aria-controls="issues"
                                     aria-selected="false"><b>Issues</b></button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="itemlist-tab" data-bs-toggle="tab"
+                                <button class="nav-link" id="itemlist-tab" data-bs-toggle="tab"
                                     data-bs-target="#itemlist" type="button" role="tab" aria-controls="itemlist"
                                     aria-selected="true"><b>Item List</b></button>
                             </li>
@@ -237,7 +237,7 @@ require_once("../Model/projectModel.php");
                         </ul>
                     </div>
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active " id="itemlist" role="tabpanel"
+                        <div class="tab-pane fade show " id="itemlist" role="tabpanel"
                             aria-labelledby="itemlist-tab">
                             <table class="table table-bordered" id="editedlineItemTable" width="80%" cellspacing="0">
                                 <thead>
@@ -406,7 +406,7 @@ require_once("../Model/projectModel.php");
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="ProjIssues" role="tabpanel" aria-labelledby="ProjIssues-tab">
+                        <div class="tab-pane fade show active" id="ProjIssues" role="tabpanel" aria-labelledby="ProjIssues-tab">
                             <div class="container">
                                 <table class="table table-bordered" id="ProjectIssuesTable" width="80%" cellspacing="0">
                                     <thead>

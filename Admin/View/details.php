@@ -242,11 +242,11 @@
                     <i class="fas fa-balance-scale-right"></i>
                     <span>Units</span></a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="dimensions.php">
                     <i class="fas fa-arrows-alt-h"></i>
                     <span>Dimension</span></a>
-            </li>
+            </li> -->
 
             <li class="nav-item">
                 <a class="nav-link" href="thickness.php">
@@ -260,7 +260,7 @@
                     <span>Grains</span></a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="finish.php">
                     <i class="fas fa-drafting-compass"></i>
                     <span>Finish</span></a>
@@ -300,8 +300,9 @@
                 <a class="nav-link" href="EB.php">
                     <i class="fab fa-elementor"></i>
                     <span>EB </span></a>
-            </li>
-
+            </li> -->
+            
+            <hr>
 
             <li class="nav-item">
                 <a class="nav-link" href="inventorydashboard.php">

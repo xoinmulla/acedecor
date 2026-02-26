@@ -139,17 +139,16 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                 <table class="table table-bordered" id="AllocatelineItemTable" width="80%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th style=display:none> StockId</th>
-                            <th style=display:none> ItemId</th>
+                            <th style="display:none">StockId</th>
+                            <th style="display:none">ItemId</th>
                             <th>Image</th>
                             <th>Name</th>
                             <th>Brand</th>
-                            <!-- <th>Description</th> -->
                             <th>Quantity</th>
-                            <th>Available Quantity</th>
                             <th>Unit</th>
-                            <!-- <th>PO Status</th>
-                            <th>Inward Status</th> -->
+                            <th>Available Quantity</th>
+                            <th>Allocated Qty</th>   <!-- NEW -->
+                            <th>Required Qty</th>    <!-- NEW -->
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -157,19 +156,20 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                         <?php
                         $itemList=DBallocate::getLineItemByProjectId($id);
                         foreach ($itemList as $item) {
-                            echo "<tr><td style=display:none>" . $item->getStockId() . "</td>
+                            echo "<tr>
+                            <td style=display:none>" . $item->getStockId() . "</td>
                             <td style=display:none>" . $item->get_itemid() . "</td>
                             <td><img src='../img/items/" . $item->getImage() . "' style='width:100px;height:100px;'></td>
                             <td>" . $item->getName() . "</td>
                             <td>" . $item->getBrand() . "</td>
-                            <td>" . $item->get_itemquantity() . "</td>
-                            <td >" . $item->get_AvailableQty() . "</td>
+                            <td class='quotationQty'>" . $item->get_itemquantity() . "</td>
                             <td>" . $item->getUnits() . "</td>
-                            <!--<td>" . $item->getPOStatus() . "</td>
-                            <td>" . $item->getInwardStatus() . "</td>-->
+                            <td class='availableQty'>" . $item->get_AvailableQty() . "</td>
+                            <td class='allocatedQty'>" . $item->getAllocatedQty() . "</td>
+                            <td class='requiredQty'></td>
                             <td>
                             <button type='button' class='btn btn-secondary'";
-                            if( $item->getAllocatedStatus() == 1 || $item->get_itemquantity() > $item->get_AvailableQty()) {
+                            if( $item->getAllocatedQty() >= $item->get_itemquantity() ) {
                                 echo "data-toggle='modal'
                              data-target='#allocationModal'
                              data-id=" . $item->get_lineItemId() . " id='allocatebtn' disabled>
@@ -236,10 +236,11 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                                     <th>Brand</th>
                                     <!-- <th>Description</th> -->
                                     <th>Quantity</th>
-                                    <th>Available Quantity</th>
                                     <th>Unit</th>
-                                    <!-- <th>PO Status</th>
-                                    <th>Inward Status</th> -->
+                                    <th>Available Quantity</th>
+                                    
+                                    <th>Allocated Qty</th>
+                                    <th>Required Qty</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -252,14 +253,17 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                                             <td><img src='../img/items/" . $Mat->getImage() . "' style='width:100px;height:100px;'></td>
                                             <td>" . $Mat->getName() . "</td>
                                             <td>" . $Mat->getBrand() . "</td>
-                                            <td>" . $Mat->get_itemquantity() . "</td>
-                                            <td >" . $Mat->get_AvailableQty() . "</td>
+                                            <td class='quotationQty'>" . $Mat->get_itemquantity() . "</td>
                                             <td>" . $Mat->getUnits() . "</td>
+                                            <td class='availableQty'>" . $Mat->get_AvailableQty() . "</td>
+                                            <td class='allocatedQty'>" . $Mat->getAllocatedQty() . "</td>
+                                            <td class='requiredQty'></td>
                                             <!--<td>" . $Mat->getPOStatus() . "</td>
                                             <td>" . $Mat->getInwardStatus() . "</td>-->
                                             <td>
                                             <button type='button' class='btn btn-secondary'";
-                                                if( $Mat->getAllocatedStatus() == 1 || $Mat->get_itemquantity() > $Mat->get_AvailableQty()) {
+                                                if( $Mat->getAllocatedStatus() == 1 || 
+                                                    $Mat->get_AvailableQty() <= 0) {
                                                 echo "data-toggle='modal'
                                                 data-target='#allocationModal'
                                                 data-id=" . $Mat->get_lineItemId() . " id='allocatebtn' disabled>
@@ -331,6 +335,7 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                     </div>
                 </div>
             </div>
+
             <div class="tab-pane fade" id="Allocateissues" role="tabpanel" aria-labelledby="Allocateissues-tab">
                 <div class="container">
                     <form method="post" id="followup_form" enctype="multipart/form-data" role="form"
@@ -404,8 +409,8 @@ $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
                     </p>
                     <input type="hidden" name="AllocateprojectId" id="AllocateprojectId" value="<?php echo $id?>">
                     <input type="hidden" name="StockId" id="StockId" value="">
-                    <input type="hidden" name="quantity" id="quantity" value="">
-                    <input type="hidden" name="itemid" id="itemid" value="">
+<input type="hidden" name="quantity" id="quantity" value="">
+<input type="hidden" name="availableQty" id="availableQty" value="">                    <input type="hidden" name="itemid" id="itemid" value="">
                     <input type="hidden" name="lineitemid" id="lineitemid" value="">
                     <input type="hidden" name="AllocatedInputName" id="AllocatedInputName" value="">
                 </div>
@@ -430,13 +435,18 @@ $(document).ready(function() {
     });
 
     $('#AllocatelineItemTable tbody').on('click', 'tr', function() {
-        debugger;
-        $('#StockId').val(this.cells[0].innerHTML);
-        $('#itemid').val(this.cells[1].innerHTML);
-        $('#quantity').val(this.cells[5].innerHTML);
-        $('#AllocatedInputName').val(this.cells[3].innerHTML);
 
-    });
+    let quotationQty = parseFloat(this.cells[5].innerHTML) || 0;
+    let availableQty = parseFloat($(this).find('.availableQty').text()) || 0;
+
+    $('#StockId').val(this.cells[0].innerHTML);
+    $('#itemid').val(this.cells[1].innerHTML);
+    $('#AllocatedInputName').val(this.cells[3].innerHTML);
+
+    // IMPORTANT: allocate only available quantity
+    $('#quantity').val(availableQty);
+    $('#availableQty').val(availableQty);
+});
 
     $('#allocate_form').submit(function(event) {
         debugger;
@@ -451,7 +461,15 @@ $(document).ready(function() {
             console.log(data);
         });
     });
+$('#AllocatelineItemTable tbody tr').each(function () {
 
+    let qty = parseFloat($(this).find('.quotationQty').text()) || 0;
+    let allocated = parseFloat($(this).find('.allocatedQty').text()) || 0;
+
+    let required = qty - allocated;
+
+    $(this).find('.requiredQty').text(required > 0 ? required : 0);
+});
 
 
 

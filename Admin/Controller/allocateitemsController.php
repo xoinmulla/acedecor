@@ -4,7 +4,7 @@ require_once "../Utilities/Sanitization.php";
 require_once "../Utilities/Helper.php";
 //require "../Admin/navbar.php";
 require_once "../DB Operations/allocateitemsOps.php";
-
+  
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
  
     if (isset($_POST['AllocateprojectId'])) {

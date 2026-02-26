@@ -230,16 +230,16 @@
                     <span>View Purchase Order</span></a>
             </li> -->
             <li class="nav-item">
-                <a class="nav-link" href="POview.php">
-                    <i class='fab fa-quora'></i>
-                    <span>View Purchase Order</span></a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link" href="purchaseorder.php">
                     <i class="fas fa-user-astronaut"></i>
                     <span>General Purchase Order</span></a>
             </li>
-
+            <li class="nav-item">
+                <a class="nav-link" href="POview.php">
+                    <i class='fab fa-quora'></i>
+                    <span>View Purchase Order</span></a>
+            </li>
+            
 
             <!-- <li class="nav-item">
                 <a class="nav-link" href="POprojects.php">

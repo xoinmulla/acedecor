@@ -28,7 +28,8 @@ class DBinputType
     LEFT JOIN inputtype_brand_mapping IB 
         ON I.InputTypeId = IB.InputTypeId 
         AND IB.brandId = ?
-    ";
+    WHERE I.InputTypeId IN (1,2)
+";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $brandId);
@@ -95,8 +96,12 @@ class DBinputType
 
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $result = mysqli_query($db->getConnection(), 'SELECT InputTypeId,InputType FROM inputtype');
-
+    $result = mysqli_query(
+      $db->getConnection(),
+      "SELECT InputTypeId, InputType 
+     FROM inputtype 
+     WHERE InputTypeId IN (1,2)"
+    );
     $inputTypelist = [];
     if (mysqli_num_rows($result) > 0) {
       while ($row = mysqli_fetch_assoc($result)) {

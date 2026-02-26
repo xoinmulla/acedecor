@@ -6,28 +6,28 @@ require_once("../Model/projectModel.php");
 require_once("../DB Operations/allocateitemsOps.php");
 
 
-$id=$_GET["id"];
-$db=ConnectDb::getInstance();
-        $query="SELECT SUM(ReceivedQty) as TotalStock from item_stock where item_id=$id";
-        error_log($query);
-        $result=mysqli_query($db->getConnection(),$query);
-        $totalstock=mysqli_fetch_assoc($result);
+$id = $_GET["id"];
+$db = ConnectDb::getInstance();
+$query = "SELECT SUM(ReceivedQty) as TotalStock from item_stock where item_id=$id";
+error_log($query);
+$result = mysqli_query($db->getConnection(), $query);
+$totalstock = mysqli_fetch_assoc($result);
 
-        $query="SELECT SUM(AllocatedQty) as TotalStockUsed from itemallocation where ItemId=$id";
-        error_log($query);
-        $result=mysqli_query($db->getConnection(),$query);
-        $totalstockUsed=mysqli_fetch_assoc($result);
+$query = "SELECT SUM(AllocatedQty) as TotalStockUsed from itemallocation where ItemId=$id";
+error_log($query);
+$result = mysqli_query($db->getConnection(), $query);
+$totalstockUsed = mysqli_fetch_assoc($result);
 
 ?>
 
 <head>
     <style>
-    .table {
-        width: 94%;
-        margin-bottom: 1 rem;
-        margin-left: 3%;
-        color: #858796;
-    }
+        .table {
+            width: 94%;
+            margin-bottom: 1 rem;
+            margin-left: 3%;
+            color: #858796;
+        }
     </style>
 </head>
 
@@ -44,8 +44,8 @@ $db=ConnectDb::getInstance();
     </div>
 
     <div class="card-body">
-    <div class=row>
-        <div class="col-md-2"></div>
+        <div class=row>
+            <div class="col-md-2"></div>
             <div class="col-md-4">
                 <div class="widget-stat card">
                     <div class="card-body">
@@ -54,10 +54,10 @@ $db=ConnectDb::getInstance();
                             <h6>Total Stock Inwarded</h6>
                             <h2 class="text-center font-weight-bold" style=font-size:50px>
                                 <?php
-                                    
-                                    
-                                        echo $totalstock['TotalStock'];
-                                             
+
+
+                                echo $totalstock['TotalStock'];
+
                                 ?>
                             </h2>
                         </div>
@@ -72,11 +72,11 @@ $db=ConnectDb::getInstance();
                             <i class="fas fa-check-square fa-2x"></i><br />
                             <h6>Total Stock Used</h6>
                             <h2 class="text-center font-weight-bold" style=font-size:50px>
-                            <?php
-                                
-                                    echo $totalstockUsed['TotalStockUsed'];
-                                
-                            ?>
+                                <?php
+
+                                echo $totalstockUsed['TotalStockUsed'];
+
+                                ?>
                             </h2>
                         </div>
                     </div>
@@ -84,6 +84,7 @@ $db=ConnectDb::getInstance();
             </div>
         </div>
         <br>
+
         <div class="table-responsive">
             <table class="table table-bordered" id="projAllocationtable" width="100%" cellspacing="0">
                 <thead>
@@ -118,29 +119,30 @@ $db=ConnectDb::getInstance();
                 </thead>
                 <tbody>
                     <?php
-                   $AllocationList= DBallocate::getAllocatedItemInfo($id);
-                   foreach ($AllocationList as $Allocation) {
-                    echo "<tr><td>" . $Allocation->getItemName() . "</td>
-                    <td>" . $Allocation->getPOcode() . "</td>
-                    <td style=display:none>" . $Allocation->get_ProjectId() . "</td>
-                    <td>" . $Allocation->getProjectCode() . "</td>
-                    <td> " . $Allocation->getCustomerName() . "</td>
-                    <td>" . $Allocation->get_AllocatedQty() . "</td>
-                    <td>
-                    <button type='button' class='btn btn-secondary'";
-                   
-                        echo "data-toggle='modal'
-                     data-target='#deallocationModal'
-                     data-id=" . $Allocation->get_itemId() . " id='allocatebtn'>
-                     De-Allocate
-                    </button>
-                        ";}
-                    echo "
-                    </td></tr>";
+                    $AllocationList = DBallocate::getAllocatedItemInfo($id);
 
-        
-                  
-                ?>
+                    foreach ($AllocationList as $Allocation) {
+                        ?>
+                        <tr>
+                            <td><?php echo $Allocation->getItemName(); ?></td>
+                            <td><?php echo $Allocation->getPOcode(); ?></td>
+                            <td style="display:none">
+                                <?php echo $Allocation->get_ProjectId(); ?>
+                            </td>
+                            <td><?php echo $Allocation->getProjectCode(); ?></td>
+                            <td><?php echo $Allocation->getCustomerName(); ?></td>
+                            <td><?php echo $Allocation->get_AllocatedQty(); ?></td>
+                            <td>
+                                <button type="button" class="btn btn-secondary" data-toggle="modal"
+                                    data-target="#deallocationModal" data-id="<?php echo $Allocation->get_itemId(); ?>"
+                                    id="allocatebtn">
+                                    De-Allocate
+                                </button>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
                 </tbody>
             </table>
 
@@ -170,7 +172,7 @@ $db=ConnectDb::getInstance();
                     <p class="lead">
                         Are you sure. Would you like to De-Allocate this item.
                     </p>
-                    <input type="hidden" name="DeallocateItemId" id="DeallocateItemId" value="<?php echo $id?>">
+                    <input type="hidden" name="DeallocateItemId" id="DeallocateItemId" value="<?php echo $id ?>">
                     <input type="hidden" name="ProjectId" id="ProjectId" value="">
                 </div>
                 <div class="modal-footer">
@@ -184,32 +186,32 @@ $db=ConnectDb::getInstance();
 </div>
 
 <script>
-$(document).ready(function() {
+    $(document).ready(function () {
 
-    
 
-    $('#projAllocationtable tbody').on('click', 'tr', function() {
-        debugger;
-        $('#ProjectId').val(this.cells[2].innerHTML);
 
-    });
+        $('#projAllocationtable tbody').on('click', 'tr', function () {
+            debugger;
+            $('#ProjectId').val(this.cells[2].innerHTML);
 
-    $('#deallocate_form').submit(function(event) {
-        debugger;
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath + "/Admin/Controller/allocateitemsController.php/",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
         });
+
+        $('#deallocate_form').submit(function (event) {
+            debugger;
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/allocateitemsController.php/",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
+        });
+
+
+
+
     });
-
-
-
-
-});
 </script>
