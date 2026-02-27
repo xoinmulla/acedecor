@@ -231,7 +231,7 @@ class DBMonthlyReport
            =============================== */
 
         $attQ = $conn->prepare("
-        SELECT status, worked_hours
+        SELECT status, worked_hours, ot_pay
         FROM attendance
         WHERE emp_id=?
     ");
@@ -250,6 +250,9 @@ class DBMonthlyReport
             if ($row['status'] === 'Present') {
                 $total_due += $salary_amount;
             }
+
+            $total_due += (float) $row['ot_pay'];
+
         }
 
         /* ===============================

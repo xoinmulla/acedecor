@@ -601,9 +601,15 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
             </p>
 
             <div class="progress mt-4" style="height:10px">
-              <div class="progress-bar bg-success"
-                style="width:<?= min(100, round(($plNet['net_profit'] / $plIncome['sales']) * 100)) ?>%">
-              </div>
+              <?php
+              $profitPercent = 0;
+              if ($plIncome['sales'] > 0) {
+                $profitPercent = min(100, round(($plNet['net_profit'] / $plIncome['sales']) * 100));
+              }
+              ?>
+
+              <div class="progress-bar bg-success" style="width:<?= $profitPercent ?>%">
+              </div> 
             </div>
           </div>
         </div>

@@ -14,4 +14,5 @@ class AttendanceReport
     public $two_days;
 
     public $hourly_hours;
+    public $hourly_only = 0;
 }

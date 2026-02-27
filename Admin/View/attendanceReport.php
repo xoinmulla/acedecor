@@ -142,7 +142,7 @@ else
                                 <td><?= number_format($r->ot_hours, 2) ?></td>
                                 <td><?= $r->one_point_five_days ?></td>
                                 <td><?= $r->two_days ?></td>
-                                <td><?= number_format($r->hourly_hours, 2) ?></td>
+                                <td><?= number_format($r->hourly_only ?? 0, 2) ?></td>
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal"
                                         data-bs-target="#info<?= $r->emp_id ?>">

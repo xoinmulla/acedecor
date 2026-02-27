@@ -407,18 +407,20 @@ class DBDashboard
 
         $sql = "
         SELECT
-            COALESCE(SUM(total_amount),0) AS sales,
-            COALESCE(SUM(creditDiscount),0) AS discount
-        FROM customerpaymentinfo
+            COALESCE(SUM(quoteValue),0) AS sales
+        FROM quotation_details
+        WHERE quo_status = 'Approved'
     ";
 
         $res = mysqli_query($conn, $sql);
         $row = mysqli_fetch_assoc($res);
 
+        $sales = (float) $row['sales'];
+
         return [
-            'sales' => (float) $row['sales'],
-            'discount' => (float) $row['discount'],
-            'net_income' => (float) $row['sales'] - (float) $row['discount']
+            'sales' => $sales,
+            'discount' => 0, // keep structure same (no impact)
+            'net_income' => $sales
         ];
     }
     public static function getPLExpensePaid()

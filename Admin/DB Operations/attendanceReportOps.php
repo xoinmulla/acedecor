@@ -29,18 +29,28 @@ class DBAttendanceReport
             $absent = $half = $full = 0;
             $ot_hours = 0;
             $one_five = $two = 0;
-            $hourly = 0;
+            $hourly = 0;        // existing (total worked hours)
+            $hourly_only = 0;   // NEW - only hourly status
 
             foreach ($rows as $r) {
-                if ($r['status'] === 'Absent') $absent++;
-                elseif ($r['status'] === 'Half-day') $half++;
-                elseif ($r['status'] === 'Present') $full++;
+                if ($r['status'] === 'Absent')
+                    $absent++;
+                elseif ($r['status'] === 'Half-day')
+                    $half++;
+                elseif ($r['status'] === 'Present')
+                    $full++;
 
-                $ot_hours += (float)$r['ot_hours'];
-                $hourly += (float)$r['worked_hours'];
+                $ot_hours += (float) $r['ot_hours'];
+                $hourly += (float) $r['worked_hours']; // keep existing logic
 
-                if ($r['worked_hours'] >= 12 && $r['worked_hours'] < 16) $one_five++;
-                if ($r['worked_hours'] >= 16) $two++;
+                if ($r['status'] === 'Hourly') {
+                    $hourly_only += (float) $r['worked_hours'];
+                }
+
+                if ($r['worked_hours'] >= 12 && $r['worked_hours'] < 16)
+                    $one_five++;
+                if ($r['worked_hours'] >= 16)
+                    $two++;
             }
 
             $rep = new AttendanceReport();
@@ -53,6 +63,7 @@ class DBAttendanceReport
             $rep->one_point_five_days = $one_five;
             $rep->two_days = $two;
             $rep->hourly_hours = $hourly;
+            $rep->hourly_only = $hourly_only;
 
             $reports[] = $rep;
         }
@@ -71,7 +82,8 @@ class DBAttendanceReport
             $month = sprintf("%04d-%02d", $year, $m);
             foreach (self::getReport($month) as $r) {
                 $id = $r->emp_id;
-                if (!isset($final[$id])) $final[$id] = $r;
+                if (!isset($final[$id]))
+                    $final[$id] = $r;
                 else {
                     $final[$id]->absent += $r->absent;
                     $final[$id]->half_days += $r->half_days;
@@ -95,7 +107,8 @@ class DBAttendanceReport
             $month = sprintf("%04d-%02d", $year, $m);
             foreach (self::getReport($month) as $r) {
                 $id = $r->emp_id;
-                if (!isset($final[$id])) $final[$id] = $r;
+                if (!isset($final[$id]))
+                    $final[$id] = $r;
                 else {
                     $final[$id]->absent += $r->absent;
                     $final[$id]->half_days += $r->half_days;

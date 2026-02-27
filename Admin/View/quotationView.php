@@ -11,6 +11,9 @@ require_once("../Model/quotationModel.php");
     width: 100%;
     overflow: auto;
 } */
+    .table-responsive {
+        overflow: visible !important;
+    }
 
     #editedlineItemTable thead {
         background-color: grey;

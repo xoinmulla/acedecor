@@ -3236,7 +3236,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
         });
     </script>
 
-
+ 
     <script>
         // Auto-open "Employee Payment" tab when redirected
         $(document).ready(function () {
