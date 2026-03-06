@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once(__DIR__ . '/../Utilities/permissionHelper.php');
 ?>
 <html>
 
@@ -258,7 +259,14 @@ include('session.php');
 
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
-
+            <?php if ($_SESSION['User_type'] === 'Admin'): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="userManagement.php">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
@@ -302,17 +310,19 @@ include('session.php');
                     <i class="fas fa-users-cog"></i>
                     <span>Purchase Orders</span></a>
             </li>
+            <?php if (hasPermission('payments', 'read')): ?>
 
-            <li class="nav-item">
-                <a class="nav-link" href="paymentdashboard.php">
-                    <i class="far fa-edit"></i>
-                    <span>Payments</span></a>
-            </li>
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="paymentdashboard.php">
+                        <i class="far fa-edit"></i>
+                        <span>Payments</span></a>
+                </li>
+                <!-- Sidebar Toggler (Sidebar) -->
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
 
+            <?php endif; ?>
         </ul>
         <!-- End of Sidebar -->
 

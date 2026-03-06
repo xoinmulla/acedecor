@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('customerNavigation.php');
 require_once("../DB Operations/customerOps.php");
 require_once("../Model/customerModel.php");
@@ -217,25 +218,36 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                     </button>
 
                                     <div class="dropdown-menu">
-                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                            data-target="#editCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
-                                            <i class="fas fa-user-edit"></i> Edit Customer
-                                        </button>
+                                        <?php if (hasActionPermission('customers', 'edit_customer')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#editCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-user-edit"></i> Edit Customer
+                                            </button>
+                                        <?php } ?>
 
-                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                            data-target="#infoCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
-                                            <i class="fas fa-info"></i> Customer Info
-                                        </button>
+                                        <?php if (hasActionPermission('customers', 'customer_info')) { ?>
 
-                                        <a class="btn btn-primary dropdown-item"
-                                            href="design.php?id=<?= $customer->get_customerId(); ?>">
-                                            <i class="fas fa-file-image"></i> Designs
-                                        </a>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#infoCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-info"></i> Customer Info
+                                            </button>
+                                        <?php } ?>
 
-                                        <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                            data-target="#quoteModal" data-id="<?= $customer->get_customerId(); ?>">
-                                            <i class="fab fa-linkedin-in"></i> Inputs
-                                        </button>
+                                        <?php if (hasActionPermission('customers', 'designs')) { ?>
+                                            <a class="btn btn-primary dropdown-item"
+                                                href="design.php?id=<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-file-image"></i> Designs
+                                            </a>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('customers', 'customer_inputs')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#inputModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-input"></i> Inputs
+                                            </button>
+                                        <?php } ?>
+
+
 
                                         <!-- <button class="btn btn-primary dropdown-item" data-toggle="modal"
                                             data-target="#optiModal" data-id="<?= $customer->get_customerId(); ?>">
@@ -244,17 +256,14 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                                         <div class="dropdown-divider"></div>
 
-                                        <?php if ($hasQuote): ?>
-                                            <button class="btn btn-danger dropdown-item disabled" disabled
-                                                title="Customer has quotation(s). Deletion not allowed">
-                                                <i class="fas fa-trash-alt"></i> Delete Customer
-                                            </button>
-                                        <?php else: ?>
-                                            <button class="btn btn-danger dropdown-item" data-toggle="modal"
-                                                data-target="#deleteUserModal" data-id="<?= $customer->get_customerId(); ?>">
-                                                <i class="fas fa-trash-alt"></i> Delete Customer
-                                            </button>
-                                        <?php endif; ?>
+                                        <?php if (hasActionPermission('customers', 'delete_customer')) { ?>
+                                            <?php if ($hasQuote): ?>
+                                                <button class="btn btn-danger dropdown-item disabled" disabled>Delete
+                                                    Customer</button>
+                                            <?php else: ?>
+                                                <button class="btn btn-danger dropdown-item" ...>Delete Customer</button>
+                                            <?php endif; ?>
+                                        <?php } ?>
                                     </div>
                                 </div>
                             </td>
@@ -1623,8 +1632,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
         //     "Turkmenistan", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom",
         //     "United States", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia",
         //     "Zimbabwe");
-        var countries = new Array( "India");
-        
+        var countries = new Array("India");
+
         for (var i = 0; i < countries.length; i++) {
 
             var option = document.createElement("option");

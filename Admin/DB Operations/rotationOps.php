@@ -14,7 +14,7 @@ class DBrotation
             "','" . $rotation->get_CreatedBy() .
             "','" . $rotation->get_ModifiedBy() .
             "')";
-            error_log($sql);
+        error_log($sql);
         if ($connectionObj->query($sql) === true) {
         } else {
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
@@ -49,14 +49,20 @@ class DBrotation
     {
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
-        $sql = "UPDATE rotation SET sides='" . $dimension->get_sides() .
-            "', createdBy='" . $dimension->get_CreatedBy() .
-            "', modifiedBy='" . $dimension->get_ModifiedBy() .
-            "' WHERE rotationId=" . $dimension->get_rotationId();
+
+        $sql = "UPDATE rotation SET 
+            sides='" . $rotation->get_sides() . "',
+            createdBy='" . $rotation->get_CreatedBy() . "',
+            modifiedBy='" . $rotation->get_ModifiedBy() . "'
+            WHERE rotationId=" . $rotation->get_rotationId();
+
+        error_log($sql);
 
         if ($connectionObj->query($sql) === TRUE) {
+            return true;
         } else {
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
+            return false;
         }
     }
     public static function selectrotations()

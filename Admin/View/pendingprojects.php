@@ -76,10 +76,10 @@ require_once("../Model/projectModel.php");
                                 Project Info
                            </button>
 
-                           <a class='btn btn-primary dropdown-item'
+                           <!--<a class='btn btn-primary dropdown-item'
                            role='button' 
                            href='../View/ItemAllocation.php?id=".$project->get_projectId()."'>
-                          <i class='fas fa-tasks'></i>Project Allocation</a> 
+                          <i class='fas fa-tasks'></i>Project Allocation</a> -->
 
                            <button class='btn btn-primary dropdown-item'
                            data-toggle='modal' 

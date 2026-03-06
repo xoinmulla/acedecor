@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -230,33 +231,44 @@ include('session.php');
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link" href="tax.php">
-                    <i class="fas fa-business-time"></i>
-                    <span>Details</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="itemstockdashboard.php">
-                    <i class="fas fa-truck-loading"></i>
-                    <span>Items</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="MaterialStockDashboard.php">
-                    <i class="fas fa-swatchbook"></i>
-                    <span>Materials</span></a>
-            </li>
+            <?php if (hasActionPermission('inventory', 'details')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="tax.php">
+                        <i class="fas fa-business-time"></i>
+                        <span>Details</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if (hasActionPermission('inventory', 'item')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="itemstockdashboard.php">
+                        <i class="fas fa-truck-loading"></i>
+                        <span>Items</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if (hasActionPermission('inventory', 'material')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="MaterialStockDashboard.php">
+                        <i class="fas fa-swatchbook"></i>
+                        <span>Materials</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- <li class="nav-item">
                 <a class="nav-link" href="products.php">
                     <i class="fab fa-product-hunt"></i>
                     <span>Products</span></a>
             </li> -->
-            <li class="nav-item">
-                <a class="nav-link" href="itemstocklist.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>Stock List</span></a>
-            </li>
+            <?php if (hasActionPermission('inventory', 'stocklist')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="itemstocklist.php">
+                        <i class="fas fa-user-astronaut"></i>
+                        <span>Stock List</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <br>
             <hr class="sidebar-divider">

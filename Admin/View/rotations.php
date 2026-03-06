@@ -165,7 +165,7 @@ require_once("../Model/rotationModel.php");
                         <div class="row">
                             <label class="col-md-4 text-right">Rotation Side<span class="text-danger">*</span></label>
                             <div class="col-md-8">
-                                <input type="text" name="editedrotationside" id="editedrotationside" class="form-control" required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150" data-parsley-trigger="keyup" />
+                                <input type="text" name="rotationside" id="editedrotationside" class="form-control" required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150" data-parsley-trigger="keyup" />
                                 <input type="hidden" name="rotationId" id="rotationId" value="">
                             </div>
                         </div>
@@ -230,7 +230,7 @@ require_once("../Model/rotationModel.php");
         </form>
     </div>
 </div>
-<div class="modal fade" id=deleterotationModal tabindex=-1 role=dialog aria-hidden=true>
+<div class="modal fade" id=deleteRotationModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_category_form" enctype="multipart/form-data">
             <div class="modal-content">
@@ -278,7 +278,7 @@ require_once("../Model/rotationModel.php");
             $.ajax({
                 type: "POST",
                 url: config.developmentPath+
-                    "/Admin/Controller/rotationContoller.php/",
+                    "/Admin/Controller/rotationController.php/",
                 data: formData,
                 processData: false,
                 contentType: false
@@ -288,13 +288,13 @@ require_once("../Model/rotationModel.php");
             $('#editbutton').dispose();
             event.preventDefault();
         });
-        $('#deleterotationModal').on('show.bs.modal', function(e) {
+        $('#deleteRotationModal').on('show.bs.modal', function(e) {
             var rowid = $(e.relatedTarget).data('id');
             $('#rotationId').val(rowid);
         });
         $('#deletebutton').click(function() {
             $.ajax({
-                url: config.developmentPath+"/Admin/Controller/rotationContoller.php/",
+                url: config.developmentPath+"/Admin/Controller/rotationController.php/",
                 method: "POST",
                 data: {
                     id: $('#rotationId').val(),

@@ -1,5 +1,40 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
+require_once("../DB Operations/dbconnection.php");
+
+$db = ConnectDb::getInstance();
+$conn = $db->getConnection();
+
+$user_name = $_SESSION['login_user'];
+
+$userQuery = $conn->query("
+SELECT user_id 
+FROM user 
+WHERE user_name='$user_name'
+");
+
+$userData = $userQuery->fetch_assoc();
+
+if (!$userData) {
+    die("User not found");
+}
+
+$user_id = $userData['user_id'];
+
+$check = $conn->query("
+SELECT uap.allowed
+FROM user_action_permissions uap
+JOIN module_actions ma ON ma.id = uap.action_id
+WHERE uap.user_id='$user_id'
+AND ma.action_key='brands'
+");
+
+if ($check->num_rows == 0) {
+    header("Location: noaccess.php");
+    exit;
+}
+
 include('channelpartnerheader.php');
 require_once("../DB Operations/brandOps.php");
 require_once("../Model/brandmodel.php");

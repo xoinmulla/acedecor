@@ -1,10 +1,16 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('materialListNavigation.php');
 require_once("../DB Operations/materialOps.php");
 require_once("../DB Operations/item_categoryOps.php");
 require_once("../DB Operations/item_subcategoryOps.php");
 require_once("../Model/materialModel.php");
+
+if(!hasActionPermission('inventory','material')){
+    header("Location: noaccess.php");
+    exit;
+}
 ?>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>

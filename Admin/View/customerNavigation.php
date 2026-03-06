@@ -1,3 +1,9 @@
+<?php
+include('session.php');
+require_once("../Utilities/permissionHelper.php");
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -223,16 +229,23 @@
 
             <!-- Nav Item - Dashboard -->
 
-            <li class="nav-item">
-                <a class="nav-link" href="customer.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>Customers</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="quotationView.php">
-                    <i class='fab fa-quora'></i>
-                    <span>Quotation</span></a>
-            </li>
+            <?php if (hasPermission('customers', 'read') || hasAnyActionPermission('customers')) { ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="customer.php">
+                        <i class="fas fa-user-astronaut"></i>
+                        <span>Customers</span>
+                    </a>
+                </li>
+            <?php } ?>
+
+            <?php if (hasPermission('customers', 'read') || hasAnyActionPermission('customers')) { ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="quotationView.php">
+                        <i class='fab fa-quora'></i>
+                        <span>Quotation</span>
+                    </a>
+                </li>
+            <?php } ?>
             <br>
             <hr class="sidebar-divider">
 

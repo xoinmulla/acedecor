@@ -4,6 +4,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('paymentNavigation.php');
 require_once("../DB Operations/expenseOps.php");
 require_once("../Controller/expenseController.php");
@@ -24,6 +25,11 @@ $expenses = DBExpense::readAll();
 $generalSubcategories = DBGeneralSubcategory::getAll();
 $approvedCustomers = DBpayment::getCustomersWithApprovedQuotes();
 $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
+
+if(!hasActionPermission('employees','transaction')){
+    header("Location: noaccess.php");
+    exit;
+}
 ?>
 <style>
     .nav-tabs .nav-link.active {

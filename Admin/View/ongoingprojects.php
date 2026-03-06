@@ -179,7 +179,7 @@ require_once("../Model/projectModel.php");
 
                             <label class="col-md-2 text-right">Quote Amount. <span class="text-danger">*</span></label>
                             <div class="col-md-2 input-group">
-                                <span class=""> <i class="fas fa-rupee-sign"> </i> </span> 
+                                <span class=""> <i class="fas fa-rupee-sign"> </i> </span>
                                 <p id="QuoteAmount" class="pad"> </p>
                             </div>
 
@@ -237,8 +237,7 @@ require_once("../Model/projectModel.php");
                         </ul>
                     </div>
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show " id="itemlist" role="tabpanel"
-                            aria-labelledby="itemlist-tab">
+                        <div class="tab-pane fade show " id="itemlist" role="tabpanel" aria-labelledby="itemlist-tab">
                             <table class="table table-bordered" id="editedlineItemTable" width="80%" cellspacing="0">
                                 <thead>
                                     <tr>
@@ -406,7 +405,8 @@ require_once("../Model/projectModel.php");
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade show active" id="ProjIssues" role="tabpanel" aria-labelledby="ProjIssues-tab">
+                        <div class="tab-pane fade show active" id="ProjIssues" role="tabpanel"
+                            aria-labelledby="ProjIssues-tab">
                             <div class="container">
                                 <table class="table table-bordered" id="ProjectIssuesTable" width="80%" cellspacing="0">
                                     <thead>
@@ -441,6 +441,13 @@ require_once("../Model/projectModel.php");
                                         required data-parsley-type="integer" data-parsley-minlength="10"
                                         data-parsley-maxlength="12" data-parsley-trigger="keyup"
                                         value="<?php echo $_SESSION['login_user']; ?>" />
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="hidden_id" id="hidden_id" />
+                                    <input type="hidden" name="action" id="action" value="Add" />
+                                    <input type="submit" name="submit" id="editbutton" class="btn btn-success"
+                                        value="Save" />
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>
 
                                 <div class="form-group">

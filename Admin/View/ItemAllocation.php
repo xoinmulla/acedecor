@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('itemallocationNavigation.php');
 require_once("../DB Operations/projectOps.php");
 require_once("../Model/projectModel.php");
@@ -8,6 +9,8 @@ require_once("../DB Operations/allocateitemsOps.php");
 $allocationDetaiks=null;
 $id=$_GET["id"];
 $allocationDetaiks=DBproject::getAllprojectsbasedonId($id);
+
+
 
 ?>
 

@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include "enquiryNavigation.php";
 require_once("../DB Operations/enquiryOps.php");
 require_once("../Model/enquirymodel.php");
@@ -28,20 +29,26 @@ require_once("../Model/enquirymodel.php");
                         data-toggle='dropdown' aria-expanded='false'>
                         Actions
                     </button>
+
                     <div class='dropdown-menu' aria-labelledby='dropdownMenu2'>
 
-                        <a class='btn btn-primary dropdown-item' href="enqcategory.php" role='button'>
-                            <i class="fas fa-plus-circle"></i>
-                            Enquiry Category
-                        </a>
-                        <button class='btn btn-primary dropdown-item' data-toggle='modal' data-target='#addEnquiryModal'
-                            role='button'>
-                            <i class="fas fa-plus-circle"></i>
-                            Create Enquiry
-                        </button>
+                        <?php if (hasActionPermission('enquiry', 'enquiry_category')) { ?>
+                            <a class='btn btn-primary dropdown-item' href="enqcategory.php" role='button'>
+                                <i class="fas fa-plus-circle"></i>
+                                Enquiry Category
+                            </a>
+                        <?php } ?>
+
+                        <?php if (hasActionPermission('enquiry', 'create_enquiry')) { ?>
+                            <button class='btn btn-primary dropdown-item' data-toggle='modal' data-target='#addEnquiryModal'
+                                role='button'>
+                                <i class="fas fa-plus-circle"></i>
+                                Create Enquiry
+                            </button>
+                        <?php } ?>
+
                     </div>
                 </div>
-                </span>
             </div>
         </div>
     </div>
@@ -65,84 +72,91 @@ require_once("../Model/enquirymodel.php");
                 <tbody>
                     <?php
                     $enquiryList = DBenq::getAllenq();
+
                     foreach ($enquiryList as $enquiry) {
-                        echo "<tr><td>" . $enquiry->get_enqname() . "</td>
-                        <td>" . $enquiry->get_enqaddress() . "</td>
-                        <td>" . $enquiry->getEnq_Country() . "</td>
-                        <td>" . $enquiry->get_enqphone() . "</td>
-                    <td>" . $enquiry->getCreatedDate() . "</td>
-                    <td>" . $enquiry->getStatus() . "</td>
-                    <td style='display:none'>" . $enquiry->get_enqemail() . "</td>
-                    <td> ";
-                        if ($enquiry->get_isCustomerCreated() == 1)
-                            echo 'Yes';
-                        else
-                            echo 'No';
-                        echo " </td>
-                    <td>";
+                        ?>
+                        <tr>
 
-                        foreach ($enquiry->get_interestList() as $interest) {
+                            <td><?= $enquiry->get_enqname() ?></td>
+                            <td><?= $enquiry->get_enqaddress() ?></td>
+                            <td><?= $enquiry->getEnq_Country() ?></td>
+                            <td><?= $enquiry->get_enqphone() ?></td>
+                            <td><?= $enquiry->getCreatedDate() ?></td>
+                            <td><?= $enquiry->getStatus() ?></td>
 
-                            echo '<li class="">' . $interest . '</li>';
-                        }
+                            <td style="display:none"><?= $enquiry->get_enqemail() ?></td>
 
-                        echo "</td>
-                    <td>
-                    <div class='dropdown'>
-                                <button class='btn btn-secondary dropdown-toggle' 
-                                type='button' 
-                                id='dropdownMenu2' 
-                                data-toggle='dropdown' 
-                               
-                                aria-expanded='false'>
-                                Actions
-                                </button>
-                                <div class='dropdown-menu' 
-                                aria-labelledby='dropdownMenu2'>
-                                    <button class='btn btn-primary dropdown-item'
-                                    data-toggle='modal' 
-                                    data-target='#enqModal' 
-                                    role='button' data-id='" . $enquiry->get_id() . "'> 
-                                    <i class='fas fa-comment-dots'></i>
-                                        Follow Up
+                            <td>
+                                <?= $enquiry->get_isCustomerCreated() == 1 ? 'Yes' : 'No' ?>
+                            </td>
+
+                            <td>
+                                <?php
+                                foreach ($enquiry->get_interestList() as $interest) {
+                                    echo "<li>$interest</li>";
+                                }
+                                ?>
+                            </td>
+
+                            <td>
+
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
                                     </button>
-                                    <button class='btn btn-primary dropdown-item'
-                                    data-toggle='modal' 
-                                    data-target='#infoEnquiryModal' 
-                                    role='button' data-id='" . $enquiry->get_id() . "'> 
-                                    <i class='fas fa-info'></i>
-                                        Enquiry Info
-                                    </button>
-                                    <button class='btn btn-primary dropdown-item'";
-                        if ($enquiry->get_isCustomerCreated() == 1)
-                            echo "style='pointer-events: none;'";
-                        echo "data-toggle='modal' 
-                                    data-target='#customerModal' 
-                                    role='button' data-id='" . $enquiry->get_id() . "'> 
-                                    <i class='fas fa-angle-double-right'></i>
-                                        Create Customer
-                                   </button>
-                                   <button class='btn btn-primary dropdown-item'
-    data-toggle='modal' 
-    data-target='#deleteEnquiryModal'
-    role='button'
-    data-id='" . $enquiry->get_id() . "'
-    " . ($enquiry->get_isCustomerCreated() == 1 ? "style='pointer-events:none;opacity:0.5;'" : "") . ">
-    <i class='fas fa-trash-alt'></i>
-    Delete Enquiry
-</button>
 
-                                  <button class='btn btn-primary dropdown-item'
-                                        data-toggle='modal' 
-                                        data-target='#editEnquiryModal' 
-                                        role='button' data-id='" . $enquiry->get_id() . "'> 
-                                        <i class='fas fa-edit'></i>
-                                        Edit Enquiry
-                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        <?php if (hasActionPermission('enquiry', 'follow_up')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#enqModal" data-id="<?= $enquiry->get_id() ?>">
+                                                <i class="fas fa-comment-dots"></i>
+                                                Follow Up
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('enquiry', 'enquiry_info')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#infoEnquiryModal" data-id="<?= $enquiry->get_id() ?>">
+                                                <i class="fas fa-info"></i>
+                                                Enquiry Info
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('enquiry', 'create_customer')) { ?>
+                                            <button class="btn btn-primary dropdown-item" <?php if ($enquiry->get_isCustomerCreated() == 1)
+                                                echo "style='pointer-events:none;'"; ?>
+                                                data-toggle="modal" data-target="#customerModal"
+                                                data-id="<?= $enquiry->get_id() ?>">
+                                                <i class="fas fa-angle-double-right"></i>
+                                                Create Customer
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('enquiry', 'delete_enquiry')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#deleteEnquiryModal" data-id="<?= $enquiry->get_id() ?>"
+                                                <?= ($enquiry->get_isCustomerCreated() == 1 ? "style='pointer-events:none;opacity:0.5;'" : "") ?>>
+                                                <i class="fas fa-trash-alt"></i>
+                                                Delete Enquiry
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('enquiry', 'edit_enquiry')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#editEnquiryModal" data-id="<?= $enquiry->get_id() ?>">
+                                                <i class="fas fa-edit"></i>
+                                                Edit Enquiry
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
                                 </div>
-                            </div>
-                            
-                    </td></tr>";
+
+                            </td>
+
+                        </tr>
+                        <?php
                     }
                     ?>
                 </tbody>

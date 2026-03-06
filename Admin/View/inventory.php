@@ -1,10 +1,16 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('itemListNavigation.php');
 require_once("../DB Operations/item_detailsOps.php");
 require_once("../DB Operations/item_categoryOps.php");
 require_once("../DB Operations/item_subcategoryOps.php");
 require_once("../Model/item_detailsmodel.php");
+
+if (!hasActionPermission('inventory', 'item')) {
+    header("Location: noaccess.php");
+    exit;
+}
 ?>
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <style>

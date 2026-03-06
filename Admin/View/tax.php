@@ -1,8 +1,13 @@
 <?php
 include('session.php');
-include('details.php');
 require_once("../DB Operations/taxOps.php");
 require_once("../Model/taxmodel.php");
+require_once("../Utilities/permissionHelper.php");
+
+
+
+include('details.php');
+ 
 ?>
 
 <!-- Page Heading -->
@@ -13,11 +18,15 @@ require_once("../Model/taxmodel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Tax List</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Tax List
+                </h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#taxModal>
-                    <button type="button" name="add_tax" id="add_tax" class="btn btn-success btn-circle btn-sm"><i class="fas fa-plus"></i></button>
+                    <?php if (hasPermission('tax', 'write')): ?>
+                        <button type="button" name="add_tax" id="add_tax" class="btn btn-success btn-circle btn-sm"><i
+                                class="fas fa-plus"></i></button>
+                    <?php endif; ?>
                 </span>
             </div>
         </div>
@@ -35,10 +44,10 @@ require_once("../Model/taxmodel.php");
                     </tr>
                 </thead>
                 <tbody>
-                <?php
+                    <?php
                     $taxlist = DBtax::getAll();
                     foreach ($taxlist as $tax) {
-                    echo "<tr>
+                        echo "<tr>
                         <td>" . $tax->get_GST() . "</td>
                         <td>" . $tax->get_SGST() . "</td>
                         <td>" . $tax->get_CGST() . "</td>
@@ -96,20 +105,20 @@ include('footer.php');
                     <span id="form_message"></span>
                     <div class="form-group">
                         <label>SGST</label>
-                        <input type="number" name="SGST" id="SGST" class="form-control"  />
+                        <input type="number" name="SGST" id="SGST" class="form-control" />
                         <input type="hidden" name="GST" id="GST">
                     </div>
                     <div class="form-group">
                         <label>CGST</label>
-                        <input type="number" name="CGST" id="CGST" class="form-control"   />
+                        <input type="number" name="CGST" id="CGST" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>IGST</label>
-                        <input type="number" name="IGST" id="IGST" class="form-control"   />
+                        <input type="number" name="IGST" id="IGST" class="form-control" />
                     </div>
                     <div class="form-group">
                         <input type="hidden" name="createdby" id="createdby" class="form-control" required
-                                    value=<?php echo $_SESSION['login_user']; ?> />
+                            value="<?php echo $_SESSION['login_user']; ?>" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -135,21 +144,21 @@ include('footer.php');
                     <span id="form_message"></span>
                     <div class="form-group">
                         <label>SGST</label>
-                        <input type="text" name="SGST" id="editedSGST" class="form-control"  />
+                        <input type="text" name="SGST" id="editedSGST" class="form-control" />
                         <input type="hidden" name="tax_id" id="editedTaxId" class="form-control">
                         <input type="hidden" name="GST" id="editedGST" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>CGST</label>
-                        <input type="text" name="CGST" id="editedCGST" class="form-control"   />
+                        <input type="text" name="CGST" id="editedCGST" class="form-control" />
                     </div>
                     <div class="form-group">
                         <label>IGST</label>
-                        <input type="text" name="IGST" id="editedIGST" class="form-control"   />
+                        <input type="text" name="IGST" id="editedIGST" class="form-control" />
                     </div>
                     <div class="form-group">
                         <input type="hidden" name="modifiedby" id="modifiedby" class="form-control" required
-                                    value=<?php echo $_SESSION['login_user']; ?> />
+                            value="<?php echo $_SESSION['login_user']; ?>" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -162,6 +171,7 @@ include('footer.php');
         </form>
     </div>
 </div>
+
 <div class="modal fade" id=deleteTaxModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <form method="POST" id="delete_user_form" enctype="multipart/form-data">
@@ -185,79 +195,112 @@ include('footer.php');
         </form>
     </div>
 </div>
+
 <script>
-    $(document).ready(function() {
-        $('#edittaxModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#editedTaxId').val(rowid);
-    });
-    var dataTable = $('#tax_table').DataTable({
+    $(document).ready(function () {
+        $('#edittaxModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#editedTaxId').val(rowid);
 
-});
-    $('#tax_table tbody').on( 'click', 'tr', function () {
-        /* Get the row as a parent of the link that was clicked on */
-        $('#editedGST').val(this.cells[0].innerHTML);
-        $('#editedSGST').val(this.cells[1].innerHTML);
-        $('#editedCGST').val(this.cells[2].innerHTML);
-        $('#editedIGST').val(this.cells[3].innerHTML);
-        
-    });
-    $('#addTax').click(function(){
-        debugger;
-        var IGST=$('#IGST').val();
-        if(IGST!=""){
-            $('#GST').val($('#IGST').val());
-        }else {
-            $('#GST').val(parseInt($('#SGST').val())+parseInt($('#SGST').val()));
-            
-        }
-    });
+            handleTaxFields($('#editedSGST'), $('#editedCGST'), $('#editedIGST'));
 
-    $('#editTax').click(function(){
-        var IGST=$('#editedIGST').val();
-        if(IGST!=""){
-            $('#editedGST').val($('#editedIGST').val());
-        }else {
-            $('#editedGST').val(parseInt($('#editedSGST').val())+parseInt($('#editedSGST').val()));
-        }
-    });
-    $('#editedtax_form').submit(function(event){
-var urldata= config.developmentPath+"/Admin/Controller/taxController.php";
-        var formData = new FormData(this);
+        });
+        $('#tax_table').DataTable({
+            "processing": true,
+            "serverSide": false,
+        });
+
+        $('#tax_table tbody').on('click', 'tr', function () {
+            /* Get the row as a parent of the link that was clicked on */
+            $('#editedGST').val(this.cells[0].innerHTML);
+            $('#editedSGST').val(this.cells[1].innerHTML);
+            $('#editedCGST').val(this.cells[2].innerHTML);
+            $('#editedIGST').val(this.cells[3].innerHTML);
+
+            handleTaxFields($('#editedSGST'), $('#editedCGST'), $('#editedIGST'));
+
+        });
+        $('#addTax').click(function () {
+            debugger;
+            var IGST = $('#IGST').val();
+            if (IGST != "") {
+                $('#GST').val($('#IGST').val());
+            } else {
+                $('#GST').val(parseInt($('#SGST').val()) + parseInt($('#SGST').val()));
+
+            }
+        });
+
+        $('#editTax').click(function () {
+            var IGST = $('#editedIGST').val();
+            if (IGST != "") {
+                $('#editedGST').val($('#editedIGST').val());
+            } else {
+                $('#editedGST').val(parseInt($('#editedSGST').val()) + parseInt($('#editedSGST').val()));
+            }
+        });
+        $('#editedtax_form').submit(function (event) {
+            var urldata = config.developmentPath + "/Admin/Controller/taxController.php";
+            var formData = new FormData(this);
             $.ajax({
                 type: "POST",
                 url: urldata,
                 data: formData,
                 processData: false,
                 contentType: false
-            }).done(function(data) {
+            }).done(function (data) {
                 console.log(data);
-            }).error(function(e){
+            }).error(function (e) {
                 console.log(e)
             });
             $('#editbutton').dispose();
             event.preventDefault();
-    });
-    $('#deleteTaxModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#editedTaxId').val(rowid);
-    });
-    $('#deletebutton').click(function() {
-        $.ajax({
-            url:  config.developmentPath+"/Admin/Controller/taxcontroller.php/",
-            method: "POST",
-            data: {
-                id: $('#taxid').val(),
-                action: 'delete'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
-                setTimeout(function() {
-                    $('#message').html('');
-                }, 5000);
-            }
         });
-    });
+        $('#deleteTaxModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#taxid').val(rowid);   // ✅ Correct field
+        });
+        $('#deletebutton').click(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: config.developmentPath + "/Admin/Controller/taxController.php",
+                method: "POST",
+                data: {
+                    id: $('#taxid').val(),
+                    action: 'delete'
+                },
+                success: function (response) {
+                    $('#deleteTaxModal').modal('hide');
+                    location.reload(); // simple and reliable
+                }
+            });
+        });
+        $('#SGST, #CGST, #IGST').on('input', function () {
+            handleTaxFields($('#SGST'), $('#CGST'), $('#IGST'));
+        });
+        $('#editedSGST, #editedCGST, #editedIGST').on('input', function () {
+            handleTaxFields($('#editedSGST'), $('#editedCGST'), $('#editedIGST'));
+        });
+        function handleTaxFields(SGST, CGST, IGST) {
+
+            SGST.prop('disabled', false);
+            CGST.prop('disabled', false);
+            IGST.prop('disabled', false);
+
+            var sgstVal = SGST.val().trim();
+            var cgstVal = CGST.val().trim();
+            var igstVal = IGST.val().trim();
+
+            if (igstVal !== "") {
+                SGST.prop('disabled', true);
+                CGST.prop('disabled', true);
+                return;
+            }
+
+            if (sgstVal !== "" && cgstVal !== "") {
+                IGST.prop('disabled', true);
+            }
+        }
     });
 </script>

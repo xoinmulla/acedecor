@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('quotationNavigation.php');
 require_once("../DB Operations/quotationOps.php");
 require_once("../Model/quotationModel.php");
@@ -153,6 +154,8 @@ require_once("../Model/quotationModel.php");
                 </thead>
                 <tbody>
                     <?php
+                    require_once("../Utilities/permissionHelper.php");
+
                     $quotationList = DBQuotation::getAllquotations();
 
                     foreach ($quotationList as $quotationObj) {
@@ -160,27 +163,7 @@ require_once("../Model/quotationModel.php");
                         // ✅ Check approval status
                         $isApproved = strtolower($quotationObj->get_quoteStatus()) === 'approved';
 
-                        // ✅ Prepare delete button safely
-                        if ($isApproved) {
-                            $deleteBtn = "
-            <button class='btn btn-secondary dropdown-item disabled' disabled
-                title='Approved quotation cannot be deleted'>
-                <i class='fas fa-lock'></i> Approved – Locked
-            </button>";
-                        } else {
-                            $deleteBtn = "
-            <button class='btn btn-primary dropdown-item'
-                data-toggle='modal'
-                data-target='#deleteQuotationModal'
-                name='delete_button'
-                role='button'
-                data-id='" . $quotationObj->get_quoteId() . "'>
-                <i class='fas fa-trash-alt'></i> Delete Quotation
-            </button>";
-                        }
-
-                        echo "
-    <tr>
+                        echo "<tr>
         <td style='display:none'>{$quotationObj->get_customerId()}</td>
         <td>{$quotationObj->getCustomerCode()}</td>
         <td>{$quotationObj->get_customerName()}</td>
@@ -213,51 +196,82 @@ require_once("../Model/quotationModel.php");
                     Actions
                 </button>
 
-                <div class='dropdown-menu'>
+                <div class='dropdown-menu'>";
 
-                    <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal'
-                        data-target='#inputListModal'
-                        data-id='{$quotationObj->get_quoteId()}'>
-                        <i class='fas fa-list-alt'></i> Input List
-                    </button>
+                        // ✅ Input List
+                        if (hasActionPermission('customers', 'input_list')) {
+                            echo "<button class='btn btn-primary dropdown-item'
+                data-toggle='modal'
+                data-target='#inputListModal'
+                data-id='{$quotationObj->get_quoteId()}'>
+                <i class='fas fa-list-alt'></i> Input List
+              </button>";
+                        }
 
-                    <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal'
-                        data-target='#customerModal'
-                        data-id='{$quotationObj->get_customerId()}'>
-                        <i class='fas fa-info'></i> Customer Info
-                    </button>
+                        // ✅ Customer Info
+                        if (hasActionPermission('customers', 'quotation_customer_info')) {
+                            echo "<button class='btn btn-primary dropdown-item'
+                data-toggle='modal'
+                data-target='#customerModal'
+                data-id='{$quotationObj->get_customerId()}'>
+                <i class='fas fa-info'></i> Customer Info
+              </button>";
+                        }
 
-                    <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal'
-                        data-target='#editquoteModal'
-                        data-id='{$quotationObj->get_quoteId()}'>
-                        <i class='fas fa-user-edit'></i> Edit Quotation
-                    </button>
+                        // ✅ Edit Quotation
+                        if (hasActionPermission('customers', 'edit_quotation')) {
+                            echo "<button class='btn btn-primary dropdown-item'
+                data-toggle='modal'
+                data-target='#editquoteModal'
+                data-id='{$quotationObj->get_quoteId()}'>
+                <i class='fas fa-user-edit'></i> Edit Quotation
+              </button>";
+                        }
 
-                    <button class='btn btn-primary dropdown-item'
-                        data-toggle='modal'
-                        data-target='#viewModal'
-                        data-id='{$quotationObj->get_quoteId()}'>
-                        <i class='fas fa-info'></i> Quotation Info
-                    </button>
+                        // ✅ Quotation Info
+                        if (hasActionPermission('customers', 'quotation_info')) {
+                            echo "<button class='btn btn-primary dropdown-item'
+                data-toggle='modal'
+                data-target='#viewModal'
+                data-id='{$quotationObj->get_quoteId()}'>
+                <i class='fas fa-info'></i> Quotation Info
+              </button>";
+                        }
 
-                    <a class='btn btn-primary dropdown-item'
-                        href='printQuote.php?id={$quotationObj->get_customerId()}'>
-                        <i class='fas fa-print'></i> Print Quote
-                    </a>
+                        // ✅ Print Quote
+                        if (hasActionPermission('customers', 'print_quote')) {
+                            echo "<a class='btn btn-primary dropdown-item'
+                href='printQuote.php?id={$quotationObj->get_customerId()}'>
+                <i class='fas fa-print'></i> Print Quote
+              </a>";
+                        }
 
-                    $deleteBtn
+                        // ✅ Delete Quotation (with approval lock)
+                        if (hasActionPermission('customers', 'delete_quotation')) {
 
-                </div>
+                            if ($isApproved) {
+                                echo "<button class='btn btn-secondary dropdown-item disabled' disabled
+                    title='Approved quotation cannot be deleted'>
+                    <i class='fas fa-lock'></i> Approved – Locked
+                  </button>";
+                            } else {
+                                echo "<button class='btn btn-primary dropdown-item'
+                    data-toggle='modal'
+                    data-target='#deleteQuotationModal'
+                    name='delete_button'
+                    data-id='{$quotationObj->get_quoteId()}'>
+                    <i class='fas fa-trash-alt'></i> Delete Quotation
+                  </button>";
+                            }
+                        }
+
+                        echo "      </div>
             </div>
         </td>
     </tr>";
                     }
                     ?>
                 </tbody>
-
             </table>
         </div>
     </div>

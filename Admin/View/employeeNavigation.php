@@ -1,3 +1,8 @@
+<?php
+include('session.php');
+require_once("../Utilities/permissionHelper.php");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -227,19 +232,22 @@
                     <span>Dashboard</span>
                 </a>
             </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="employee.php?action=list">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Employee</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="attendance.php?action=list">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Attendance</span>
-                </a>
-            </li>
+            <?php if (hasActionPermission('employees', 'employee')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="employee.php?action=list">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Employee</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if (hasActionPermission('employees', 'attendance')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="attendance.php?action=list">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <!-- <li class="nav-item">
             <a class="nav-link" href="monthlyReport.php?action=list">
@@ -247,24 +255,28 @@
                 <span>Monthly Reports</span>
             </a>
         </li> -->
-            <li class="nav-item">
-                <a class="nav-link" href="attendanceReport.php?action=list">
-                    <i class="fas fa-atlas"></i>
-                    <span>Attendance Reports</span>
-                </a>
-            </li>
-            <li class="nav-item">
+            <?php if (hasActionPermission('employees', 'attendance_reports')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="attendanceReport.php?action=list">
+                        <i class="fas fa-atlas"></i>
+                        <span>Attendance Reports</span>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <!-- <li class="nav-item">
                 <a class="nav-link" href="settings.php?action=list">
                     <i class="fas fa-bahai"></i>
                     <span>Settings</span>
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="expense.php?action=list">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Transaction</span>
-                </a>
-            </li>
+            </li> -->
+            <?php if (hasActionPermission('employees', 'transaction')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="expense.php?action=list">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Transaction</span>
+                    </a>
+                </li>
+            <?php endif; ?>
 
             <br>
             <hr class="sidebar-divider">

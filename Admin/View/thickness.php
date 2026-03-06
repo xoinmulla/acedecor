@@ -211,8 +211,9 @@ $(document).ready(function() {
         var rowid = $(e.relatedTarget).data('id');
         $('#editedThicknessId').val(rowid);
     });
-    var dataTable = $('#brand_table').DataTable({
-
+    $('#thickness_table').DataTable({
+        "processing": true,
+        "serverSide": false,
     });
     
     var nEditing = null;

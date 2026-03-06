@@ -302,7 +302,7 @@
                     <span>EB </span></a>
             </li> -->
             
-            <hr>
+            <hr class="sidebar-divider">
 
             <li class="nav-item">
                 <a class="nav-link" href="inventorydashboard.php">

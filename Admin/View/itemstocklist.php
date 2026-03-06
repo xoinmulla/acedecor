@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include "itemstocksnavigation.php";
 require_once("../DB Operations/item_stocksOps.php");
 require_once("../DB Operations/item_detailsOps.php");
@@ -27,6 +28,10 @@ if ($_SERVER["REQUEST_METHOD"]=="GET") {
         $totalstockUsed=mysqli_fetch_assoc($result);
     }
    
+}
+if(!hasActionPermission('inventory','stocklist')){
+    header("Location: noaccess.php");
+    exit;
 }
 ?>
 <h1 class="h3 mb-4 text-gray-800">Stock Management</h1>
