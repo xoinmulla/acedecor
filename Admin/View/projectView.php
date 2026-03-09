@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('projectNavigation.php');
 require_once("../DB Operations/taskOps.php");
 require_once("../Model/taskModel.php");
@@ -22,7 +23,8 @@ require_once("../Model/taskModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Project Tasks</h6>
+                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Project
+                    Tasks</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#projectModal>
@@ -51,58 +53,49 @@ require_once("../Model/taskModel.php");
                     <?php
                     $TaskList = DBTask::getAllTasks();
                     foreach ($TaskList as $Task) {
-                        echo "<tr><td style=display:none>" . $Task->get_TaskId() . "</td>
-                        <td>" . $Task->get_Date() . "</td>
-                        <td>" . $Task->get_TaskDescription() . "</td>
-                        <td>" . $Task->get_ContactPerson() . "</td>
-                        <td >" . $Task->get_ContactNo() . "</td>
-                        <td></td>
-                        <td>" . $Task->get_Status() . "</td>
-                       
-                   
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#followUp' 
-                            role='button' 
-                            data-id='" . $Task->get_TaskId() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                FollowUp
-                           </button>
+                        ?>
+                        <tr>
+                            <td style="display:none"><?= $Task->get_TaskId() ?></td>
+                            <td><?= $Task->get_Date() ?></td>
+                            <td><?= $Task->get_TaskDescription() ?></td>
+                            <td><?= $Task->get_ContactPerson() ?></td>
+                            <td><?= $Task->get_ContactNo() ?></td>
+                            <td></td>
+                            <td><?= $Task->get_Status() ?></td>
 
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                            data-target='#editTask' 
-                            role='button' 
-                            data-id= '".$Task->get_TaskId()."'>
-                          <i class='fas fa-tasks'></i>
-                          Edit Task  
-                          </button>
-                           
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deletetaskModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $Task->get_TaskId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete Task
-                          </button>
-                        </div>
-                    </div>
-                       </td></tr>";
-                    }
-                    ?>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        <?php if (hasActionPermission('projects', 'task_followup')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#followUp" data-id="<?= $Task->get_TaskId() ?>">
+                                                <i class="fas fa-user-edit"></i> FollowUp
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('projects', 'task_edit')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#editTask" data-id="<?= $Task->get_TaskId() ?>">
+                                                <i class="fas fa-tasks"></i> Edit Task
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('projects', 'task_delete')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#deletetaskModal" data-id="<?= $Task->get_TaskId() ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Task
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -217,7 +210,8 @@ require_once("../Model/taskModel.php");
 <div class="modal fade" id="followUp" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
     <div class="modal-dialog modal-lg " role="document">
-        <form method="post" id="followup_form" enctype="multipart/form-data" action="../Controller/taskfollowupController.php">
+        <form method="post" id="followup_form" enctype="multipart/form-data"
+            action="../Controller/taskfollowupController.php">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Follow Details</h5>
@@ -261,7 +255,7 @@ require_once("../Model/taskModel.php");
                                         <label for="followcomment">Comments</label>
                                     </div>
                                     <input type="hidden" name="taskfollowupid" id="taskfollowupid" value="">
-                                    
+
                                     <fieldset>
                             </div>
                         </div>
@@ -413,123 +407,123 @@ require_once("../Model/taskModel.php");
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $(document).on('blur', '#followcomment', function (){
-        debugger;
-        if($("#followcomment").val()==""){
-            $("#FollowupBtn").addClass('disabled');
-        }else{
-            $("#FollowupBtn").removeClass('disabled');
-        }
-    });
-    var date = new Date();
-    var day = date.getDate();
-    var month = date.getMonth() + 1;
-    var year = date.getFullYear();
-
-    if (month < 10) month = "0" + month;
-    if (day < 10) day = "0" + day;
-
-    var today = year + "-" + month + "-" + day;
-
-    document.getElementById("date").value = today;
-
-
-    var dataTable = $('#tasks_table').DataTable({
-});
-var nEditing = null;
-
-    
-
-
-    $('#tasks_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-        $('#taskId').val(this.cells[0].innerHTML);
-        $('#taskfollowupid').val(this.cells[0].innerHTML);
-        $('#deleteTaskId').val(this.cells[0].innerHTML);
-        $('#editeddate').val(this.cells[1].innerHTML);
-        $('#editedtaskDescription').val(this.cells[2].innerHTML);
-        $('#editedcontactPerson').val(this.cells[3].innerHTML);
-        $('#editedcontactNo').val(this.cells[4].innerHTML);
-        // $('#editedstatus').val(this.cells[6].innerHTML);
-    });
-
-    $('#project_form').submit(function(event) {
-        debugger;
-        var formData = new FormData(this);
-        console.log(formData);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/taskController.php",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
-        });
-        location.reload();
-        // $('#editbutton').dispose();
-        event.preventDefault();
-    });
-
-    $('#deletetaskModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#deleteTaskId').val(rowid);
-    });
-
-    $('#deletebutton').click(function() {
-        debugger;
-        $.ajax({
-            url: config.developmentPath + "/Admin/Controller/taskController.php/",
-            method: "POST",
-            data: {
-                id: $('#deleteTaskId').val(),
-                action: 'delete'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
-                setTimeout(function() {
-                    $('#message').html('');
-                }, 5000);
+    $(document).ready(function () {
+        $(document).on('blur', '#followcomment', function () {
+            debugger;
+            if ($("#followcomment").val() == "") {
+                $("#FollowupBtn").addClass('disabled');
+            } else {
+                $("#FollowupBtn").removeClass('disabled');
             }
         });
-    });
+        var date = new Date();
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
 
-    $('#followUp').on('show.bs.modal', function(e) {
-        debugger;
-        $('#FollowupBtn').addClass('disabled');
-        var rowid = $(e.relatedTarget).data('id');
-        $('#taskfollowupid').val(rowid);
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/taskfollowupController.php/?id=" +
-            rowid ;
-        $.getJSON(contactUrl, function(data) {
-            $("#followuptable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#followuptable tbody').
-                append($(document.createElement('tr')).prop({
-                   
-                }));
+        if (month < 10) month = "0" + month;
+        if (day < 10) day = "0" + day;
 
-                $('#followuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.FollowUp_Comments
-                }));
-                $('#followuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.FollowUp_createdBy
-                }));
-                $('#followuptable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.FollowUp_createdOn
-                }));
+        var today = year + "-" + month + "-" + day;
+
+        document.getElementById("date").value = today;
+
+
+        var dataTable = $('#tasks_table').DataTable({
+        });
+        var nEditing = null;
+
+
+
+
+        $('#tasks_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+            $('#taskId').val(this.cells[0].innerHTML);
+            $('#taskfollowupid').val(this.cells[0].innerHTML);
+            $('#deleteTaskId').val(this.cells[0].innerHTML);
+            $('#editeddate').val(this.cells[1].innerHTML);
+            $('#editedtaskDescription').val(this.cells[2].innerHTML);
+            $('#editedcontactPerson').val(this.cells[3].innerHTML);
+            $('#editedcontactNo').val(this.cells[4].innerHTML);
+            // $('#editedstatus').val(this.cells[6].innerHTML);
+        });
+
+        $('#project_form').submit(function (event) {
+            debugger;
+            var formData = new FormData(this);
+            console.log(formData);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/taskController.php",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
+            location.reload();
+            // $('#editbutton').dispose();
+            event.preventDefault();
+        });
+
+        $('#deletetaskModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#deleteTaskId').val(rowid);
+        });
+
+        $('#deletebutton').click(function () {
+            debugger;
+            $.ajax({
+                url: config.developmentPath + "/Admin/Controller/taskController.php/",
+                method: "POST",
+                data: {
+                    id: $('#deleteTaskId').val(),
+                    action: 'delete'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+                    setTimeout(function () {
+                        $('#message').html('');
+                    }, 5000);
+                }
             });
         });
-    });
 
-});
+        $('#followUp').on('show.bs.modal', function (e) {
+            debugger;
+            $('#FollowupBtn').addClass('disabled');
+            var rowid = $(e.relatedTarget).data('id');
+            $('#taskfollowupid').val(rowid);
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/taskfollowupController.php/?id=" +
+                rowid;
+            $.getJSON(contactUrl, function (data) {
+                $("#followuptable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#followuptable tbody').
+                        append($(document.createElement('tr')).prop({
+
+                        }));
+
+                    $('#followuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.FollowUp_Comments
+                        }));
+                    $('#followuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.FollowUp_createdBy
+                        }));
+                    $('#followuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.FollowUp_createdOn
+                        }));
+                });
+            });
+        });
+
+    });
 </script>

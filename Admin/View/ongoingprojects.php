@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('ongoingprojectnavigation.php');
 require_once("../DB Operations/materialOps.php");
 require_once("../DB Operations/projectOps.php");
@@ -49,61 +50,50 @@ require_once("../Model/projectModel.php");
                     <?php
                     $projectList = DBproject::getAllprojectsbasedonStatus();
                     foreach ($projectList as $project) {
-                        echo "<tr><td style=display:none>" . $project->get_projectId() . "</td>
-                        <td>" . $project->get_projectCode() . "</td>
-                        <td> " . $project->getDOA() . "</td>
-                        <td>" . $project->get_custName() . "</td>
-                        <td>" . $project->get_custid() . "</td>
-                        <td style=display:none>" . $project->get_quoteid() . "</td>
-                        <td>" . $project->get_quotecode() . "</td>
-                        <td style=display:none>" . $project->get_quoteType() . "</td>
-                        <td style=display:none>" . $project->getEnqCatName() . "</td>
-                        <td style=display:none>" . $project->get_quoteamt() . "</td>
-                        <td style=display:none>" . $project->getQuantity() . "</td> 
-                        <td style=display:none>" . $project->getUnitName() . "</td>
-                        <td>" . $project->get_projectstatus() . "</td>
-                        <td>" . $project->getDayCount() . "</td>
-                        <td style=display:none>" . $project->getInputType() . "</td>
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#ProjectInfoModal' 
-                            role='button' 
-                            data-id='" . $project->get_projectId() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                Project Info
-                           </button>
+                        ?>
+                        <tr>
+                            <td style="display:none"><?= $project->get_projectId() ?></td>
+                            <td><?= $project->get_projectCode() ?></td>
+                            <td><?= $project->getDOA() ?></td>
+                            <td><?= $project->get_custName() ?></td>
+                            <td><?= $project->get_custid() ?></td>
+                            <td style="display:none"><?= $project->get_quoteid() ?></td>
+                            <td><?= $project->get_quotecode() ?></td>
+                            <td style="display:none"><?= $project->get_quoteType() ?></td>
+                            <td style="display:none"><?= $project->getEnqCatName() ?></td>
+                            <td style="display:none"><?= $project->get_quoteamt() ?></td>
+                            <td style="display:none"><?= $project->getQuantity() ?></td>
+                            <td style="display:none"><?= $project->getUnitName() ?></td>
+                            <td><?= $project->get_projectstatus() ?></td>
+                            <td><?= $project->getDayCount() ?></td>
+                            <td style="display:none"><?= $project->getInputType() ?></td>
 
-                           <a class='btn btn-primary dropdown-item'
-                           role='button' 
-                           href='../View/ItemAllocation.php?id=" . $project->get_projectId() . "'>
-                          <i class='fas fa-tasks'></i>Project Allocation</a> 
-                           
-                           <!--<button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deleteprojectsModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $project->get_projectId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete project
-                          </button>-->
-                        </div>
-                    </div>
-                        
-                       </td></tr>";
-                    }
-                    ?>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu">
+
+                                        <?php if (hasActionPermission('projects', 'ongoing_info')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#ProjectInfoModal" data-id="<?= $project->get_projectId() ?>">
+                                                <i class="fas fa-info"></i> Project Info
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('projects', 'ongoing_allocate')) { ?>
+                                            <a class="btn btn-primary dropdown-item"
+                                                href="../View/ItemAllocation.php?id=<?= $project->get_projectId() ?>">
+                                                <i class="fas fa-tasks"></i> Project Allocation
+                                            </a>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>

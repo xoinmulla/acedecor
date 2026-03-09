@@ -131,8 +131,129 @@ while ($row = $resActions->fetch_assoc()) { $existingActions[$row['action_id']] 
                             </div>
                             <div class="row">
 
-<?php if ($mod === 'customers'): ?>
+<?php if ($mod === 'projects'): ?>
 
+<?php
+$tasks = [];
+$ongoing = [];
+$pending = [];
+$completed = [];
+
+foreach ($actions[$mod] as $act) {
+    $key = $act['action_key'];
+
+    if (in_array($key, ['task_followup','task_edit','task_delete'])) {
+        $tasks[] = $act;
+    }
+    elseif (in_array($key, ['ongoing_info','ongoing_allocate'])) {
+        $ongoing[] = $act;
+    }
+    elseif (in_array($key, ['pending_info','pending_allocate','pending_delete'])) {
+        $pending[] = $act;
+    }
+    elseif (in_array($key, ['completed_info','completed_delete'])) {
+        $completed[] = $act;
+    }
+}
+?>
+
+<!-- ===== PROJECT TASKS PAGE ===== -->
+<div class="col-12 mb-3">
+    <h6 class="text-primary font-weight-bold mb-2">
+        <i class="fas fa-tasks"></i> Project Tasks Page
+    </h6>
+    <div class="row">
+        <?php foreach ($tasks as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox" class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]" value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- ===== ONGOING PROJECTS PAGE ===== -->
+<div class="col-12 mb-3">
+    <h6 class="text-success font-weight-bold mb-2">
+        <i class="fas fa-spinner"></i> Ongoing Projects List
+    </h6>
+    <div class="row">
+        <?php foreach ($ongoing as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox" class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]" value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- ===== PENDING PROJECTS PAGE ===== -->
+<div class="col-12 mb-3">
+    <h6 class="text-warning font-weight-bold mb-2">
+        <i class="fas fa-clock"></i> Pending Projects List
+    </h6>
+    <div class="row">
+        <?php foreach ($pending as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox" class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]" value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- ===== COMPLETED PROJECTS PAGE ===== -->
+<div class="col-12">
+    <h6 class="text-dark font-weight-bold mb-2">
+        <i class="fas fa-check-circle"></i> Completed Projects List
+    </h6>
+    <div class="row">
+        <?php foreach ($completed as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox" class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]" value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<?php elseif ($mod === 'customers'): ?>
     <?php
     $customerActions = [];
     $quotationActions = [];
@@ -205,7 +326,32 @@ while ($row = $resActions->fetch_assoc()) { $existingActions[$row['action_id']] 
             <?php endforeach; ?>
         </div>
     </div>
+<?php elseif ($mod === 'purchase_orders'): ?>
 
+<div class="col-12 mb-3">
+    <h6 class="text-primary font-weight-bold mb-2">
+        <i class="fas fa-file-invoice"></i> Purchase Orders Pages
+    </h6>
+    <div class="row">
+        <?php foreach ($actions[$mod] as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox"
+                       class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]"
+                       value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 <?php else: ?>
 
     <!-- ===== DEFAULT (UNCHANGED) FOR OTHER MODULES ===== -->

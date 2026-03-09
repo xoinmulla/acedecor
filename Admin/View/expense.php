@@ -1,11 +1,49 @@
 <?php
-
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
 include('session.php');
+require_once("../DB Operations/dbconnection.php");
+
+// ===== PERMISSION CHECK FIRST =====
+$db = ConnectDb::getInstance();
+$conn = $db->getConnection();
+
+$user_name = $_SESSION['login_user'];
+
+$userQuery = $conn->query("
+    SELECT user_id 
+    FROM user 
+    WHERE user_name='$user_name'
+");
+
+$userData = $userQuery->fetch_assoc();
+
+if (!$userData) {
+    die("User not found");
+}
+
+$user_id = $userData['user_id'];
+
+$check = $conn->query("
+    SELECT uap.allowed
+    FROM user_action_permissions uap
+    JOIN module_actions ma ON ma.id = uap.action_id
+    WHERE uap.user_id='$user_id'
+    AND ma.action_key='po_transaction'
+");
+
+if ($check->num_rows == 0) {
+    header("Location: noaccess.php");
+    exit;
+}
+// ===== END PERMISSION CHECK =====
+
+
+// Now safe to include UI files
 require_once("../Utilities/permissionHelper.php");
 include('paymentNavigation.php');
+
 require_once("../DB Operations/expenseOps.php");
 require_once("../Controller/expenseController.php");
 require_once("../DB Operations/expenseCategoryOps.php");
@@ -25,11 +63,6 @@ $expenses = DBExpense::readAll();
 $generalSubcategories = DBGeneralSubcategory::getAll();
 $approvedCustomers = DBpayment::getCustomersWithApprovedQuotes();
 $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
-
-if(!hasActionPermission('employees','transaction')){
-    header("Location: noaccess.php");
-    exit;
-}
 ?>
 <style>
     .nav-tabs .nav-link.active {

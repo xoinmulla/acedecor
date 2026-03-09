@@ -1,5 +1,43 @@
 <?php
 include('session.php');
+require_once("../DB Operations/dbconnection.php");
+
+// ===== PERMISSION CHECK FIRST =====
+$db = ConnectDb::getInstance();
+$conn = $db->getConnection();
+
+$user_name = $_SESSION['login_user'];
+
+$userQuery = $conn->query("
+    SELECT user_id 
+    FROM user 
+    WHERE user_name='$user_name'
+");
+
+$userData = $userQuery->fetch_assoc();
+
+if (!$userData) {
+    die("User not found");
+}
+
+$user_id = $userData['user_id'];
+
+$check = $conn->query("
+    SELECT uap.allowed
+    FROM user_action_permissions uap
+    JOIN module_actions ma ON ma.id = uap.action_id
+    WHERE uap.user_id='$user_id'
+    AND ma.action_key='po_view'
+");
+
+if ($check->num_rows == 0) {
+    header("Location: noaccess.php");
+    exit;
+}
+// ===== END PERMISSION CHECK =====
+
+
+// SAFE TO LOAD UI NOW
 include('POviewnavigation.php');
 require_once("../DB Operations/purchaseorderOps.php");
 require_once("../DB Operations/POlineitemOps.php");
@@ -66,9 +104,9 @@ require_once("../Model/purchaseModel.php");
                     $purchaseList = DBpurchase::getAllpurchases();
                     foreach ($purchaseList as $purchaseObj) {
                         ?>
-                        
+
                         <tr>
-                            
+
                             <td style="display:none"><?= $purchaseObj->get_id(); ?></td>
                             <td><?= $purchaseObj->getPOcode(); ?></td>
                             <td><?= $purchaseObj->get_purchaseddate(); ?></td>
@@ -486,7 +524,7 @@ require_once("../Model/purchaseModel.php");
         </form>
     </div>
 </div>
- 
+
 <script>
     $(document).ready(function () {
         // var waterMarked = false;

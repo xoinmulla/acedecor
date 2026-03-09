@@ -1,5 +1,6 @@
 <?php
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
 include('pendingprojectNavigation.php');
 require_once("../DB Operations/projectOps.php");
 require_once("../Model/projectModel.php");
@@ -11,7 +12,8 @@ require_once("../Model/projectModel.php");
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h5 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Pending Projects List</h5>
+                <h5 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Pending
+                    Projects List</h5>
             </div>
             <!-- <div class="col" align="right">
                 <span data-toggle=modal data-target=#projectModal>
@@ -44,58 +46,54 @@ require_once("../Model/projectModel.php");
                     <?php
                     $projectList = DBproject::getAllprojectsbasedonPendingStatus();
                     foreach ($projectList as $project) {
-                        echo "<tr><td style=display:none>" . $project->get_projectId() . "</td>
-                        <td>" . $project->get_projectCode() . "</td>
-                        <td>" . $project->get_custName() . "</td>
-                        <td>" . $project->get_custid() . "</td>
-                        <td style=display:none>" . $project->get_quoteid() . "</td>
-                        <td>" . $project->get_quotecode() . "</td>
-                        <td style=display:none>" . $project->get_quoteType() . "</td>
-                        <td style=display:none>" . $project->getEnqCatName() . "</td>
-                        <td style=display:none>" . $project->get_quoteamt() . "</td>
-                        <td style=display:none>" . $project->getQuantity() . "</td> 
-                        <td style=display:none>" . $project->getUnitName() . "</td>
-                        <td>" . $project->get_projectstatus() . "</td>
-                        <td>
-                        <div class='dropdown'>
-                        <button class='btn btn-secondary dropdown-toggle' 
-                        type='button' 
-                        id='dropdownMenu2' 
-                        data-toggle='dropdown' 
-                        aria-expanded='false'>
-                        Actions
-                        </button>
-                        <div class='dropdown-menu' 
-                        aria-labelledby='dropdownMenu2'>
-                            <button class='btn btn-primary dropdown-item'
-                            data-toggle='modal' 
-                            data-target='#ProjectInfoModal' 
-                            role='button' 
-                            data-id='" . $project->get_projectId() . "'> 
-                            <i class='fas fa-user-edit'></i>
-                                Project Info
-                           </button>
+                        ?>
+                        <tr>
+                            <td style="display:none"><?= $project->get_projectId() ?></td>
+                            <td><?= $project->get_projectCode() ?></td>
+                            <td><?= $project->get_custName() ?></td>
+                            <td><?= $project->get_custid() ?></td>
+                            <td style="display:none"><?= $project->get_quoteid() ?></td>
+                            <td><?= $project->get_quotecode() ?></td>
+                            <td style="display:none"><?= $project->get_quoteType() ?></td>
+                            <td style="display:none"><?= $project->getEnqCatName() ?></td>
+                            <td style="display:none"><?= $project->get_quoteamt() ?></td>
+                            <td style="display:none"><?= $project->getQuantity() ?></td>
+                            <td style="display:none"><?= $project->getUnitName() ?></td>
+                            <td><?= $project->get_projectstatus() ?></td>
 
-                           <!--<a class='btn btn-primary dropdown-item'
-                           role='button' 
-                           href='../View/ItemAllocation.php?id=".$project->get_projectId()."'>
-                          <i class='fas fa-tasks'></i>Project Allocation</a> -->
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <div class="dropdown-menu">
 
-                           <button class='btn btn-primary dropdown-item'
-                           data-toggle='modal' 
-                           data-target='#deleteprojectsModal' 
-                           name='delete_button' 
-                           role='button' 
-                           data-id='" . $project->get_projectId() . "'>
-                            <i class='fas fa-trash-alt'></i>
-                              Delete project
-                          </button>
-                        </div>
-                    </div>
-                        
-                       </td></tr>";
-                    }
-                    ?>
+                                        <?php if (hasActionPermission('projects', 'pending_info')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#ProjectInfoModal" data-id="<?= $project->get_projectId() ?>">
+                                                <i class="fas fa-info"></i> Project Info
+                                            </button>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('projects', 'pending_allocate')) { ?>
+                                            <a class="btn btn-primary dropdown-item"
+                                                href="../View/ItemAllocation.php?id=<?= $project->get_projectId() ?>">
+                                                <i class="fas fa-tasks"></i> Project Allocation
+                                            </a>
+                                        <?php } ?>
+
+                                        <?php if (hasActionPermission('projects', 'pending_delete')) { ?>
+                                            <button class="btn btn-primary dropdown-item" data-toggle="modal"
+                                                data-target="#deleteprojectsModal" data-id="<?= $project->get_projectId() ?>">
+                                                <i class="fas fa-trash-alt"></i> Delete Project
+                                            </button>
+                                        <?php } ?>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php } ?>
                 </tbody>
             </table>
         </div>
@@ -476,303 +474,303 @@ require_once("../Model/projectModel.php");
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $('#projects_table tbody').on('click', 'tr', function() {
-        debugger;
-        /* Get the row as a parent of the link that was clicked on */
-        $('#projectId').val(this.cells[0].innerHTML);
-        $('#projectcode').text(this.cells[1].innerHTML);
-        $('#customerName').text(this.cells[2].innerHTML);
-        $('#customerCode').text(this.cells[3].innerHTML);
-        $('#quoteid').val(this.cells[4].innerHTML);
-        $('#quoteCode').text(this.cells[5].innerHTML);
-        $('#quoteType').text(this.cells[6].innerHTML);
-        $('#QuoteFor').text(this.cells[7].innerHTML);
-        $('#QuoteAmount').text(this.cells[8].innerHTML);
-        $('#quantity').text(this.cells[9].innerHTML);
-        $('#Unit').text(this.cells[10].innerHTML);
-        $('#editedprojectStatus').val(this.cells[11].innerHTML);
-    });
-
-    $('#ProjectInfoModal').on('show.bs.modal', function(e) {
-        var projId = $('#projectId').val();
-
-        // $('#editLineItem').attr('href', 'lineItemView.php?id=' + rowid);
-        var uniturl = config.developmentPath +
-            "/Admin/Controller/itemListController.php?projId=" + projId;
-        var sumTotalAmount = 0;
-        var sumTotalPrice = 0;
-        $.getJSON(uniturl, function(data) {
-
-            $("#editedlineItemTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-
-                $('#editedlineItemTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.lineItemId
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).append($(document
-                        .createElement(
-                            'img'))
-                    .prop({
-                        src: "../img/items/" + value.image,
-                        style: "width:100px; height:100px",
-                        class: 'img-fluid'
-                    })));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.ItemCode
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Name
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Brand
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.itemquantity
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AvailableQty
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AllocatedQty
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Units
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.POStatus
-                }));
-
-                $('#editedlineItemTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.InwardStatus
-                }));
-                sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
-                sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
-            });
-            $('#sumTotalAmount').val(sumTotalAmount);
-            $('#sumTotalPrice').val(sumTotalPrice);
-            var uniturl = config.developmentPath + "/Admin/Controller/unitsContoller.php"
-            $.getJSON(uniturl, function(data) {
-
-                $.each(data, function(index, value) {
-                    // APPEND OR INSERT DATA TO SELECT ELEMENT.
-                    if (value.unitId == $('#unitId').val()) {
-                        $('#unit').append('<option selected value="' + value
-                            .unitId + '">' +
-                            value.unitName + '</option>');
-                    } else {
-                        $('#unit').append('<option  value="' + value
-                            .unitId +
-                            '">' +
-                            value.unitName + '</option>');
-                    }
-                });
-            });
+    $(document).ready(function () {
+        $('#projects_table tbody').on('click', 'tr', function () {
+            debugger;
+            /* Get the row as a parent of the link that was clicked on */
+            $('#projectId').val(this.cells[0].innerHTML);
+            $('#projectcode').text(this.cells[1].innerHTML);
+            $('#customerName').text(this.cells[2].innerHTML);
+            $('#customerCode').text(this.cells[3].innerHTML);
+            $('#quoteid').val(this.cells[4].innerHTML);
+            $('#quoteCode').text(this.cells[5].innerHTML);
+            $('#quoteType').text(this.cells[6].innerHTML);
+            $('#QuoteFor').text(this.cells[7].innerHTML);
+            $('#QuoteAmount').text(this.cells[8].innerHTML);
+            $('#quantity').text(this.cells[9].innerHTML);
+            $('#Unit').text(this.cells[10].innerHTML);
+            $('#editedprojectStatus').val(this.cells[11].innerHTML);
         });
 
-        var uniturl = config.developmentPath +
-            "/Admin/Controller/materialListController.php?projId=" + projId;
-        var sumTotalAmount = 0;
-        var sumTotalPrice = 0;
-        $.getJSON(uniturl, function(data) {
+        $('#ProjectInfoModal').on('show.bs.modal', function (e) {
+            var projId = $('#projectId').val();
 
-            $("#editedMaterialTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
+            // $('#editLineItem').attr('href', 'lineItemView.php?id=' + rowid);
+            var uniturl = config.developmentPath +
+                "/Admin/Controller/itemListController.php?projId=" + projId;
+            var sumTotalAmount = 0;
+            var sumTotalPrice = 0;
+            $.getJSON(uniturl, function (data) {
 
-                $('#editedMaterialTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.lineItemId
-                }));
+                $("#editedlineItemTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).append($(document
-                        .createElement(
-                            'img'))
-                    .prop({
-                        src: "../img/items/" + value.image,
-                        style: "width:100px; height:100px",
-                        class: 'img-fluid'
-                    })));
+                    $('#editedlineItemTable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.lineItemId
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.ItemCode
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).append($(document
+                            .createElement(
+                                'img'))
+                            .prop({
+                                src: "../img/items/" + value.image,
+                                style: "width:100px; height:100px",
+                                class: 'img-fluid'
+                            })));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Name
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.ItemCode
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Brand
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Name
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.itemquantity
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Brand
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AvailableQty
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.itemquantity
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.AllocatedQty
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AvailableQty
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Units
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AllocatedQty
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.POStatus
-                }));
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Units
+                        }));
 
-                $('#editedMaterialTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.InwardStatus
-                }));
-                sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
-                sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
-            });
-            $('#sumTotalAmount').val(sumTotalAmount);
-            $('#sumTotalPrice').val(sumTotalPrice);
-            var uniturl = config.developmentPath + "/Admin/Controller/unitsContoller.php"
-            $.getJSON(uniturl, function(data) {
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.POStatus
+                        }));
 
-                $.each(data, function(index, value) {
-                    // APPEND OR INSERT DATA TO SELECT ELEMENT.
-                    if (value.unitId == $('#unitId').val()) {
-                        $('#unit').append('<option selected value="' + value
-                            .unitId + '">' +
-                            value.unitName + '</option>');
-                    } else {
-                        $('#unit').append('<option  value="' + value
-                            .unitId +
-                            '">' +
-                            value.unitName + '</option>');
-                    }
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.InwardStatus
+                        }));
+                    sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
+                    sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
+                });
+                $('#sumTotalAmount').val(sumTotalAmount);
+                $('#sumTotalPrice').val(sumTotalPrice);
+                var uniturl = config.developmentPath + "/Admin/Controller/unitsContoller.php"
+                $.getJSON(uniturl, function (data) {
+
+                    $.each(data, function (index, value) {
+                        // APPEND OR INSERT DATA TO SELECT ELEMENT.
+                        if (value.unitId == $('#unitId').val()) {
+                            $('#unit').append('<option selected value="' + value
+                                .unitId + '">' +
+                                value.unitName + '</option>');
+                        } else {
+                            $('#unit').append('<option  value="' + value
+                                .unitId +
+                                '">' +
+                                value.unitName + '</option>');
+                        }
+                    });
                 });
             });
-        });
 
-    });
-    $('#ProjectInfoModal').on('show.bs.modal', function(e) {
-        debugger;
-        var rowid = $(e.relatedTarget).data('id');
-        $('#projectId').val(rowid);
-        var contactUrl = config.developmentPath +
-            "/Admin/Controller/Project_IssuesController.php/?id=" +
-            rowid ;
+            var uniturl = config.developmentPath +
+                "/Admin/Controller/materialListController.php?projId=" + projId;
+            var sumTotalAmount = 0;
+            var sumTotalPrice = 0;
+            $.getJSON(uniturl, function (data) {
+
+                $("#editedMaterialTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+
+                    $('#editedMaterialTable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.lineItemId
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).append($(document
+                            .createElement(
+                                'img'))
+                            .prop({
+                                src: "../img/items/" + value.image,
+                                style: "width:100px; height:100px",
+                                class: 'img-fluid'
+                            })));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.ItemCode
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Name
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Brand
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.itemquantity
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AvailableQty
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.AllocatedQty
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Units
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.POStatus
+                        }));
+
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.InwardStatus
+                        }));
+                    sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
+                    sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
+                });
+                $('#sumTotalAmount').val(sumTotalAmount);
+                $('#sumTotalPrice').val(sumTotalPrice);
+                var uniturl = config.developmentPath + "/Admin/Controller/unitsContoller.php"
+                $.getJSON(uniturl, function (data) {
+
+                    $.each(data, function (index, value) {
+                        // APPEND OR INSERT DATA TO SELECT ELEMENT.
+                        if (value.unitId == $('#unitId').val()) {
+                            $('#unit').append('<option selected value="' + value
+                                .unitId + '">' +
+                                value.unitName + '</option>');
+                        } else {
+                            $('#unit').append('<option  value="' + value
+                                .unitId +
+                                '">' +
+                                value.unitName + '</option>');
+                        }
+                    });
+                });
+            });
+
+        });
+        $('#ProjectInfoModal').on('show.bs.modal', function (e) {
+            debugger;
+            var rowid = $(e.relatedTarget).data('id');
+            $('#projectId').val(rowid);
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/Project_IssuesController.php/?id=" +
+                rowid;
             console.log(contactUrl);
-        $.getJSON(contactUrl, function(data) {
-            $("#ProjectIssuesTable").find("tr:gt(0)").remove();
-            $.each(data, function(index, value) {
-                $('#ProjectIssuesTable tbody').
-                append($(document.createElement('tr')).prop({
-                    id: value.IssueId
-                }));
+            $.getJSON(contactUrl, function (data) {
+                $("#ProjectIssuesTable").find("tr:gt(0)").remove();
+                $.each(data, function (index, value) {
+                    $('#ProjectIssuesTable tbody').
+                        append($(document.createElement('tr')).prop({
+                            id: value.IssueId
+                        }));
 
-                $('#ProjectIssuesTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Issue_createdby
-                }));
-                $('#ProjectIssuesTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Issue_Description
-                }));
+                    $('#ProjectIssuesTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Issue_createdby
+                        }));
+                    $('#ProjectIssuesTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Issue_Description
+                        }));
 
-                $('#ProjectIssuesTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Issue_ContactName
-                }));
-                $('#ProjectIssuesTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Issue_ContactDetails
-                }));
-                $('#ProjectIssuesTable tr:last').
-                append($(document.createElement('td')).prop({
-                    innerHTML: value.Issue_createdon
-                }));
+                    $('#ProjectIssuesTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Issue_ContactName
+                        }));
+                    $('#ProjectIssuesTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Issue_ContactDetails
+                        }));
+                    $('#ProjectIssuesTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Issue_createdon
+                        }));
+                });
+            });
+        });
+        var dataTable = $('#projects_table').DataTable({
+
+        });
+
+        var nEditing = null;
+
+        // $('#projects_table tbody').on('click', 'tr', function() {
+        //     /* Get the row as a parent of the link that was clicked on */
+        //     $('#editedprojectStatus').val(this.cells[0].innerHTML);
+        //     // $('#editedprogressNote').text(this.cells[1].innerHTML);
+        // });
+        $('#project_form').submit(function (event) {
+            debugger;
+            var formData = new FormData(this);
+            console.log(formData);
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath +
+                    "/Admin/Controller/projectController.php",
+                data: formData,
+                processData: false,
+                contentType: false
+            }).done(function (data) {
+                console.log(data);
+            });
+            location.reload();
+            // $('#editbutton').dispose();
+            event.preventDefault();
+        });
+        $('#deleteprojectsModal').on('show.bs.modal', function (e) {
+            var rowid = $(e.relatedTarget).data('id');
+            $('#projectId').val(rowid);
+        });
+        $('#deletebutton').click(function () {
+            debugger;
+            $.ajax({
+                url: config.developmentPath + "/Admin/Controller/projectController.php/",
+                method: "POST",
+                data: {
+                    id: $('#projectId').val(),
+                    action: 'delete'
+                },
+                success: function (data) {
+                    $('#message').html(data);
+                    dataTable.ajax.reload();
+                    setTimeout(function () {
+                        $('#message').html('');
+                    }, 5000);
+                }
             });
         });
     });
-    var dataTable = $('#projects_table').DataTable({
-
-    });
-
-    var nEditing = null;
-
-    // $('#projects_table tbody').on('click', 'tr', function() {
-    //     /* Get the row as a parent of the link that was clicked on */
-    //     $('#editedprojectStatus').val(this.cells[0].innerHTML);
-    //     // $('#editedprogressNote').text(this.cells[1].innerHTML);
-    // });
-    $('#project_form').submit(function(event) {
-        debugger;
-        var formData = new FormData(this);
-        console.log(formData);
-        $.ajax({
-            type: "POST",
-            url: config.developmentPath +
-                "/Admin/Controller/projectController.php",
-            data: formData,
-            processData: false,
-            contentType: false
-        }).done(function(data) {
-            console.log(data);
-        });
-        location.reload();
-        // $('#editbutton').dispose();
-        event.preventDefault();
-    });
-    $('#deleteprojectsModal').on('show.bs.modal', function(e) {
-        var rowid = $(e.relatedTarget).data('id');
-        $('#projectId').val(rowid);
-    });
-    $('#deletebutton').click(function() {
-        debugger;
-        $.ajax({
-            url: config.developmentPath + "/Admin/Controller/projectController.php/",
-            method: "POST",
-            data: {
-                id: $('#projectId').val(),
-                action: 'delete'
-            },
-            success: function(data) {
-                $('#message').html(data);
-                dataTable.ajax.reload();
-                setTimeout(function() {
-                    $('#message').html('');
-                }, 5000);
-            }
-        });
-    });
-});
 </script>
