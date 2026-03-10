@@ -41,7 +41,7 @@ if ($check->num_rows == 0) {
 include "purchaseorderheader.php";
 require_once("../DB Operations/purchaseorderOps.php");
 require_once("../Model/purchaseModel.php");
-?>
+?> 
 <style>
     .form-check-input {
         position: static;
