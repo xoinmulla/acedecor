@@ -9,6 +9,12 @@ include "paymentnavigation.php";
 require_once "../DB Operations/dashboardOps.php";
 require_once "../DB Operations/customerpaymentOps.php";
 require_once "../DB Operations/supplierpaymentOps.php";
+require_once("../Utilities/permissionHelper.php");
+
+if (!hasActionPermission('payments', 'pay_dashboard')) {
+    header("Location: noaccess.php");
+    exit;
+}
 
 $supplierChartData = DBsupplierpayment::getAllsupplierpayment();
 

@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once("../Utilities/permissionHelper.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -228,21 +229,27 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <!-- Nav Item - Dashboard -->
 
-            <li class="nav-item">
-                <a class="nav-link" href="paymentdashboard.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>Dashboard</span></a>
-            </li>
+            <?php if (hasActionPermission('payments', 'pay_dashboard')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="paymentdashboard.php">
+                        <i class="fas fa-user-astronaut"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="expenseCategory.php">
                 <i class="fab fa-cloudsmith"></i>
                     <span>Category</span></a>
             </li> -->
-            <li class="nav-item">
-                <a class="nav-link" href="generalsubcategory.php">
-                    <i class="fas fa-exchange-alt"></i>
-                    <span>Subcategory</span></a>
-            </li>
+            <?php if (hasActionPermission('payments', 'pay_subcategory')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="generalsubcategory.php">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>Subcategory</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="transactionCategory.php">
                 <i class="fab fa-cloudsmith"></i>
@@ -263,12 +270,14 @@ if (session_status() === PHP_SESSION_NONE) {
                 <i class="fas fa-user-tie"></i>
                     <span>Employee Payment</span></a>
             </li>  -->
-            <li class="nav-item">
-                <a class="nav-link" href="expense.php?action=list">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>Transactions</span>
-                </a>
-            </li>
+            <?php if (hasActionPermission('payments', 'pay_transaction')): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="expense.php?action=list">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Transactions</span>
+                    </a>
+                </li>
+            <?php endif; ?>
             <!-- <li class="nav-item">
                 <a class="nav-link" href="paymentdashboard.php">
                 <i class="fas fa-backward"></i>

@@ -2,6 +2,12 @@
 include("Session.php");
 include("paymentnavigation.php");
 require_once("../DB Operations/generalSubcategoryOps.php");
+require_once("../Utilities/permissionHelper.php");
+
+if (!hasActionPermission('payments', 'pay_subcategory')) {
+    header("Location: noaccess.php");
+    exit;
+}
 
 $subcategories = DBGeneralSubcategory::getAll();
 ?>

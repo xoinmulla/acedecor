@@ -352,6 +352,33 @@ foreach ($actions[$mod] as $act) {
         <?php endforeach; ?>
     </div>
 </div>
+
+<?php elseif ($mod === 'payments'): ?>
+
+<div class="col-12 mb-3">
+    <h6 class="text-primary font-weight-bold mb-2">
+        <i class="fas fa-credit-card"></i> Payments Pages
+    </h6>
+    <div class="row">
+        <?php foreach ($actions[$mod] as $act): ?>
+        <div class="col-md-3 mb-2">
+            <div class="action-chip">
+                <input type="checkbox"
+                       class="action-checkbox"
+                       name="actions[<?= $act['id'] ?>]"
+                       value="1"
+                       id="act_<?= $act['id'] ?>"
+                       <?= isset($existingActions[$act['id']]) ? 'checked' : '' ?>
+                       data-module="<?= $mod ?>">
+                <label for="act_<?= $act['id'] ?>">
+                    <i class="fas fa-fingerprint mr-1"></i>
+                    <?= $act['action_label'] ?>
+                </label>
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
 <?php else: ?>
 
     <!-- ===== DEFAULT (UNCHANGED) FOR OTHER MODULES ===== -->
