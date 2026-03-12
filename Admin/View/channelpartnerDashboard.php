@@ -29,7 +29,7 @@ $totalsuppliers = DBDashboard::totalsupplierscount();
         /* Page background */
         body {
             background: linear-gradient(135deg, #eef2f7, #f8fbff);
-            font-family: "Segoe UI", sans-serif;
+            font-family: 'Poppins', sans-serif;
         }
 
         /* Card Grid */

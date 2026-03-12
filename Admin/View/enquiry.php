@@ -6,6 +6,11 @@ require_once("../DB Operations/enquiryOps.php");
 require_once("../Model/enquirymodel.php");
 ?>
 <style>
+     .topbar {
+        position: relative;
+        z-index: 1050;
+    }
+
     .form-check-input {
         position: static;
         margin-top: .3rem;

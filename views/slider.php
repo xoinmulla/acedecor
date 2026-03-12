@@ -4,163 +4,334 @@ require_once __DIR__ . "/../cmsadmin/model/sliderImageModel.php";
 ?>
 
 <style>
-    /* Luxury Slider Styling */
+    /* ----- Cover Flow Carousel Styles ----- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+    .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        max-width: 1200px;
+        height: 500px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .carousel {
         position: relative;
+        width: 100%;
+        height: 100%;
+        perspective: 1500px;
+        transform-style: preserve-3d;
+    }
+
+    .slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: transform 0.7s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.7s ease;
+        opacity: 0.8;
+    }
+
+    .slide-content {
+        position: relative;
+        width: 45%;
+        height: 65%;
+        transform-style: preserve-3d;
+        border-radius: 12px;
         overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        background: #000;
+        /* fallback for videos */
     }
 
-    .carousel-item img {
-        height: 90vh;
+    /* Images */
+    .slide-img-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .slide-img-wrapper::after {
+        content: '';
+        position: absolute;
+        bottom: -100%;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: inherit;
+        background-size: cover;
+        background-position: center;
+        transform: scaleY(-1);
+        filter: blur(5px);
+        mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 60%);
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .slide-img {
+        width: 100%;
+        height: 100%;
         object-fit: cover;
-        filter: brightness(70%);
+        display: block;
     }
 
-    .carousel-caption {
-        bottom: 20%;
-        text-align: center;
-        color: var(--white);
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-        animation: fadeInUp 1.2s ease;
+    /* Videos */
+    .slide-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 
-    .carousel-caption p {
-        font-size: 0.6rem;
-        font-weight: 500;
-        letter-spacing: 1px;
-        color: var(--gold);
-        font-family: 'Playfair Display', serif;
-        background: rgba(26, 26, 26, 0.6);
-        display: inline-block;
-        padding: 12px 20px;
-        border-left: 3px solid var(--gold);
-        border-right: 3px solid var(--gold);
-    }
-
-    /* Controls */
-    .carousel-control-prev-icon,
-    .carousel-control-next-icon {
-        background-size: 60% 60%;
-        background-color: rgba(0, 0, 0, 0.4);
-        border-radius: 50%;
+    /* Caption */
+    .slide-text {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
         padding: 25px;
-        transition: var(--transition);
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: #fff;
+        transform: translateY(100%);
+        transition: transform 0.5s 0.2s cubic-bezier(0.23, 1, 0.32, 1);
     }
 
-    .carousel-control-prev-icon:hover,
-    .carousel-control-next-icon:hover {
-        background-color: var(--gold);
+    .slide-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 5px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s 0.4s ease, transform 0.5s 0.4s ease;
     }
 
-    /* Indicators */
-    .carousel-indicators [data-bs-target] {
-        background-color: var(--white);
-        border: 2px solid var(--gold);
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        transition: var(--transition);
-        opacity: 0.7;
+    .slide-desc {
+        font-size: 0.9rem;
+        font-weight: 300;
+        margin: 0;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s 0.5s ease, transform 0.5s 0.5s ease;
     }
 
-    .carousel-indicators .active {
-        background-color: var(--gold);
-        transform: scale(1.2);
+    /* Active and neighbour states */
+    .slide.active {
         opacity: 1;
+        z-index: 2;
+        transform: translateZ(0) rotateY(0deg) scale(1);
     }
 
-    /* Animation */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .slide.active .slide-text {
+        transform: translateY(0);
+    }
+
+    .slide.active .slide-title,
+    .slide.active .slide-desc {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide.prev {
+        z-index: 1;
+        transform: translateX(-35%) scale(0.75) rotateY(45deg);
+    }
+
+    .slide.next {
+        z-index: 1;
+        transform: translateX(35%) scale(0.75) rotateY(-45deg);
+    }
+
+    .slide.hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(0) scale(0.5);
+    }
+
+    /* Navigation buttons */
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        color: #fff;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s ease;
+    }
+
+    .carousel-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .carousel-btn.prev {
+        left: 5%;
+    }
+
+    .carousel-btn.next {
+        right: 5%;
     }
 
     /* Mobile adjustments */
     @media (max-width: 768px) {
-        .carousel-item img {
-            height: 60vh;
+        .carousel-wrapper {
+            height: 350px;
         }
-        .carousel-caption p {
+
+        .slide-content {
+            width: 60%;
+            height: 60%;
+        }
+
+        .slide-title {
             font-size: 1.2rem;
-            padding: 8px 16px;
+        }
+
+        .slide-desc {
+            font-size: 0.8rem;
+        }
+
+        .carousel-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
         }
     }
 </style>
 
-<div id="carouselExampleDark" class="carousel slide" data-bs-ride="carousel">
-    <div class="carousel-indicators">
+<div class="carousel-wrapper">
+    <div class="carousel">
         <?php
-        $count = 0;
-        $isActive = "active";
-        $initialValue = 'aria-current="true"';
-        $designList = DBsliderImageFile::readByPostId($postId??0);
-        foreach ($designList as $design) {
-            echo '<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="' . $count . '" class="' . $isActive . '" ' . $initialValue . ' aria-label="Slide ' . ($count + 1) . '"></button>';
-            $isActive = "";
-            $initialValue = "";
-            $count++;
-        }
+        $designList = DBsliderImageFile::readByPostId($postId ?? 0);
+        if (count($designList) > 0):
+            foreach ($designList as $design):
+                // Map database fields to title/description (customise as needed)
+                $title = htmlspecialchars($design->getImageAlternateText() ?: 'Slide', ENT_QUOTES, 'UTF-8');
+                $desc = htmlspecialchars($design->getImageFileCaption() ?: '', ENT_QUOTES, 'UTF-8');
+                $fileType = $design->getFileType();
+                ?>
+                <div class="slide">
+                    <div class="slide-content">
+                        <?php if ($fileType === 'video'): ?>
+                            <?php if (!empty($design->getVideoUrl())): ?>
+                                <!-- YouTube/Vimeo embed -->
+                                <iframe class="slide-video" src="<?= $design->getVideoUrl() ?>" frameborder="0"
+                                    allow="autoplay; fullscreen" allowfullscreen style="width:100%; height:100%;"></iframe>
+                            <?php elseif (!empty($design->getVideoFile())): ?>
+                                <!-- Local MP4 -->
+                                <video class="slide-video" autoplay muted loop controls>
+                                    <source src="cmsadmin/img/Slider/<?= $design->getVideoFile() ?>" type="video/mp4">
+                                </video>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <!-- Image with reflection wrapper -->
+                            <div class="slide-img-wrapper"
+                                style="background-image: url('cmsadmin/img/Slider/<?= $design->getImage() ?>');">
+                                <img src="cmsadmin/img/Slider/<?= $design->getImage() ?>" alt="<?= $title ?>" class="slide-img">
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Caption (shown for all types) -->
+                        <div class="slide-text">
+                            <h2 class="slide-title"><?= $title ?></h2>
+                            <p class="slide-desc"><?= $desc ?></p>
+                        </div>
+                    </div>
+                </div>
+                <?php
+            endforeach;
+        else:
+            echo '<p style="color:#fff; text-align:center;">No slides to display</p>';
+        endif;
         ?>
     </div>
-    <div class="carousel-inner">
-        <?php
-        $isActive = "active";
-        $designList = DBsliderImageFile::readByPostId($postId??0);
-        if (count($designList) > 0) {
-            foreach ($designList as $design) {
-    echo '<div class="carousel-item ' . $isActive . '" data-bs-interval="5000">';
-    
-    if ($design->getFileType() === "video") {
-        // Check if it’s YouTube or local MP4
-        if (!empty($design->getVideoUrl())) {
-            // YouTube / Vimeo embed
-            echo '<div class="ratio ratio-16x9">
-                    <iframe src="' . $design->getVideoUrl() . '" 
-                            frameborder="0" 
-                            allow="autoplay; fullscreen" 
-                            allowfullscreen>
-                    </iframe>
-                  </div>';
-        } elseif (!empty($design->getVideoFile())) {
-            // Local MP4
-            echo '<video class="d-block w-100" autoplay muted loop controls>
-                    <source src="cmsadmin/img/Slider/' . $design->getVideoFile() . '" type="video/mp4">
-                    Your browser does not support the video tag.
-                  </video>';
-        }
-    } else {
-        // Default image
-        echo '<img src="cmsadmin/img/Slider/' . $design->getImage() . '" 
-                   class="d-block w-100 img-fluid" 
-                   alt="' . htmlspecialchars($design->getImageAlternateText(), ENT_QUOTES, 'UTF-8') . '">';
-    }
 
-    // Caption (for all types)
-    echo '<div class="carousel-caption d-none d-md-block">
-            <!--<p>' . $design->getImageFileCaption() . '</p>-->
-          </div>
-        </div>';
-
-    $isActive = "";
-}
-
-            echo '</div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>';
-        } else {
-            echo "No images to display";
-        }
-        ?>
+    <?php if (count($designList) > 0): ?>
+        <button class="carousel-btn prev">&#10094;</button>
+        <button class="carousel-btn next">&#10095;</button>
+    <?php endif; ?>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const carousel = document.querySelector('.carousel');
+        const prevBtn = document.querySelector('.carousel-btn.prev');
+        const nextBtn = document.querySelector('.carousel-btn.next');
+        const wrapper = document.querySelector('.carousel-wrapper');
+
+        // Get all slides (already generated by PHP)
+        const slides = document.querySelectorAll('.slide');
+        const slideCount = slides.length;
+
+        if (slideCount === 0) return; // nothing to do
+
+        let currentIndex = 0;
+        let autoSlideInterval;
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev', 'next', 'hidden');
+
+                // Calculate circular position relative to currentIndex
+                let diff = (index - currentIndex + slideCount) % slideCount;
+
+                if (diff === 0) {
+                    slide.classList.add('active');
+                } else if (diff === 1) {
+                    slide.classList.add('next');
+                } else if (diff === slideCount - 1) {
+                    slide.classList.add('prev');
+                } else {
+                    slide.classList.add('hidden');
+                }
+            });
+        }
+
+        function moveNext() {
+            currentIndex = (currentIndex + 1) % slideCount;
+            updateSlides();
+        }
+
+        function movePrev() {
+            currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+            updateSlides();
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            autoSlideInterval = setInterval(moveNext, 5000);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        // Event listeners
+        if (nextBtn) nextBtn.addEventListener('click', moveNext);
+        if (prevBtn) prevBtn.addEventListener('click', movePrev);
+        if (wrapper) {
+            wrapper.addEventListener('mouseenter', stopAutoSlide);
+            wrapper.addEventListener('mouseleave', startAutoSlide);
+        }
+
+        // Initialise
+        updateSlides();
+        startAutoSlide();
+    });
+</script>

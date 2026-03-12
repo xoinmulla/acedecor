@@ -1,5 +1,5 @@
 <?php
-include('header.php');
+include('userNavbar.php');
 require_once("../DB Operations/userOps.php");
 
 if ($_SESSION['User_type'] !== 'Admin') {

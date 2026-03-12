@@ -1,20 +1,25 @@
 <!doctype html>
+
 <html lang="en">
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 include('session.php');
+require_once("../Utilities/permissionHelper.php");
+
+// ===== PERMISSION CHECK FIRST =====
+if (!hasActionPermission('payments', 'pay_dashboard')) {
+  header("Location: noaccess.php");
+  exit;
+}
+
+// ===== LOAD UI AFTER PERMISSION CHECK =====
 include "paymentnavigation.php";
+
 require_once "../DB Operations/dashboardOps.php";
 require_once "../DB Operations/customerpaymentOps.php";
 require_once "../DB Operations/supplierpaymentOps.php";
-require_once("../Utilities/permissionHelper.php");
-
-if (!hasActionPermission('payments', 'pay_dashboard')) {
-    header("Location: noaccess.php");
-    exit;
-}
 
 $supplierChartData = DBsupplierpayment::getAllsupplierpayment();
 
@@ -27,6 +32,7 @@ $totalcustomer = DBDashboard::Totalcustomers();
 $totalEmployees = DBDashboard::TotalEmployees();
 $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
 ?>
+
 
 <head>
   <meta charset="utf-8">
@@ -615,7 +621,7 @@ $employeeBarChart = DBDashboard::EmployeeSalaryDetails();
               ?>
 
               <div class="progress-bar bg-success" style="width:<?= $profitPercent ?>%">
-              </div> 
+              </div>
             </div>
           </div>
         </div>

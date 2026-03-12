@@ -7,33 +7,39 @@ $db = ConnectDb::getInstance();
 $conn = $db->getConnection();
 
 $user_name = $_SESSION['login_user'];
+$user_type = $_SESSION['User_type']; // get role
 
-$userQuery = $conn->query("
-SELECT user_id 
-FROM user 
-WHERE user_name='$user_name'
-");
+// ✅ Skip permission check for Admin
+if ($user_type != 'Admin') {
 
-$userData = $userQuery->fetch_assoc();
+    $userQuery = $conn->query("
+    SELECT user_id 
+    FROM user 
+    WHERE user_name='$user_name'
+    ");
 
-if (!$userData) {
-    die("User not found");
+    $userData = $userQuery->fetch_assoc();
+
+    if (!$userData) {
+        die("User not found");
+    }
+
+    $user_id = $userData['user_id'];
+
+    $check = $conn->query("
+    SELECT uap.allowed
+    FROM user_action_permissions uap
+    JOIN module_actions ma ON ma.id = uap.action_id
+    WHERE uap.user_id='$user_id'
+    AND ma.action_key='suppliers'
+    ");
+
+    if ($check->num_rows == 0) {
+        header("Location: noaccess.php");
+        exit;
+    }
 }
 
-$user_id = $userData['user_id'];
-
-$check = $conn->query("
-SELECT uap.allowed
-FROM user_action_permissions uap
-JOIN module_actions ma ON ma.id = uap.action_id
-WHERE uap.user_id='$user_id'
-AND ma.action_key='suppliers'
-");
-
-if ($check->num_rows == 0) {
-    header("Location: noaccess.php");
-    exit;
-}
 /* INCLUDE HEADER AFTER PERMISSION CHECK */
 include('channelpartnerheader.php');
 

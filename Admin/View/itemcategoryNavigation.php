@@ -30,11 +30,15 @@
 
     <style>
         /* ================= GLOBAL ================= */
+        .topbar {
+            position: relative;
+            z-index: 1050;
+        }
 
         :root {
             --bg-main: #F4F7FC;
-            --sidebar-dark:rgb(0, 0, 0);
-            --sidebar-dark-2:rgb(0, 0, 0);
+            --sidebar-dark: rgb(0, 0, 0);
+            --sidebar-dark-2: rgb(0, 0, 0);
             --accent-blue: #2563EB;
             --accent-cyan: #06B6D4;
             --accent-purple: #7C3AED;
@@ -294,13 +298,15 @@
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
                     <!-- Sidebar Toggle (Topbar) -->
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div class="sidebar-brand-text mx-3"><i class="fas fa-user"></i>
-                        <?php echo $_SESSION['login_user']; ?></div>
+                    <div class="sidebar-brand-text mx-3 font-weight-600 text-dark">
+                        <i class="fas fa-user-circle text-primary mr-2"></i>
+                        <?php echo $_SESSION['login_user']; ?>
+                    </div>
+
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
@@ -313,12 +319,12 @@
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user_profile_name"></span>
-                                <i class="fas fa-chevron-circle-down 7x"></i>
+                                <i class="fas fa-chevron-circle-down fa-lg"></i>
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="profile.php">
+                                <!-- <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
@@ -327,9 +333,7 @@
                                     <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Settings
                                 </a>
-
-
-                                <div class="dropdown-divider"></div>
+                                <div class="dropdown-divider"></div> -->
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -341,6 +345,34 @@
 
                 </nav>
                 <!-- End of Topbar -->
+                <!-- Logout Modal-->
+                <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content" style="border-radius:16px;">
+
+                            <div class="modal-header">
+                                <h5 class="modal-title">Ready to Leave?</h5>
+                                <button class="close" type="button" data-dismiss="modal">
+                                    <span>×</span>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                Select "Logout" below if you are ready to end your session.
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-secondary" type="button" data-dismiss="modal">
+                                    Cancel
+                                </button>
+                                <a class="btn btn-primary" href="logout.php">
+                                    Logout
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">

@@ -7,32 +7,37 @@ $db = ConnectDb::getInstance();
 $conn = $db->getConnection();
 
 $user_name = $_SESSION['login_user'];
+$user_type = $_SESSION['User_type']; // get role
 
-$userQuery = $conn->query("
-    SELECT user_id 
-    FROM user 
-    WHERE user_name='$user_name'
-");
+// Only check permissions if NOT Admin
+if ($user_type != 'Admin') {
 
-$userData = $userQuery->fetch_assoc();
+    $userQuery = $conn->query("
+        SELECT user_id 
+        FROM user 
+        WHERE user_name='$user_name'
+    ");
 
-if (!$userData) {
-    die("User not found");
-}
+    $userData = $userQuery->fetch_assoc();
 
-$user_id = $userData['user_id'];
+    if (!$userData) {
+        die("User not found");
+    }
 
-$check = $conn->query("
-    SELECT uap.allowed
-    FROM user_action_permissions uap
-    JOIN module_actions ma ON ma.id = uap.action_id
-    WHERE uap.user_id='$user_id'
-    AND ma.action_key='po_view'
-");
+    $user_id = $userData['user_id'];
 
-if ($check->num_rows == 0) {
-    header("Location: noaccess.php");
-    exit;
+    $check = $conn->query("
+        SELECT uap.allowed
+        FROM user_action_permissions uap
+        JOIN module_actions ma ON ma.id = uap.action_id
+        WHERE uap.user_id='$user_id'
+        AND ma.action_key='po_view'
+    ");
+
+    if ($check->num_rows == 0) {
+        header("Location: noaccess.php");
+        exit;
+    }
 }
 // ===== END PERMISSION CHECK =====
 
