@@ -15,22 +15,37 @@ class DBitemdetails
     // -------------------------------
     // 1️⃣ CHECK DUPLICATE ITEM
     // -------------------------------
-    $itemName = $itemdetailsObj->get_itemname();
+    $itemName = trim($itemdetailsObj->get_itemname());
     $brandId = $itemdetailsObj->get_itemcompid();
+    $categoryId = $itemdetailsObj->get_itemcatid();
+    $subCategoryId = $itemdetailsObj->get_itemsubcatid();
 
-    $checkSql = "SELECT COUNT(*) AS total 
-                 FROM item_details 
-                 WHERE item_name = ? AND item_compid = ?";
+    $checkSql = "
+SELECT COUNT(*) AS total
+FROM item_details
+WHERE
+    item_name = ?
+    AND item_compid = ?
+    AND item_catid = ?
+    AND item_subcatid = ?
+";
 
     $stmt = $connectionObj->prepare($checkSql);
-    $stmt->bind_param("si", $itemName, $brandId);
+
+    $stmt->bind_param(
+      "siii",
+      $itemName,
+      $brandId,
+      $categoryId,
+      $subCategoryId
+    );
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
 
     if ($result['total'] > 0) {
       return [
         "status" => "error",
-        "message" => "❌ Item with same name and brand already exists!"
+        "message" => "❌ Item already exists with the same Name, Brand, Category and Subcategory."
       ];
     }
 
@@ -82,6 +97,46 @@ class DBitemdetails
     }
   }
 
+  public static function isDuplicateItemForUpdate($detailsObj)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $sql = "
+        SELECT COUNT(*) AS total
+        FROM item_details
+        WHERE
+            item_name = ?
+            AND item_compid = ?
+            AND item_catid = ?
+            AND item_subcatid = ?
+            AND item_id <> ?
+    ";
+
+    $stmt = $connectionObj->prepare($sql);
+
+    // IMPORTANT: bind_param() needs VARIABLES, not function calls.
+    $itemName = trim($detailsObj->get_itemname());
+    $brandId = (int) $detailsObj->get_itemcompid();
+    $categoryId = (int) $detailsObj->get_itemcatid();
+    $subCategoryId = (int) $detailsObj->get_itemsubcatid();
+    $itemId = (int) $detailsObj->get_itemid();
+
+    $stmt->bind_param(
+      "siiii",
+      $itemName,
+      $brandId,
+      $categoryId,
+      $subCategoryId,
+      $itemId
+    );
+
+    $stmt->execute();
+
+    $result = $stmt->get_result()->fetch_assoc();
+
+    return ($result['total'] > 0);
+  }
   public static function getallItemdetails()
   {
     $db = ConnectDb::getInstance();
@@ -244,7 +299,7 @@ SELECT
     I.item_PackingUnit AS spu,
     I.item_Size AS qty,
     U.unitName AS unitname,
-    UF.unitFactor AS unitfactor,
+    UF.unitFactor AS unitFactor,
     I.item_MRP AS itemMRP,
     I.item_Amount AS itemAmount,
     I.item_GST AS itemGST,

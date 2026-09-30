@@ -1,7 +1,7 @@
 <?php 
 require_once("navigation.php"); 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/termsandconditionsModel.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/dblayer/termsandconditionsOps.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/model/termsandconditionsModel.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/dblayer/termsandconditionsOps.php";
 ?>
 
 <style>

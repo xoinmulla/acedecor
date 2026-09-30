@@ -1,15 +1,19 @@
 <?php 
 require_once("../model/userLoginModel.php");
 require_once("../dblayer/userOps.php");
+error_log($_SERVER["REQUEST_METHOD"]);
    if($_SERVER["REQUEST_METHOD"] == "POST") {
       // username and password sent from form 
         $db=ConnectDb::getInstance();
         $myusername = mysqli_real_escape_string($db->getConnection(),$_POST['user_email']);
         $mypassword = mysqli_real_escape_string($db->getConnection(),$_POST['user_password']); 
+        
         $loginModel= new userLoginModel();
+        error_log($sql);
         $loginModel->set_username($myusername);
         $loginModel->set_userpassword($mypassword);
         $user=DBuser::checkUser($loginModel);
+        error_log($sql);
       // If result matched $myusername and $mypassword, table row must be 1 row
       if(!empty($user) && $user->get_userstatus()=='Enable') {
          // echo "Validateed successfully";

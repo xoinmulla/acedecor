@@ -1,6 +1,6 @@
 <?php
 require_once "dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT'] ."/acedecor/cmsadmin/model/termsandconditionsModel.php";
+require_once $_SERVER['DOCUMENT_ROOT'] ."/cmsadmin/model/termsandconditionsModel.php";
 class DBterms
 {
   public static function insert($termsandconditionsObj)

@@ -269,43 +269,71 @@ class DBQuotation
 
 
 
-  public static function getQuotationsForPrint($id)
+  public static function getQuotationsForPrint($customerId)
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * FROM quotation_details AS Q
-            JOIN customer AS C ON C.customerId=Q.customerId
-            LEFT JOIN units AS U ON U.unitId=Q.unitId
-            WHERE Q.customerId=" . $id;
 
-    $result = $connectionObj->query($sql);
+    $sql = "SELECT
+                Q.*,
+                C.*,
+                U.unitName,
+                E.enq_cat_name
+            FROM quotation_details Q
+            INNER JOIN customer C
+                ON C.customerId = Q.customerId
+            LEFT JOIN units U
+                ON U.unitId = Q.unitId
+            LEFT JOIN enquiry_category E
+                ON E.enq_catid = Q.enqCatId
+            WHERE
+                Q.customerId = ?
+                AND LOWER(Q.quo_status) = 'approved'
+            ORDER BY Q.quo_createdon ASC";
+
+    $stmt = $connectionObj->prepare($sql);
+    $stmt->bind_param("i", $customerId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
     $quoteList = [];
 
-    if ($result && mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-        $quotation = new Quotation();
-        $quotation->setCatId($row["enqCatId"]);
-        $quotation->set_quoteId($row["quoteId"]);
-        $quotation->set_quoteType($row["quo_type"]);
-        $quotation->set_quoteStatus($row["quo_status"]);
-        $quotation->set_quoteComments($row["quo_comments"]);
-        $quotation->set_quoteDescription($row["quoteDescription"]);
-        $quotation->set_itemListName($row['itemListName']);
-        $quotation->set_orderListName($row['orderListName']);
-        $quotation->set_customerName($row['customerName']);
-        $quotation->setCustomerCode($row['customerCode']);
-        $quotation->setDOE(date('d/m/Y', strtotime($row['customerDOV'])));
-        $quotation->setQuoteCode($row['quoteCode']);
-        $quotation->setDOQ(date('d/m/Y', strtotime($row['quo_createdon'])));
-        $quotation->setQuoteValue($row['quoteValue']);
-        $quotation->setCustomerAddress($row['customerAddress']);
-        $quotation->setCustomerCity($row['customerCity']);
-        $quotation->setUnitId($row['unitId']);
-        $quotation->setQuantity($row['quantity']);
-        $quotation->setUnitName($row['unitName']);
-        $quotation->setCustomerphone($row['customerContactNumber']);
-        array_push($quoteList, $quotation);
-      }
+    while ($row = $result->fetch_assoc()) {
+
+      $quotation = new Quotation();
+
+      $quotation->setCatId($row["enqCatId"]);
+      $quotation->setEnqCatName($row["enq_cat_name"]);
+
+      $quotation->set_quoteId($row["quoteId"]);
+      $quotation->set_quoteType($row["quo_type"]);
+      $quotation->set_quoteStatus($row["quo_status"]);
+      $quotation->set_quoteComments($row["quo_comments"]);
+      $quotation->set_quoteDescription($row["quoteDescription"]);
+
+      $quotation->set_itemListName($row["itemListName"]);
+      $quotation->set_orderListName($row["orderListName"]);
+
+      $quotation->set_customerId($row["customerId"]);
+      $quotation->set_customerName($row["customerName"]);
+      $quotation->setCustomerCode($row["customerCode"]);
+
+      $quotation->setCustomerAddress($row["customerAddress"]);
+      $quotation->setCustomerCity($row["customerCity"]);
+      $quotation->setCustomerphone($row["customerContactNumber"]);
+
+      $quotation->setDOE(date('d/m/Y', strtotime($row["customerDOV"])));
+      $quotation->setDOQ(date('d/m/Y', strtotime($row["quo_createdon"])));
+
+      $quotation->setQuoteCode($row["quoteCode"]);
+      $quotation->setQuoteValue($row["quoteValue"]);
+
+      $quotation->setUnitId($row["unitId"]);
+      $quotation->setQuantity($row["quantity"]);
+      $quotation->setUnitName($row["unitName"]);
+
+      $quoteList[] = $quotation;
     }
 
     return $quoteList;

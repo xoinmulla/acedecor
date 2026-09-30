@@ -1,11 +1,8 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 include "session.php";
 include "header.php";
-require_once "../dblayer/dbconnection.php";
-require_once "../dblayer/contentOps.php";
+require_once __DIR__ . "/../dblayer/dbconnection.php";
+require_once __DIR__ . "/../dblayer/contentOps.php";
 
 $maincontent = DBcontent::getLatestContent(type: "main");
 ?>

@@ -47,6 +47,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 
 
         $stmt->execute();
+        return $conn->insert_id; // 🔥 RETURN payment_id
     }
 
     public static function getAllcustomerpayment()
@@ -517,8 +518,8 @@ WHERE quotation_id = ?
     }
     public static function isQuotePaymentLocked($quoteCode, $customerCode = null)
     {
-        if (!$customerCode) {
-            return false; // no customer → don’t lock
+        if (!$quoteCode || !$customerCode) {
+            return false;
         }
 
         $conn = ConnectDb::getInstance()->getConnection();
@@ -526,17 +527,23 @@ WHERE quotation_id = ?
         $sql = "
         SELECT COUNT(*) AS cnt
         FROM customerpaymentinfo
-        WHERE customer_id = ?
+        WHERE quotation_id = ?
+          AND customer_id = ?
           AND received_amount > 0
     ";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $customerCode);
+
+        if (!$stmt) {
+            return false;
+        }
+
+        $stmt->bind_param("ss", $quoteCode, $customerCode);
         $stmt->execute();
 
         $result = $stmt->get_result()->fetch_assoc();
 
-        return ($result['cnt'] > 0);
+        return ((int) ($result['cnt'] ?? 0) > 0);
     }
 
 }

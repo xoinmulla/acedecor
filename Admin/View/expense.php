@@ -47,7 +47,7 @@ if ($user_type != 'Admin') {
 
 // Now safe to include UI files
 require_once("../Utilities/permissionHelper.php");
-include('paymentNavigation.php');
+include('paymentnavigation.php');
 
 require_once("../DB Operations/expenseOps.php");
 require_once("../Controller/expenseController.php");
@@ -88,11 +88,32 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
     .form-label {
         font-size: 0.9rem;
     }
+
+    .card-body #allExpenseTable th {
+        font-weight: 500;
+    }
+
+    .card-body #Customer_table th {
+        font-weight: 500;
+    }
+
+    .card-body #employee_payment_table th {
+        font-weight: 500;
+    }
+
+    .card-body #Supplier_table th {
+        font-weight: 500;
+    }
+
+    table thead th {
+        text-align: center !important;
+    }
 </style>
 
 <div class="card shadow mb-4 mt-4 mx-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 text-primary" style="font-size: 25px; font-weight: 800;"> Payments Management</h6>
+    <div class="card-header py-3 d-flex justify-content-between align-items-center"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+        <h6 class="m-0 text-white" style="font-size: 25px;"> Payments Management</h6>
         <button class="btn btn-success btn-circle btn-sm" data-bs-toggle="modal" data-bs-target="#allExpenseModal">
             <i class="fas fa-plus"></i>
         </button>
@@ -100,21 +121,25 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
     <div class="card-body">
         <ul class="nav nav-tabs mb-3" id="expenseTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button"
-                    role="tab"><b>All Transactions</b></button>
+            <li class="nav-item" role="presentation"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                <button class="nav-link active text-white" id="all-tab" data-bs-toggle="tab" data-bs-target="#all"
+                    type="button" role="tab">All Transactions</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer" type="button"
-                    role="tab"><b>Customer Payment</b></button>
+            <li class="nav-item" role="presentation"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                <button class="nav-link text-white" id="customer-tab" data-bs-toggle="tab" data-bs-target="#customer"
+                    type="button" role="tab">Customer Payment</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="suppliers-tab" data-bs-toggle="tab" data-bs-target="#suppliers"
-                    type="button" role="tab"><b>Suppliers Payment</b></button>
+            <li class="nav-item" role="presentation"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                <button class="nav-link text-white" id="suppliers-tab" data-bs-toggle="tab" data-bs-target="#suppliers"
+                    type="button" role="tab">Suppliers Payment</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee" type="button"
-                    role="tab"><b>Employee Payment</b></button>
+            <li class="nav-item" role="presentation"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                <button class="nav-link text-white" id="employee-tab" data-bs-toggle="tab" data-bs-target="#employee"
+                    type="button" role="tab">Employee Payment</button>
             </li>
         </ul>
 
@@ -123,13 +148,13 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
             <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
                 <div class="table-responsive mt-3">
                     <table class="table table-bordered table-hover" id="allExpenseTable" width="100%" cellspacing="0">
-                        <thead>
+                        <thead align="center">
                             <tr>
                                 <th>Date</th>
                                 <th>Type</th>
                                 <th>Category</th>
                                 <!-- <th>Subcategory</th> -->
-                                <th>Amount (₹)</th>
+                                <th>Amount</th>
                                 <th>Payment Mode</th>
                                 <th>Notes</th>
                                 <th>Action</th>
@@ -176,21 +201,21 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                 ?>
 
                                 <tr>
-                                    <td><?= htmlspecialchars($exp['expense_date']); ?></td>
+                                    <td align="center"><?= htmlspecialchars($exp['expense_date']); ?></td>
 
-                                    <td>
+                                    <td align="center">
                                         <span class="badge <?= $badgeClass; ?>">
                                             <?= htmlspecialchars($type); ?>
                                         </span>
                                     </td>
 
-                                    <td><?= $catName; ?></td>
+                                    <td align="center"><?= $catName; ?></td>
                                     <!-- <td><?= $subcategory; ?></td> -->
 
 
                                     <td>₹<?= number_format($exp['amount'], 2); ?></td>
 
-                                    <td><?= htmlspecialchars($exp['payment_type']); ?></td>
+                                    <td align="center"><?= htmlspecialchars($exp['payment_type']); ?></td>
 
                                     <td><?= nl2br(htmlspecialchars($exp['notes'])); ?></td>
 
@@ -244,7 +269,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered" id="Customer_table" width="100%" cellspacing="0">
-                                <thead>
+                                <thead align="center">
                                     <tr>
                                         <th style=display:none>Payment Id</th>
                                         <th>Customer ID</th>
@@ -254,9 +279,9 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                         <th>DOQ</th>
                                         <!-- <th>DOE</th> -->
                                         <!-- <th>Quote Code</th> -->
-                                        <th>Total Amt</th>
-                                        <th>Paid Amt</th>
-                                        <th>Balance Amt</th>
+                                        <th>Total Amount</th>
+                                        <th>Paid Amount</th>
+                                        <th>Balance Amount</th>
                                         <th>Expenditure</th>
                                         <th>Credit Discount</th>
                                         <th>Action</th>
@@ -271,18 +296,18 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                         echo "
     <tr>
     <td style='display:none'>" . $customer->get_paymentid() . "</td>
-    <td>" . $customer->get_custid() . "</td>
+    <td align='center'>" . $customer->get_custid() . "</td>
     <td>" . $customer->get_custname() . "</td>
-    <td>" . $customer->get_custcontactnumber() . "</td>
+    <td align='center'>" . $customer->get_custcontactnumber() . "</td>
     <td style='display:none'>" . $customer->getcustomerAddress() . "</td>
-    <td>" . $customer->getcustomerDOV() . "</td>
+    <td align='center'>" . $customer->getcustomerDOV() . "</td>
     <!-- <td>" . $customer->getDOQ() . "</td>-->
     <!-- <td>" . $customer->getQuoteCode() . "</td> -->
-    <td>" . $customer->get_totalamt() . "</td>
-    <td>" . $customer->get_receivedamt() . "</td>
-    <td>" . $customer->get_pendingamt() . "</td>
-    <td>" . number_format($customer->get_expenditure(), 2) . "</td>
-    <td>" . $customer->get_creditdiscount() . "</td>
+    <td>₹ " . $customer->get_totalamt() . "</td>
+    <td>₹ " . $customer->get_receivedamt() . "</td>
+    <td>₹ " . $customer->get_pendingamt() . "</td>
+    <td>₹ " . number_format($customer->get_expenditure(), 2) . "</td>
+    <td>₹ " . $customer->get_creditdiscount() . "</td>
 
 
         <td>
@@ -351,7 +376,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                                                     <table class="table table-bordered  container"
                                                         id="Transactiontable">
-                                                        <thead>
+                                                        <thead align="center">
                                                             <tr>
                                                                 <td style="text-align:center" colspan="5">
                                                                     <h1>Payment Receipt</h1>
@@ -448,7 +473,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                         <input type="submit" name="submit" id="printPDF"
                                                             class="btn btn-success" value="Save AS PDF" />
                                                         <button type="button" class="btn btn-danger"
-                                                            data-dismiss="modal">Close</button>
+                                                            data-bs-dismiss="modal">Close</button>
 
                                                     </div>
                                                 </div>
@@ -641,7 +666,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                         <button class="btn btn-success" id="btn" type="submit"
                                                             name="submit">Update</button>
                                                         <button type="button" class="btn btn-danger"
-                                                            data-dismiss="modal">Close</button>
+                                                            data-bs-dismiss="modal">Close</button>
                                                         <br />
                                                     </div>
                                                 </div>
@@ -657,9 +682,10 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                         <div class="modal-dialog">
                             <form method="POST" id="creditDiscount_form" enctype="multipart/form-data">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header text-white"
+                                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                                         <h4 class="modal-title" id="modal_title">Credit Discount</h4>
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                                     </div>
                                     <div class="modal-body">
                                         <p class="lead">
@@ -674,8 +700,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                         <input type="hidden" name="hidden_id" id="hidden_id" />
                                         <input type="submit" name="submit" id="allocatebutton" class="btn btn-danger"
                                             value="Confirmed" />
-                                        <button type="button" class="btn btn-default"
-                                            data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-default btn-danger"
+                                            data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </form>
@@ -705,7 +731,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                         <div class="container-fluid">
                             <table class="table table-bordered table-hover" id="employee_payment_table" width="100%"
                                 cellspacing="0">
-                                <thead>
+                                <thead align="center">
                                     <tr>
                                         <th>Employee</th>
                                         <th>Due (₹)</th>
@@ -731,7 +757,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Add Payment</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="action" value="add">
@@ -800,7 +826,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Save</button>
                                 </div>
                             </div>
@@ -815,7 +841,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Edit Payment</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" name="action" value="update">
@@ -881,7 +907,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </div>
                             </div>
@@ -896,14 +922,15 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Delete Payment</h5>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
                                     <p>Are you sure you want to delete this payment?</p>
                                     <input type="hidden" id="delete_id">
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-default btn-danger"
+                                        data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn btn-danger">Delete</button>
                                 </div>
                             </div>
@@ -930,8 +957,25 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <div class="card-body">
                         <div class="table-responsive">
+                            <?php
+                            $supplierList = DBsupplierpayment::getAllsupplierpayment();
+
+                            $supplierTotalAmount = 0;
+                            $supplierPaidAmount = 0;
+                            $supplierBalanceAmount = 0;
+
+                            foreach ($supplierList as $supplier) {
+                                $supplierTotalAmount += (float) $supplier->get_totalamt();
+                                $supplierPaidAmount += (float) $supplier->get_paidamt();
+                                $supplierBalanceAmount += (float) $supplier->get_pendingamt();
+                            }
+
+                            $formatSupplierTotal = function ($amount) {
+                                return '₹ ' . number_format($amount, 2);
+                            };
+                            ?>
                             <table class="table table-bordered" id="Supplier_table" width="100%" cellspacing="0">
-                                <thead>
+                                <thead align="center">
                                     <tr>
                                         <th style=display:none>Supplier ID</th>
                                         <th style=display:none>Payment ID</th>
@@ -939,23 +983,22 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                         <td style='display:none'>0</td> <!-- 2 PO ID -->
                                         <th style=display:none>Supplier Address</th>
                                         <th>Supplier Name</th>
-                                        <th>Total Amt</th>
-                                        <th>Paid Amt</th>
-                                        <th>Balance Amt</th>
+                                        <th>Total Amount (<?= $formatSupplierTotal($supplierTotalAmount); ?>)</th>
+                                        <th>Paid Amount (<?= $formatSupplierTotal($supplierPaidAmount); ?>)</th>
+                                        <th>Balance Amount (<?= $formatSupplierTotal($supplierBalanceAmount); ?>)</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $supplierList = DBsupplierpayment::getAllsupplierpayment();
                                     foreach ($supplierList as $supplier) {
                                         echo "<tr><td style=display:none >" . $supplier->get_supplierId() . "</td>
                         <td style=display:none >" . $supplier->get_supplierpaymentId() . "</td>
                         <td>" . $supplier->get_suppliername() . "</td>
                         <td style=display:none >" . $supplier->get_supplierAddress() . "</td>
-                        <td>" . $supplier->get_totalamt() . "</td>
-                        <td>" . $supplier->get_paidamt() . "</td>
-                        <td>" . $supplier->get_pendingamt() . "</td>
+                        <td>₹ " . $supplier->get_totalamt() . "</td>
+                        <td style='color:rgb(84, 198, 71);'>₹ " . $supplier->get_paidamt() . "</td>
+                        <td style='color:rgb(244, 62, 62);'>₹ " . $supplier->get_pendingamt() . "</td>
                         <td><div class='dropdown'>
                                 <button class='btn btn-secondary dropdown-toggle' 
                                 type='button' 
@@ -1150,7 +1193,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <button class="btn btn-success" id="sup_btn" type="submit"
                                                         name="submit">Update</button>
                                                     <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Close</button>
+                                                        data-bs-dismiss="modal">Close</button>
                                                     <br />
                                                 </div>
                                             </div>
@@ -1176,7 +1219,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                             <div class="col-12" id="sup_printTransaction">
 
                                                 <table class="table table-bordered  container" id="SupplierTransaction">
-                                                    <thead>
+                                                    <thead align="center">
                                                         <tr>
                                                             <td style="text-align:center" colspan="5">
                                                                 <h1>Payment Receipt</h1>
@@ -1250,7 +1293,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                                                     <input type="submit" name="submit" id="PDF" class="btn btn-success"
                                                         value="Save AS PDF" />
                                                     <button type="button" class="btn btn-danger"
-                                                        data-dismiss="modal">Close</button>
+                                                        data-bs-dismiss="modal">Close</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -1270,7 +1313,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 <div class="modal-content shadow-lg rounded-4">
 
                     <!-- Header -->
-                    <div class="modal-header border-0 pb-0">
+                    <div class="modal-header border-0 pb-3 text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title fw-semibold">
                             <i class="bi bi-plus-circle me-2 text-success"></i>
                             Transactions
@@ -1321,7 +1365,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <!-- Footer -->
                     <div class="modal-footer border-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">
                             Close
                         </button>
                         <button type="submit" class="btn btn-success px-4 fw-semibold">
@@ -1350,7 +1394,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                 <div class="modal-content shadow-lg rounded-4">
                     <!-- Header -->
-                    <div class="modal-header border-0">
+                    <div class="modal-header border-0 text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title fw-semibold">
                             <i class="bi bi-wallet2 me-2 text-success"></i>
                             Add Expense
@@ -1418,7 +1463,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <!-- Footer -->
                     <div class="modal-footer border-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">
                             Close
                         </button>
                         <button type="submit" class="btn btn-success px-4 fw-semibold">
@@ -1480,7 +1525,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </form>
@@ -1501,7 +1546,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-danger">Confirm</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </form>
@@ -1516,7 +1561,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 <input type="hidden" name="type" id="salary_expense_type">
                 <div class="modal-content shadow-lg rounded-4">
                     <!-- Header -->
-                    <div class="modal-header border-0">
+                    <div class="modal-header border-0 text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title fw-semibold">
                             <i class="bi bi-person-badge me-2 text-primary"></i>
                             Employee Payment
@@ -1587,7 +1633,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <!-- Footer -->
                     <div class="modal-footer border-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">
                             Close
                         </button>
                         <button type="submit" class="btn btn-primary px-4 fw-semibold">
@@ -1610,7 +1656,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 <div class="modal-content shadow-lg rounded-4">
 
                     <!-- Header -->
-                    <div class="modal-header border-0">
+                    <div class="modal-header border-0 text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title fw-semibold">
                             <i class="bi bi-cash-coin me-2 text-success"></i>
                             Project Income
@@ -1758,7 +1805,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <!-- Footer -->
                     <div class="modal-footer border-0 pt-3">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-danger px-4" data-bs-dismiss="modal">
                             Close
                         </button>
                         <button type="submit" class="btn btn-success px-4 fw-semibold">
@@ -1778,7 +1825,8 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 <div class="modal-content shadow-lg rounded-4">
 
                     <!-- Header -->
-                    <div class="modal-header border-0">
+                    <div class="modal-header border-0 text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title fw-semibold">
                             <i class="bi bi-briefcase-fill me-2 text-danger"></i>
                             Project Expense
@@ -1904,7 +1952,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                     <!-- Footer -->
                     <div class="modal-footer border-0">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
                             Close
                         </button>
                         <button type="submit" class="btn btn-danger fw-semibold">
@@ -1932,8 +1980,9 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
                 <div class="modal-content shadow-lg rounded-4">
 
-                    <div class="modal-header">
-                        <h5 class="modal-title text-danger">
+                    <div class="modal-header text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                        <h5 class="modal-title">
                             <i class="bi bi-truck me-2"></i> Supplier Expense
                         </h5>
                         <button class="btn-close" data-bs-dismiss="modal"></button>
@@ -2029,7 +2078,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
 
 
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                         <button class="btn btn-danger">Save Expense</button>
                     </div>
 
@@ -2775,7 +2824,7 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 const tbody = $('#Transactiontable tbody');
                 tbody.empty();
 
-                $.getJSON('../Controller/customerpaymentController.php', {
+                $.getJSON('../Controller/customerpaymentcontroller.php', {
                     custid: custId
                 }, function (data) {
 
@@ -3207,18 +3256,46 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                     const tbody = $('#employeePaymentBody');
                     tbody.empty();
 
+                    // Calculate totals from the complete data returned by the server.
+                    // This happens before DataTable pagination/search, so totals represent
+                    // the entire returned columns, not only the currently visible page.
+                    let totalDue = 0;
+                    let totalPaid = 0;
+                    let totalBalance = 0;
+
                     data.forEach(row => {
+                        totalDue += Number(row.total_amount) || 0;
+                        totalPaid += Number(row.paid_amount) || 0;
+                        totalBalance += Number(row.balance) || 0;
+
                         tbody.append(`
                 <tr>
                     <td>${row.emp_name}</td>
-                    <td>₹ ${row.total_amount.toFixed(2)}</td>
-                    <td class="text-success">₹ ${row.paid_amount.toFixed(2)}</td>
-                    <td class="${row.balance <= 0 ? 'text-success' : 'text-danger'}">
-                        ₹ ${row.balance.toFixed(2)}
+                    <td>₹ ${Number(row.total_amount).toFixed(2)}</td>
+                    <td class="text-success">₹ ${Number(row.paid_amount).toFixed(2)}</td>
+                    <td class="${Number(row.balance) <= 0 ? 'text-success' : 'text-danger'}">
+                        ₹ ${Number(row.balance).toFixed(2)}
                     </td>
                 </tr>
             `);
                     });
+
+                    // Show the total of the complete column in its heading.
+                    const formatTotal = value =>
+                        '₹ ' + value.toLocaleString('en-IN', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        });
+
+                    $('#employee_payment_table thead th').eq(1).text(
+                        'Due (' + formatTotal(totalDue) + ')'
+                    );
+                    $('#employee_payment_table thead th').eq(2).text(
+                        'Paid (' + formatTotal(totalPaid) + ')'
+                    );
+                    $('#employee_payment_table thead th').eq(3).text(
+                        'Balance (' + formatTotal(totalBalance) + ')'
+                    );
 
                     // ✅ INIT DATATABLE AFTER ROWS ARE ADDED
                     initEmployeePaymentDataTable();
@@ -3278,9 +3355,10 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
             }
 
         });
+
+
     </script>
 
- 
     <script>
         // Auto-open "Employee Payment" tab when redirected
         $(document).ready(function () {
@@ -3296,7 +3374,9 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 alert('✅ Payment deleted successfully');
             }
         });
+
     </script>
+
     <script>
         document.addEventListener('click', function (e) {
             if (e.target.closest('.edit-btn')) {
@@ -3318,4 +3398,5 @@ $supplierPayments = DBsupplierpayment::getAllsupplierpayment();
                 document.getElementById('editNotes').value = btn.dataset.notes;
             }
         });
+
     </script>

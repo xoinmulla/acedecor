@@ -29,15 +29,82 @@ require_once("../Model/item_stocksmodel.php");
     .pad {
         padding-right: .5rem;
     }
+
+    .card-body #quote_table th {
+        font-weight: 500;
+    }
+
+    /* =========================================================
+   MODAL CENTERING
+   ========================================================= */
+
+    .modal .modal-dialog {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* Desktop */
+    @media (min-width: 992px) {
+
+        .modal .modal-dialog {
+            max-width: 700px;
+            width: calc(100% - 2rem);
+        }
+
+        .modal .modal-dialog.modal-lg {
+            max-width: 900px;
+        }
+    }
+
+    /* Tablet */
+    @media (min-width: 768px) and (max-width: 991.98px) {
+
+        .modal .modal-dialog {
+            width: calc(100% - 2rem);
+            max-width: 650px;
+        }
+
+        .modal .modal-dialog.modal-lg {
+            width: calc(100% - 2rem);
+            max-width: 750px;
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 767.98px) {
+
+        .modal .modal-dialog {
+            width: calc(100% - 1rem);
+            max-width: 500px;
+        }
+
+        .modal .modal-dialog.modal-lg {
+            width: calc(100% - 1rem);
+            max-width: 500px;
+        }
+    }
+
+    /* Very small mobile */
+    @media (max-width: 399.98px) {
+
+        .modal .modal-dialog {
+            width: calc(100% - .5rem);
+        }
+    }
+
+    /* Prevent Bootstrap transform from fighting draggable */
+    .modal .modal-dialog.ui-draggable {
+        transform: none !important;
+    }
 </style>
-<h1 class="h3 mb-4 text-gray-800">Item Stock Management</h1>
+<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Item List
+                <h6 class="m-0" style="font-size: 1.2rem;">Item List
                     With Issues </h6>
             </div>
 
@@ -47,14 +114,14 @@ require_once("../Model/item_stocksmodel.php");
         <div class="col-md-9">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="Issues-tab" data-bs-toggle="tab" data-bs-target="#Issues"
-                        type="button" role="tab" aria-controls="Issues" aria-selected="true"><b>Issues</b></button>
+                    <button class="nav-link active" id="Issues-tab" data-toggle="tab" data-target="#Issues"
+                        type="button" role="tab" aria-controls="Issues" aria-selected="true">Issues</button>
                 </li>
 
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="PricingIssues-tab" data-bs-toggle="tab" data-bs-target="#PricingIssues"
-                        type="button" role="tab" aria-controls="PricingIssues" aria-selected="false"><b>Pricing
-                            Issues</b></button>
+                    <button class="nav-link" id="PricingIssues-tab" data-toggle="tab" data-target="#PricingIssues"
+                        type="button" role="tab" aria-controls="PricingIssues" aria-selected="false">Pricing
+                        Issues</button>
                 </li>
 
             </ul>
@@ -64,7 +131,7 @@ require_once("../Model/item_stocksmodel.php");
                 <br />
                 <div class="table-responsive">
                     <table class="table table-bordered" id="quote_table" width="100%" cellspacing="0">
-                        <thead>
+                        <thead align="center">
                             <tr>
                                 <th style='display:none'>Item Stock Id</th>
                                 <th style='display:none'>Item Id</th>
@@ -222,7 +289,8 @@ require_once("../Model/item_stocksmodel.php");
     <div class="modal-dialog ">
         <form method="POST" id="editedIssues_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Issues</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -275,7 +343,7 @@ require_once("../Model/item_stocksmodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -286,7 +354,8 @@ require_once("../Model/item_stocksmodel.php");
     <div class="modal-dialog ">
         <form method="POST" id="editedPricingIssues_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Issues</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -347,7 +416,7 @@ require_once("../Model/item_stocksmodel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -361,7 +430,8 @@ require_once("../Model/item_stocksmodel.php");
         <form method="post" id="followup_form" enctype="multipart/form-data"
             action="../Controller/issues_followupcontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h5 class="modal-title">Issue Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -430,21 +500,22 @@ require_once("../Model/item_stocksmodel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_pricingissue_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title">Delete Pricing Issue</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
                 <div class="modal-body">
-                    <p class="lead text-danger">
+                    <p class="lead text-secondary">
                         Are you sure you want to delete this pricing issue?
                     </p>
                     <input type="hidden" name="deletePricingIssueId" id="deletePricingIssueId">
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger">Confirm Delete</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Confirmed</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
         </form>
@@ -602,6 +673,78 @@ require_once("../Model/item_stocksmodel.php");
             );
         });
 
+        /* =========================================================
+           CENTER ALL MODALS + KEEP THEM DRAGGABLE
+           ========================================================= */
 
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $modal = $(this);
+            var $dialog = $modal.find('.modal-dialog');
+
+            if (!$dialog.length) {
+                return;
+            }
+
+            /* Remove previous draggable instance */
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            /*
+             * Get actual dialog dimensions after Bootstrap
+             * has completely displayed the modal.
+             */
+            var dialogWidth = $dialog.outerWidth();
+            var dialogHeight = $dialog.outerHeight();
+
+            var windowWidth = $(window).width();
+            var windowHeight = $(window).height();
+
+            /*
+             * Calculate exact center position.
+             */
+            var left = Math.max(
+                10,
+                (windowWidth - dialogWidth) / 2
+            );
+
+            var top = Math.max(
+                10,
+                (windowHeight - dialogHeight) / 2
+            );
+
+            /*
+             * Position exactly in the center.
+             */
+            $dialog.css({
+                margin: 0,
+                position: "fixed",
+                left: left + "px",
+                top: top + "px",
+                transform: "none"
+            });
+
+            /*
+             * Keep modal draggable after opening.
+             */
+            if (typeof $dialog.draggable === 'function') {
+
+                $dialog.draggable({
+                    handle: ".modal-header",
+                    containment: "window",
+                    scroll: false,
+
+                    start: function () {
+                        $(this).css("transform", "none");
+                    },
+
+                    drag: function () {
+                        $(this).css("transform", "none");
+                    }
+                });
+            }
+
+        });
     });
 </script>

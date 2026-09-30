@@ -226,7 +226,11 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-
+            <li class="nav-item">
+                <a class="nav-link" href="channelpartnerDashboard.php">
+                    <i class="fab fa-apple"></i>
+                    <span>Dashboard</span></a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="brand.php">
                     <i class="fab fa-apple"></i>
@@ -299,6 +303,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

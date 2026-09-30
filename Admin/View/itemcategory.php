@@ -19,15 +19,65 @@ require_once("../Model/item_categorymodel.php");
         margin-top: .3em;
         margin-left: 0;
     }
+
+    /* =========================================================
+   RESPONSIVE MODALS
+   ========================================================= */
+
+    .modal .modal-dialog {
+        width: calc(100% - 2rem);
+        max-width: 500px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* Large modal */
+    .modal .modal-dialog.modal-lg {
+        max-width: 900px;
+    }
+
+    /* Tablet */
+    @media (max-width: 991.98px) {
+
+        .modal .modal-dialog,
+        .modal .modal-dialog.modal-lg {
+            width: calc(100% - 2rem);
+            max-width: 750px;
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 767.98px) {
+
+        .modal .modal-dialog,
+        .modal .modal-dialog.modal-lg {
+            width: calc(100% - 1rem);
+            max-width: 500px;
+        }
+    }
+
+    /* Very small screens */
+    @media (max-width: 399.98px) {
+
+        .modal .modal-dialog,
+        .modal .modal-dialog.modal-lg {
+            width: calc(100% - .5rem);
+        }
+    }
+
+    .card-body #itemcat_table th {
+        font-weight: 500;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800 ">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0  text-primary" style="font-size: 1.2rem; font-weight: bold;">Item Category</h6>
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Item Category</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#itemcatModal>
@@ -40,7 +90,7 @@ require_once("../Model/item_categorymodel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="itemcat_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>Item Category</th>
                         <th>Item Category Description.</th>
@@ -112,7 +162,8 @@ require_once("../Model/item_categorymodel.php");
     <div class="modal-dialog modal-lg">
         <form method="post" id="addCategoryForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Add Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -129,7 +180,7 @@ require_once("../Model/item_categorymodel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        data-toggle="dropdown" aria-expanded="false">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="checkboxes">
@@ -189,7 +240,7 @@ require_once("../Model/item_categorymodel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -199,7 +250,8 @@ require_once("../Model/item_categorymodel.php");
 <div class="modal fade" id=infoItemcatModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header text-white"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                 <h4 class="modal-title" id="modal_title">Category Info</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
@@ -240,7 +292,7 @@ require_once("../Model/item_categorymodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
 
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
             </form>
@@ -251,7 +303,8 @@ require_once("../Model/item_categorymodel.php");
     <div class="modal-dialog">
         <form method="post" id="edititemcat_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Edit Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -267,7 +320,7 @@ require_once("../Model/item_categorymodel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false" id="editedBrand">
+                                        data-toggle="dropdown" aria-expanded="false" id="editedBrand">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="editedcheckboxes">
@@ -328,7 +381,7 @@ require_once("../Model/item_categorymodel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -339,7 +392,8 @@ require_once("../Model/item_categorymodel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_category_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Delete Item Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -351,8 +405,8 @@ require_once("../Model/item_categorymodel.php");
                 </div>
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
-                    <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" name="submit" id="deletebutton" class="btn btn-success" value="Confirmed" />
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -360,6 +414,14 @@ require_once("../Model/item_categorymodel.php");
 </div>
 <script>
     $(document).ready(function () {
+
+        $('#itemcatModal').on('show.bs.modal', function () {
+            $('#itemcatModal #form_message').html('');
+        });
+
+        $('#editItemcatModal').on('show.bs.modal', function () {
+            $('#editItemcatModal #form_message').html('');
+        });
         $('#itemcat_table tbody').on('click', 'tr', function () {
 
             /* Get the row as a parent of the link that was clicked on */
@@ -457,6 +519,7 @@ require_once("../Model/item_categorymodel.php");
         });
 
         $('#edititemcat_form').submit(function (event) {
+            event.preventDefault();
             debugger;
             var formData = new FormData(this);
             $.ajax({
@@ -466,102 +529,228 @@ require_once("../Model/item_categorymodel.php");
                 data: formData,
                 processData: false,
                 contentType: false
-            }).done(function (data) {
-                console.log(data);
-            });
-        });
-        $('#deleteCategoryModal').on('show.bs.modal', function (e) {
-            var rowid = $(e.relatedTarget).data('id');
-            $('#itemcatid').val(rowid);
-        });
-        $('#deletebutton').click(function () {
-            $.ajax({
-                url: config.developmentPath +
-                    "/Admin/Controller/item_categorycontroller.php/",
-                method: "POST",
-                data: {
-                    id: $('#itemcatid').val(),
-                    action: 'delete'
-                },
-                success: function (data) {
-                    $('#message').html(data);
-                    // dataTable.ajax.reload();
+            }).done(function (res) {
+
+                let json = typeof res === "string" ? JSON.parse(res) : res;
+
+                if (json.status == "success") {
+
+                    $('#editItemcatModal #form_message').html(
+                        `<div class="alert alert-success">${json.message}</div>`
+                    );
+
                     setTimeout(function () {
-                        $('#message').html('');
-                    }, 5000);
+                        location.reload();
+                    }, 1500);
+
+                } else {
+
+                    $('#editItemcatModal #form_message').html(
+                        `<div class="alert alert-danger">${json.message}</div>`
+                    );
+
                 }
+
             });
         });
+    });
+    $('#deleteCategoryModal').on('show.bs.modal', function (e) {
 
+        var rowid = $(e.relatedTarget).data('id');
+        $('#itemcatid').val(rowid);
 
-        $('#addCategoryForm').on('submit', function (event) {
-            event.preventDefault();
+    });
 
-            var formData = new FormData(this);
+    $('#deletebutton').click(function (e) {
 
-            $.ajax({
-                type: "POST",
-                url: config.developmentPath + "/Admin/Controller/item_categorycontroller.php/",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (res) {
-                    let json;
+        e.preventDefault();
 
-                    try {
-                        json = typeof res === "string" ? JSON.parse(res) : res;
-                    } catch (e) {
-                        console.log("Invalid JSON:", res);
-                        $('#form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
-                        return;
-                    }
+        $.ajax({
 
-                    if (json.status === "success") {
+            url: config.developmentPath + "/Admin/Controller/item_categorycontroller.php/",
 
-                        // ✅ Success Message (same style as brand form)
-                        $('#form_message').html(
-                            '<div class="alert alert-success">Category added successfully!</div>'
-                        );
+            method: "POST",
 
-                        // Small delay to let user read the message
-                        setTimeout(() => {
-                            // Close modal
-                            $('#itemcatModal').modal('hide');
+            dataType: "json",
 
-                            // Remove ghost backdrop (Bootstrap bug fix)
-                            $('.modal-backdrop').remove();
-                            $('body').removeClass('modal-open');
+            data: {
+                id: $('#itemcatid').val(),
+                action: 'delete'
+            },
 
-                            // Reload categories inside item modal
-                            reloadCategoryList(() => {
-                                $('#itemCategory').val(json.newCategoryId);
-                            });
+            success: function (res) {
 
-                            // Reopen the Item Modal
-                            setTimeout(() => {
-                                $('#itemdetailsModal').modal('show');
-                            }, 200);
+                $('#deleteCategoryModal').modal('hide');
 
-                            // Reset category form
-                            $('#addCategoryForm')[0].reset();
+                if (res.status == "success") {
 
-                        }, 600);
-                    } else {
-                        $('#form_message').html(
-                            `<div class="alert alert-danger">${json.message || 'Error adding category.'}</div>`
-                        );
-                    }
-                },
-                error: function (xhr, status, error) {
-                    $('#form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                    $('#message').html(
+                        `<div class="alert alert-success">${res.message}</div>`
+                    );
+
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+
+                } else {
+
+                    $('#message').html(
+                        `<div class="alert alert-danger">${res.message}</div>`
+                    );
+
                 }
-            });
-        });
 
-        $(document).on('click', '.dropdown-item[disabled]', function (e) {
-            e.preventDefault();
-            alert('❌ This category cannot be deleted because it is in use.');
+            }
+
         });
 
     });
+
+
+
+    $('#addCategoryForm').on('submit', function (event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+
+        $.ajax({
+            type: "POST",
+            url: config.developmentPath + "/Admin/Controller/item_categorycontroller.php/",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                let json;
+
+                try {
+                    json = typeof res === "string" ? JSON.parse(res) : res;
+                } catch (e) {
+                    console.log("Invalid JSON:", res);
+                    $('#form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
+                    return;
+                }
+
+                if (json.status === "success") {
+
+                    // ✅ Success Message (same style as brand form)
+                    $('#form_message').html(
+                        `<div class="alert alert-success">${json.message}</div>`
+                    );
+
+                    // Small delay to let user read the message
+                    setTimeout(() => {
+                        // Close modal
+                        $('#itemcatModal').modal('hide');
+
+                        // Remove ghost backdrop (Bootstrap bug fix)
+                        $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open');
+
+                        // Reload categories inside item modal
+                        reloadCategoryList(() => {
+                            $('#itemCategory').val(json.newCategoryId);
+                        });
+
+                        // Reopen the Item Modal
+                        setTimeout(() => {
+                            $('#itemdetailsModal').modal('show');
+                        }, 200);
+
+                        // Reset category form
+                        $('#addCategoryForm')[0].reset();
+
+                    }, 600);
+                } else {
+                    $('#form_message').html(
+                        `<div class="alert alert-danger">${json.message || 'Error adding category.'}</div>`
+                    );
+                }
+            },
+            error: function (xhr, status, error) {
+                $('#form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+            }
+        });
+    });
+
+    $(document).on('click', '.dropdown-item[disabled]', function (e) {
+        e.preventDefault();
+        alert('❌ This category cannot be deleted because it is in use.');
+    });
+
+    /* =========================================================
+       CENTER ALL MODALS IN VIEWPORT
+       + KEEP MODALS DRAGGABLE
+       ========================================================= */
+
+    $('.modal').on('shown.bs.modal', function () {
+
+        var $modal = $(this);
+        var $dialog = $modal.find('.modal-dialog');
+
+        if (!$dialog.length) {
+            return;
+        }
+
+        /* Destroy previous draggable instance */
+        if ($dialog.hasClass('ui-draggable')) {
+            $dialog.draggable('destroy');
+        }
+
+        /*
+         * Force browser to calculate the actual
+         * displayed dimensions of the modal.
+         */
+        var dialogWidth = $dialog.outerWidth();
+        var dialogHeight = $dialog.outerHeight();
+
+        var windowWidth = $(window).width();
+        var windowHeight = $(window).height();
+
+        /*
+         * Calculate exact center position.
+         */
+        var left = (windowWidth - dialogWidth) / 2;
+        var top = (windowHeight - dialogHeight) / 2;
+
+        /*
+         * Prevent the modal from going outside
+         * the viewport on small screens.
+         */
+        left = Math.max(10, left);
+        top = Math.max(10, top);
+
+        /*
+         * Position modal exactly in the center.
+         */
+        $dialog.css({
+            margin: 0,
+            position: 'fixed',
+            left: left + 'px',
+            top: top + 'px',
+            transform: 'none'
+        });
+
+        /*
+         * Make modal draggable.
+         */
+        if (typeof $dialog.draggable === 'function') {
+
+            $dialog.draggable({
+                handle: '.modal-header',
+                containment: 'window',
+                scroll: false,
+
+                start: function () {
+                    $(this).css('transform', 'none');
+                },
+
+                drag: function () {
+                    $(this).css('transform', 'none');
+                }
+            });
+
+        }
+
+    });
+
 </script>

@@ -1,7 +1,7 @@
 <?php
 
 require_once "dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/contentModel.php";
+require_once __DIR__ . "/../model/contentModel.php";
 
 class DBcontent {
 

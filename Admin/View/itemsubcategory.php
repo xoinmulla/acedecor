@@ -6,12 +6,53 @@ require_once("../Model/item_subcategorymodel.php");
 ?>
 <h1 class="h3 mb-4 text-gray-800 ">Inventory Management</h1>
 <!-- DataTales Example -->
+<style>
+    .card-body #itemsubcat_table th {
+        font-weight: 500;
+    }
+
+    /* =========================================================
+   ITEM SUBCATEGORY MODAL - RESPONSIVE CENTERING
+   ========================================================= */
+
+    .modal .modal-dialog {
+        width: calc(100% - 2rem);
+        max-width: 500px;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* Tablet */
+    @media (max-width: 991.98px) {
+        .modal .modal-dialog {
+            width: calc(100% - 2rem);
+            max-width: 500px;
+        }
+    }
+
+    /* Mobile */
+    @media (max-width: 767.98px) {
+        .modal .modal-dialog {
+            width: calc(100% - 1rem);
+            max-width: 500px;
+        }
+    }
+
+    /* Small mobile */
+    @media (max-width: 399.98px) {
+        .modal .modal-dialog {
+            width: calc(100% - .5rem);
+        }
+    }
+</style>
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Item SubCategory</h6>
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Item
+                    SubCategory</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#itemsubcatModal>
@@ -24,7 +65,7 @@ require_once("../Model/item_subcategorymodel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="itemsubcat_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style='display:none'>Category Id</th>
                         <th>Item Category</th>
@@ -87,7 +128,8 @@ require_once("../Model/item_subcategorymodel.php");
     <div class="modal-dialog">
         <form method="post" id="user_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Add Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -167,7 +209,8 @@ require_once("../Model/item_subcategorymodel.php");
     <div class="modal-dialog">
         <form method="post" id="itemsubcat_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Edit Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -244,7 +287,8 @@ require_once("../Model/item_subcategorymodel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_subcategory_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Delete Sub Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -265,7 +309,13 @@ require_once("../Model/item_subcategorymodel.php");
 </div>
 <script>
     $(document).ready(function () {
+        $('#itemsubcatModal').on('show.bs.modal', function () {
+            $('#itemsubcatModal #form_message').html('');
+        });
 
+        $('#edititemsubcatModal').on('show.bs.modal', function () {
+            $('#edititemsubcatModal #form_message').html('');
+        });
         $('#edititemsubcatModal').on('show.bs.modal', function (e) {
             var rowid = $(e.relatedTarget).data('id');
             $('#itemsubcatid').val(rowid);
@@ -284,28 +334,52 @@ require_once("../Model/item_subcategorymodel.php");
             $('#editeditemsubcatdescription').val(this.cells[3].innerHTML);
 
         });
-        $('#editbutton').click(function (event) {
-            var formData = {
-                itemcatid: $('#edititemCategory').val(),
-                itemsubcatid: $('#itemsubcatid').val(),
-                itemsubcatname: $('#editeditemsubcatname').val(),
-                itemsubcatdescription: $('#editeditemsubcatdescription').val(),
-                itemsubcatcreatedby: $('#editeditemsubcatcreatedby').val(),
-                itemsubcatmodifiedby: $('#editeditemsubcatmodifiedby').val(),
-            };
+        $('#itemsubcat_form').submit(function (e) {
+
+            e.preventDefault();
+
+            let formData = new FormData(this);
 
             $.ajax({
+
+                url: config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php",
+
                 type: "POST",
-                url: config.developmentPath +
-                    "/Admin/Controller/item_subcategorycontroller.php",
+
                 data: formData,
+
+                processData: false,
+
+                contentType: false,
+
                 dataType: "json",
-                encode: true,
-            }).done(function (data) {
-                console.log(data);
+
+                success: function (res) {
+
+                    if (res.status == "success") {
+
+                        $('#edititemsubcatModal #form_message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+
+                        setTimeout(function () {
+
+                            location.reload();
+
+                        }, 1500);
+
+                    } else {
+
+                        $('#edititemsubcatModal #form_message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+
+                    }
+
+                }
+
             });
-            $('#editbutton').dispose();
-            event.preventDefault();
+
         });
 
         var url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
@@ -325,81 +399,100 @@ require_once("../Model/item_subcategorymodel.php");
             var rowid = $(e.relatedTarget).data('id');
             $('#itemsubcatid').val(rowid);
         });
-        $('#deletebutton').click(function () {
+        $('#deletebutton').click(function (e) {
+
+            e.preventDefault();
 
             $.ajax({
+
                 url: config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php",
+
                 method: "POST",
+
+                dataType: "json",
+
                 data: {
+
                     id: $('#itemsubcatid').val(),
+
                     action: 'delete'
+
                 },
-                success: function (data) {
-                    $('#message').html(data);
-                    // dataTable.ajax.reload();
-                    setTimeout(function () {
-                        $('#message').html('');
-                    }, 5000);
-                }
-            });
-        });
-        // ADD SUBCATEGORY FORM SUBMIT
-        $('#user_form').on('submit', function (event) {
-            event.preventDefault();
-
-            var formData = new FormData(this);
-
-            $.ajax({
-                type: "POST",
-                url: config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php",
-                data: formData,
-                processData: false,
-                contentType: false,
 
                 success: function (res) {
-                    let json;
 
-                    try {
-                        json = typeof res === "string" ? JSON.parse(res) : res;
-                    } catch (e) {
-                        console.log("Invalid JSON:", res);
-                        $('#form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
-                        return;
-                    }
+                    $('#deleteSubCategoryModal').modal('hide');
 
-                    if (json.status === "success") {
+                    if (res.status == "success") {
 
-                        // SUCCESS MESSAGE
-                        $('#form_message').html(
-                            '<div class="alert alert-success">SubCategory added successfully!</div>'
+                        $('#message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
                         );
 
-                        setTimeout(() => {
-                            // Close modal
-                            $('#itemsubcatModal').modal('hide');
+                        setTimeout(function () {
 
-                            // Remove backdrop
-                            $('.modal-backdrop').remove();
-                            $('body').removeClass('modal-open');
+                            location.reload();
 
-                            // Reset form fields
-                            $('#user_form')[0].reset();
-
-                            // Reload table (if required)
-                            // dataTable.ajax.reload();
-
-                        }, 600);
+                        }, 1500);
 
                     } else {
-                        $('#form_message').html(
-                            `<div class="alert alert-danger">${json.message || 'Error adding subcategory.'}</div>`
-                        );
-                    }
-                },
 
-                error: function (xhr, status, error) {
-                    $('#form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                        $('#message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+
+                    }
+
                 }
+
+            });
+
+        });
+        // ADD SUBCATEGORY FORM SUBMIT
+        $('#user_form').submit(function (e) {
+
+            e.preventDefault();
+
+            let formData = new FormData(this);
+
+            $.ajax({
+
+                url: config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php",
+
+                type: "POST",
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                dataType: "json",
+
+                success: function (res) {
+
+                    if (res.status == "success") {
+
+                        $('#itemsubcatModal #form_message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+
+                        setTimeout(function () {
+
+                            location.reload();
+
+                        }, 1500);
+
+                    } else {
+
+                        $('#itemsubcatModal #form_message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+
+                    }
+
+                }
+
             });
 
         });
@@ -408,6 +501,113 @@ require_once("../Model/item_subcategorymodel.php");
             alert('❌ This subcategory cannot be deleted because items are linked to it.');
         });
 
+        /* =========================================================
+   CENTER ALL SUBCATEGORY MODALS IN BROWSER WINDOW
+   + KEEP MODALS DRAGGABLE
+   ========================================================= */
+
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $modal = $(this);
+            var $dialog = $modal.find('.modal-dialog');
+
+            if (!$dialog.length) {
+                return;
+            }
+
+            /* Remove previous draggable instance */
+            if ($dialog.hasClass('ui-draggable')) {
+                $dialog.draggable('destroy');
+            }
+
+            /*
+             * Get actual modal dimensions
+             */
+            var dialogWidth = $dialog.outerWidth();
+            var dialogHeight = $dialog.outerHeight();
+
+            var windowWidth = $(window).width();
+            var windowHeight = $(window).height();
+
+            /*
+             * Calculate exact center of browser window
+             */
+            var left = (windowWidth - dialogWidth) / 2;
+            var top = (windowHeight - dialogHeight) / 2;
+
+            /*
+             * Keep modal inside viewport
+             */
+            left = Math.max(10, left);
+            top = Math.max(10, top);
+
+            /*
+             * Position modal
+             */
+            $dialog.css({
+                margin: 0,
+                position: 'fixed',
+                left: left + 'px',
+                top: top + 'px',
+                transform: 'none'
+            });
+
+            /*
+             * Keep existing draggable functionality
+             */
+            if (typeof $dialog.draggable === 'function') {
+
+                $dialog.draggable({
+                    handle: '.modal-header',
+                    containment: 'window',
+                    scroll: false,
+
+                    start: function () {
+                        $(this).css('transform', 'none');
+                    },
+
+                    drag: function () {
+                        $(this).css('transform', 'none');
+                    }
+                });
+
+            }
+
+        });
+        /* =========================================================
+   RECENTER OPEN MODAL WHEN WINDOW SIZE CHANGES
+   ========================================================= */
+
+        $(window).on('resize', function () {
+
+            $('.modal.show').each(function () {
+
+                var $dialog = $(this).find('.modal-dialog');
+
+                if (!$dialog.length || $dialog.hasClass('ui-draggable-dragging')) {
+                    return;
+                }
+
+                var dialogWidth = $dialog.outerWidth();
+                var dialogHeight = $dialog.outerHeight();
+
+                var windowWidth = $(window).width();
+                var windowHeight = $(window).height();
+
+                var left = (windowWidth - dialogWidth) / 2;
+                var top = (windowHeight - dialogHeight) / 2;
+
+                left = Math.max(10, left);
+                top = Math.max(10, top);
+
+                $dialog.css({
+                    left: left + 'px',
+                    top: top + 'px'
+                });
+
+            });
+
+        });
 
     });
 </script>

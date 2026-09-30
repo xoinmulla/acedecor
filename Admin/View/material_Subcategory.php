@@ -7,12 +7,17 @@ require_once("../Model/material_subcategoryModel.php");
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
-
+<style>
+    .card-body #materialsubcat_table th {
+        font-weight: 500;
+    }
+</style>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 "
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Material
                     SubCategory</h6>
             </div>
             <div class="col" align="right">
@@ -25,7 +30,7 @@ require_once("../Model/material_subcategoryModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="materialsubcat_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style='display:none'>Category Id</th>
                         <th>Material Category</th>
@@ -100,10 +105,11 @@ require_once("../Model/material_subcategoryModel.php");
 
 <!-- ADD Modal -->
 <div class="modal fade" id="materialsubcatModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="post" id="addMaterialSubcatForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Add Material SubCategory</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -156,10 +162,11 @@ require_once("../Model/material_subcategoryModel.php");
 
 <!-- EDIT Modal -->
 <div class="modal fade" id="editmaterialsubcatModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="post" id="editMaterialSubcatForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Edit Material SubCategory</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -211,11 +218,12 @@ require_once("../Model/material_subcategoryModel.php");
 
 <!-- DELETE Modal -->
 <div class="modal fade" id="deleteSubCategoryModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <form id="deleteMaterialSubcatForm">
             <span class="delete_message"></span>
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Delete Sub Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -392,6 +400,22 @@ require_once("../Model/material_subcategoryModel.php");
                 $('#message').html('<div class="alert alert-danger">AJAX Error: ' + err + '</div>');
                 setTimeout(function () { $('#message').html(''); }, 3000);
             });
+        });
+
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
         });
 
     });

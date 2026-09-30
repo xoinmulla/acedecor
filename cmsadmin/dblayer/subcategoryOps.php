@@ -1,7 +1,7 @@
 <?php
 require_once "../dblayer/dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/subcategorymodel.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/dblayer/categoryOps.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/model/subcategorymodel.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/dblayer/categoryOps.php";
 
 class DBsubcategory
 {

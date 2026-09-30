@@ -34,6 +34,12 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
 <style>
+    .sidebar-logo {
+        width: 190px;
+        height: 140px;
+        object-fit: contain;
+    }
+
     .topbar {
         position: relative;
         z-index: 1050;
@@ -256,15 +262,15 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <!-- Sidebar - Brand -->
+            <br><br>
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="dashboard.php">
-                <i class="fas fa-layer-group mr-2"></i>
-                <span>Ace Decors</span>
+                <img src="../img/logo.png" alt="Ace Decors" class="sidebar-logo">
             </a>
-
+            <br>
 
 
             <!-- Divider -->
-            <hr class="sidebar-divider my-0">
+            <!-- <hr class="sidebar-divider my-0">
             <?php if ($_SESSION['User_type'] === 'Admin'): ?>
                 <li class="nav-item">
                     <a class="nav-link" href="userManagement.php">
@@ -272,13 +278,9 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                         <span>User Management</span>
                     </a>
                 </li>
-            <?php endif; ?>
+            <?php endif; ?> -->
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item">
-                <a class="nav-link" href="maindashboard.php">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span></a>
-            </li>
+
             <li class="nav-item">
                 <a class="nav-link" href="enquiry.php">
                     <i class="fas fa-question-circle"></i>
@@ -321,6 +323,12 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                 <a class="nav-link" href="paymentdashboard.php">
                     <i class="far fa-edit"></i>
                     <span>Payments</span></a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="invoice.php">
+                    <i class="far fa-envelope"></i>
+                    <span>Invoice</span></a>
             </li>
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
@@ -374,10 +382,15 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
+
                             </div>
                         </li>
 
@@ -416,7 +429,7 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    
+
                     <script>
                         $(document).ready(function () {
 

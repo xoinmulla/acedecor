@@ -10,13 +10,17 @@ class DBPOLineItem
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * from purchaseorder_lineitem where 	Item_id='" . $lineItemObj->get_itemid() . "' and POID='" . $lineItemObj->get_POID() . "'";
+    $sql = "SELECT *
+FROM purchaseorder_lineitem
+WHERE Item_id='" . $lineItemObj->get_itemid() . "'
+AND POID='" . $lineItemObj->get_POID() . "'
+AND InputName='" . $lineItemObj->getInputName() . "'";
     error_log($sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     error_log($count);
     if ($count < 1) {
-      if ($_POST["totalamt"] == 0) {
+      if ($lineItemObj->get_totalamt() == 0 || $lineItemObj->get_totalamt() == "") {
         $sql = "INSERT INTO `purchaseorder_lineitem`(
             `POID`, 
             `Item_id`,
@@ -83,9 +87,10 @@ class DBPOLineItem
         PLI.Price AS Price,
         C.item_catName AS CategoryName,
         SC.item_subcatName AS SubCategoryName,
-        PLI.GST AS GST
+        PLI.GST AS GST,
+        'item' AS inventoryType
         FROM `purchaseorder_lineitem` AS PLI 
-        JOIN `item_details` AS I ON PLI.InputName=I.item_name
+        JOIN `item_details` AS I ON PLI.Item_id = I.item_id
         Join `item_category` C ON C.item_catid=I.item_catid
         Join `item_subcategory` SC ON SC.item_subcatid=I.item_subcatid
         JOIN `brands` AS B ON I.item_compid=B.brand_id 
@@ -106,9 +111,10 @@ class DBPOLineItem
         PLI.Price AS Price,
         C.material_catName AS CategoryName,
         SC.material_subcatName AS SubCategoryName,
-        PLI.GST AS GST
+        PLI.GST AS GST,
+        'material' AS inventoryType 
         FROM `purchaseorder_lineitem` AS PLI 
-        JOIN `material` AS M ON PLI.InputName=M.Material_Name 
+        JOIN `material` AS M ON PLI.Item_id = M.Material_Id
         JOIN material_category C ON M.Category=C.material_catId 
       JOIN material_subcategory SC ON M.SubCategory=SC.material_subcatId 
         JOIN `brands` AS B ON M.Brand=B.brand_id 
@@ -116,6 +122,8 @@ class DBPOLineItem
         Where PLI.POID=" . $purchaseId . "
         ";
     $result = $connectionObj->query($sql);
+
+    mysqli_data_seek($result, 0);
     $count = mysqli_num_rows($result);
     error_log($sql);
     $lineitemList = [];
@@ -134,11 +142,11 @@ class DBPOLineItem
         $item->setunitName($row["Units"]);
         $item->setBrand($row["Brand"]);
         $item->setDescription($row["Description"]);
+        $item->setInventoryType($row["inventoryType"]);
         array_push($lineitemList, $item);
       }
     }
-    header('Content-Type: application/json');
-    echo json_encode($lineitemList);
+    return $lineitemList;
   }
 
 
@@ -300,7 +308,8 @@ I.item_Price AS InventoryPrice,
     UF.unitName AS unitName,
     'item' AS inventoryType
 FROM purchaseorder_lineitem PLI
-JOIN item_details I ON PLI.InputName = I.item_name
+JOIN `item_details` AS I
+ON PLI.Item_id = I.item_id
 JOIN purchase_order P ON PLI.POID = P.ID
 LEFT JOIN item_stock S ON S.POID = PLI.POID AND S.item_id = PLI.Item_id
 JOIN units UF ON UF.unitId = I.item_unit
@@ -326,18 +335,19 @@ GROUP BY PLI.POlineitemId
 M.MaterialPrice AS InventoryPrice,
         P.POcode as POcode,
         P.SupplierId as SupplierId,
-        S.GST AS GSTamt,
-        S.item_stockid AS StockId,
-        S.InvoiceNo AS InvoiceNo,
-        PLI.Quantity - Sum(S.ReceivedQty) As BalanceQty,
-        sum(S.ReceivedQtyAmt) AS ReceivedQtyAmt,
-        Sum(S.ReceivedQty) AS ReceivedQty,
+        MAX(S.GST) AS GSTamt,
+MAX(S.item_stockid) AS StockId,
+MAX(S.InvoiceNo) AS InvoiceNo,
+PLI.Quantity - COALESCE(SUM(S.ReceivedQty),0) AS BalanceQty,
+COALESCE(SUM(S.ReceivedQtyAmt),0) AS ReceivedQtyAmt,
+COALESCE(SUM(S.ReceivedQty),0) AS ReceivedQty,
         C.material_catName AS CategoryName,
         SC.material_subcatName AS SubCategoryName,
         UF.unitName AS unitName,
         'material' AS inventoryType
         FROM `purchaseorder_lineitem` AS PLI 
-        JOIN `material` AS M ON PLI.InputName=M.Material_Name  
+        JOIN `material` AS M
+ON PLI.Item_id = M.Material_Id  
         JOIN `purchase_order` AS P ON PLI.POID=P.ID 
         JOIN units UF ON UF.unitId=M.Mat_Unit
         JOIN material_category C ON M.Category=C.material_catId 
@@ -350,9 +360,11 @@ M.MaterialPrice AS InventoryPrice,
     $result = $connectionObj->query($sql);
     error_log($sql);
     $count = mysqli_num_rows($result);
+    error_log("Total Rows Returned = " . $count);
     $POListItem = [];
     if ($count > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+        error_log(print_r($row, true));
         $item = new PurchaselineItem();
         $item->set_POlineitemId($row["Id"]);
         $item->set_POID($row["POID"]);
@@ -442,6 +454,24 @@ M.MaterialPrice AS InventoryPrice,
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
 
+  }
+  public static function updateQuantity($lineItemObj)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $sql = "UPDATE purchaseorder_lineitem
+            SET Quantity='" . $lineItemObj->get_quantity() . "'
+            WHERE POlineitemId='" . $lineItemObj->get_POlineitemId() . "'";
+
+    error_log($sql);
+
+    if ($connectionObj->query($sql) === TRUE) {
+      return true;
+    } else {
+      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      return false;
+    }
   }
 
 }

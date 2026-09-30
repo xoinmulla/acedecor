@@ -67,9 +67,9 @@ $startIndex = ($currentPage - 1) * $limit;
 // Slice for current page
 $attendanceListPage = array_slice($attendanceList, $startIndex, $limit);
 
-if(!hasActionPermission('employees','attendance')){
-    header("Location: noaccess.php");
-    exit;
+if (!hasActionPermission('employees', 'attendance')) {
+  header("Location: noaccess.php");
+  exit;
 }
 ?>
 <!DOCTYPE html>
@@ -553,7 +553,8 @@ if(!hasActionPermission('employees','attendance')){
                 <option value="">— Select employee —</option>
                 <?php foreach ($employees as $emp): ?>
                   <?php $selected = ($editAtt && $editAtt['emp_id'] == $emp['id']) ? 'selected' : ''; ?>
-                  <option value="<?php echo $emp['id']; ?>" data-hours="<?php echo $emp['working_hours']; ?>"
+                  <option value="<?php echo $emp['id']; ?>" <?php echo $selected; ?>
+                    data-hours="<?php echo $emp['working_hours']; ?>"
                     data-hourly="<?php echo (!empty($emp['hourly_rate']) && $emp['hourly_rate'] > 0) ? 1 : 0; ?>">
                     <?php echo htmlspecialchars($emp['name']); ?>
                   </option>
@@ -571,10 +572,14 @@ if(!hasActionPermission('employees','attendance')){
               <label class="form-label"><i class="fas fa-tag me-1"></i> Status</label>
               <select name="status" id="statusField" class="form-select" required>
                 <?php
-                $statuses = ['Present', '2 Days', '1.5 Day', 'Half-day', 'Weekly Off', 'Absent'];
+                // Add Hourly in the list
+                $statuses = ['Present', 'Hourly', '2 Days', '1.5 Day', 'Half-day', 'Weekly Off', 'Absent'];
+
                 foreach ($statuses as $s) {
-                  $sel = (isset($editAtt['status']) && $editAtt['status'] == $s) ? 'selected' : '';
-                  echo "<option $sel>$s</option>";
+
+                  $selected = ($editAtt && $editAtt['status'] === $s) ? 'selected' : '';
+
+                  echo '<option value="' . $s . '" ' . $selected . '>' . $s . '</option>';
                 }
                 ?>
               </select>
@@ -778,6 +783,10 @@ if(!hasActionPermission('employees','attendance')){
       const outTimeField = document.querySelector('[name="out_time"]');
       const inOutGroups = document.querySelectorAll('.inout-group');
       const DEFAULT_IN_TIME = "11:00";
+      const IS_EDIT =
+        document.querySelector('input[name="action"]').value === "update";
+
+      const ORIGINAL_STATUS = statusField.value;
 
       function addHours(time, hours) {
         const [h, m] = time.split(':').map(Number);
@@ -788,41 +797,89 @@ if(!hasActionPermission('employees','attendance')){
       }
 
       function updateStatusOptions() {
+
         const selectedEmp = empSelect.options[empSelect.selectedIndex];
         if (!selectedEmp) return;
+
         const isHourly = selectedEmp.dataset.hourly === "1";
+
+        // While editing, never remove Hourly
+        if (IS_EDIT) {
+          return;
+        }
+
         [...statusField.options].forEach(opt => {
-          if (opt.value === 'Hourly') opt.remove();
+          if (opt.value === "Hourly") {
+            opt.remove();
+          }
         });
+
         if (isHourly) {
+
           const opt = document.createElement("option");
           opt.value = "Hourly";
           opt.textContent = "Hourly";
+
           statusField.appendChild(opt);
         }
       }
 
       function toggleInOut() {
+
         const status = statusField.value;
+
         const selectedEmp = empSelect.options[empSelect.selectedIndex];
+
         if (!selectedEmp) return;
+
         const workingHours = parseFloat(selectedEmp.dataset.hours || 0);
+
         const isHourly = selectedEmp.dataset.hourly === "1";
-        if (status === 'Present') {
-          inOutGroups.forEach(div => div.style.display = 'block');
-          inTimeField.value = DEFAULT_IN_TIME;
-          outTimeField.value = addHours(DEFAULT_IN_TIME, workingHours);
+
+        if (status === "Present") {
+
+          inOutGroups.forEach(div => div.style.display = "block");
+
+          // Only for NEW record
+          if (!IS_EDIT) {
+
+            inTimeField.value = DEFAULT_IN_TIME;
+
+            outTimeField.value = addHours(DEFAULT_IN_TIME, workingHours);
+
+          }
+
         }
-        else if (status === 'Hourly' && isHourly) {
-          inOutGroups.forEach(div => div.style.display = 'block');
-          inTimeField.value = '';
-          outTimeField.value = '';
+
+        else if (status === "Hourly" && isHourly) {
+
+          inOutGroups.forEach(div => div.style.display = "block");
+
+          // Only clear for NEW record
+          if (!IS_EDIT) {
+
+            inTimeField.value = "";
+
+            outTimeField.value = "";
+
+          }
+
         }
+
         else {
-          inOutGroups.forEach(div => div.style.display = 'none');
-          inTimeField.value = '';
-          outTimeField.value = '';
+
+          inOutGroups.forEach(div => div.style.display = "none");
+
+          if (!IS_EDIT) {
+
+            inTimeField.value = "";
+
+            outTimeField.value = "";
+
+          }
+
         }
+
       }
 
       empSelect.addEventListener('change', () => {

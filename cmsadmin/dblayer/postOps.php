@@ -1,6 +1,6 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/postModel.php");
-require_once($_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/subcategorymodel.php");
+require_once __DIR__ . "/../model/postModel.php";
+require_once __DIR__ . "/../model/subcategorymodel.php";
 require_once("dbconnection.php");
 class DBpost
 {
@@ -46,31 +46,52 @@ class DBpost
     if ($stmt->execute()) {
       $lastInsertedId = $connectionObj->insert_id;
       $stmt->close();
-      $postImage = $post->getImage();
       $createdBy = $post->getPostCreatedBy();
       $modifiedByImg = $post->getModifiedBy();
       $imageAltText = $post->getAltTextImage();
 
-      if (!empty($postImage)) {
-        $stmtImg = $connectionObj->prepare(
-          "INSERT INTO `postimages`(`postImage`,`createdBy`, `modifiedBy`, `imageAlternateText`, `postId`) VALUES (?, ?, ?, ?, ?)"
-        );
-        $stmtImg->bind_param(
-          "ssssi",
-          $postImage,
-          $createdBy,
-          $modifiedByImg,
-          $imageAltText,
-          $lastInsertedId
-        );
-        if ($stmtImg->execute()) {
-          $stmtImg->close();
+      // 🔥 Handle file upload (NO CHANGE TO YOUR FLOW)
+      if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+
+        $fileName = $_FILES['image']['name'];
+        $tempName = $_FILES['image']['tmp_name'];
+
+        // 🔥 Generate unique filename (avoids overwrite)
+        $uniqueName = time() . "_" . basename($fileName);
+
+        $uploadPath = $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/img/Slider/" . $uniqueName;
+
+        // Move file to Slider folder
+        if (move_uploaded_file($tempName, $uploadPath)) {
+
+          $stmtImg = $connectionObj->prepare(
+            "INSERT INTO `postimages`
+      (`postImage`,`createdBy`, `modifiedBy`, `imageAlternateText`, `postId`)
+      VALUES (?, ?, ?, ?, ?)"
+          );
+
+          $stmtImg->bind_param(
+            "ssssi",
+            $uniqueName, // ✅ store filename only
+            $createdBy,
+            $modifiedByImg,
+            $imageAltText,
+            $lastInsertedId
+          );
+
+          if ($stmtImg->execute()) {
+            $stmtImg->close();
+          } else {
+            echo "Error: " . $stmtImg->error;
+            $stmtImg->close();
+          }
+
         } else {
-          echo "Error: " . $stmtImg->error;
-          $stmtImg->close();
+          error_log("Error: Failed to move uploaded file for postId " . $lastInsertedId);
         }
+
       } else {
-        error_log("Error: postImage is empty for postId " . $lastInsertedId);
+        error_log("Error: No image uploaded for postId " . $lastInsertedId);
       }
 
       if ($post->getLinkUnder() == "1") {
@@ -132,7 +153,7 @@ class DBpost
     JOIN  post ON postcatmapping.postId=post.postId
     JOIN postimages AS pI ON post.postId=pI.postId
     WHERE category.CategoryId=" . $CatId;
-    
+
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $postList = [];
@@ -236,7 +257,8 @@ class DBpost
     $sql = "SELECT *  FROM post AS p 
     JOIN postimages AS pI ON p.postId= pI.postId 
     WHERE p.postUrl='" . $postUrl . "'";
-    
+
+    error_log("Executing SQL: " . $sql);
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     $post = new Post();
@@ -330,7 +352,7 @@ class DBpost
     }
     return $mappedCategoriesList;
   }
- 
+
 
 
   public static function getPostOnHome()
@@ -377,7 +399,7 @@ class DBpost
       "', `keywords`='" . $post->getKeywords() .
       "', `modifiedBy`='" . $post->getModifiedBy() .
       "' WHERE `postId`=" . $post->getPostId();
-    
+
     if ($connectionObj->query($sql) === true) {
       if (!empty($post->getImage())) {
         $sql = "UPDATE `postimages` SET `postImage`='" . $post->getImage() .
@@ -390,13 +412,13 @@ class DBpost
 
       error_log($post->getLinkUnder());
       if ($post->getLinkUnder() == "1") {
-        $sql = "DELETE FROM postcatmapping WHERE postId=". $post->getPostId();
+        $sql = "DELETE FROM postcatmapping WHERE postId=" . $post->getPostId();
         if ($connectionObj->query($sql) === true) {
         }
         if (is_array($post->getMappedSubCategory())) {
           $count = count($post->getMappedSubCategory());
           $mapped = $post->getMappedSubCategory();
-         
+
           for ($i = 0; $i < $count; $i++) {
             $sql = "INSERT INTO `postcatmapping`(`postId`, `CatId`) VALUES (" .
               $post->getPostId() .
@@ -404,15 +426,15 @@ class DBpost
             if ($connectionObj->query($sql) === true) {
             }
           }
-        }else {
+        } else {
           $sql = "INSERT INTO `postcatmapping`(`postId`, `CatId`) VALUES (" .
-          $post->getPostId() .
+            $post->getPostId() .
             "," . $post->getMappedSubCategory() . ")";
           if ($connectionObj->query($sql) === true) {
           }
         }
       } else {
-        $sql = "DELETE FROM postsubcatmapping WHERE postId=". $post->getPostId();
+        $sql = "DELETE FROM postsubcatmapping WHERE postId=" . $post->getPostId();
         if ($connectionObj->query($sql) === true) {
         }
         if (is_array($post->getMappedSubCategory())) {
@@ -420,7 +442,7 @@ class DBpost
           $mapped = $post->getMappedSubCategory();
           for ($i = 0; $i < $count; $i++) {
             $sql = "INSERT INTO `postsubcatmapping`(`postId`, `subCatId`) VALUES (" .
-            $post->getPostId() .
+              $post->getPostId() .
               "," . $mapped[$i] . ")";
             if ($connectionObj->query($sql) === true) {
             }
@@ -453,5 +475,41 @@ class DBpost
       if ($connectionObj->query($sql) === true) {
       }
     }
+  }
+
+  public static function getPopularPosts($excludePostId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $excludePostId = (int) $excludePostId;
+
+    $sql = "SELECT p.postId, p.postTitle, p.postUrl,
+                   pI.postImage, pI.imageAlternateText
+            FROM post p
+            LEFT JOIN postimages pI ON p.postId = pI.postId
+            WHERE p.appearOnHome = 1";
+
+    if ($excludePostId > 0) {
+      $sql .= " AND p.postId != $excludePostId";
+    }
+
+    $sql .= " ORDER BY p.postId DESC";
+
+    $result = $connectionObj->query($sql);
+
+    $postList = [];
+
+    while ($row = mysqli_fetch_assoc($result)) {
+      $post = new Post();
+      $post->setPostId($row["postId"]);
+      $post->setPostTitle($row["postTitle"]);
+      $post->setPostUrl($row["postUrl"]);
+      $post->setImage($row["postImage"] ?? '');
+      $post->setAltTextImage($row["imageAlternateText"] ?? '');
+      $postList[] = $post;
+    }
+
+    return $postList;
   }
 }

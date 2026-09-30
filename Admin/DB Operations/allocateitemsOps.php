@@ -4,29 +4,29 @@ require_once "../Model/allocateitemsModel.php";
 require_once "../Model/quoteLineItemModel.php";
 class DBallocate
 {
-  public static function insert($allocateObj)
-  {
-    $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
-    $sql = "INSERT INTO itemallocation (`item_stockId`, `ProjectId`, `itemId`,`InputName`,`AllocatedQty`) 
+    public static function insert($allocateObj)
+    {
+        $db = ConnectDb::getInstance();
+        $connectionObj = $db->getConnection();
+        $sql = "INSERT INTO itemallocation (`item_stockId`, `ProjectId`, `itemId`,`InputName`,`AllocatedQty`) 
                 values ('" . $allocateObj->get_itemstockId() .
-      "','" . $allocateObj->get_ProjectId() .
-      "','" . $allocateObj->get_itemId() .
-      "','" . $allocateObj->getItemName() .
-      "','" . $allocateObj->get_AllocatedQty() . "')";
-    error_log($sql);
-    if ($connectionObj->query($sql) === TRUE) {
-    } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+            "','" . $allocateObj->get_ProjectId() .
+            "','" . $allocateObj->get_itemId() .
+            "','" . $allocateObj->getItemName() .
+            "','" . $allocateObj->get_AllocatedQty() . "')";
+        error_log($sql);
+        if ($connectionObj->query($sql) === TRUE) {
+        } else {
+            echo "Error: " . $sql . "<br>" . $connectionObj->error;
+        }
     }
-  }
 
-  public static function getLineItemByProjectId($projectId)
-  {
-    $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
+    public static function getLineItemByProjectId($projectId)
+    {
+        $db = ConnectDb::getInstance();
+        $connectionObj = $db->getConnection();
 
-    $sql = "SELECT 
+        $sql = "SELECT 
         QLI.lineItemId AS lineItemId,
         QLI.itemId AS Id,
 
@@ -119,43 +119,43 @@ COALESCE(SUM(AI.AllocatedQty),0) as AllocatedQty,
 
     GROUP BY QLI.lineItemId";
 
-    error_log($sql);
+        error_log($sql);
 
-    $result = $connectionObj->query($sql);
-    $itemList = [];
+        $result = $connectionObj->query($sql);
+        $itemList = [];
 
-    if ($result && mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_assoc($result)) {
-        $item = new lineItem();
-        $item->set_lineItemId($row["lineItemId"]);
-        $item->set_itemid($row["Id"]);
-        $item->setImage($row["Image"]);
-        $item->setName($row["Name"]);
-        $item->setItemCode($row["ItemCode"]);
-        $item->setBrand($row["Brand"]);
-        $item->setPOStatus($row["POStatus"]);
-        $item->setInwardStatus($row["InwardStatus"]);
-        $item->setDescription($row["Description"]);
-        $item->set_itemquantity($row["Quantity"]);
-        $item->set_AvailableQty($row["AvailableQty"]);
-        $item->setAllocatedQty($row["AllocatedQty"]);
-        $item->setUnits($row["Units"]);
-        $item->set_itemid($row["ItemId"]);
-        $item->setStockId($row["StockId"]);
-        $item->setAllocatedStatus($row["AllocatedStatus"]);
-        $itemList[] = $item;
-      }
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $item = new lineItem();
+                $item->set_lineItemId($row["lineItemId"]);
+                $item->set_itemid($row["Id"]);
+                $item->setImage($row["Image"]);
+                $item->setName($row["Name"]);
+                $item->setItemCode($row["ItemCode"]);
+                $item->setBrand($row["Brand"]);
+                $item->setPOStatus($row["POStatus"]);
+                $item->setInwardStatus($row["InwardStatus"]);
+                $item->setDescription($row["Description"]);
+                $item->set_itemquantity($row["Quantity"]);
+                $item->set_AvailableQty($row["AvailableQty"]);
+                $item->setAllocatedQty($row["AllocatedQty"]);
+                $item->setUnits($row["Units"]);
+                $item->set_itemid($row["ItemId"]);
+                $item->setStockId($row["StockId"]);
+                $item->setAllocatedStatus($row["AllocatedStatus"]);
+                $itemList[] = $item;
+            }
+        }
+
+        return $itemList;
     }
 
-    return $itemList;
-  }
+    public static function getMaterialLineItemByProjectId($projectId)
+    {
+        $db = ConnectDb::getInstance();
+        $connectionObj = $db->getConnection();
 
-  public static function getMaterialLineItemByProjectId($projectId)
-  {
-    $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
-
-    $sql = "SELECT 
+        $sql = "SELECT 
         QLI.lineItemId AS lineItemId,
         QLI.itemId AS Id,
 
@@ -251,98 +251,97 @@ COALESCE(SUM(AI.AllocatedQty),0) as AllocatedQty,
 
     GROUP BY QLI.lineItemId";
 
-    error_log($sql);
+        error_log($sql);
 
-    $result = $connectionObj->query($sql);
+        $result = $connectionObj->query($sql);
 
-    $MatList = [];
+        $MatList = [];
 
-    if ($result && mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_assoc($result)) {
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
 
-        $item = new lineItem();
-        $item->set_lineItemId($row["lineItemId"]);
-        $item->set_itemid($row["Id"]);
-        $item->setImage($row["Image"]);
-        $item->setName($row["Name"]);
-        $item->setItemCode($row["ItemCode"]);
-        $item->setBrand($row["Brand"]);
-        $item->setPOStatus($row["POStatus"]);
-        $item->setInwardStatus($row["InwardStatus"]);
-        $item->setDescription($row["Description"]);
-        $item->set_itemquantity($row["Quantity"]);
-        $item->set_AvailableQty($row["AvailableQty"]);
-        $item->setUnits($row["Units"]);
-        $item->setAllocatedQty($row["AllocatedQty"]);
-        $item->setAllocatedStatus($row["AllocatedStatus"]);
+                $item = new lineItem();
+                $item->set_lineItemId($row["lineItemId"]);
+                $item->set_itemid($row["Id"]);
+                $item->setImage($row["Image"]);
+                $item->setName($row["Name"]);
+                $item->setItemCode($row["ItemCode"]);
+                $item->setBrand($row["Brand"]);
+                $item->setPOStatus($row["POStatus"]);
+                $item->setInwardStatus($row["InwardStatus"]);
+                $item->setDescription($row["Description"]);
+                $item->set_itemquantity($row["Quantity"]);
+                $item->set_AvailableQty($row["AvailableQty"]);
+                $item->setUnits($row["Units"]);
+                $item->setAllocatedQty($row["AllocatedQty"]);
+                $item->setAllocatedStatus($row["AllocatedStatus"]);
 
-        $MatList[] = $item;
-      }
+                $MatList[] = $item;
+            }
+        }
+
+        return $MatList;
     }
 
-    return $MatList;
-  }
+    public static function getAllocatedItemInfo($ItemId)
+    {
+        $db = ConnectDb::getInstance();
+        $connectionObj = $db->getConnection();
 
-  public static function getAllocatedItemInfo($ItemId)
-  {
-    $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
+        $sql = "SELECT 
+        A.ItemId as ItemId,
+        A.ProjectId as ProjectId,
+        A.AllocatedQty as AllocatedQty,
+        P.customerName as customerName,
+        P.projectCode as ProjectCode,
+        S.item_stockid as StockId,
+        PO.POcode as POcode,
+        COALESCE(I.item_name, A.InputName) as ItemName
+    FROM itemallocation as A
+    JOIN projects P 
+        ON P.projectId = A.ProjectId
+    LEFT JOIN item_stock S 
+        ON S.item_stockid = A.item_stockId
+    LEFT JOIN purchase_order PO 
+        ON S.POID = PO.Id
+    LEFT JOIN item_details as I 
+        ON A.ItemId = I.item_id
+    WHERE A.ItemId = $ItemId";
 
-    $sql = "SELECT 
-                A.ItemId as ItemId,
-                A.ProjectId as ProjectId,
-                A.AllocatedQty as AllocatedQty,
-                P.projectId as ProjectId,
-                P.customerName as customerName,
-                P.projectCode as ProjectCode,
-                S.item_stockid as StockId,
-                PO.POcode as POcode,
-                I.item_name as ItemName
-            FROM itemallocation as A
-            JOIN projects P 
-                ON P.projectId = A.ProjectId
-            LEFT JOIN item_stock S 
-                ON S.item_stockid = A.item_stockId
-            LEFT JOIN purchase_order PO 
-                ON S.POID = PO.Id
-            JOIN item_details as I 
-                ON A.ItemId = I.item_id
-            WHERE A.ItemId = $ItemId";
+        error_log($sql);
 
-    error_log($sql);
+        $result = $connectionObj->query($sql);
+        $AllocationList = [];
 
-    $result = $connectionObj->query($sql);
-    $AllocationList = [];
+        if ($result && mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
 
-    if ($result && mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_assoc($result)) {
+                $Allocation = new Allocation();
+                $Allocation->set_itemId($row['ItemId']);
+                $Allocation->setItemName($row['ItemName']);
+                $Allocation->setCustomerName($row['customerName']);
+                $Allocation->setProjectCode($row['ProjectCode']);
+                $Allocation->set_ProjectId($row['ProjectId']);
+                $Allocation->setPOcode($row['POcode']);
+                $Allocation->set_AllocatedQty($row['AllocatedQty']);
 
-        $Allocation = new Allocation();
-        $Allocation->set_itemId($row['ItemId']);
-        $Allocation->setItemName($row['ItemName']);
-        $Allocation->setCustomerName($row['customerName']);
-        $Allocation->setProjectCode($row['ProjectCode']);
-        $Allocation->set_ProjectId($row['ProjectId']);
-        $Allocation->setPOcode($row['POcode']);
-        $Allocation->set_AllocatedQty($row['AllocatedQty']);
+                array_push($AllocationList, $Allocation);
+            }
+        }
 
-        array_push($AllocationList, $Allocation);
-      }
+        return $AllocationList;
     }
 
-    return $AllocationList;
-  }
-
-  public static function delete($allocateObj)
-  {
-    $db = ConnectDb::getInstance();
-    $connectionObj = $db->getConnection();
-    $sql = "DELETE FROM itemallocation where ItemId=" . $allocateObj->get_itemId() . " and ProjectId=" . $allocateObj->get_ProjectId() . " ";
-    error_log($sql);
-    if ($connectionObj->query($sql) === TRUE) {
-    } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+    public static function delete($allocateObj)
+    {
+        $db = ConnectDb::getInstance();
+        $connectionObj = $db->getConnection();
+        $sql = "DELETE FROM itemallocation where ItemId=" . $allocateObj->get_itemId() . " and ProjectId=" . $allocateObj->get_ProjectId() . " ";
+        error_log($sql);
+        if ($connectionObj->query($sql) === TRUE) {
+        } else {
+            echo "Error: " . $sql . "<br>" . $connectionObj->error;
+        }
     }
-  }
 
 }

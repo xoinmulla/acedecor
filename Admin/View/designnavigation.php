@@ -245,7 +245,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="enquiry.php">
+                <a class="nav-link" href="maindashboard.php">
                     <i class="fas fa-home"></i>
                     <span>Home</span></a>
             </li>

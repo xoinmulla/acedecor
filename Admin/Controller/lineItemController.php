@@ -34,15 +34,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $lineItem->set_discount1(floatval($_POST['tradeDiscount'] ?? 0));     // Trade Discount %
         $lineItem->set_discount1Amt($discount1Amt);                           // Discount amount
         $lineItem->set_GST($gst);                                             // GST %
-        $lineItem->set_GSTAmt($GSTAmount);                                    // GST amount
+        $lineItem->set_GSTAmt($GSTAmount);
+        $lineItem->set_reference($_POST['reference'] ?? '');
+        $lineItem->set_note($_POST['note'] ?? '');                                // GST amount
         $lineItem->set_totalPrice($totalPrice);                               // final price
         $lineItem->set_totalValue($totalValue);                               // SPU based value
         $lineItem->set_value($value);
         $lineItem->set_modifiedby($modifiedby);
+        $lineItem->set_reference($_POST['reference'] ?? '');
+        $lineItem->set_note($_POST['note'] ?? '');
 
         error_log(("Updating Line Item: " . print_r($lineItem, true)));
         DBLineItem::update($lineItem);
-        
+
 
         echo "success";
         exit();
@@ -86,6 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $lineItem->set_totalValue($totalValue);
         $lineItem->set_GST($GST);
         $lineItem->set_GSTAmt($GSTAmount);
+        $lineItem->set_reference($_POST['reference'] ?? '');
+        $lineItem->set_note($_POST['note'] ?? '');
 
         $lineItem->set_createdby(Sanitization::test_input($_POST['createdby']));
         $lineItem->set_modifiedby(Sanitization::test_input($_POST['modifiedby']));
@@ -99,5 +105,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 /* ------------------------- GET REQUEST --------------------------- */ else if ($_SERVER["REQUEST_METHOD"] == "GET") {
     DBLineItem::getLineItemByQuoteId($_GET['id']);
+}
+
+if (isset($_GET['quoteId'])) {
+    $data = DBLineItem::getLineItemByQuoteIdForOrder($_GET['quoteId']);
+    echo json_encode($data);
+    exit();
 }
 ?>

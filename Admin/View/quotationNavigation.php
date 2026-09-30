@@ -227,7 +227,11 @@
 
             <!-- Nav Item - Dashboard -->
 
-
+            <li class="nav-item">
+                <a class="nav-link" href="enquiry.php">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Enquiries</span></a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="customer.php">
                     <i class="fas fa-user-astronaut"></i>
@@ -238,7 +242,7 @@
                     <i class='fab fa-quora'></i>
                     <span>Quotation</span></a>
             </li>
-
+            
             <br>
             <hr class="sidebar-divider">
             <li class="nav-item">
@@ -268,7 +272,7 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div class="sidebar-brand-text mx-3 font-weight-600 text-dark">
+                    <div class="sidebar-brand-text mx-3 font-weight-600" style="font-size: 16px;">
                         <i class="fas fa-user-circle text-primary mr-2"></i>
                         <?php echo $_SESSION['login_user']; ?>
                     </div>
@@ -300,6 +304,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

@@ -106,4 +106,53 @@ class DBTax
       echo "Error: " . $sql . "<br>" . $connectionObj->error;
     }
   }
+
+  public static function isTaxExists($CGST, $SGST, $IGST, $taxId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    if ($taxId > 0) {
+
+      $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM tax_table
+            WHERE IFNULL(CGST,0)=?
+            AND IFNULL(SGST,0)=?
+            AND IFNULL(IGST,0)=?
+            AND tax_id != ?
+        ");
+
+      $stmt->bind_param(
+        "dddi",
+        $CGST,
+        $SGST,
+        $IGST,
+        $taxId
+      );
+
+    } else {
+
+      $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM tax_table
+            WHERE IFNULL(CGST,0)=?
+            AND IFNULL(SGST,0)=?
+            AND IFNULL(IGST,0)=?
+        ");
+
+      $stmt->bind_param(
+        "ddd",
+        $CGST,
+        $SGST,
+        $IGST
+      );
+    }
+
+    $stmt->execute();
+
+    $result = $stmt->get_result()->fetch_assoc();
+
+    return ($result['total'] > 0);
+  }
 }

@@ -44,7 +44,12 @@ include('channelpartnerheader.php');
 require_once("../DB Operations/brandOps.php");
 require_once("../Model/brandmodel.php");
 ?>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <style>
+    .card-body #brand_table th{
+        font-weight: 500;
+    }
     .topbar {
         position: relative;
         z-index: 1050;
@@ -64,15 +69,19 @@ require_once("../Model/brandmodel.php");
         margin-top: .3em;
         margin-left: 0;
     }
+    .modal-dialog{
+        max-width: 500px;
+        width: 75%;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Channel Partners</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Brands
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Brands
                     List</h6>
             </div>
             <div class="col" align="right">
@@ -86,7 +95,7 @@ require_once("../Model/brandmodel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="brand_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style='display:none'>Brand Id</th>
                         <th>Brand Name</th>
@@ -164,8 +173,8 @@ require_once("../Model/brandmodel.php");
     <div class="modal-dialog ">
         <form method="post" id="brand_form" enctype="multipart/form-data" action="../Controller/brandcontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Add Data</h4>
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="modal-title text-white" id="modal_title">Add Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -191,7 +200,7 @@ require_once("../Model/brandmodel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        data-toggle="dropdown" aria-expanded="false">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="checkboxes">
@@ -228,7 +237,7 @@ require_once("../Model/brandmodel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -240,8 +249,8 @@ require_once("../Model/brandmodel.php");
         <form method="post" id="editbrand_form" enctype="multipart/form-data"
             action="../Controller/brandcontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Edit Data</h4>
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="modal-title text-white" id="modal_title">Edit Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -267,7 +276,7 @@ require_once("../Model/brandmodel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        data-toggle="dropdown" aria-expanded="false">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="editcheckboxes">
@@ -303,7 +312,7 @@ require_once("../Model/brandmodel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -313,8 +322,8 @@ require_once("../Model/brandmodel.php");
 <div class="modal fade" id=brandInfoModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog ">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal_title">Brand Info</h4>
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h4 class="modal-title text-white" id="modal_title">Brand Info</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -345,7 +354,7 @@ require_once("../Model/brandmodel.php");
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -355,7 +364,7 @@ require_once("../Model/brandmodel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_user_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Brand</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -368,7 +377,7 @@ require_once("../Model/brandmodel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -591,7 +600,10 @@ require_once("../Model/brandmodel.php");
             var rowid = $(e.relatedTarget).data('id');
             $('#brandid').val(rowid);
         });
-        $('#deletebutton').click(function () {
+        $('#deletebutton').click(function (e) {
+
+            e.preventDefault();
+
             $.ajax({
                 url: config.developmentPath + "/Admin/Controller/brandcontroller.php/",
                 method: "POST",
@@ -600,12 +612,98 @@ require_once("../Model/brandmodel.php");
                     action: 'delete'
                 },
                 success: function (data) {
+
+                    $('#deletebrandModal').modal('hide');
+
+                    $('.modal-backdrop').remove();
+                    $('body').removeClass('modal-open');
+
                     $('#message').html(data);
-                    //dataTable.ajax.reload();
+
                     setTimeout(function () {
                         $('#message').html('');
                     }, 5000);
+
+                    // location.reload();
                 }
+            });
+
+        });
+
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if (!$dialog.length) {
+                return;
+            }
+
+            // Remove any previous draggable instance before positioning.
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            // Keep Bootstrap's modal responsive sizing, but position the
+            // dialog at the horizontal center of the viewport.
+            var viewportWidth = $(window).width();
+            var viewportHeight = $(window).height();
+            var dialogWidth = $dialog.outerWidth();
+            var dialogHeight = $dialog.outerHeight();
+
+            var left = Math.max(5, (viewportWidth - dialogWidth) / 2);
+
+            // Keep every modal near the top while remaining fully visible.
+            var top = viewportWidth <= 767 ? 8 : 20;
+            var maxTop = Math.max(5, viewportHeight - dialogHeight - 5);
+            top = Math.min(top, maxTop);
+
+            $dialog.css({
+                margin: 0,
+                position: "fixed",
+                left: left + "px",
+                top: top + "px",
+                transform: "none"
+            });
+
+            // Preserve the existing ability to drag the modal by its header.
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false,
+                start: function () {
+                    $(this).css("transform", "none");
+                },
+                drag: function () {
+                    $(this).css("transform", "none");
+                }
+            });
+
+        });
+
+        // Re-center visible modals if the browser/device width changes.
+        $(window).on('resize', function () {
+
+            $('.modal:visible').each(function () {
+
+                var $dialog = $(this).find('.modal-dialog');
+
+                if (!$dialog.length) {
+                    return;
+                }
+
+                var viewportWidth = $(window).width();
+                var viewportHeight = $(window).height();
+                var dialogWidth = $dialog.outerWidth();
+                var dialogHeight = $dialog.outerHeight();
+
+                var left = Math.max(5, (viewportWidth - dialogWidth) / 2);
+                var currentTop = parseFloat($dialog.css('top')) || 8;
+                var maxTop = Math.max(5, viewportHeight - dialogHeight - 5);
+
+                $dialog.css({
+                    left: left + "px",
+                    top: Math.min(Math.max(5, currentTop), maxTop) + "px"
+                });
             });
         });
     });

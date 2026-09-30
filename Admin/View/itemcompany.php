@@ -43,10 +43,65 @@ if ($user_type != 'Admin') {
 /* INCLUDE HEADER AFTER PERMISSION CHECK */
 include('channelpartnerheader.php');
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['message'])) {
+    ?>
+    <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show" role="alert">
+        <?php echo $_SESSION['message']; ?>
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    </div>
+
+    <?php
+    unset($_SESSION['message']);
+    unset($_SESSION['message_type']);
+}
+
 require_once("../DB Operations/item_compdetailsOps.php");
 require_once("../Model/item_companydetailsmodel.php");
 ?>
 <style>
+
+    /* Modal sizing - existing page/table responsiveness is unchanged */
+    .modal-dialog {
+        max-width: 550px !important;
+        width: 90%;
+        margin: 0 !important;
+    }
+
+    .modal-lg {
+        max-width: 700px !important;
+    }
+
+    .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    /* Position every modal at the top-center of the viewport */
+    .modal-dialog.modal-positioned {
+        position: fixed !important;
+        margin: 0 !important;
+        transform: none !important;
+        z-index: 1051;
+    }
+
+    @media (max-width: 767.98px) {
+        .modal-dialog,
+        .modal-lg {
+            width: calc(100% - 20px) !important;
+            max-width: calc(100% - 20px) !important;
+        }
+
+        .modal-body {
+            max-height: 70vh;
+        }
+    }
+
     .form-switch .form-check-input {
         margin-left: 0 !important;
     }
@@ -85,15 +140,30 @@ require_once("../Model/item_companydetailsmodel.php");
         background-color: lightgrey !important;
         color: #858796 !important;
     }
+    .card-body #itemcompdetails_table th {
+        font-weight: 500;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Channel Partners</h1>
+<?php
+if (isset($_SESSION['message'])) {
+    ?>
+    <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show">
+        <?php echo $_SESSION['message']; ?>
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    <?php
+    unset($_SESSION['message']);
+    unset($_SESSION['message_type']);
+}
+?>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Suppliers
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Suppliers
                     List</h6>
             </div>
             <div class="col" align="right">
@@ -106,7 +176,7 @@ require_once("../Model/item_companydetailsmodel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="itemcompdetails_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>Name</th>
                         <th>GSTIN</th>
@@ -156,7 +226,7 @@ require_once("../Model/item_companydetailsmodel.php");
                                     <div class="accordion-item">
                                         <h2 class="accordion-header">
                                             <button class="accordion-button" type="button" data-toggle="collapse"
-                                                data-bs-target="#collapse-<?= $supplierId ?>">
+                                                data-target="#collapse-<?= $supplierId ?>">
                                                 Bank Details
                                             </button>
                                         </h2>
@@ -226,8 +296,8 @@ require_once("../Model/item_companydetailsmodel.php");
         <form method="post" id="itemcompdetails_form" enctype="multipart/form-data"
             action="../Controller/item_compdetailscontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Add Supplier</h4>
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="modal-title text-white" id="modal_title">Add Supplier</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -410,7 +480,7 @@ require_once("../Model/item_companydetailsmodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -420,8 +490,8 @@ require_once("../Model/item_companydetailsmodel.php");
     <div class="modal-dialog modal-lg">
         <form method="post" id="edititemcompdetails_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Edit Supplier</h4>
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h4 class="modal-title text-white" id="modal_title">Edit Supplier</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
                 <div class="modal-body">
@@ -607,7 +677,7 @@ require_once("../Model/item_companydetailsmodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -617,7 +687,7 @@ require_once("../Model/item_companydetailsmodel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_company_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Company</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -630,7 +700,7 @@ require_once("../Model/item_companydetailsmodel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -639,8 +709,8 @@ require_once("../Model/item_companydetailsmodel.php");
 <div class="modal fade" id=detailsCompanyModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal_title">Supplier Info</h4>
+            <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <h4 class="modal-title text-white" id="modal_title">Supplier Info</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -648,7 +718,8 @@ require_once("../Model/item_companydetailsmodel.php");
                     <div class="card-body">
                         <div class="row">
                             <div class="col-4">
-                                <img src="" alt="..." id="companyLogo" width="200px" height="200px">
+                                <img src="" alt="..." id="companyLogo" width="200px" height="200px"
+                                    style="border-radius: 10%;">
                             </div>
                             <div class="col-8">
                                 <div class="row">
@@ -686,7 +757,7 @@ require_once("../Model/item_companydetailsmodel.php");
 
                                 <div class="row">
                                     <div class="col-4">
-                                        <label for="displaycompaccno">Account Number</label>
+                                        <label for="displaycompaccno">Account No</label>
                                     </div>
                                     <div class="col-8">
                                         <p class="card-title" id="displaycompaccno"></p>
@@ -743,11 +814,11 @@ require_once("../Model/item_companydetailsmodel.php");
                         <div class="row">
                             <table class="table table-bordered" id="contact_table" width="100%" cellspacing="0">
                                 <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Designation</th>
-                                        <th>Phone</th>
-                                        <th>Email</th>
+                                    <tr style="text-align: center; background-color: #343a40;">
+                                        <th class="text-white">Name</th>
+                                        <th class="text-white">Designation</th>
+                                        <th class="text-white">Phone</th>
+                                        <th class="text-white">Email</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -759,7 +830,7 @@ require_once("../Model/item_companydetailsmodel.php");
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -769,7 +840,7 @@ require_once("../Model/item_companydetailsmodel.php");
         <form method="post" id="itemcompdetails_form" enctype="multipart/form-data"
             action="../Controller/item_compdetailscontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Add Contact</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -838,7 +909,7 @@ require_once("../Model/item_companydetailsmodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -1056,6 +1127,59 @@ require_once("../Model/item_companydetailsmodel.php");
                     setTimeout(function () {
                         $('#message').html('');
                     }, 5000);
+                }
+            });
+        });
+
+        /*
+         * Keep every modal horizontally centered and near the top.
+         * Existing AJAX, form, CRUD and other page logic is untouched.
+         */
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            $dialog.addClass('modal-positioned');
+
+            // Calculate the exact horizontal center of the viewport.
+            var dialogWidth = $dialog.outerWidth();
+            var windowWidth = $(window).width();
+            var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+            $dialog.css({
+                position: "fixed",
+                left: left + "px",
+                top: "20px",
+                margin: 0,
+                transform: "none"
+            });
+
+            // Keep the existing drag functionality.
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+        });
+
+        // Keep an open modal centered when the browser/device viewport changes.
+        $(window).on('resize', function () {
+            $('.modal.show').each(function () {
+                var $dialog = $(this).find('.modal-dialog');
+
+                if (!$dialog.hasClass("ui-draggable-dragging")) {
+                    var dialogWidth = $dialog.outerWidth();
+                    var windowWidth = $(window).width();
+                    var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+                    $dialog.css({
+                        left: left + "px",
+                        top: "20px"
+                    });
                 }
             });
         });

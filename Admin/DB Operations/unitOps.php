@@ -122,4 +122,25 @@ class DBunit
     return ($result['total'] > 0);
   }
 
+  public static function isUnitExists($unitName, $unitId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    if ($unitId > 0) {
+      // While updating, ignore the current record
+      $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM units WHERE LOWER(TRIM(unitName)) = LOWER(TRIM(?)) AND unitId != ?");
+      $stmt->bind_param("si", $unitName, $unitId);
+    } else {
+      // While inserting
+      $stmt = $conn->prepare("SELECT COUNT(*) AS total FROM units WHERE LOWER(TRIM(unitName)) = LOWER(TRIM(?))");
+      $stmt->bind_param("s", $unitName);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+
+    return ($result['total'] > 0);
+  }
+
 }

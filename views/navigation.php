@@ -497,7 +497,7 @@ $socialMediaHandles = DBsocialMediaHandle::read();
 
   <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
     <div class="container">
-      <a class="navbar-brand" href="/acedecor/views/about">
+      <a class="navbar-brand" href="/about/">
         <span style="font-family: 'Montserrat', serif; color: var(--gold); font-size: 28px;">ACE</span>
         <span style="font-family: 'Montserrat', sans-serif; color: var(--white); font-size: 28px;">DECORS</span>
       </a>
@@ -507,7 +507,7 @@ $socialMediaHandles = DBsocialMediaHandle::read();
 
       <div class="collapse navbar-collapse" id="navbarContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link active" href="/acedecor/">Home</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
 
           <?php
           // ---------- CATEGORIES THAT HAVE SUBCATEGORIES ----------

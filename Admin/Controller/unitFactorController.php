@@ -21,7 +21,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $unitFactor->set_CreatedBy(Sanitization::test_input($_POST["createdby"]));
         $unitFactor->set_ModifiedBy(Sanitization::test_input($_POST["modifiedby"]));
         $unitFactor->set_unitId(Sanitization::test_input($_POST["unitId"]));
+        if (
+            DBunitFactor::isUnitFactorExists(
+                $unitFactor->get_unitId(),
+                $unitFactor->get_unitFactor(),
+                $unitFactor->get_unitFactorId()
+            )
+        ) {
 
+            echo json_encode([
+                "status" => "error",
+                "message" => "Unit Factor already exists for this Unit."
+            ]);
+
+            exit;
+        }
         DBunitFactor::update($unitFactor);
 
         // Recalculate affected items
@@ -74,7 +88,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $unitFactor->set_unitFactor(Sanitization::test_input($_POST["unitFactor"]));
     $unitFactor->set_CreatedBy(Sanitization::test_input($_POST["createdby"]));
     $unitFactor->set_ModifiedBy(Sanitization::test_input($_POST["modifiedby"]));
+    if (
+        DBunitFactor::isUnitFactorExists(
+            $unitFactor->get_unitId(),
+            $unitFactor->get_unitFactor()
+        )
+    ) {
 
+        echo json_encode([
+            "status" => "error",
+            "message" => "Unit Factor already exists for this Unit."
+        ]);
+
+        exit;
+    }
     DBunitFactor::insert($unitFactor);
 
     echo json_encode([

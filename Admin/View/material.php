@@ -7,7 +7,7 @@ require_once("../DB Operations/item_categoryOps.php");
 require_once("../DB Operations/item_subcategoryOps.php");
 require_once("../Model/materialModel.php");
 
-if(!hasActionPermission('inventory','material')){
+if (!hasActionPermission('inventory', 'material')) {
     header("Location: noaccess.php");
     exit;
 }
@@ -16,6 +16,600 @@ if(!hasActionPermission('inventory','material')){
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <style>
+    .card-body #item_table th {
+        font-weight: 500;
+    }
+
+    /* Edit Material Modal Styles */
+    #edititemdetailsModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    /* Cards */
+    #edititemdetailsModal .card {
+        border: none;
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    #edititemdetailsModal .card:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    #edititemdetailsModal .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        font-weight: 600;
+    }
+
+    /* Form Controls */
+    #edititemdetailsModal .form-control,
+    #edititemdetailsModal .form-select {
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    #edititemdetailsModal .form-control:focus,
+    #edititemdetailsModal .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    #edititemdetailsModal .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+        color: #495057;
+    }
+
+    /* Input Group */
+    #edititemdetailsModal .input-group-text {
+        background: #f1f3f5;
+        border: 1px solid #ced4da;
+        border-radius: 8px 0 0 8px;
+        font-weight: 500;
+    }
+
+    #edititemdetailsModal .input-group .form-control {
+        border-radius: 0 8px 8px 0;
+    }
+
+    /* Buttons */
+    #edititemdetailsModal .btn-outline-primary {
+        border-radius: 8px;
+        padding: 0.375rem 0.75rem;
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    #edititemdetailsModal .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    #edititemdetailsModal .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #edititemdetailsModal .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+    }
+
+    #edititemdetailsModal .btn-success:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    #edititemdetailsModal .btn-secondary {
+        border-radius: 8px;
+        padding: 8px 25px;
+    }
+
+    /* Image Preview */
+    #editedPreviewImage {
+        transition: transform 0.3s ease;
+        background: white;
+    }
+
+    #editedPreviewImage:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Scrollbar */
+    #edititemdetailsModal .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #edititemdetailsModal .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #edititemdetailsModal .modal-body::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+    }
+
+    /* Draggable Handle */
+    #edititemdetailsModal .modal-header {
+        cursor: grab;
+        padding: 15px 20px;
+    }
+
+    #edititemdetailsModal .modal-header:active {
+        cursor: grabbing;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #edititemdetailsModal .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* Alert Messages */
+    #edititemdetailsModal .alert {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        animation: slideDown 0.3s ease;
+    }
+
+    #edititemdetailsModal .alert-success {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        color: #155724;
+        font-weight: 500;
+    }
+
+    #edititemdetailsModal .alert-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        font-weight: 500;
+    }
+
+    /* Glowing animation for save button */
+    @keyframes glow {
+        0% {
+            box-shadow: 0 0 5px rgba(56, 239, 125, 0.2);
+        }
+
+        50% {
+            box-shadow: 0 0 20px rgba(56, 239, 125, 0.6);
+        }
+
+        100% {
+            box-shadow: 0 0 5px rgba(56, 239, 125, 0.2);
+        }
+    }
+
+    #edititemdetailsModal .btn-success:focus {
+        animation: glow 1.5s ease-in-out infinite;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Brand Modal Styles */
+    #brandModal .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+    }
+
+    /* Header */
+    #brandModal .modal-header {
+        border-bottom: none;
+        padding: 18px 25px;
+    }
+
+    #brandModal .modal-header .close {
+        opacity: 0.8;
+        text-shadow: none;
+        font-size: 28px;
+        transition: transform 0.3s ease;
+    }
+
+    #brandModal .modal-header .close:hover {
+        opacity: 1;
+        transform: rotate(90deg);
+    }
+
+    /* Form Controls */
+    #brandModal .form-control {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+
+    #brandModal .form-control:focus {
+        border-color: #4facfe;
+        box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.25);
+    }
+
+    #brandModal .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        color: #2d3436;
+        font-weight: 600;
+    }
+
+    /* Input Group */
+    #brandModal .input-group-text {
+        background: #f1f3f5;
+        border: 2px solid #e9ecef;
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        color: #4facfe;
+    }
+
+    #brandModal .input-group .form-control {
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+    }
+
+    #brandModal .input-group .form-control:focus {
+        border-left: none;
+    }
+
+    /* Dropdown */
+    #brandModal .dropdown-toggle {
+        transition: all 0.3s ease;
+    }
+
+    #brandModal .dropdown-toggle:hover {
+        border-color: #4facfe;
+    }
+
+    #brandModal .dropdown-menu {
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    #brandModal .dropdown-menu .form-check {
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+        margin: 2px 0;
+    }
+
+    #brandModal .dropdown-menu .form-check:hover {
+        background: #f8f9fa;
+    }
+
+    #brandModal .dropdown-menu .form-check-input {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        margin-top: 0.2rem;
+    }
+
+    #brandModal .dropdown-menu .form-check-input:checked {
+        background-color: #4facfe;
+        border-color: #4facfe;
+    }
+
+    #brandModal .dropdown-menu .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        color: #2d3436;
+        padding-left: 5px;
+    }
+
+    /* Type Tags */
+    .type-tag {
+        animation: fadeIn 0.3s ease;
+    }
+
+    .type-tag .remove-type-tag:hover {
+        opacity: 1 !important;
+        transform: scale(1.2);
+    }
+
+    /* Dropdown button when types are selected */
+    #inputTypeDropdown.btn-primary {
+        color: white !important;
+    }
+
+    #inputTypeDropdown.btn-primary .badge {
+        background: white !important;
+        color: #4facfe !important;
+    }
+
+    /* Buttons */
+    #brandModal .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 30px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    #brandModal .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(56, 239, 125, 0.4);
+    }
+
+    #brandModal .btn-success:active {
+        transform: translateY(0px);
+    }
+
+    #brandModal .btn-success:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    #brandModal .btn-secondary {
+        border-radius: 8px;
+        padding: 10px 25px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    #brandModal .btn-secondary:hover {
+        background: #f8f9fa;
+        border-color: #dee2e6;
+    }
+
+    /* Badge */
+    #brandModal .badge {
+        font-size: 0.75rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    #brandModal .badge-primary {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    /* Scrollbar for dropdown */
+    #brand_inputtypes::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #brand_inputtypes::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    #brand_inputtypes::-webkit-scrollbar-thumb {
+        background: #4facfe;
+        border-radius: 10px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Alert Messages */
+    #brandModal .alert {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        animation: slideDown 0.3s ease;
+    }
+
+    #brandModal .alert-success {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        color: #155724;
+        font-weight: 500;
+    }
+
+    #brandModal .alert-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        font-weight: 500;
+    }
+
+    /* =========================================================
+   MATERIAL PAGE MODAL SIZING
+   ========================================================= */
+
+    .modal-dialog {
+        max-width: 1200px;
+        width: 65%;
+    }
+
+    /* Delete modal keeps its compact size */
+    #deleteMaterialModal .modal-dialog {
+        max-width: 420px !important;
+        width: 100%;
+    }
+
+
+    /* =========================================================
+   TABLET
+   ========================================================= */
+
+    @media (max-width: 991.98px) {
+
+        #itemdetailsModal .modal-dialog,
+        #edititemdetailsModal .modal-dialog,
+        #detailsItemModal .modal-dialog {
+
+            width: calc(100% - 24px);
+            max-width: none;
+
+        }
+
+    }
+
+
+    /* =========================================================
+   MOBILE
+   ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        #itemdetailsModal .modal-dialog,
+        #edititemdetailsModal .modal-dialog,
+        #detailsItemModal .modal-dialog {
+
+            width: calc(100% - 16px);
+            max-width: none;
+
+        }
+
+        #deleteMaterialModal .modal-dialog,
+        #itemcatModal .modal-dialog,
+        #itemsubcatModal .modal-dialog,
+        #brandModal .modal-dialog {
+
+            width: calc(100% - 20px);
+            max-width: none !important;
+
+        }
+
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+        #brandModal .modal-dialog {
+            margin: 10px;
+        }
+
+        #brandModal .modal-body {
+            padding: 15px !important;
+        }
+
+        #brandModal .btn-success,
+        #brandModal .btn-secondary {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+    }
+
+    /* Material Brand Tags */
+    .material-brand-tag {
+        animation: fadeIn 0.3s ease;
+    }
+
+    .material-brand-tag .remove-material-brand-tag:hover {
+        opacity: 1 !important;
+        transform: scale(1.2);
+    }
+
+    /* Material Checkbox Styles */
+    #materialCheckboxes .form-check {
+        padding: 8px 12px;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+        margin: 2px 0;
+    }
+
+    #materialCheckboxes .form-check:hover {
+        background: #f8f9fa;
+    }
+
+    #materialCheckboxes .form-check-input {
+        cursor: pointer;
+        width: 18px;
+        height: 18px;
+        margin-top: 0.2rem;
+    }
+
+    #materialCheckboxes .form-check-input:checked {
+        background-color: #667eea;
+        border-color: #667eea;
+    }
+
+    #materialCheckboxes .form-check-label {
+        cursor: pointer;
+        font-weight: 500;
+        color: #2d3436;
+        padding-left: 5px;
+    }
+
+    /* Dropdown button when brands are selected */
+    #materialBrandDropdown.btn-primary {
+        color: white !important;
+    }
+
+    #materialBrandDropdown.btn-primary .badge {
+        background: white !important;
+        color: #667eea !important;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 576px) {
+        .row.g-2 {
+            flex-direction: column;
+        }
+
+        .col-md-9,
+        .col-md-3 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        .col-md-3 .btn {
+            margin-top: 5px;
+        }
+    }
+
     /* Modal Polish */
     .modal-content-modern {
         border-radius: 16px;
@@ -114,12 +708,343 @@ if(!hasActionPermission('inventory','material')){
         border: none;
     }
 </style>
+<!-- Enhanced CSS -->
+<style>
+    /* =========================================================
+   DRAGGABLE MODAL HEADER
+   ========================================================= */
+
+#itemdetailsModal .modal-header,
+#edititemdetailsModal .modal-header,
+#detailsItemModal .modal-header,
+#deleteMaterialModal .modal-header,
+#itemcatModal .modal-header,
+#itemsubcatModal .modal-header,
+#brandModal .modal-header {
+
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+
+}
+
+
+#itemdetailsModal .modal-header:active,
+#edititemdetailsModal .modal-header:active,
+#detailsItemModal .modal-header:active,
+#deleteMaterialModal .modal-header:active,
+#itemcatModal .modal-header:active,
+#itemsubcatModal .modal-header:active,
+#brandModal .modal-header:active {
+
+    cursor: grabbing;
+
+}
+    /* =========================================================
+   MATERIAL LIST TABLE RESPONSIVENESS
+   ========================================================= */
+
+    #item_table_wrapper {
+
+        width: 100% !important;
+        max-width: 100% !important;
+
+    }
+
+
+    /* Keep horizontal scrolling inside the table area */
+    #item_table_wrapper .dataTables_scroll,
+    #item_table_wrapper .dataTables_scrollBody {
+
+        max-width: 100%;
+        overflow-x: auto !important;
+
+    }
+
+
+    /* Prevent the whole page from becoming horizontally scrollable */
+    #item_table_wrapper {
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+    }
+
+
+    /* Table minimum width */
+    #item_table {
+
+        width: 100% !important;
+        min-width: 850px;
+
+    }
+
+
+    /* Don't allow table text to destroy column sizing */
+    #item_table th,
+    #item_table td {
+
+        white-space: nowrap;
+
+    }
+
+
+    /* Mobile */
+    @media (max-width: 767.98px) {
+
+        #item_table {
+
+            min-width: 850px;
+
+        }
+
+    }
+
+    /* Card Styles */
+    .card {
+        border: none;
+        border-radius: 10px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+        font-weight: 600;
+    }
+
+    /* Form Controls */
+    .form-control,
+    .form-select {
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+        color: #495057;
+    }
+
+    /* Input Group */
+    .input-group-text {
+        background: #f1f3f5;
+        border: 1px solid #ced4da;
+        border-radius: 8px 0 0 8px;
+        font-weight: 500;
+    }
+
+    .input-group .form-control {
+        border-radius: 0 8px 8px 0;
+    }
+
+    /* Buttons */
+    .btn-outline-primary {
+        border-radius: 8px;
+        padding: 0.375rem 0.75rem;
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 8px 25px;
+        font-weight: 600;
+        transition: transform 0.2s ease;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 8px;
+        padding: 8px 25px;
+    }
+
+    /* Modal Body Scrollbar */
+    .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        background: #667eea;
+        border-radius: 10px;
+    }
+
+    /* Draggable Handle */
+    .modal-header {
+        cursor: grab;
+        padding: 15px 20px;
+    }
+
+    .modal-header:active {
+        cursor: grabbing;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .col-md-6 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    /* Alert Messages */
+    .alert-success {
+        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        border: none;
+        border-radius: 8px;
+        color: #155724;
+        font-weight: 500;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+    }
+
+    /* =========================================================
+   RESPONSIVE MODAL CONTENT
+   ========================================================= */
+
+    #itemdetailsModal .modal-content,
+    #edititemdetailsModal .modal-content,
+    #detailsItemModal .modal-content,
+    #deleteMaterialModal .modal-content,
+    #itemcatModal .modal-content,
+    #itemsubcatModal .modal-content,
+    #brandModal .modal-content {
+
+        max-height: calc(100vh - 24px);
+
+    }
+
+
+    /* Large Add/Edit modals */
+    #itemdetailsModal .modal-body,
+    #edititemdetailsModal .modal-body,
+    #detailsItemModal .modal-body {
+
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        max-height: calc(100vh - 150px);
+
+    }
+
+
+    /* Small modals */
+    #deleteMaterialModal .modal-body,
+    #itemcatModal .modal-body,
+    #itemsubcatModal .modal-body,
+    #brandModal .modal-body {
+
+        overflow-y: auto;
+        max-height: calc(100vh - 150px);
+
+    }
+
+
+    /* =========================================================
+   RESPONSIVE FORM GRID
+   ========================================================= */
+
+    @media (max-width: 767.98px) {
+
+        #itemdetailsModal .modal-body,
+        #edititemdetailsModal .modal-body,
+        #detailsItemModal .modal-body {
+
+            padding: 15px !important;
+
+        }
+
+        #itemdetailsModal .row.g-3>[class*="col-"],
+        #edititemdetailsModal .row.g-3>[class*="col-"] {
+
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+
+        }
+
+        #itemdetailsModal .row.g-2>[class*="col-"],
+        #edititemdetailsModal .row.g-2>[class*="col-"] {
+
+            margin-bottom: 10px;
+
+        }
+
+        #itemdetailsModal .modal-footer,
+        #edititemdetailsModal .modal-footer {
+
+            flex-wrap: wrap;
+            gap: 8px;
+
+        }
+
+    }
+
+
+    /* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+    @media (max-width: 400px) {
+
+        #itemdetailsModal .modal-body,
+        #edititemdetailsModal .modal-body,
+        #detailsItemModal .modal-body {
+
+            padding: 12px !important;
+
+        }
+
+        #itemdetailsModal .modal-header,
+        #edititemdetailsModal .modal-header,
+        #detailsItemModal .modal-header {
+
+            padding: 12px 15px !important;
+
+        }
+
+    }
+</style>
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Material
                     List</h6>
             </div>
             <div class="col" align="right">
@@ -133,7 +1058,7 @@ if(!hasActionPermission('inventory','material')){
     <div class="card-body">
         <div class="container-fluid">
             <table class="table table-bordered" id="item_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style="display:none">Material Id</th>
                         <th>Material Name</th>
@@ -308,510 +1233,583 @@ if(!hasActionPermission('inventory','material')){
 <?php include('footer.php'); ?>
 
 <div class="modal fade" id="itemdetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <form method="post" id="itemdetails_form" enctype="multipart/form-data">
             <input type="hidden" name="from_modal" value="1">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Add Material Info</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- Modern Header with Gradient -->
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                    <h4 class="modal-title text-white">
+                        <i class="fas fa-cubes me-2"></i>Add Material
+                    </h4>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
-                <div class="modal-body">
-
-
-                    <!-- Material Name -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Material Name <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialname" id="materialname" class="form-control" required
-                                    data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
-                                    data-parsley-trigger="keyup" />
-                                <input type="hidden" id="itemcatid" name="itemcatid" value="">
-                                <input type="hidden" id="itemsubcatid" name="itemsubcatid" value="">
-                                <input type="hidden" id="itemcompid" name="itemcompid" value="">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Description<span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <textarea name="materialdescription" id="materialdescription" class="form-control"
-                                    required></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Brand (Company) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
-                            <div class="col-md-5">
-                                <select id="company" class="form-select" required name="company">
-                                </select>
-                            </div>
-                            <!-- <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
-                                    <i class="fas fa-plus-circle"></i> Brand
-                                </a>
-                            </div> -->
-                        </div>
-                    </div>
-                    <!-- Category / Add Category Button-->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right"> Category<span class="text-danger">*</span></label>
-                            <div class="col-md-5">
-                                <select id="materialCategory" class="form-select" required
-                                    name="materialCategory"></select>
-                            </div>
-                            <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle="modal" data-target="#itemcatModal"><i
-                                        class="fas fa-plus-circle"></i> Category</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Subcategory / Add Subcategory -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right"> Subcategory<span class="text-danger">*</span></label>
-                            <div class="col-md-5">
-                                <select id="materialsubCategory" class="form-select" required
-                                    name="materialsubCategory"></select>
-                            </div>
-                            <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle="modal" data-target="#itemsubcatModal"><i
-                                        class="fas fa-plus-circle"></i> SubCategory</a>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Material Code -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Material Code <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialCode" id="materialCode" class="form-control" required
-                                    data-parsley-minlength="6" data-parsley-maxlength="16"
-                                    data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- HSN -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">HSNcode <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialhsncode" id="materialhsncode" class="form-control"
-                                    data-parsley-maxlength="150" data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Quantity / Unit / Factor -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Quantity <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialQty" id="materialQty" class="form-control" required
-                                    data-parsley-trigger="change" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right ">Unit <span class="text-danger">*</span></label>
-                            <div class="col-md-4">
-                                <select id="materialunit" class="form-select" required name="materialunit"></select>
-                            </div>
-
-                            <label class="col-md-2 text-right">Factor <span class="text-danger">*</span></label>
-                            <div class="col-md-2">
-                                <select id="materialunitFactor" class="form-select" required
-                                    name="materialunitFactor"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Extra MATERIAL fields: Thickness & Grains -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Thickness <span class="text-danger">*</span></label>
-                            <div class="col-md-4">
-                                <select id="thickness" class="form-select" required name="thickness"></select>
-                            </div>
-
-                            <label class="col-md-2 text-right">Grains <span class="text-danger">*</span></label>
-                            <div class="col-md-2">
-                                <select id="materialGrains" class="form-select" required name="materialGrains"></select>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- SPU / MRP / GST / Discount -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right" title="Standard Packing Unit">SPU<span
-                                    class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialSPU" id="materialSPU" class="form-control" required
-                                    data-parsley-minlength="1" data-parsley-maxlength="16"
-                                    data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">MRP <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialMRP" id="materialMRP" class="form-control" required
-                                    data-parsley-minlength="1" data-parsley-maxlength="16"
-                                    data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right" title="Goods and Service Tax">GST <span
-                                    class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialGST" id="materialGST" class="form-control" required />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Company Discount -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Company Discount (%)</label>
-                            <div class="col-md-8">
-                                <input type="number" step="0.01" name="materialDiscount" id="materialDiscount"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Amount (MRP × Factor) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Amount <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialAmount" id="materialAmount" class="form-control"
-                                    required readonly />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Price (readonly) and Total Value (readonly) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Price <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialPrice" id="materialPrice" class="form-control" required
-                                    readonly />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Total Value <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialTotalValue" id="materialTotalValue"
-                                    class="form-control" required readonly />
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    <!-- Upload Image -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Upload Item Image <span
-                                    class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="file" name="materialimage" id="materialimage" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
+                <div class="modal-body" style="background: #f8f9fa; padding: 25px;">
                     <span id="form_message"></span>
-                    <!-- Hidden created/modified -->
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <input type="hidden" name="materialcreatedby" id="materialcreatedby"
-                                    class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
-                                <input type="hidden" name="materialmodifiedby" id="materialmodifiedby"
-                                    class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
+
+                    <!-- Two Column Grid Layout -->
+                    <div class="row g-3">
+                        <!-- LEFT COLUMN -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" style="background: #f1f3f5; border-bottom: 2px solid #667eea;">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Material Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Material Name -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Material Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="materialname" id="materialname" class="form-control"
+                                            required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
+                                            data-parsley-trigger="keyup" placeholder="Enter material name" />
+                                        <input type="hidden" id="itemcatid" name="itemcatid" value="">
+                                        <input type="hidden" id="itemsubcatid" name="itemsubcatid" value="">
+                                        <input type="hidden" id="itemcompid" name="itemcompid" value="">
+                                    </div>
+
+                                    <!-- Brand -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Brand <span
+                                                class="text-danger">*</span></label>
+                                        <select id="company" class="form-select" required name="company">
+                                            <option hidden disabled selected value>-- select brand --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Category & Subcategory Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-7">
+                                            <label class="form-label fw-bold">Category <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="d-flex">
+                                                <select id="materialCategory" class="form-select me-2" required
+                                                    name="materialCategory" style="flex:1;">
+                                                    <option hidden disabled selected value>-- select category --
+                                                    </option>
+                                                </select>
+                                                <a class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                                    data-target="#itemcatModal">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold">Subcategory <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="d-flex">
+                                                <select id="materialsubCategory" class="form-select me-2" required
+                                                    name="materialsubCategory" style="flex:1;">
+                                                    <option hidden disabled selected value>-- select subcategory --
+                                                    </option>
+                                                </select>
+                                                <a class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                                    data-target="#itemsubcatModal">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Description <span
+                                                class="text-danger">*</span></label>
+                                        <textarea name="materialdescription" id="materialdescription"
+                                            class="form-control" required rows="2"
+                                            placeholder="Enter material description"></textarea>
+                                    </div>
+
+                                    <!-- Codes Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Material Code <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="materialCode" id="materialCode"
+                                                class="form-control" required data-parsley-minlength="6"
+                                                data-parsley-maxlength="16" data-parsley-trigger="keyup"
+                                                placeholder="Enter code" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">HSN Code <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="materialhsncode" id="materialhsncode"
+                                                class="form-control" data-parsley-maxlength="150"
+                                                data-parsley-trigger="keyup" placeholder="Enter HSN code" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity & Unit Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Quantity <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="materialQty" id="materialQty" class="form-control"
+                                                required data-parsley-trigger="change" placeholder="Enter qty" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Unit <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="materialunit" class="form-select" required name="materialunit">
+                                                <option hidden disabled selected value>-- select unit --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Factor <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="materialunitFactor" class="form-select" required
+                                                name="materialunitFactor">
+                                                <option hidden disabled selected value>-- select factor --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Thickness & Grains Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Thickness <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="thickness" class="form-select" required name="thickness">
+                                                <option hidden disabled selected value>-- select thickness --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Grains <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="materialGrains" class="form-select" required
+                                                name="materialGrains">
+                                                <option hidden disabled selected value>-- select grains --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- SPU -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">
+                                            <span title="Standard Packing Unit">SPU</span>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="materialSPU" id="materialSPU" class="form-control"
+                                            required data-parsley-minlength="1" data-parsley-maxlength="16"
+                                            data-parsley-trigger="keyup" placeholder="Enter SPU" />
+                                    </div>
+
+                                    <!-- Image Upload -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Material Image <span
+                                                class="text-danger">*</span></label>
+                                        <input type="file" name="materialimage" id="materialimage" class="form-control"
+                                            accept="image/*" style="padding: 8px;" />
+                                        <small class="text-muted">Upload material image (JPG, PNG, GIF)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN - Financial & Pricing -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" style="background: #f1f3f5; border-bottom: 2px solid #764ba2;">
+                                    <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Pricing & Financials</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- MRP & GST Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">MRP <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="text" name="materialMRP" id="materialMRP"
+                                                    class="form-control" required data-parsley-minlength="1"
+                                                    data-parsley-maxlength="16" data-parsley-trigger="keyup"
+                                                    placeholder="0.00" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">
+                                                <span title="Goods and Service Tax">GST</span>
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" name="materialGST" id="materialGST"
+                                                    class="form-control" required placeholder="0" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Discount -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Company Discount (%)</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" name="materialDiscount"
+                                                id="materialDiscount" class="form-control" placeholder="0.00" />
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Calculated Values -->
+                                    <div class="bg-light p-3 rounded-3 mb-3" style="background: #f8f9fa !important;">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold">Amount <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input type="text" name="materialAmount" id="materialAmount"
+                                                        class="form-control" required readonly
+                                                        style="background: #e9ecef; font-weight: bold;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold">Price <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input type="text" name="materialPrice" id="materialPrice"
+                                                        class="form-control" required readonly
+                                                        style="background: #e9ecef; font-weight: bold;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="form-label fw-bold">Total Value <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="text" name="materialTotalValue" id="materialTotalValue"
+                                                    class="form-control" required readonly
+                                                    style="background: #e9ecef; font-weight: bold; color: #764ba2;" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hidden Fields -->
+                                    <input type="hidden" name="materialcreatedby" id="materialcreatedby"
+                                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
+                                    <input type="hidden" name="materialmodifiedby" id="materialmodifiedby"
+                                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="modal-footer">
-                        <input type="hidden" name="hidden_id" id="hidden_id" />
-                        <input type="hidden" name="action" id="action" value="Add" />
-                        <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                    <!-- Progress Indicator -->
+                    <div id="item_form_message" class="mt-3"></div>
+                </div>
 
+                <!-- Modal Footer -->
+                <div class="modal-footer"
+                    style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 8px 8px;">
+                    <input type="hidden" name="hidden_id" id="hidden_id" />
+                    <input type="hidden" name="action" id="action" value="Add" />
+                    <button type="button" class="btn btn-danger text-white" data-dismiss="modal">
+                        </i>Close
+                    </button>
+                    <button type="submit" name="submit" id="submit_button" class="btn btn-success">
+                        </i>Add Material
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 <div class="modal fade" id="edititemdetailsModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <form method="post" id="editeditemdetails_form" enctype="multipart/form-data"
             action="../Controller/materialController.php">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit Material Info</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- Modern Header with Gradient -->
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                    <h4 class="modal-title text-white">
+                        <i class="fas fa-edit me-2"></i>Edit Material Information
+                    </h4>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
-                <div class="modal-body">
-
-
-                    <!-- Use same fields but with edited* names -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Material Name <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialname" id="editedmaterialname"
-                                    class="form-control" required />
-                                <input type="hidden" name="materialid" id="materialid" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- other edited fields -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Description</label>
-                            <div class="col-md-8">
-                                <textarea name="editedmaterialdescription" id="editedmaterialdescription"
-                                    class="form-control"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Category / Subcategory -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Category</label>
-                            <div class="col-md-5">
-                                <select id="editedmaterialCategory" class="form-select"
-                                    name="editedmaterialCategory"></select>
-                            </div>
-                            <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle="modal" data-target="#itemcatModal"><i
-                                        class="fas fa-plus-circle"></i> Category</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Subcategory</label>
-                            <div class="col-md-5">
-                                <select id="editedsubCategory" class="form-select" name="editedsubCategory"></select>
-                            </div>
-                            <div class="col-md-3">
-                                <a class="btn btn-primary" data-toggle="modal" data-target="#itemsubcatModal"><i
-                                        class="fas fa-plus-circle"></i> SubCategory</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Brand -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Brand</label>
-                            <div class="col-md-8">
-                                <select id="editedmaterialbrand" class="form-select"
-                                    name="editedmaterialbrand"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Material Code / HSN -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Material Code</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialCode" id="editedmaterialCode"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">HSN Code</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialhsncode" id="editedmaterialhsncode"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Qty / Unit / Factor -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Quantity</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialQty" id="editedmaterialQty"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Unit</label>
-                            <div class="col-md-4">
-                                <select id="editedunit" class="form-select" name="editedunit"></select>
-                            </div>
-                            <label class="col-md-2 text-right">Factor</label>
-                            <div class="col-md-2">
-                                <select id="editedunitFactor" class="form-select" name="editedunitFactor"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SPU / MRP / GST / Discount -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">SPU</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialSPU" id="editedmaterialSPU"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">MRP</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialMRP" id="editedmaterialMRP"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">GST</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialGST" id="editedmaterialGST"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Company Discount (%)</label>
-                            <div class="col-md-8">
-                                <input type="number" step="0.01" name="editedmaterialDiscount"
-                                    id="editedmaterialDiscount" class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Amount (MRP × Factor) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Amount <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialAmount" id="editedmaterialAmount"
-                                    class="form-control" required readonly />
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Price & Total for Edited -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Price</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialPrice" id="editedmaterialPrice"
-                                    class="form-control" readonly />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Total Value</label>
-                            <div class="col-md-8">
-                                <input type="text" name="editedmaterialTotalValue" id="editedmaterialTotalValue"
-                                    class="form-control" readonly />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Thickness & Grains (edited) -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Thickness</label>
-                            <div class="col-md-4">
-                                <select id="editedthickness" class="form-select" name="editedthickness"></select>
-                            </div>
-                            <label class="col-md-2 text-right">Grains</label>
-                            <div class="col-md-2">
-                                <select id="editedRotation" class="form-select" name="editedRotation"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Upload / Hidden createdby/modifiedby -->
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Upload Item Image</label>
-                            <div class="col-md-8">
-                                <input type="file" name="editedmaterialimage" id="editedmaterialimage"
-                                    class="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-4 text-right">Preview</div>
-                            <div class="col-md-8">
-                                <img id="editedPreviewImage" src="" class="img-thumbnail mb-2" width="150">
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" name="existing_image" id="existing_image">
-
+                <div class="modal-body" style="background: #f8f9fa; padding: 25px;">
                     <span id="edit_form_message"></span>
 
-                    <div class="modal-footer">
-                        <input type="hidden" name="hidden_id" id="edited_hidden_id" />
-                        <input type="hidden" name="action" id="edit_action" value="Edit" />
-                        <input type="submit" name="edit_submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                    <!-- Two Column Grid Layout -->
+                    <div class="row g-3">
+                        <!-- LEFT COLUMN - Material Details -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" style="background: #f1f3f5; border-bottom: 2px solid #667eea;">
+                                    <h6 class="mb-0"><i class="fas fa-info-circle me-2"></i>Material Details</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Material Name -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Material Name <span
+                                                class="text-danger">*</span></label>
+                                        <input type="text" name="editedmaterialname" id="editedmaterialname"
+                                            class="form-control" required placeholder="Enter material name" />
+                                        <input type="hidden" name="materialid" id="materialid" />
+                                    </div>
 
+                                    <!-- Brand -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Brand <span
+                                                class="text-danger">*</span></label>
+                                        <select id="editedmaterialbrand" class="form-select" name="editedmaterialbrand">
+                                            <option hidden disabled selected value>-- select brand --</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Category & Subcategory Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-7">
+                                            <label class="form-label fw-bold">Category <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="d-flex">
+                                                <select id="editedmaterialCategory" class="form-select me-2"
+                                                    name="editedmaterialCategory" style="flex:1;">
+                                                    <option hidden disabled selected value>-- select category --
+                                                    </option>
+                                                </select>
+                                                <a class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                                    data-target="#itemcatModal">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <label class="form-label fw-bold">Subcategory <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="d-flex">
+                                                <select id="editedsubCategory" class="form-select me-2"
+                                                    name="editedsubCategory" style="flex:1;">
+                                                    <option hidden disabled selected value>-- select subcategory --
+                                                    </option>
+                                                </select>
+                                                <a class="btn btn-sm btn-outline-primary" data-toggle="modal"
+                                                    data-target="#itemsubcatModal">
+                                                    <i class="fas fa-plus"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Description <span
+                                                class="text-danger">*</span></label>
+                                        <textarea name="editedmaterialdescription" id="editedmaterialdescription"
+                                            class="form-control" required rows="2"
+                                            placeholder="Enter material description"></textarea>
+                                    </div>
+
+                                    <!-- Codes Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Material Code <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="editedmaterialCode" id="editedmaterialCode"
+                                                class="form-control" required placeholder="Enter code" />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">HSN Code <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="editedmaterialhsncode" id="editedmaterialhsncode"
+                                                class="form-control" placeholder="Enter HSN code" />
+                                        </div>
+                                    </div>
+
+                                    <!-- Quantity & Unit Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Quantity <span
+                                                    class="text-danger">*</span></label>
+                                            <input type="text" name="editedmaterialQty" id="editedmaterialQty"
+                                                class="form-control" required placeholder="Enter qty" />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Unit <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="editedunit" class="form-select" name="editedunit">
+                                                <option hidden disabled selected value>-- select unit --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="form-label fw-bold">Factor <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="editedunitFactor" class="form-select" name="editedunitFactor">
+                                                <option hidden disabled selected value>-- select factor --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Thickness & Grains Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Thickness <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="editedthickness" class="form-select" name="editedthickness">
+                                                <option hidden disabled selected value>-- select thickness --</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">Grains <span
+                                                    class="text-danger">*</span></label>
+                                            <select id="editedRotation" class="form-select" name="editedRotation">
+                                                <option hidden disabled selected value>-- select grains --</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- SPU -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">
+                                            <span title="Standard Packing Unit">SPU</span>
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" name="editedmaterialSPU" id="editedmaterialSPU"
+                                            class="form-control" required placeholder="Enter SPU" />
+                                    </div>
+
+                                    <!-- Image Upload -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Material Image</label>
+                                        <input type="file" name="editedmaterialimage" id="editedmaterialimage"
+                                            class="form-control" accept="image/*" style="padding: 8px;" />
+                                        <small class="text-muted">Upload new image (JPG, PNG, GIF) - Leave blank to keep
+                                            existing</small>
+                                    </div>
+
+                                    <!-- Image Preview -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Current Image</label>
+                                        <div>
+                                            <img id="editedPreviewImage" src="" alt="Material Image"
+                                                style="max-width: 150px; max-height: 150px; border-radius: 8px; border: 2px solid #e9ecef; padding: 5px;" />
+                                            <small class="d-block text-muted mt-1">Current image preview</small>
+                                        </div>
+                                        <input type="hidden" name="existing_image" id="existing_image">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN - Financial & Pricing -->
+                        <div class="col-md-6">
+                            <div class="card shadow-sm mb-3">
+                                <div class="card-header" style="background: #f1f3f5; border-bottom: 2px solid #764ba2;">
+                                    <h6 class="mb-0"><i class="fas fa-calculator me-2"></i>Pricing & Financials</h6>
+                                </div>
+                                <div class="card-body">
+                                    <!-- MRP & GST Side by Side -->
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">MRP <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="text" name="editedmaterialMRP" id="editedmaterialMRP"
+                                                    class="form-control" required placeholder="0.00" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-bold">
+                                                <span title="Goods and Service Tax">GST</span>
+                                                <span class="text-danger">*</span>
+                                            </label>
+                                            <div class="input-group">
+                                                <input type="text" name="editedmaterialGST" id="editedmaterialGST"
+                                                    class="form-control" required placeholder="0" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Discount -->
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Company Discount (%)</label>
+                                        <div class="input-group">
+                                            <input type="number" step="0.01" name="editedmaterialDiscount"
+                                                id="editedmaterialDiscount" class="form-control" placeholder="0.00" />
+                                            <span class="input-group-text">%</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Calculated Values -->
+                                    <div class="bg-light p-3 rounded-3 mb-3" style="background: #f8f9fa !important;">
+                                        <div class="row g-2">
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold">Amount <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input type="text" name="editedmaterialAmount"
+                                                        id="editedmaterialAmount" class="form-control" required readonly
+                                                        style="background: #e9ecef; font-weight: bold;" />
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label class="form-label fw-bold">Price <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">₹</span>
+                                                    <input type="text" name="editedmaterialPrice"
+                                                        id="editedmaterialPrice" class="form-control" required readonly
+                                                        style="background: #e9ecef; font-weight: bold;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="form-label fw-bold">Total Value <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="input-group">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="text" name="editedmaterialTotalValue"
+                                                    id="editedmaterialTotalValue" class="form-control" required readonly
+                                                    style="background: #e9ecef; font-weight: bold; color: #764ba2;" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Hidden Fields -->
+                                    <input type="hidden" name="materialcreatedby" id="editedmaterialcreatedby"
+                                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
+                                    <input type="hidden" name="materialmodifiedby" id="editedmaterialmodifiedby"
+                                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer"
+                    style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 8px 8px;">
+                    <input type="hidden" name="hidden_id" id="edited_hidden_id" />
+                    <input type="hidden" name="action" id="edit_action" value="Edit" />
+                    <button type="button" class="btn btn-danger text-white" data-dismiss="modal">
+                        </i>Close
+                    </button>
+                    <button type="submit" name="edit_submit" id="editbutton" class="btn btn-success">
+                        </i>Save Changes
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 <div class="modal fade" id="deleteMaterialModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog" id="deleteMaterialModalDialog">
         <form method="POST" id="delete_material_form">
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Delete Material</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -831,156 +1829,187 @@ if(!hasActionPermission('inventory','material')){
                         Confirm
                     </button>
 
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
 
             </div>
         </form>
     </div>
 </div>
-<div class="modal fade" id=itemcatModal tabindex=-1 role=dialog aria-hidden=true>
-    <div class="modal-dialog">
+<div class="modal fade" id="itemcatModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="post" id="addMaterialCategoryForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Add Data</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- Modern Header with Gradient -->
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                    <h4 class="modal-title text-white">
+                        <i class="fas fa-folder-plus me-2"></i>Add Material Category
+                    </h4>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="modal-body">
+
+                <div class="modal-body" style="background: #f8f9fa; padding: 25px;">
                     <span id="form_message"></span>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Brand <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <div class="btn-group dropend">
 
-                                    <button type="button" class="btn btn-secondary">
-                                        Select Brands
-                                    </button>
-                                    <button type="button"
-                                        class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="visually-hidden">Toggle Dropright</span>
-                                    </button>
-                                    <ul class="dropdown-menu" id="checkboxes">
+                    <!-- Category Name -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Category Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-folder"></i></span>
+                            <input type="text" name="materialCatname" id="materialCatname" class="form-control" required
+                                data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
+                                data-parsley-trigger="keyup" placeholder="Enter category name" autofocus />
+                        </div>
+                    </div>
 
+                    <!-- Category Description -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Category Description <span
+                                class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <textarea name="materialCatdescription" id="materialCatdescription" class="form-control"
+                                required rows="2" placeholder="Enter category description"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Brand Selection - Enhanced Dropdown -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Brands <span class="text-danger">*</span></label>
+                        <div class="row g-2">
+                            <div class="col-md-9">
+                                <div class="dropdown w-100">
+                                    <button
+                                        class="btn btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center dropdown-toggle"
+                                        type="button" id="materialBrandDropdown" data-toggle="dropdown"
+                                        aria-expanded="false"
+                                        style="border-radius: 8px; padding: 10px 15px; border: 2px solid #e9ecef; background: white;">
+                                        <span>
+                                            <i class="fas fa-trademark me-2"></i>
+                                            <span id="materialBrandDropdownText">Select Brands</span>
+                                        </span>
+                                        <span class="badge bg-primary rounded-pill"
+                                            id="materialBrandSelectedCount">0</span>
+                                    </button>
+                                    <ul class="dropdown-menu w-100 p-3" id="materialCheckboxes"
+                                        style="max-height: 200px; overflow-y: auto; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                                        <!-- Dynamic checkboxes will be loaded here -->
                                     </ul>
-                                    <div class="col-md-3">
-                                        <a class="btn btn-primary" data-toggle='modal' data-target='#brandModal'>
-                                            <i class="fas fa-plus-circle"></i> Brand
-                                        </a>
-                                    </div>
                                 </div>
-
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Category Name <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialCatname" id="materialCatname" class="form-control"
-                                    required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
-                                    data-parsley-trigger="keyup" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Category Description <span
-                                    class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" name="materialCatdescription" id="materialCatdescription"
-                                    class="form-control" required data-parsley-type="integer"
-                                    data-parsley-minlength="10" data-parsley-maxlength="12"
-                                    data-parsley-trigger="keyup" />
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary w-100" data-toggle='modal'
+                                    data-target='#brandModal'
+                                    style="border-radius: 8px; padding: 10px 15px; white-space: nowrap; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border: none;">
+                                    <i class="fas fa-plus-circle me-1"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <div class="row">
-
-                            <div class="col-md-8">
-                                <input type="hidden" name="materialCatcreatedby" id="materialCatcreatedby"
-                                    class="form-control" required data-parsley-type="integer"
-                                    data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup"
-                                    value="<?php echo $_SESSION['login_user']; ?>" />
-                            </div>
+                    <!-- Selected Brands Display -->
+                    <div id="materialSelectedBrandsDisplay" class="mb-3" style="display: none;">
+                        <label class="form-label fw-bold">Selected Brands:</label>
+                        <div id="materialSelectedBrandsTags" class="d-flex flex-wrap gap-2">
+                            <!-- Tags will appear here -->
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <input type="hidden" name="materialCatmodifiedby" id="materialCatmodifiedby"
-                                    class="form-control" required data-parsley-type="integer"
-                                    data-parsley-minlength="10" data-parsley-maxlength="12" data-parsley-trigger="keyup"
-                                    value="<?php echo $_SESSION['login_user']; ?>" />
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Hidden Fields -->
+                    <input type="hidden" name="materialCatcreatedby" id="materialCatcreatedby" class="form-control"
+                        value="<?php echo $_SESSION['login_user']; ?>" />
+                    <input type="hidden" name="materialCatmodifiedby" id="materialCatmodifiedby" class="form-control"
+                        value="<?php echo $_SESSION['login_user']; ?>" />
+                </div>
 
-                    <div class="modal-footer">
-                        <input type="hidden" name="hidden_id" id="hidden_id" />
-                        <input type="hidden" name="action" id="action" value="Add" />
-                        <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                <!-- Modal Footer -->
+                <div class="modal-footer"
+                    style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 8px 8px;">
+                    <input type="hidden" name="hidden_id" id="hidden_id" />
+                    <input type="hidden" name="action" id="action" value="Add" />
+                    <button type="button" class="btn btn-danger text-white" data-dismiss="modal">
+                        </i>Close
+                    </button>
+                    <button type="submit" name="submit" id="submit_button" class="btn btn-success">
+                        </i>Add Category
+                    </button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<div class="modal fade" id=itemsubcatModal tabindex=-1 role=dialog aria-hidden=true>
-    <div class="modal-dialog">
+<div class="modal fade" id="itemsubcatModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="post" id="addMaterialSubcatForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Material SubCategory</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <!-- Modern Header with Gradient -->
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                    <h4 class="modal-title text-white">
+                        <i class="fas fa-list-ul me-2"></i>Add Material Subcategory
+                    </h4>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="modal-body">
+
+                <div class="modal-body" style="background: #f8f9fa; padding: 25px;">
                     <span id="form_message_add"></span>
 
-                    <div class="form-group row">
-                        <label class="col-md-5 text-right">Material Category Name <span
-                                class="text-danger">*</span></label>
-                        <div class="col-md-7">
-                            <select id="materialcatid" name="materialcatid" class="form-select" required></select>
+                    <!-- Parent Category Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Material Category <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-folder-open"></i></span>
+                            <select id="materialcatid" name="materialcatid" class="form-select" required>
+                                <option hidden disabled selected value>-- Select Material Category --</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-md-5 text-right">Material SubCategory Name <span
-                                class="text-danger">*</span></label>
-                        <div class="col-md-7">
+                    <!-- Subcategory Name -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Subcategory Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
                             <input type="text" name="materialsubcatname" id="materialsubcatname" class="form-control"
                                 required data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
-                                data-parsley-trigger="keyup" />
+                                data-parsley-trigger="keyup" placeholder="Enter subcategory name" autofocus />
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label class="col-md-5 text-right">Material SubCategory Description <span
+                    <!-- Subcategory Description -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Subcategory Description <span
                                 class="text-danger">*</span></label>
-                        <div class="col-md-7">
-                            <input type="text" name="materialsubcatdescription" id="materialsubcatdescription"
-                                class="form-control" required data-parsley-minlength="3" data-parsley-maxlength="255"
-                                data-parsley-trigger="keyup" />
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <textarea name="materialsubcatdescription" id="materialsubcatdescription"
+                                class="form-control" required rows="2"
+                                placeholder="Enter subcategory description"></textarea>
                         </div>
                     </div>
 
+                    <!-- Hidden Fields -->
                     <input type="hidden" name="materialsubcatcreatedby" id="materialsubcatcreatedby"
-                        value="<?php echo $_SESSION['login_user']; ?>" />
+                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
                     <input type="hidden" name="materialsubcatmodifiedby" id="materialsubcatmodifiedby"
-                        value="<?php echo $_SESSION['login_user']; ?>" />
-
+                        class="form-control" value="<?php echo $_SESSION['login_user']; ?>" />
                 </div>
-                <div class="modal-footer">
+
+                <!-- Modal Footer -->
+                <div class="modal-footer"
+                    style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 8px 8px;">
                     <input type="hidden" name="action" value="Add" />
-                    <input type="submit" id="submit_button" class="btn btn-success" value="Add" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger text-white" data-dismiss="modal">
+                        </i>Close
+                    </button>
+                    <button type="submit" id="submit_button" class="btn btn-success">
+                        </i>Add Subcategory
+                    </button>
                 </div>
             </div>
         </form>
@@ -990,9 +2019,10 @@ if(!hasActionPermission('inventory','material')){
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content modal-content-modern shadow-lg">
 
-            <div class="modal-header modal-header-modern align-items-center">
+            <div class="modal-header text-white"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                 <div>
-                    <h5 class="modal-title font-weight-bold text-primary" id="modal_title">
+                    <h5 class="modal-title font-weight-bold" id="modal_title">
                         <i class="fas fa-info-circle mr-2"></i> Material Information
                     </h5>
                 </div>
@@ -1029,17 +2059,21 @@ if(!hasActionPermission('inventory','material')){
 
                         <div class="bg-white p-3 rounded shadow-sm border-0 mt-2">
                             <div class="row">
-                                <div class="col-12 mb-2">
+                                <div class="col-md-14 mb-2">
                                     <small class="text-muted font-weight-bold">Description</small>
                                     <p class="mb-0 text-dark" id="displayItemDescription"></p>
                                 </div>
-                                <div class="col-md-6 border-top pt-2 mt-1">
-                                    <small class="text-muted">Item Code: </small>
+                                <div class="col-md-4 border-top pt-2 mt-1">
+                                    <small class="text-muted">Code: </small>
                                     <span class="font-weight-bold text-dark" id="displayItemArticleNo"></span>
                                 </div>
-                                <div class="col-md-6 border-top pt-2 mt-1">
+                                <div class="col-md-4 border-top pt-2 mt-1">
                                     <small class="text-muted">HSN Code: </small>
                                     <span class="font-weight-bold text-dark" id="displayItemHSNCode"></span>
+                                </div>
+                                <div class="col-md-4 border-top pt-2 mt-1">
+                                    <small class="text-muted">Company Discount: </small>
+                                    <span class="font-weight-bold text-success" id="displayItemDiscount"></span>
                                 </div>
                             </div>
                         </div>
@@ -1114,7 +2148,7 @@ if(!hasActionPermission('inventory','material')){
                     <div class="col-md-2 col-6 mb-3">
                         <div class="info-card">
                             <span class="label-text">Discount</span>
-                            <p class="value-text" id="displayItemDiscount"></p>
+                            <p class="value-text" id="displayCardDiscount"></p>
                         </div>
                     </div>
 
@@ -1160,46 +2194,66 @@ if(!hasActionPermission('inventory','material')){
             </div>
 
             <div class="modal-footer bg-white border-top-0">
-                <button class="btn btn-light text-secondary font-weight-bold" data-dismiss="modal">Close</button>
+                <button class="btn btn-danger text-white font-weight-bold" data-dismiss="modal">Close</button>
             </div>
 
         </div>
     </div>
 </div>
 <div class="modal fade" id="brandModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <form method="post" id="brand_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Brand</h4>
-                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                <!-- Modern Header with Gradient -->
+                <div class="modal-header"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
+                    <h4 class="modal-title text-white">
+                        <i class="fas fa-trademark me-2"></i>Add New Brand
+                    </h4>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
 
-                <div class="modal-body">
+                <div class="modal-body" style="background: #f8f9fa; padding: 25px;">
                     <span id="brand_form_message"></span>
 
                     <!-- Brand Name -->
-                    <div class="form-group row">
-                        <label class="col-md-4 text-right">Brand Name <span class="text-danger">*</span></label>
-                        <div class="col-md-8">
-                            <input type="text" name="brandname" id="brandname" class="form-control" required />
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Brand Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                            <input type="text" name="brandname" id="brandname" class="form-control" required
+                                placeholder="Enter brand name" autofocus />
                         </div>
                     </div>
 
-                    <!-- Input Types -->
-                    <div class="form-group row">
-                        <label class="col-md-4 text-right">Input Type <span class="text-danger">*</span></label>
-                        <div class="col-md-8">
-                            <div class="btn-group dropend w-50">
-                                <button type="button" class="btn btn-secondary w-100 text-start">
-                                    Select Input Types
-                                </button>
-                                <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="visually-hidden">Toggle Dropright</span>
-                                </button>
-                                <ul class="dropdown-menu w-50" id="brand_inputtypes"></ul>
-                            </div>
+                    <!-- Input Types - Enhanced Dropdown -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Input Type <span class="text-danger">*</span></label>
+                        <div class="dropdown w-100">
+                            <button
+                                class="btn btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center dropdown-toggle"
+                                type="button" id="inputTypeDropdown" data-toggle="dropdown" aria-expanded="false"
+                                style="border-radius: 8px; padding: 10px 15px; border: 2px solid #e9ecef; background: white;">
+                                <span>
+                                    <i class="fas fa-list me-2"></i>
+                                    <span id="inputTypeDropdownText">Select Input Types</span>
+                                </span>
+                                <span class="badge bg-primary rounded-pill" id="inputTypeSelectedCount">0</span>
+                            </button>
+                            <ul class="dropdown-menu w-100 p-3" id="brand_inputtypes"
+                                style="max-height: 200px; overflow-y: auto; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+                                <!-- Dynamic checkboxes will be loaded here -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Selected Input Types Display -->
+                    <div id="selectedTypesDisplay" class="mb-3" style="display: none;">
+                        <label class="form-label fw-bold">Selected Types:</label>
+                        <div id="selectedTypesTags" class="d-flex flex-wrap gap-2">
+                            <!-- Tags will appear here -->
                         </div>
                     </div>
 
@@ -1207,14 +2261,18 @@ if(!hasActionPermission('inventory','material')){
                     <input type="hidden" name="brandcreatedby" value="<?php echo $_SESSION['login_user']; ?>">
                     <input type="hidden" name="brandmodifiedby" value="<?php echo $_SESSION['login_user']; ?>">
                     <input type="hidden" name="action" value="Add">
-
                 </div>
 
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success" value="Add" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!-- Modal Footer -->
+                <div class="modal-footer"
+                    style="background: #f8f9fa; border-top: 1px solid #dee2e6; border-radius: 0 0 8px 8px;">
+                    <button type="button" class="btn btn-danger text-white" data-dismiss="modal">
+                        </i>Close
+                    </button>
+                    <button type="submit" class="btn btn-success" id="brandSubmitBtn">
+                        </i>Add Brand
+                    </button>
                 </div>
-
             </div>
         </form>
     </div>
@@ -2012,6 +3070,7 @@ if(!hasActionPermission('inventory','material')){
                 if (!data || !data.length) return;
 
                 let m = data[0];
+                console.log(m);
 
                 function safe(v) { return (v === null || v === "" ? "-" : v); }
 
@@ -2045,7 +3104,9 @@ if(!hasActionPermission('inventory','material')){
                 $('#displayItemTotalValue').text(
                     safe(parseFloat(m.MaterialTotalValue || 0).toFixed(2))
                 );
-
+                $('#displayCardDiscount').text(
+                    safe(m.MaterialDiscount) + "%"
+                );
 
 
                 // IMAGE
@@ -2063,13 +3124,27 @@ if(!hasActionPermission('inventory','material')){
                 // ✅ Sort by date / id if needed (important)
                 data.sort((a, b) => new Date(a.DateofPurchase) - new Date(b.DateofPurchase));
 
+                let hasHistory = false;
+
                 $.each(data, function (index, r) {
+
+                    // Skip rows where there is no inward history
+                    if (
+                        !r.SupplierName &&
+                        !r.POcode &&
+                        !r.InvoiceNo &&
+                        !r.DateofPurchase &&
+                        (r.ReceivedQty == null || r.ReceivedQty == "")
+                    ) {
+                        return true; // continue
+                    }
+
+                    hasHistory = true;
 
                     let qty = parseFloat(r.ReceivedQty) || 0;
                     let amt = parseFloat(r.ReceivedQtyAmt) || 0;
 
-                    // ✅ DIVIDED VALUE (same as inward modal)
-                    let perUnitAmt = qty > 0 ? (amt / qty) : 0;
+                    let perUnitAmt = qty > 0 ? (amt / qty).toFixed(2) : "-";
 
                     $("#details_table tbody").append(`
 <tr>
@@ -2079,11 +3154,14 @@ if(!hasActionPermission('inventory','material')){
     <td>${safe(r.DateofPurchase)}</td>
     <td>${safe(r.ItemPrice)}</td>
     <td>${safe(r.ReceivedQty)}</td>
-    <td>${perUnitAmt.toFixed(2)}</td>
+    <td>${perUnitAmt}</td>
 </tr>
 `);
-
                 });
+
+                if (!hasHistory) {
+                    $("#details_table tbody").empty();
+                }
 
             }).fail(function (xhr, status, err) {
                 console.error("Failed to fetch material details:", status, err);
@@ -2190,7 +3268,7 @@ if(!hasActionPermission('inventory','material')){
             }).fail(() => console.error("Failed to load unit factors on unit change"));
         });
 
-        
+
 
         $('#itemCategory').on('change', function () {
             $('#subCategory').empty();
@@ -2525,19 +3603,73 @@ if(!hasActionPermission('inventory','material')){
                 type: "POST",
                 data: $('#delete_material_form').serialize(),
                 dataType: "json",
-                success: function (json) {
-                    if (json.status === "success") {
-                        alert("Material deleted successfully!");
-                        location.reload();
+                success: function (response) {
+
+                    if (response.status === "success") {
+
+                        $('#deleteMaterialModal').modal('hide');
+
+                        $('#message').html(`
+            <div class="alert alert-success alert-dismissible fade show">
+                ${response.message}
+            </div>
+        `);
+
+                        $('html, body').animate({
+                            scrollTop: $('#message').offset().top - 20
+                        }, 300);
+
+                        setTimeout(function () {
+                            $('#message').fadeOut(function () {
+                                $(this).html('').show();
+                            });
+                        }, 4000);
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+
                     } else {
-                        alert(json.message || "Delete failed");
-                        $btn.prop('disabled', false);
+
+                        $('#deleteMaterialModal').modal('hide');
+
+                        $('#message').html(`
+            <div class="alert alert-danger alert-dismissible fade show">
+                ${response.message}
+            </div>
+        `);
+
+                        $('html, body').animate({
+                            scrollTop: $('#message').offset().top - 20
+                        }, 300);
+
+                        setTimeout(function () {
+                            $('#message').fadeOut(function () {
+                                $(this).html('').show();
+                            });
+                        }, 4000);
                     }
                 },
                 error: function () {
-                    alert("Server error during delete");
-                    $btn.prop('disabled', false);
-                }
+
+                    $('#deleteMaterialModal').modal('hide');
+
+                    $('#message').html(`
+        <div class="alert alert-danger alert-dismissible fade show">
+            Something went wrong while deleting the material.
+        </div>
+    `);
+
+                    $('html, body').animate({
+                        scrollTop: $('#message').offset().top - 20
+                    }, 300);
+
+                    setTimeout(function () {
+                        $('#message').fadeOut(function () {
+                            $(this).html('').show();
+                        });
+                    }, 4000);
+                },
             });
         });
         const MATERIAL_INPUT_TYPE = 2;
@@ -2563,6 +3695,1064 @@ if(!hasActionPermission('inventory','material')){
                 });
             }
         );
+        // Material Modal - Auto-calculations
+        function calculateMaterialPriceAndValue() {
+            let MRP = parseFloat($('#materialMRP').val()) || 0;
+            let Discount = parseFloat($('#materialDiscount').val()) || 0;
+            let GST = parseFloat($('#materialGST').val()) || 0;
+            let SPU = parseFloat($('#materialSPU').val()) || 0;
+            let factor = parseFloat($('#materialunitFactor').find(":selected").text()) || 1;
+
+            let price = MRP * factor;
+
+            if (Discount > 0) {
+                let discounted = price - (price * (Discount / 100));
+                price = discounted * (1 + (GST / 100));
+            }
+
+            let amount = MRP * factor;
+
+            $('#materialAmount').val(amount.toFixed(2));
+            $('#materialPrice').val(price.toFixed(2));
+            $('#materialTotalValue').val((price * SPU).toFixed(2));
+        }
+
+        // Trigger calculations on input changes
+        $('#materialMRP, #materialDiscount, #materialGST, #materialSPU, #materialunitFactor')
+            .on('keyup blur change', calculateMaterialPriceAndValue);
+
+
+
+        // Load category dropdown with Add button integration
+        function loadMaterialCategories() {
+            const url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
+            $.getJSON(url, function (data) {
+                $('#materialCategory').empty().append('<option hidden disabled selected value>-- select category --</option>');
+                $.each(data, function (index, value) {
+                    $('#materialCategory').append(`<option value="${value.itemcatid}">${value.itemcatname}</option>`);
+                });
+            });
+        }
+
+        // Load subcategories when category changes
+        $('#materialCategory').on('change', function () {
+            $('#materialsubCategory').empty().append('<option hidden disabled selected value>-- select subcategory --</option>');
+
+            let catId = this.value;
+            if (!catId) return;
+
+            let url = config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php/?catId=" + catId;
+            $.getJSON(url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#materialsubCategory').append(`<option value="${value.itemsubcatid}">${value.itemsubcatname}</option>`);
+                });
+            });
+        });
+        // =============================================
+        // MATERIAL CATEGORY - Brand Selection
+        // =============================================
+        $(document).on('change', '#materialCheckboxes input[type="checkbox"]', function () {
+            updateMaterialSelectedBrands();
+        });
+
+        function updateMaterialSelectedBrands() {
+            const checked = $('#materialCheckboxes input:checked');
+            const count = checked.length;
+            const $display = $('#materialSelectedBrandsDisplay');
+            const $tags = $('#materialSelectedBrandsTags');
+            const $badge = $('#materialBrandSelectedCount');
+            const $text = $('#materialBrandDropdownText');
+
+            // Update badge count
+            $badge.text(count);
+
+            if (count > 0) {
+                $display.show();
+                $tags.empty();
+
+                let brandNames = [];
+                checked.each(function () {
+                    const label = $(this).closest('.form-check').find('.form-check-label').text();
+                    const id = $(this).attr('id');
+                    brandNames.push(label);
+
+                    $tags.append(`
+                <span class="material-brand-tag" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; animation: fadeIn 0.3s ease; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                    <i class="fas fa-check-circle me-1"></i>${label}
+                    <span class="remove-material-brand-tag" data-id="${id}" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; font-size: 14px; margin-left: 5px;">&times;</span>
+                </span>
+            `);
+                });
+
+                // Update dropdown button text
+                if (count <= 2) {
+                    $text.text(brandNames.join(', '));
+                } else {
+                    $text.text(`${count} brands selected`);
+                }
+
+                // Change button style when brands are selected
+                $('#materialBrandDropdown').removeClass('btn-outline-secondary').addClass('btn-primary').css({
+                    'background': 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    'border': 'none',
+                    'color': 'white'
+                });
+
+            } else {
+                $display.hide();
+                $text.text('Select Brands');
+                $('#materialBrandDropdown').removeClass('btn-primary').addClass('btn-outline-secondary').css({
+                    'background': 'white',
+                    'border': '2px solid #e9ecef',
+                    'color': '#212529'
+                });
+            }
+        }
+
+        // Remove brand tag functionality
+        $(document).on('click', '.remove-material-brand-tag', function () {
+            const id = $(this).data('id');
+            $('#' + id).prop('checked', false).trigger('change');
+        });
+
+        // =============================================
+        // MATERIAL CATEGORY - Load Brands
+        // =============================================
+        function loadMaterialCategoryBrands() {
+            const InputType = 1; // 1 = Material
+            const url = config.developmentPath + "/Admin/Controller/brandcontroller.php?InputId=" + InputType;
+
+            $('#materialCheckboxes').empty();
+
+            $.getJSON(url, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#materialCheckboxes').append(`
+                    <li class="form-check form-switch px-3" style="padding: 8px 12px; border-radius: 6px; transition: background 0.2s ease; margin: 2px 0;">
+                        <input class="form-check-input me-1" name="brand_list[]" 
+                            value="${value.brandid}" type="checkbox" id="materialBrand_${value.brandid}"
+                            style="cursor: pointer; width: 18px; height: 18px;">
+                        <label class="form-check-label" for="materialBrand_${value.brandid}" 
+                            style="cursor: pointer; font-weight: 500; color: #2d3436; padding-left: 5px;">
+                            ${value.brandname}
+                        </label>
+                    </li>
+                `);
+                    });
+                } else {
+                    $('#materialCheckboxes').append(`
+                <li class="text-center text-muted p-3">
+                    <i class="fas fa-info-circle me-1"></i>No brands available
+                </li>
+            `);
+                }
+            });
+        }
+
+        // =============================================
+        // MATERIAL SUBCATEGORY - Load Categories
+        // =============================================
+        function loadMaterialCategoriesForSubcat() {
+            const url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
+
+            $('#materialcatid').empty().append('<option hidden disabled selected value>-- Select Material Category --</option>');
+
+            $.getJSON(url, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#materialcatid').append(`<option value="${value.itemcatid}">${value.itemcatname}</option>`);
+                    });
+                }
+            });
+        }
+
+        // =============================================
+        // LOAD WHEN MODALS OPEN
+        // =============================================
+        $('#itemcatModal').on('show.bs.modal', function () {
+            loadMaterialCategoryBrands();
+            // Reset form
+            $('#addMaterialCategoryForm')[0].reset();
+            $('#materialSelectedBrandsDisplay').hide();
+            $('#materialBrandDropdownText').text('Select Brands');
+            $('#materialBrandSelectedCount').text('0');
+            $('#materialBrandDropdown').removeClass('btn-primary').addClass('btn-outline-secondary').css({
+                'background': 'white',
+                'border': '2px solid #e9ecef',
+                'color': '#212529'
+            });
+        });
+
+        $('#itemsubcatModal').on('show.bs.modal', function () {
+            loadMaterialCategoriesForSubcat();
+            // Reset form
+            $('#addMaterialSubcatForm')[0].reset();
+        });
+
+        // =============================================
+        // FORM SUBMISSIONS WITH LOADING STATES
+        // =============================================
+        $('#addMaterialCategoryForm').on('submit', function (event) {
+            event.preventDefault();
+
+            const $btn = $('#submit_button');
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Adding...');
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/item_categorycontroller.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    let json;
+                    try {
+                        json = typeof res === "string" ? JSON.parse(res) : res;
+                    } catch (e) {
+                        $('#form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
+                        $btn.prop('disabled', false);
+                        $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Category');
+                        return;
+                    }
+
+                    if (json.status === "success") {
+                        $('#form_message').html(`<div class="alert alert-success">${json.message || "Category added successfully!"}</div>`);
+
+                        setTimeout(() => {
+                            $('#itemcatModal').modal('hide');
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+
+                            // Reload categories in the main modal
+                            if (typeof loadMaterialCategories === 'function') {
+                                loadMaterialCategories();
+                            }
+
+                            // Reset form
+                            $('#addMaterialCategoryForm')[0].reset();
+
+                        }, 800);
+                    } else {
+                        $('#form_message').html(`<div class="alert alert-danger">${json.message || "Error adding category."}</div>`);
+                    }
+
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Category');
+                },
+                error: function (xhr, status, error) {
+                    $('#form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Category');
+                }
+            });
+        });
+
+        $('#addMaterialSubcatForm').on('submit', function (event) {
+            event.preventDefault();
+
+            const $btn = $('#submit_button');
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Adding...');
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    let json;
+                    try {
+                        json = typeof res === "string" ? JSON.parse(res) : res;
+                    } catch (e) {
+                        $('#form_message_add').html('<div class="alert alert-danger">Invalid server response.</div>');
+                        $btn.prop('disabled', false);
+                        $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Subcategory');
+                        return;
+                    }
+
+                    if (json.status === "success") {
+                        $('#form_message_add').html(`<div class="alert alert-success">${json.message || "Subcategory added successfully!"}</div>`);
+
+                        setTimeout(() => {
+                            $('#itemsubcatModal').modal('hide');
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+
+                            // Reset form
+                            $('#addMaterialSubcatForm')[0].reset();
+
+                        }, 800);
+                    } else {
+                        $('#form_message_add').html(`<div class="alert alert-danger">${json.message || "Error adding subcategory."}</div>`);
+                    }
+
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Subcategory');
+                },
+                error: function (xhr, status, error) {
+                    $('#form_message_add').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Subcategory');
+                }
+            });
+        });
+
+        // =============================================
+        // BRAND MODAL - Input Type Selection
+        // =============================================
+        $(document).on('change', '#brand_inputtypes input[type="checkbox"]', function () {
+            updateSelectedTypes();
+        });
+
+        function updateSelectedTypes() {
+            const checked = $('#brand_inputtypes input:checked');
+            const count = checked.length;
+            const $display = $('#selectedTypesDisplay');
+            const $tags = $('#selectedTypesTags');
+            const $badge = $('#inputTypeSelectedCount');
+            const $text = $('#inputTypeDropdownText');
+
+            // Update badge count
+            $badge.text(count);
+
+            if (count > 0) {
+                $display.show();
+                $tags.empty();
+
+                let typeNames = [];
+                checked.each(function () {
+                    const label = $(this).closest('.form-check').find('.form-check-label').text();
+                    const id = $(this).attr('id');
+                    typeNames.push(label);
+
+                    $tags.append(`
+                <span class="type-tag" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; animation: fadeIn 0.3s ease; box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);">
+                    <i class="fas fa-check-circle me-1"></i>${label}
+                    <span class="remove-type-tag" data-id="${id}" style="cursor: pointer; opacity: 0.7; transition: opacity 0.2s ease; font-size: 14px; margin-left: 5px;">&times;</span>
+                </span>
+            `);
+                });
+
+                // Update dropdown button text
+                if (count <= 2) {
+                    $text.text(typeNames.join(', '));
+                } else {
+                    $text.text(`${count} types selected`);
+                }
+
+                // Change button style when types are selected
+                $('#inputTypeDropdown').removeClass('btn-outline-secondary').addClass('btn-primary').css({
+                    'background': 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    'border': 'none',
+                    'color': 'white'
+                });
+
+            } else {
+                $display.hide();
+                $text.text('Select Input Types');
+                $('#inputTypeDropdown').removeClass('btn-primary').addClass('btn-outline-secondary').css({
+                    'background': 'white',
+                    'border': '2px solid #e9ecef',
+                    'color': '#212529'
+                });
+            }
+        }
+
+        // Remove type tag functionality
+        $(document).on('click', '.remove-type-tag', function () {
+            const id = $(this).data('id');
+            $('#' + id).prop('checked', false).trigger('change');
+        });
+
+        // =============================================
+        // BRAND MODAL - Load Input Types
+        // =============================================
+        function loadBrandInputTypes() {
+            const url = config.developmentPath + "/Admin/Controller/inputTypeController.php";
+
+            $('#brand_inputtypes').empty();
+
+            $.getJSON(url, function (data) {
+                if (data && data.length > 0) {
+                    $.each(data, function (index, value) {
+                        $('#brand_inputtypes').append(`
+                    <li class="form-check form-switch px-3" style="padding: 8px 12px; border-radius: 6px; transition: background 0.2s ease; margin: 2px 0;">
+                        <input class="form-check-input me-1" name="inputtype_list[]" 
+                            value="${value.InputTypeId}" type="checkbox" id="inputType_${value.InputTypeId}"
+                            style="cursor: pointer; width: 18px; height: 18px;">
+                        <label class="form-check-label" for="inputType_${value.InputTypeId}" 
+                            style="cursor: pointer; font-weight: 500; color: #2d3436; padding-left: 5px;">
+                            ${value.InputType}
+                        </label>
+                    </li>
+                `);
+                    });
+                } else {
+                    $('#brand_inputtypes').append(`
+                <li class="text-center text-muted p-3">
+                    <i class="fas fa-info-circle me-1"></i>No input types available
+                </li>
+            `);
+                }
+            });
+        }
+
+        // =============================================
+        // LOAD WHEN MODAL OPENS
+        // =============================================
+        $('#brandModal').on('show.bs.modal', function () {
+            loadBrandInputTypes();
+            // Reset form and selections
+            $('#brand_form')[0].reset();
+            $('#selectedTypesDisplay').hide();
+            $('#inputTypeDropdownText').text('Select Input Types');
+            $('#inputTypeSelectedCount').text('0');
+            $('#inputTypeDropdown').removeClass('btn-primary').addClass('btn-outline-secondary').css({
+                'background': 'white',
+                'border': '2px solid #e9ecef',
+                'color': '#212529'
+            });
+            $('#brand_form_message').empty();
+        });
+
+        // =============================================
+        // BRAND FORM SUBMISSION WITH LOADING STATE
+        // =============================================
+        $('#brand_form').on('submit', function (event) {
+            event.preventDefault();
+
+            const $btn = $('#brandSubmitBtn');
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Adding...');
+
+            var formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/brandcontroller.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    let json;
+                    try {
+                        json = typeof res === "string" ? JSON.parse(res) : res;
+                    } catch (e) {
+                        $('#brand_form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
+                        $btn.prop('disabled', false);
+                        $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Brand');
+                        return;
+                    }
+
+                    if (json.status === "success") {
+                        $('#brand_form_message').html(`
+                    <div class="alert alert-success">${json.message || "Brand added successfully!"}</div>
+                `);
+
+                        setTimeout(() => {
+                            // Close modal
+                            $('#brandModal').modal('hide');
+
+                            // Remove backdrop
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+
+                            // Reset form
+                            $('#brand_form')[0].reset();
+                            $('#selectedTypesDisplay').hide();
+                            $('#inputTypeDropdownText').text('Select Input Types');
+                            $('#inputTypeSelectedCount').text('0');
+                            $('#inputTypeDropdown').removeClass('btn-primary').addClass('btn-outline-secondary').css({
+                                'background': 'white',
+                                'border': '2px solid #e9ecef',
+                                'color': '#212529'
+                            });
+
+                            // Reload brand lists in parent modals
+                            if (typeof reloadBrandListSimple === 'function') {
+                                reloadBrandListSimple();
+                            }
+                            if (typeof loadMaterialCategoryBrands === 'function') {
+                                loadMaterialCategoryBrands();
+                            }
+                            if (typeof loadMaterialBrands === 'function') {
+                                loadMaterialBrands();
+                            }
+
+                        }, 800);
+
+                    } else {
+                        $('#brand_form_message').html(`
+                    <div class="alert alert-danger">${json.message || "Error adding brand."}</div>
+                `);
+                    }
+
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Brand');
+                },
+                error: function (xhr, status, error) {
+                    $('#brand_form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-plus-circle me-1"></i>Add Brand');
+                }
+            });
+        });
+
+        // =============================================
+        // PREVENT DROPDOWN CLOSE ON INSIDE CLICK
+        // =============================================
+        $('#brand_inputtypes').on('click', function (e) {
+            e.stopPropagation();
+        });
+
+        // =============================================
+        // CLOSE DROPDOWN WHEN CLICKING OUTSIDE
+        // =============================================
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.dropdown').length) {
+                $('.dropdown-menu').removeClass('show');
+            }
+        });
+        // =============================================================
+        // RESPONSIVE + DRAGGABLE MODALS
+        // Works on:
+        // Desktop
+        // Laptop
+        // Tablet
+        // Mobile
+        // Touch devices
+        // =============================================================
+
+        (function () {
+
+            function clamp(value, min, max) {
+                return Math.min(Math.max(value, min), max);
+            }
+
+
+            function centerModal($modal) {
+
+                const $dialog = $modal.find('.modal-dialog').first();
+
+                if (!$dialog.length) {
+                    return;
+                }
+
+                const dialog = $dialog[0];
+
+                // Reset previous positioning
+                $dialog.css({
+                    position: 'fixed',
+                    margin: '0',
+                    transform: 'none',
+                    left: '0px',
+                    top: '0px'
+                });
+
+                // Force browser layout calculation
+                const rect = dialog.getBoundingClientRect();
+
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+
+                const dialogWidth = rect.width;
+                const dialogHeight = rect.height;
+
+                const left = Math.max(
+                    8,
+                    (viewportWidth - dialogWidth) / 2
+                );
+
+                const top = Math.max(
+                    8,
+                    (viewportHeight - dialogHeight) / 2
+                );
+
+                $dialog.css({
+                    left: left + 'px',
+                    top: top + 'px'
+                });
+
+                $modal.data('modal-dragged', false);
+            }
+
+
+            function keepDialogInsideWindow($dialog) {
+
+                if (!$dialog.length) {
+                    return;
+                }
+
+                const dialog = $dialog[0];
+                const rect = dialog.getBoundingClientRect();
+
+                const margin = 8;
+
+                const maxLeft = Math.max(
+                    margin,
+                    window.innerWidth - rect.width - margin
+                );
+
+                const maxTop = Math.max(
+                    margin,
+                    window.innerHeight - rect.height - margin
+                );
+
+                const currentLeft = parseFloat($dialog.css('left')) || 0;
+                const currentTop = parseFloat($dialog.css('top')) || 0;
+
+                $dialog.css({
+                    left: clamp(currentLeft, margin, maxLeft) + 'px',
+                    top: clamp(currentTop, margin, maxTop) + 'px'
+                });
+            }
+
+
+            function makeModalDraggable($modal) {
+
+                const $dialog = $modal.find('.modal-dialog').first();
+                const $header = $modal.find('.modal-header').first();
+
+                if (!$dialog.length || !$header.length) {
+                    return;
+                }
+
+
+                // Remove previous handlers
+                $header.off('.materialModalDrag');
+
+
+                let dragging = false;
+                let startX = 0;
+                let startY = 0;
+                let startLeft = 0;
+                let startTop = 0;
+
+
+                $header.on(
+                    'pointerdown.materialModalDrag',
+                    function (e) {
+
+                        // Don't drag when clicking buttons/interactive elements
+                        if (
+                            $(e.target).closest(
+                                'button, a, input, select, textarea, .close'
+                            ).length
+                        ) {
+                            return;
+                        }
+
+                        const rect = $dialog[0].getBoundingClientRect();
+
+                        dragging = true;
+
+                        startX = e.clientX;
+                        startY = e.clientY;
+
+                        startLeft = rect.left;
+                        startTop = rect.top;
+
+                        $modal.data('modal-dragged', true);
+
+                        $header.css('cursor', 'grabbing');
+
+                        if (this.setPointerCapture) {
+                            try {
+                                this.setPointerCapture(e.pointerId);
+                            } catch (err) {
+                                // Ignore pointer capture errors
+                            }
+                        }
+
+                        e.preventDefault();
+                    }
+                );
+
+
+                $header.on(
+                    'pointermove.materialModalDrag',
+                    function (e) {
+
+                        if (!dragging) {
+                            return;
+                        }
+
+                        const dialog = $dialog[0];
+
+                        const rect = dialog.getBoundingClientRect();
+
+                        const deltaX = e.clientX - startX;
+                        const deltaY = e.clientY - startY;
+
+                        const margin = 8;
+
+                        const maxLeft = Math.max(
+                            margin,
+                            window.innerWidth - rect.width - margin
+                        );
+
+                        const maxTop = Math.max(
+                            margin,
+                            window.innerHeight - rect.height - margin
+                        );
+
+                        const newLeft = clamp(
+                            startLeft + deltaX,
+                            margin,
+                            maxLeft
+                        );
+
+                        const newTop = clamp(
+                            startTop + deltaY,
+                            margin,
+                            maxTop
+                        );
+
+                        $dialog.css({
+                            left: newLeft + 'px',
+                            top: newTop + 'px'
+                        });
+
+                        e.preventDefault();
+                    }
+                );
+
+
+                $header.on(
+                    'pointerup.materialModalDrag pointercancel.materialModalDrag',
+                    function () {
+
+                        dragging = false;
+
+                        $header.css('cursor', 'grab');
+
+                        keepDialogInsideWindow($dialog);
+
+                    }
+                );
+
+            }
+
+
+            // ---------------------------------------------------------
+            // WHEN MODAL OPENS
+            // ---------------------------------------------------------
+
+            $('.modal').on('shown.bs.modal.materialResponsive', function () {
+
+                const $modal = $(this);
+
+                centerModal($modal);
+
+                makeModalDraggable($modal);
+
+            });
+
+
+            // ---------------------------------------------------------
+            // WHEN MODAL CLOSES
+            // RESET POSITION
+            // ---------------------------------------------------------
+
+            $('.modal').on('hidden.bs.modal.materialResponsive', function () {
+
+                const $modal = $(this);
+                const $dialog = $modal.find('.modal-dialog').first();
+
+                if (!$dialog.length) {
+                    return;
+                }
+
+                $dialog.css({
+                    position: '',
+                    left: '',
+                    top: '',
+                    margin: '',
+                    transform: ''
+                });
+
+                $modal.removeData('modal-dragged');
+
+            });
+
+
+            // ---------------------------------------------------------
+            // WINDOW RESIZE
+            // ---------------------------------------------------------
+
+            $(window).on('resize.materialResponsive', function () {
+
+                $('.modal.show').each(function () {
+
+                    const $modal = $(this);
+                    const $dialog = $modal.find('.modal-dialog').first();
+
+                    if (!$dialog.length) {
+                        return;
+                    }
+
+                    // If user has not manually moved the modal,
+                    // keep it centered.
+                    if (!$modal.data('modal-dragged')) {
+
+                        centerModal($modal);
+
+                    } else {
+
+                        // If user dragged it, just keep it
+                        // inside the viewport.
+                        keepDialogInsideWindow($dialog);
+
+                    }
+
+                });
+
+            });
+
+        })();
+        // =============================================
+        // EDIT MATERIAL - Load Data into Modal
+        // =============================================
+        $('#edititemdetailsModal').on('show.bs.modal', function (e) {
+            const $btn = $(e.relatedTarget);
+            const materialId = $btn.data('id');
+
+            $('#materialid').val(materialId);
+            $('#edited_hidden_id').val(materialId);
+
+            // Load material data
+            loadMaterialData(materialId);
+
+            // Load dropdowns
+            loadEditedMaterialCategories();
+            loadEditedMaterialBrands();
+            loadEditedMaterialUnits();
+            loadEditedThickness();
+            loadEditedGrains();
+        });
+
+        // =============================================
+        // LOAD MATERIAL DATA
+        // =============================================
+        function loadMaterialData(materialId) {
+            const url = config.developmentPath + "/Admin/Controller/materialController.php?materialid=" + materialId;
+
+            $.getJSON(url, function (data) {
+                if (data && data.length > 0) {
+                    const m = data[0];
+
+                    // Basic fields
+                    $('#editedmaterialname').val(m.materialname || '');
+                    $('#editedmaterialdescription').val(m.materialdescription || '');
+                    $('#editedmaterialCode').val(m.materialcode || '');
+                    $('#editedmaterialhsncode').val(m.materialhsncode || '');
+                    $('#editedmaterialQty').val(m.materialqty || '');
+                    $('#editedmaterialSPU').val(m.materialspu || '');
+                    $('#editedmaterialMRP').val(m.materialmrp || '');
+                    $('#editedmaterialGST').val(m.materialgst || '');
+                    $('#editedmaterialDiscount').val(m.materialdiscount || '');
+
+                    // Dropdown values
+                    $('#editedmaterialCategory').val(m.catid || '');
+                    $('#editedsubCategory').val(m.subcatid || '');
+                    $('#editedmaterialbrand').val(m.brandid || '');
+                    $('#editedunit').val(m.unitid || '');
+                    $('#editedunitFactor').val(m.unitfactorid || '');
+                    $('#editedthickness').val(m.thicknessid || '');
+                    $('#editedRotation').val(m.grainsid || '');
+
+                    // Calculations
+                    calculateEditedMaterialPriceAndValue();
+
+                    // Image preview
+                    if (m.materialimage) {
+                        const imgPath = config.developmentPath + "/Admin/img/materials/" + m.materialimage;
+                        $('#editedPreviewImage').attr('src', imgPath);
+                        $('#existing_image').val(m.materialimage);
+                    } else {
+                        $('#editedPreviewImage').attr('src', '');
+                        $('#existing_image').val('');
+                    }
+                }
+            });
+        }
+
+        // =============================================
+        // LOAD DROPDOWNS
+        // =============================================
+        function loadEditedMaterialCategories() {
+            const url = config.developmentPath + "/Admin/Controller/item_categorycontroller.php";
+            $('#editedmaterialCategory').empty().append('<option hidden disabled selected value>-- select category --</option>');
+
+            $.getJSON(url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#editedmaterialCategory').append(`<option value="${value.itemcatid}">${value.itemcatname}</option>`);
+                });
+            });
+        }
+
+        function loadEditedMaterialBrands() {
+            const InputType = 1; // Material
+            const url = config.developmentPath + "/Admin/Controller/brandcontroller.php?InputId=" + InputType;
+            $('#editedmaterialbrand').empty().append('<option hidden disabled selected value>-- select brand --</option>');
+
+            $.getJSON(url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#editedmaterialbrand').append(`<option value="${value.brandid}">${value.brandname}</option>`);
+                });
+            });
+        }
+
+        function loadEditedMaterialUnits() {
+            const url = config.developmentPath + "/Admin/Controller/unitsContoller.php";
+            $('#editedunit').empty().append('<option hidden disabled selected value>-- select unit --</option>');
+
+            $.getJSON(url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#editedunit').append(`<option value="${value.unitId}">${value.unitName}</option>`);
+                });
+            });
+        }
+
+        function loadEditedThickness() {
+            // Add your thickness loading logic here
+        }
+
+        function loadEditedGrains() {
+            // Add your grains loading logic here
+        }
+
+        // =============================================
+        // AUTO-CALCULATIONS
+        // =============================================
+        function calculateEditedMaterialPriceAndValue() {
+            let MRP = parseFloat($('#editedmaterialMRP').val()) || 0;
+            let Discount = parseFloat($('#editedmaterialDiscount').val()) || 0;
+            let GST = parseFloat($('#editedmaterialGST').val()) || 0;
+            let SPU = parseFloat($('#editedmaterialSPU').val()) || 0;
+            let factor = parseFloat($('#editedunitFactor').find(":selected").text()) || 1;
+
+            let price = MRP * factor;
+
+            if (Discount > 0) {
+                let discounted = price - (price * (Discount / 100));
+                price = discounted * (1 + (GST / 100));
+            }
+
+            let amount = MRP * factor;
+
+            $('#editedmaterialAmount').val(amount.toFixed(2));
+            $('#editedmaterialPrice').val(price.toFixed(2));
+            $('#editedmaterialTotalValue').val((price * SPU).toFixed(2));
+        }
+
+        // Trigger calculations on input changes
+        $('#editedmaterialMRP, #editedmaterialDiscount, #editedmaterialGST, #editedmaterialSPU, #editedunitFactor')
+            .on('keyup blur change', calculateEditedMaterialPriceAndValue);
+
+        // =============================================
+        // UNIT FACTOR LOADING
+        // =============================================
+        $('#editedunit').on('change', function () {
+            $('#editedunitFactor').empty().append('<option hidden disabled selected value>-- select factor --</option>');
+
+            const unitFactorurl = config.developmentPath + "/Admin/Controller/unitFactorController.php/?unitId=" + this.value;
+            $.getJSON(unitFactorurl, function (data) {
+                $.each(data, function (index, value) {
+                    $('#editedunitFactor').append(`<option value="${value.unitFactorId}">${value.unitFactor}</option>`);
+                });
+            });
+        });
+
+        // =============================================
+        // CATEGORY SUBCATEGORY LOADING
+        // =============================================
+        $('#editedmaterialCategory').on('change', function () {
+            $('#editedsubCategory').empty().append('<option hidden disabled selected value>-- select subcategory --</option>');
+
+            const catId = this.value;
+            if (!catId) return;
+
+            const url = config.developmentPath + "/Admin/Controller/item_subcategorycontroller.php/?catId=" + catId;
+            $.getJSON(url, function (data) {
+                $.each(data, function (index, value) {
+                    $('#editedsubCategory').append(`<option value="${value.itemsubcatid}">${value.itemsubcatname}</option>`);
+                });
+            });
+        });
+
+        // =============================================
+        // FORM SUBMISSION
+        // =============================================
+        $('#editeditemdetails_form').on('submit', function (event) {
+            event.preventDefault();
+
+            const $btn = $('#editbutton');
+            $btn.prop('disabled', true);
+            $btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Saving...');
+
+            const formData = new FormData(this);
+
+            $.ajax({
+                type: "POST",
+                url: config.developmentPath + "/Admin/Controller/materialController.php",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    let json;
+                    try {
+                        json = typeof res === "string" ? JSON.parse(res) : res;
+                    } catch (e) {
+                        $('#edit_form_message').html('<div class="alert alert-danger">Invalid server response.</div>');
+                        $btn.prop('disabled', false);
+                        $btn.html('<i class="fas fa-save me-1"></i>Save Changes');
+                        return;
+                    }
+
+                    if (json.status === "success") {
+                        $('#edit_form_message').html(`<div class="alert alert-success">${json.message || "Material updated successfully!"}</div>`);
+
+                        setTimeout(() => {
+                            $('#edititemdetailsModal').modal('hide');
+                            $('.modal-backdrop').remove();
+                            $('body').removeClass('modal-open');
+                            location.reload();
+                        }, 800);
+                    } else {
+                        $('#edit_form_message').html(`<div class="alert alert-danger">${json.message || "Error updating material."}</div>`);
+                    }
+
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-save me-1"></i>Save Changes');
+                },
+                error: function (xhr, status, error) {
+                    $('#edit_form_message').html('<div class="alert alert-danger">AJAX Error: ' + error + '</div>');
+                    $btn.prop('disabled', false);
+                    $btn.html('<i class="fas fa-save me-1"></i>Save Changes');
+                }
+            });
+        });
+
+        // =============================================
+        // IMAGE PREVIEW
+        // =============================================
+        $('#editedmaterialimage').on('change', function () {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#editedPreviewImage').attr('src', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
 
 
     }); // end document ready

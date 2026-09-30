@@ -25,16 +25,19 @@ require_once("../Model/material_stocksModel.php");
     .pad {
         padding-right: .5rem;
     }
+    .card-body #quote_table th {
+        font-weight: 500;
+    }
 </style>
-<h1 class="h3 mb-4 text-gray-800">Material Stock Management</h1>
+<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                <h6 class="m-0" style="font-size: 1.2rem;">Material
                     List With Issues </h6>
             </div>
 
@@ -44,14 +47,14 @@ require_once("../Model/material_stocksModel.php");
         <div class="col-md-9">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-Material" role="presentation">
-                    <button class="nav-link active" id="Issues-tab" data-bs-toggle="tab" data-bs-target="#Issues"
-                        type="button" role="tab" aria-controls="Issues" aria-selected="true"><b>Issues</b></button>
+                    <button class="nav-link active" id="Issues-tab" data-toggle="tab" data-target="#Issues"
+                        type="button" role="tab" aria-controls="Issues" aria-selected="true">Issues</button>
                 </li>
 
                 <li class="nav-Material" role="presentation">
-                    <button class="nav-link" id="PricingIssues-tab" data-bs-toggle="tab" data-bs-target="#PricingIssues"
-                        type="button" role="tab" aria-controls="PricingIssues" aria-selected="false"><b>Pricing
-                            Issues</b></button>
+                    <button class="nav-link" id="PricingIssues-tab" data-toggle="tab" data-target="#PricingIssues"
+                        type="button" role="tab" aria-controls="PricingIssues" aria-selected="false">Pricing
+                            Issues</button>
                 </li>
             </ul>
         </div>
@@ -60,7 +63,7 @@ require_once("../Model/material_stocksModel.php");
                 <br />
                 <div class="table-responsive">
                     <table class="table table-bordered" id="quote_table" width="100%" cellspacing="0">
-                        <thead>
+                        <thead align="center">
                             <tr>
                                 <th style='display:none'>Material Stock Id</th>
                                 <th style='display:none'>Material Id</th>
@@ -220,7 +223,7 @@ require_once("../Model/material_stocksModel.php");
     <div class="modal-dialog ">
         <form method="POST" id="editedIssues_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Issues</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -273,7 +276,7 @@ require_once("../Model/material_stocksModel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -285,7 +288,7 @@ require_once("../Model/material_stocksModel.php");
     <div class="modal-dialog ">
         <form method="POST" id="editedPricingIssues_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Issues</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -346,7 +349,7 @@ require_once("../Model/material_stocksModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -360,7 +363,7 @@ require_once("../Model/material_stocksModel.php");
         <form method="post" id="followup_form" enctype="multipart/form-data"
             action="../Controller/MatIssues_followupcontroller.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h5 class="modal-title">Issue Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -409,7 +412,7 @@ require_once("../Model/material_stocksModel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_material_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Material</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -422,7 +425,7 @@ require_once("../Model/material_stocksModel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -437,7 +440,7 @@ require_once("../Model/material_stocksModel.php");
             $('#followupMaterialId').val(rowid);
             var POID = 0;
             var contactUrl = config.developmentPath +
-                "/Admin/Controller/MatIssues_followupController.php/?id=" +
+                "/Admin/Controller/MatIssues_followupcontroller.php/?id=" +
                 rowid + "&POID=" + POID;
             $.getJSON(contactUrl, function (data) {
                 $("#Issuesfollowuptable").find("tr:gt(0)").remove();

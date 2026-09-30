@@ -29,14 +29,19 @@ if ($_SERVER["REQUEST_METHOD"]=="GET") {
    
 }
 ?>
+<style>
+    .card-body #linematerialTable th{
+        font-weight: 500;
+    }
+</style>
 <h1 class="h3 mb-4 text-gray-800">Stock Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material Stock</h6>
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Material Stock</h6>
             </div>
             <div class="col" align="right">
                 <!-- <span data-toggle=modal data-target=#materialcatModal>
@@ -136,18 +141,18 @@ if ($_SERVER["REQUEST_METHOD"]=="GET") {
             </div>
         </div>
         <table class="table table-bordered" id="linematerialTable" width="100%" cellspacing="0">
-            <thead>
+            <thead align="center">
                 <tr>
                     <th style='display:none'>material ID</th>
                     <th style='display:none'>POID</th>
-                    <th>Material Name</th>
-                    <th>PO Code</th>
+                    <th>Name</th>
+                    <th>PO ID</th>
                     <th>PO Type</th>
                     <th>Quantity Raised</th>
                     <th>Quantity Inwarded</th>
-                    <th>Total Value of Stock</th>
-                    <th>Net Rate of Material</th>
-                    <th>Latest Rate of Material</th>
+                    <th>Total Value</th>
+                    <th>Net Rate</th>
+                    <th>Inwarded Rate</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -206,7 +211,7 @@ if ($_SERVER["REQUEST_METHOD"]=="GET") {
             aria-hidden="true">
             <div class="modal-dialog modal-lg " role="document">
                 <form method="post" id="followup_form" enctype="multipart/form-data"
-                    action="../Controller/MatIssues_followupcontroller.php">
+                    action="../Controller/MatIssues_followupController.php">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">Issue Details</h5>
@@ -395,7 +400,7 @@ $(document).ready(function() {
         $('#followupmaterialId').val(rowid);
         var POID = $('#followupPOID').val();
         var contactUrl = config.developmentPath +
-            "/Admin/Controller/MatIssues_followupcontroller.php/?id=" +
+            "/Admin/Controller/MatIssues_followupController.php/?id=" +
             rowid + "&POID=" + POID;
             console.log(contactUrl);
         $.getJSON(contactUrl, function(data) {

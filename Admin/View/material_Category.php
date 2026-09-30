@@ -19,6 +19,16 @@ require_once("../Model/material_CategoryModel.php");
         margin-top: .3em;
         margin-left: 0;
     }
+
+    .modal-dialog {
+        max-width: 500px;
+        width: calc(100% - 30px);
+        margin: 1.75rem auto;
+    }
+
+    .card-body #materialCat_table th {
+        font-weight: 500;
+    }
 </style>
 
 <h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
@@ -27,10 +37,11 @@ require_once("../Model/material_CategoryModel.php");
 <span id="message"></span>
 
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Material
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Material
                     Category</h6>
             </div>
             <div class="col" align="right">
@@ -44,7 +55,7 @@ require_once("../Model/material_CategoryModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="materialCat_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>Material Category</th>
                         <th>Material Category Description.</th>
@@ -118,7 +129,6 @@ require_once("../Model/material_CategoryModel.php");
     </div>
 </div>
 
-<?php include('footer.php'); ?>
 
 <!-- ADD MODAL (Now uses AJAX and same behavior as itemcategory.php) -->
 <div class="modal fade" id=materialcatModal tabindex=-1 role=dialog aria-hidden=true>
@@ -126,7 +136,8 @@ require_once("../Model/material_CategoryModel.php");
         <!-- Updated form id to match item flow -->
         <form method="post" id="addMaterialCategoryForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Add Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -143,7 +154,7 @@ require_once("../Model/material_CategoryModel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        data-toggle="dropdown" aria-expanded="false">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="checkboxes">
@@ -203,7 +214,7 @@ require_once("../Model/material_CategoryModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -215,7 +226,8 @@ require_once("../Model/material_CategoryModel.php");
 <div class="modal fade" id=infoMatcatModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header text-white"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                 <h4 class="modal-title" id="modal_title">Category Info</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
@@ -256,7 +268,7 @@ require_once("../Model/material_CategoryModel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
 
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
             </form>
@@ -269,7 +281,8 @@ require_once("../Model/material_CategoryModel.php");
     <div class="modal-dialog">
         <form method="post" id="editMaterialCatForm" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title" id="modal_title">Edit Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -285,7 +298,7 @@ require_once("../Model/material_CategoryModel.php");
                                     </button>
                                     <button type="button"
                                         class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
-                                        data-bs-toggle="dropdown" aria-expanded="false" id="editedBrand">
+                                        data-toggle="dropdown" aria-expanded="false" id="editedBrand">
                                         <span class="visually-hidden">Toggle Dropright</span>
                                     </button>
                                     <ul class="dropdown-menu" id="editedcheckboxes">
@@ -346,7 +359,7 @@ require_once("../Model/material_CategoryModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id_edit" />
                         <input type="hidden" name="action" id="action_edit" value="Edit" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -372,12 +385,13 @@ require_once("../Model/material_CategoryModel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id_del" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+<?php include('footer.php'); ?>
 
 <script>
     $(document).ready(function () {
@@ -663,6 +677,32 @@ require_once("../Model/material_CategoryModel.php");
                 if (typeof callback === 'function') callback();
             });
         }
+
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            // Destroy previous draggable instance if any
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            // Keep Bootstrap responsible for positioning
+            $dialog.css({
+                position: "",
+                left: "",
+                top: "",
+                margin: ""
+            });
+
+            // Make modal draggable from its header
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
+        });
 
     });
 </script>

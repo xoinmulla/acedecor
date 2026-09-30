@@ -10,7 +10,32 @@ require_once "../DB Operations/projectOps.php";
 require_once "../Model/customerpaymentmodel.php";
 require_once "../DB Operations/customerpaymentOps.php";
 
+if (isset($_GET['checkQuoteByEnq'])) {
 
+    $enqId = (int) $_GET['checkQuoteByEnq'];
+
+    $db = ConnectDb::getInstance()->getConnection();
+
+    $stmt = $db->prepare("
+    SELECT DISTINCT enqCatId 
+    FROM quotation_details 
+    WHERE quo_enq_id = ?
+");
+
+    $stmt->bind_param("i", $enqId);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+
+    $catIds = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $catIds[] = (string) $row['enqCatId'];
+    }
+
+    echo json_encode($catIds);
+    exit;
+}
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['obj'])) {
         $value = $_POST['obj'];
@@ -96,6 +121,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $lineItem->set_modifiedby(Sanitization::test_input($createdby));
 
             error_log("CALC: qId=$quoteId, item={$value['selectedItemName']}, TotalAmt=$totalAmount, Comp=$companyPrice, TVal=$totalValue, TPrice=$tradePrice, Disc%=$discount1, DiscAmt=$discount1Amt, GSTAmt=$GSTAmount");
+            // 🔥 ADD THIS (VERY IMPORTANT)
+            $lineItem->set_reference(Sanitization::test_input($value['quoteReference'] ?? ''));
+            $lineItem->set_note(Sanitization::test_input($value['quoteNote'] ?? ''));
 
             DBLineItem::insert($lineItem);
 
@@ -104,7 +132,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     } else if (isset($_POST['quoteid'])) {
         // 🔐 Prevent status change if payment exists
-        if (DBpayment::isQuotePaymentLocked($_POST['quoteCode'])) {
+        if (
+            DBpayment::isQuotePaymentLocked(
+                $_POST['quoteCode'],
+                $_POST['customerCode']
+            )
+        ) {
 
             // Allow updates EXCEPT quoteStatus
             unset($_POST['quoteStatus']);

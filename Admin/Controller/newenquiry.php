@@ -11,6 +11,32 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch' && isset($_GET['id'])) 
     $enq = DBenq::readById($id);
 
     if ($enq) {
+
+        // 🔥 STEP 1: DB CONNECTION
+        // 🔥 STEP 1: DB CONNECTION
+        $db = ConnectDb::getInstance()->getConnection();
+
+        $customer_created = "No";
+        $quote_generated = "No";
+
+        // ✅ CORRECT TABLE & COLUMN NAMES
+        $checkCustomer = $db->prepare("SELECT customerId, isQuoteGenerated FROM customer WHERE enq_id = ?");
+        $checkCustomer->bind_param("i", $id);
+        $checkCustomer->execute();
+        $resultCustomer = $checkCustomer->get_result();
+
+        if ($resultCustomer->num_rows > 0) {
+            $customer_created = "Yes";
+
+            $customerRow = $resultCustomer->fetch_assoc();
+
+            // 🔥 USE EXISTING COLUMN (NO NEED QUOTATION TABLE 🚀)
+            if ($customerRow['isQuoteGenerated'] == 1) {
+                $quote_generated = "Yes";
+            }
+        }
+
+        // 🔥 FINAL RESPONSE
         echo json_encode([
             "enqid" => $enq->get_id(),
             "name" => $enq->get_enqname(),
@@ -21,7 +47,11 @@ if (isset($_GET['action']) && $_GET['action'] == 'fetch' && isset($_GET['id'])) 
             "state" => $enq->getEnq_State(),
             "country" => $enq->getEnq_Country(),
             "created_date" => $enq->getCreatedDate(),
-            "interests" => $enq->get_interestList()
+            "interests" => $enq->get_interestList(),
+
+            // 🔥 NEW FIELDS (CRITICAL)
+            "customer_created" => $customer_created,
+            "quote_generated" => $quote_generated
         ]);
     } else {
         echo json_encode(["error" => "No record found"]);
@@ -37,6 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
 
 // ==================== UPDATE ENQUIRY ====================
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'update') {
+
     $enq = new Enquiry();
     $enq->set_id($_POST["enqid"]);
     $enq->set_enqname(Sanitization::test_input($_POST["name"]));
@@ -52,7 +83,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
 
     DBenq::update($enq);
-    header("Location: ../View/enquiry.php?updated=1");
+
+    // ✅ RETURN JSON INSTEAD OF REDIRECT
+    echo json_encode([
+        "status" => "success",
+        "message" => "Enquiry updated successfully"
+    ]);
     exit();
 }
 

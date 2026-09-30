@@ -222,31 +222,11 @@
             <!-- Nav Item - Dashboard -->
 
 
-            <li class="nav-item">
-                <a class="nav-link" href="maindashboard.php">
-                    <i class='fas fa-chart-line'></i>
-                    <span>Dashboard</span></a>
-            </li>
+            
             <li class="nav-item">
                 <a class="nav-link" href="enquiry.php">
                     <i class="fas fa-question-circle"></i>
                     <span>Enquiries</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="channelpartnerDashboard.php">
-                    <i class="fas fa-hands-helping"></i>
-                    <span>Channel Partners</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="inventorydashboard.php">
-                    <i class="fas fa-percent"></i>
-                    <span>Inventory</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="employeeDashboard.php">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Employees</span>
-                </a>
             </li>
 
             <li class="nav-item">
@@ -254,21 +234,20 @@
                     <i class="fas fa-user-astronaut"></i>
                     <span>Customers</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="projectView.php">
-                    <i class="fab fa-product-hunt"></i>
-                    <span>Projects</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="POview.php">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Purchase Orders</span></a>
-            </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="quotationView.php">
+                        <i class='fab fa-quora'></i>
+                        <span>Quotation</span>
+                    </a>
+                </li>
+            <br>
+            <hr class="sidebar-divider">
+
 
             <li class="nav-item">
-                <a class="nav-link" href="paymentdashboard.php">
-                    <i class="far fa-edit"></i>
-                    <span>Payments</span></a>
+                <a class="nav-link" href="maindashboard.php">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span></a>
             </li>
 
 
@@ -296,7 +275,7 @@
                     <div class="sidebar-brand-text mx-3 font-weight-600 text-dark">
                         <i class="fas fa-user-circle text-primary mr-2"></i>
                         <?php echo $_SESSION['login_user']; ?>
-                    </div>
+                    </div>  
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -325,6 +304,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

@@ -8,11 +8,16 @@ require_once("../Model/projectModel.php");
 <h1 class="h3 mb-4 text-gray-800">Projects Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
+<style>
+    .card-body #projects_table th {
+        font-weight: 500;
+    }
+</style>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h5 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Pending
+                <h5 class="m-0" style="font-size: 1.2rem;">Pending
                     Projects List</h5>
             </div>
             <!-- <div class="col" align="right">
@@ -25,14 +30,14 @@ require_once("../Model/projectModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="projects_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style=display:none>Project Id</th>
-                        <th>Project Code</th>
+                        <th>Project ID</th>
                         <th>Customer Name</th>
-                        <th>Customer Code</th>
+                        <th>Customer ID</th>
                         <th style=display:none>Quote Id</th>
-                        <th>Quote Code</th>
+                        <th>Quote ID</th>
                         <th style=display:none>Quote Type</th>
                         <th style=display:none>Quote For</th>
                         <th style=display:none>Quote Amount</th>
@@ -49,17 +54,17 @@ require_once("../Model/projectModel.php");
                         ?>
                         <tr>
                             <td style="display:none"><?= $project->get_projectId() ?></td>
-                            <td><?= $project->get_projectCode() ?></td>
-                            <td><?= $project->get_custName() ?></td>
-                            <td><?= $project->get_custid() ?></td>
+                            <td align="center"><?= $project->get_projectCode() ?></td>
+                            <td align="left"><?= $project->get_custName() ?></td>
+                            <td align="center"><?= $project->get_custid() ?></td>
                             <td style="display:none"><?= $project->get_quoteid() ?></td>
-                            <td><?= $project->get_quotecode() ?></td>
+                            <td align="center"><?= $project->get_quotecode() ?></td>
                             <td style="display:none"><?= $project->get_quoteType() ?></td>
                             <td style="display:none"><?= $project->getEnqCatName() ?></td>
                             <td style="display:none"><?= $project->get_quoteamt() ?></td>
                             <td style="display:none"><?= $project->getQuantity() ?></td>
                             <td style="display:none"><?= $project->getUnitName() ?></td>
-                            <td><?= $project->get_projectstatus() ?></td>
+                            <td align="center"><?= $project->get_projectstatus() ?></td>
 
                             <td>
                                 <div class="dropdown">
@@ -105,7 +110,8 @@ require_once("../Model/projectModel.php");
     <div class="modal-dialog modal-xl">
         <form method="post" id="project_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Edit projects</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -140,9 +146,10 @@ require_once("../Model/projectModel.php");
                             <div class="col-md-2">
                                 <p id="Unit" class=""></p>
                             </div>
-                            <label class="col-md-2 text-right">Quote Type <span class="text-danger">*</span></label>
-                            <div class="col-md-2">
-                                <p id="quoteType" class=""></p>
+                            <label class="col-md-2 text-right">Quote For<span class="text-danger">*</span></label>
+                            <div class="col-md-2 input-group">
+                                <p id="QuoteFor" class="pad"></p>
+
                             </div>
                         </div>
                     </div>
@@ -150,11 +157,7 @@ require_once("../Model/projectModel.php");
                     <div class="form-group">
                         <div class="row">
 
-                            <label class="col-md-2 text-right">Quote For<span class="text-danger">*</span></label>
-                            <div class="col-md-2 input-group">
-                                <p id="QuoteFor" class="pad"></p>
-
-                            </div>
+                            
 
                             <!-- <label class="col-md-2 text-right">Total Amount<span class="text-danger">*</span></label>
                             <div class="col-md-2 input-group">
@@ -171,11 +174,6 @@ require_once("../Model/projectModel.php");
                             <div class="col-md-2 input-group">
                                 <p id="projectcode" class=""></p>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-
                             <label class="col-md-2 text-right"> Project Status<span class="text-danger">*</span></label>
                             <div class="col-md-2">
                                 <select name="projectStatus" id="editedprojectStatus" class="form-select">
@@ -187,46 +185,44 @@ require_once("../Model/projectModel.php");
                                 </select>
                                 <input type="hidden" name="projectId" id="projectId" value="">
                             </div>
-                            <label class="col-md-2 text-right">Progress Note<span class="text-danger">*</span></label>
-                            <div class="col-md-3">
-                                <textarea class="form-control" placeholder="Leave a note here" id="progressNote"
-                                    style="height: 100px" data-parsley-pattern="/^[a-zA-Z\s]+$/"
-                                    data-parsley-trigger="keyup" name="progressNote"></textarea>
-                            </div>
                         </div>
                     </div>
+                    
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
+                             <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="ProjIssues-tab" data-toggle="tab" data-target="#ProjIssues"
+                                    type="button" role="tab" aria-controls="issues"
+                                    aria-selected="false">Issues</button>
+                            </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="itemlist-tab" data-bs-toggle="tab"
-                                    data-bs-target="#itemlist" type="button" role="tab" aria-controls="itemlist"
-                                    aria-selected="true"><b>Item List</b></button>
+                                <button class="nav-link active" id="itemlist-tab" data-toggle="tab"
+                                    data-target="#itemlist" type="button" role="tab" aria-controls="itemlist"
+                                    aria-selected="true">Item List</button>
                             </li>
 
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="material-tab" data-bs-toggle="tab"
-                                    data-bs-target="#material" type="button" role="tab" aria-controls="democlass"
-                                    aria-selected="false"><b>Material List</b></button>
+                                <button class="nav-link" id="material-tab" data-toggle="tab" data-target="#material"
+                                    type="button" role="tab" aria-controls="democlass" aria-selected="false">Material
+                                        List</b></button>
                             </li>
 
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="products-tab" data-bs-toggle="tab"
-                                    data-bs-target="#products" type="button" role="tab" aria-controls="products"
-                                    aria-selected="false"><b>Product List</b></button>
-                            </li>
+                            
 
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="ProjIssues-tab" data-bs-toggle="tab"
-                                    data-bs-target="#ProjIssues" type="button" role="tab" aria-controls="issues"
-                                    aria-selected="false"><b>Issues</b></button>
-                            </li>
+                           
                         </ul>
                     </div>
+                    <style>
+                        .tab-content th {
+                            font-weight: 500;
+                        }
+
+                    </style>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active " id="itemlist" role="tabpanel"
                             aria-labelledby="itemlist-tab">
                             <table class="table table-bordered" id="editedlineItemTable" width="80%" cellspacing="0">
-                                <thead>
+                                <thead style="text-align:center">
                                     <tr>
 
                                         <th>Image</th>
@@ -234,11 +230,11 @@ require_once("../Model/projectModel.php");
                                         <th>Name</th>
                                         <th>Brand</th>
                                         <th>Quantity</th>
+                                        <th>Unit</th>
                                         <th>Available Qty</th>
                                         <th>Allocated Qty</th>
-                                        <th>Unit</th>
-                                        <th>PO Status</th>
-                                        <th>Inward Status</th>
+
+
 
                                     </tr>
                                 </thead>
@@ -286,18 +282,18 @@ require_once("../Model/projectModel.php");
                         </div>
                         <div class="tab-pane fade " id="material" role="tabpanel" aria-labelledby="material-tab">
                             <table class="table table-bordered" id="editedMaterialTable" width="80%" cellspacing="0">
-                                <thead>
+                                <thead style="text-align:center">
                                     <tr>
                                         <th>Image</th>
                                         <th>Material Code</th>
                                         <th>Material Name</th>
                                         <th>Brand</th>
                                         <th>Quantity</th>
+                                        <th>Unit</th>
                                         <th>Available Qty</th>
                                         <th>Allocated Qty</th>
-                                        <th>Unit</th>
-                                        <th>PO Status</th>
-                                        <th>Inward Status</th>
+                                        
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -344,7 +340,7 @@ require_once("../Model/projectModel.php");
                                 <div class="row">
                                     <table class="table table-bordered" id="editedlineItemTable" width="80%"
                                         cellspacing="0">
-                                        <thead>
+                                        <thead style="text-align:center">
                                             <tr>
 
                                                 <th>Name</th>
@@ -395,7 +391,7 @@ require_once("../Model/projectModel.php");
                         <div class="tab-pane fade" id="ProjIssues" role="tabpanel" aria-labelledby="ProjIssues-tab">
                             <div class="container">
                                 <table class="table table-bordered" id="ProjectIssuesTable" width="80%" cellspacing="0">
-                                    <thead>
+                                    <thead style="text-align:center">
                                         <tr>
                                             <th>
 
@@ -454,7 +450,8 @@ require_once("../Model/projectModel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_category_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Item Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -542,6 +539,11 @@ require_once("../Model/projectModel.php");
 
                     $('#editedlineItemTable tr:last').
                         append($(document.createElement('td')).prop({
+                            innerHTML: value.Units
+                        }));
+
+                    $('#editedlineItemTable tr:last').
+                        append($(document.createElement('td')).prop({
                             innerHTML: value.AvailableQty
                         }));
 
@@ -550,20 +552,9 @@ require_once("../Model/projectModel.php");
                             innerHTML: value.AllocatedQty
                         }));
 
-                    $('#editedlineItemTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.Units
-                        }));
 
-                    $('#editedlineItemTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.POStatus
-                        }));
 
-                    $('#editedlineItemTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.InwardStatus
-                        }));
+                   
                     sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
                     sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
                 });
@@ -631,6 +622,10 @@ require_once("../Model/projectModel.php");
                         append($(document.createElement('td')).prop({
                             innerHTML: value.itemquantity
                         }));
+                    $('#editedMaterialTable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.Units
+                        }));
 
                     $('#editedMaterialTable tr:last').
                         append($(document.createElement('td')).prop({
@@ -642,20 +637,9 @@ require_once("../Model/projectModel.php");
                             innerHTML: value.AllocatedQty
                         }));
 
-                    $('#editedMaterialTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.Units
-                        }));
+                    
 
-                    $('#editedMaterialTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.POStatus
-                        }));
-
-                    $('#editedMaterialTable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.InwardStatus
-                        }));
+                    
                     sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
                     sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
                 });
@@ -771,6 +755,31 @@ require_once("../Model/projectModel.php");
                     }, 5000);
                 }
             });
+        });
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            var offset = $dialog.offset();
+
+            $dialog.css({
+                margin: 0,
+                position: "fixed",
+                left: offset.left,
+                top: offset.top,
+                transform: "none"
+            });
+
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
         });
     });
 </script>

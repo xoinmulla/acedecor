@@ -7,6 +7,10 @@ require_once("../Model/customerModel.php");
 require_once("../Model/enq_cat_mappingmodel.php");
 ?>
 <style>
+    .table-responsive {
+        overflow: visible !important;
+    }
+
     .paging-nav {
         text-align: right;
         padding-top: 2px;
@@ -120,15 +124,344 @@ require_once("../Model/enq_cat_mappingmodel.php");
     .modal-backdrop.modal-stack {
         pointer-events: none !important;
     }
+    .card-body #Customer_table th {
+        font-weight: 500;
+    }
+</style>
+<style>
+    /* Collapse only for Quote Modal */
+    #quoteModal.modal-collapsed .qm-body,
+    #quoteModal.modal-collapsed .qm-footer {
+        display: none;
+    }
+
+    #quoteModal.modal-collapsed .modal-dialog {
+        max-width: 700px;
+        transition: all .3s ease;
+    }
+
+    #quoteModal .modal-dialog {
+        transition: all .3s ease;
+    }
+
+    #quoteModal.modal-collapsed .qm-header {
+        border-radius: 12px;
+    }
+
+    /* Scoped to this modal only — won't leak into the rest of the app */
+    #quoteModal .qm-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #quoteModal .qm-header {
+        background: linear-gradient(90deg, #6a5cf5 0%, #8a5cf0 100%);
+        color: #fff;
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #quoteModal .qm-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.15rem;
+    }
+
+    #quoteModal .qm-header .btn-close {
+        filter: invert(1) brightness(2);
+        opacity: .9;
+    }
+
+    #quoteModal .qm-body {
+        background: #f4f5fb;
+        padding: 20px;
+    }
+
+    #quoteModal .qm-panel {
+        background: #fff;
+        border-radius: 10px;
+        padding: 18px 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        height: 100%;
+    }
+
+    #quoteModal .qm-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #333;
+        font-size: 1rem;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #6a5cf5;
+    }
+
+    #quoteModal .qm-panel-title i {
+        color: #6a5cf5;
+    }
+
+    #quoteModal .qm-toggle {
+        background: none;
+        border: none;
+        padding: 0;
+        color: #6a5cf5;
+        font-size: .8rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-left: auto;
+    }
+
+    #quoteModal .qm-field {
+        margin-bottom: 14px;
+    }
+
+    #quoteModal .qm-field label {
+        font-weight: 600;
+        font-size: .82rem;
+        color: #333;
+        margin-bottom: 4px;
+        display: block;
+    }
+
+    #quoteModal .qm-field label .text-danger {
+        margin-left: 2px;
+    }
+
+    #quoteModal .qm-field .form-control,
+    #quoteModal .qm-field .form-select {
+        font-size: .85rem;
+        border-radius: 6px;
+        border: 1px solid #dcdfe6;
+    }
+
+    #quoteModal .qm-field .input-group-text {
+        background: #f4f5fb;
+        border: 1px solid #dcdfe6;
+    }
+
+    #quoteModal .qm-add-inline {
+        border: 1px dashed #6a5cf5;
+        color: #6a5cf5;
+        background: #fff;
+        border-radius: 6px;
+        padding: 0 10px;
+        margin-left: 6px;
+    }
+
+    #quoteModal .qm-items-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    #quoteModal .qm-items-header .qm-panel-title {
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    #quoteModal .btn-add-item {
+        border: 1px solid #6a5cf5;
+        color: #6a5cf5;
+        background: #fff;
+        border-radius: 6px;
+        font-size: .82rem;
+        font-weight: 500;
+        padding: 6px 14px;
+    }
+
+    #quoteModal .btn-add-item:hover {
+        background: #6a5cf5;
+        color: #fff;
+    }
+
+    #quoteModal .btn-clear-all {
+        border: 1px solid #e5546b;
+        color: #e5546b;
+        background: #fff;
+        border-radius: 6px;
+        font-size: .82rem;
+        font-weight: 500;
+        padding: 6px 14px;
+        margin-left: 8px;
+    }
+
+    #quoteModal .btn-clear-all:hover {
+        background: #e5546b;
+        color: #fff;
+    }
+
+    #quoteModal .qm-table-wrap {
+        position: relative;
+        overflow-x: auto;
+        overflow-y: auto;
+        border-radius: 8px;
+        border: 1px solid #eee;
+        height: 420px;
+        /* fixed height so the scrollbar sits at the bottom edge */
+    }
+
+    #quoteModal #lineItemTable {
+        margin-bottom: 0;
+        height: 100%;
+    }
+
+    #quoteModal #lineItemTable thead th {
+        background: #6a5cf5;
+        color: #fff;
+        font-size: .78rem;
+        font-weight: 600;
+        white-space: nowrap;
+        border-color: #6a5cf5;
+        vertical-align: middle;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+    }
+
+    #quoteModal #lineItemTable tbody td {
+        font-size: .82rem;
+        vertical-align: middle;
+    }
+
+    /* Empty state now lives INSIDE the table area, centered over the
+       (empty) tbody, instead of appearing as a separate block below it.
+       Toggle this with #qmEmptyState.style.display in your existing
+       "add row" / "clear all" JS. */
+    #quoteModal .qm-empty-state {
+        position: absolute;
+        top: 46px;
+        /* clears the sticky header */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        color: #9aa0b4;
+        pointer-events: none;
+    }
+
+    #quoteModal .qm-empty-state .qm-empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #f1eefe;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 14px;
+        color: #6a5cf5;
+        font-size: 1.6rem;
+    }
+
+    #quoteModal .qm-empty-state strong {
+        color: #555;
+        display: block;
+        font-size: .95rem;
+    }
+
+    #quoteModal .qm-empty-state span {
+        font-size: .8rem;
+    }
+
+    #quoteModal .qm-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-top: 16px;
+        align-items: stretch;
+    }
+
+    #quoteModal .qm-sum-card {
+        flex: 1;
+        min-width: 130px;
+        text-align: center;
+        background: #f8f8fb;
+        border-radius: 8px;
+        padding: 10px 8px;
+    }
+
+    #quoteModal .qm-sum-card label {
+        font-size: .68rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #777;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    #quoteModal .qm-sum-card .val {
+        font-weight: 700;
+        color: #333;
+        font-size: 1rem;
+    }
+
+    #quoteModal .qm-sum-card.qm-quote-value {
+        background: #f1eefe;
+        border: 1px solid #6a5cf5;
+    }
+
+    #quoteModal .qm-sum-card.qm-quote-value label {
+        color: #6a5cf5;
+    }
+
+    #quoteModal .qm-sum-card.qm-quote-value input {
+        font-weight: 700;
+        color: #6a5cf5;
+        text-align: center;
+        border-color: #6a5cf5;
+    }
+
+    #quoteModal .qm-footer {
+        background: #f4f5fb;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    #quoteModal .qm-footer .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 8px 20px;
+    }
+
+    #quoteModal .btn-qm-close {
+        background: #e5546b;
+        border-color: #e5546b;
+        color: #fff;
+    }
+
+    #quoteModal .btn-qm-save {
+        background: #4a6cf7;
+        border-color: #4a6cf7;
+        color: #fff;
+    }
+
+    #quoteModal .btn-qm-create {
+        background: #29b06b;
+        border-color: #29b06b;
+        color: #fff;
+    }
 </style>
 <h1 class="h3 mb-4 text-gray-800">Customer Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Customer
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Customer
                     List</h6>
             </div>
             <!-- <div class="col" align="right">
@@ -144,7 +477,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             <table class="table table-bordered" id="Customer_table" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Customer ID</th>
+                        <th>Customer ID</th>    
                         <th>Customer Name</th>
                         <th>DOE</th>
                         <th>Place</th>
@@ -167,13 +500,15 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     foreach ($customerList as $customer):
 
                         // ✅ define once per row
-                        $hasQuote = ($customer->getQuotationCount() > 0);
+                        $quotes = DBcustomer::getQuotationSummaryByCustomer($customer->get_customerId());
+
+                        $hasQuote = !empty($quotes);
                         ?>
                         <tr>
-                            <td><?= $customer->getCustomerCode(); ?></td>
+                            <td align="center"><?= $customer->getCustomerCode(); ?></td>
                             <td><?= $customer->get_customerName(); ?></td>
-                            <td><?= $customer->get_customerDov(); ?></td>
-                            <td><?= $customer->get_customerCity(); ?></td>
+                            <td align="center"><?= $customer->get_customerDov(); ?></td>
+                            <td align="center"><?= $customer->get_customerCity(); ?></td>
 
                             <!-- Enquiry -->
                             <td>
@@ -212,7 +547,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                             <!-- Actions -->
                             <td>
-                                <div class="dropdown">
+                                <div class="dropdown" >
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown">
                                         Actions
                                     </button>
@@ -220,7 +555,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                     <div class="dropdown-menu">
                                         <?php if (hasActionPermission('customers', 'edit_customer')) { ?>
                                             <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                                data-target="#editCustomerModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                data-target="#editCustomerModal" data-id="<?= $customer->get_customerId(); ?>"
+                                                data-enqid="<?= trim($customer->get_enqId()); ?>">
                                                 <i class="fas fa-user-edit"></i> Edit Customer
                                             </button>
                                         <?php } ?>
@@ -242,8 +578,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                                         <?php if (hasActionPermission('customers', 'customer_inputs')) { ?>
                                             <button class="btn btn-primary dropdown-item" data-toggle="modal"
-                                                data-target="#inputModal" data-id="<?= $customer->get_customerId(); ?>">
-                                                <i class="fas fa-input"></i> Inputs
+                                                data-target="#quoteModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                <i class="fas fa-edit"></i> Inputs
                                             </button>
                                         <?php } ?>
 
@@ -261,7 +597,10 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                                 <button class="btn btn-danger dropdown-item disabled" disabled>Delete
                                                     Customer</button>
                                             <?php else: ?>
-                                                <button class="btn btn-danger dropdown-item" ...>Delete Customer</button>
+                                                <button type="button" class="btn btn-danger dropdown-item" data-toggle="modal"
+                                                    data-target="#deleteUserModal" data-id="<?= $customer->get_customerId(); ?>">
+                                                    Delete Customer
+                                                </button>
                                             <?php endif; ?>
                                         <?php } ?>
                                     </div>
@@ -398,572 +737,1015 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="addCustomer" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<div class="modal fade" id=editCustomerModal tabindex=-1 role=dialog aria-hidden=true>
-    <div class="modal-dialog">
+<style>
+    #editCustomerModal .ec-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #editCustomerModal .ec-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    #editCustomerModal .ec-header .ec-header-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, .2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    #editCustomerModal .ec-header h4 {
+        margin: 0;
+        flex-grow: 1;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    #editCustomerModal .ec-header .close {
+        color: #fff;
+        opacity: .9;
+        font-size: 1.6rem;
+        font-weight: 400;
+        text-shadow: none;
+    }
+
+    #editCustomerModal .ec-header .close:hover {
+        opacity: 1;
+    }
+
+    #editCustomerModal .ec-body {
+        background: #f4f5fb;
+        padding: 20px;
+    }
+
+    #editCustomerModal .ec-panel {
+        background: #fff;
+        border-radius: 10px;
+        padding: 18px 22px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        height: 100%;
+    }
+
+    #editCustomerModal .ec-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: #4a3fbf;
+        font-size: 1.02rem;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #6a5cf5;
+    }
+
+    #editCustomerModal .ec-panel-title .ec-icon-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #ece9fd;
+        color: #6a5cf5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .9rem;
+    }
+
+    #editCustomerModal .ec-field-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    #editCustomerModal .ec-field-row label {
+        width: 155px;
+        flex-shrink: 0;
+        text-align: right;
+        font-weight: 600;
+        color: #4a4a5a;
+        font-size: .9rem;
+        margin: 0;
+    }
+
+    #editCustomerModal .ec-field-row label .text-danger {
+        margin-left: 2px;
+    }
+
+    #editCustomerModal .ec-field-row .ec-field-input {
+        flex-grow: 1;
+    }
+
+    #editCustomerModal .ec-field-row .form-control,
+    #editCustomerModal .ec-field-row .form-select {
+        border-radius: 8px;
+        border: 1px solid #dcdfe6;
+        font-size: .9rem;
+        padding: 9px 12px;
+    }
+
+    #editCustomerModal .ec-field-row .form-control[readonly] {
+        background: #f0eefe;
+        color: #6a5cf5;
+    }
+
+    /* ---- Looking For list ---- */
+    #editCustomerModal .ec-interest-wrap {
+        max-height: 460px;
+        overflow-y: auto;
+    }
+
+    #editCustomerModal #editCustomerInterestList {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Best-effort styling for whatever checkbox markup your JS generates
+       inside #editCustomerInterestList. Covers plain <label><input> pairs
+       and Bootstrap .form-check markup. If your JS uses different classes,
+       tell me the generated HTML and I'll tighten these selectors. */
+    #editCustomerModal #editCustomerInterestList>* {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 13px 4px;
+        border-bottom: 1px solid #f0f0f5;
+        font-size: .95rem;
+        color: #333;
+        pointer-events: auto;
+    }
+
+    #editCustomerModal #editCustomerInterestList>*:last-child {
+        border-bottom: none;
+    }
+
+    #editCustomerModal #editCustomerInterestList input[type="checkbox"] {
+        all: revert !important;
+        /* wipe out any global appearance:none / width:0 reset fighting us */
+        -webkit-appearance: checkbox !important;
+        appearance: checkbox !important;
+        display: inline-block !important;
+        width: 20px !important;
+        height: 20px !important;
+        min-width: 20px !important;
+        margin: 0 !important;
+        opacity: 1 !important;
+        position: static !important;
+        pointer-events: auto !important;
+        accent-color: #4a6cf7 !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+        vertical-align: middle !important;
+    }
+
+    #editCustomerModal #editCustomerInterestList input[type="checkbox"]:disabled {
+        cursor: not-allowed !important;
+        opacity: .6 !important;
+    }
+
+    #editCustomerModal #editCustomerInterestList label {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    #editCustomerModal #editCustomerInterestList input[type="checkbox"]:disabled+label,
+    #editCustomerModal #editCustomerInterestList *:has(input[type="checkbox"]:disabled) label {
+        color: #a8a8c0;
+    }
+
+    /* Lock icon: add class="ec-locked" (or data-locked="true") from your JS
+       on any row that should show the padlock, e.g.:
+       <div class="ec-locked"><input ...><label>Sliding Wardrobe</label></div> */
+    #editCustomerModal .ec-locked::after {
+        content: "\f023";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        color: #f0a020;
+        margin-left: auto;
+        font-size: .85rem;
+    }
+
+    #editCustomerModal .ec-footer {
+        background: #fff;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        border-top: 1px solid #eee;
+    }
+
+    #editCustomerModal .ec-footer .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 9px 22px;
+    }
+
+    #editCustomerModal .btn-ec-save {
+        background: #29b06b;
+        border-color: #29b06b;
+        color: #fff;
+    }
+
+    #editCustomerModal .btn-ec-close {
+        background: #e5546b;
+        border-color: #e5546b;
+        color: #fff;
+    }
+</style>
+
+<div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
         <form method="POST" id="editedCustomer_form" enctype="multipart/form-data">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="modal_title">Edit Customer</h4>
+            <div class="modal-content ec-content">
+
+                <!-- ===== Header ===== -->
+                <div class="ec-header">
+                    <div class="ec-header-icon"><i class="fas fa-user"></i></div>
+                    <h4 id="modal_title">Edit Customer</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                <div class="modal-body">
+
+                <div class="ec-body">
                     <span id="form_message"></span>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Customer Id <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="editedcustomerCode" name="customerCode"
-                                    readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Name <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="editedcustomerName" name="customerName">
-                                <input type="hidden" name="customerId" id="editedcustomerId" value="">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Date of Enquiry. <span
-                                    class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="date" class="form-control" id="editedcustomerDov" name="customerDov">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Email <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="email" class="form-control" id="editedcustomerEmail" name="customerEmail">
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Mobile<span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="editedcustomerPhone" name="customerPhone">
+                    <div class="row g-3">
+                        <!-- ===== LEFT: Customer Information ===== -->
+                        <div class="col-lg-7">
+                            <div class="ec-panel">
+                                <div class="ec-panel-title">
+                                    <span class="ec-icon-badge"><i class="fas fa-user"></i></span>
+                                    Customer Information
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerCode">Customer Id <span
+                                            class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="text" class="form-control" id="editedcustomerCode"
+                                            name="customerCode" readonly>
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerName">Name <span class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="text" class="form-control" id="editedcustomerName"
+                                            name="customerName">
+                                        <input type="hidden" name="customerId" id="editedcustomerId" value="">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerDov">Date of Enquiry. <span
+                                            class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="date" class="form-control" id="editedcustomerDov"
+                                            name="customerDov">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerEmail">Email <span class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="email" class="form-control" id="editedcustomerEmail"
+                                            name="customerEmail">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerPhone">Mobile <span class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="text" class="form-control" id="editedcustomerPhone"
+                                            name="customerPhone">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerAddress">Address line <span
+                                            class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="text" class="form-control" id="editedcustomerAddress"
+                                            placeholder="1234 Main St" name="customerAddress">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerCity">City <span class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <input type="text" class="form-control" id="editedcustomerCity"
+                                            name="customerCity">
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedcustomerState">State <span class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <select id="editedcustomerState" name="customerState" class="form-select"
+                                            required>
+                                            <option selected="selected" value="">Select State</option>
+                                            <option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
+                                            <option value="ARUNACHAL PRADESH">ARUNACHAL PRADESH</option>
+                                            <option value="ASSAM">ASSAM</option>
+                                            <option value="BIHAR">BIHAR</option>
+                                            <option value="CHANDIGARH">CHANDIGARH</option>
+                                            <option value="CHATTISGARH">CHATTISGARH</option>
+                                            <option value="DADRA & NAGAR HAVELI">DADRA & NAGAR HAVELI</option>
+                                            <option value="DAMAN & DIU">DAMAN & DIU</option>
+                                            <option value="DELHI">DELHI</option>
+                                            <option value="GOA">GOA</option>
+                                            <option value="GUJARAT">GUJARAT</option>
+                                            <option value="HARYANA">HARYANA</option>
+                                            <option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
+                                            <option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
+                                            <option value="JHARKHAND">JHARKHAND</option>
+                                            <option value="KARNATAKA">KARNATAKA</option>
+                                            <option value="KERALA">KERALA</option>
+                                            <option value="LAKSHADWEEP">LAKSHADWEEP</option>
+                                            <option value="MADHYA PRADESH">MADHYA PRADESH</option>
+                                            <option value="MAHARASHTRA">MAHARASHTRA</option>
+                                            <option value="MANIPUR">MANIPUR</option>
+                                            <option value="MEGHALAYA">MEGHALAYA</option>
+                                            <option value="MIZORAM">MIZORAM</option>
+                                            <option value="NAGALAND">NAGALAND</option>
+                                            <option value="ODISHA">ODISHA</option>
+                                            <option value="PONDICHERRY">PONDICHERRY</option>
+                                            <option value="PUNJAB">PUNJAB</option>
+                                            <option value="RAJASTHAN">RAJASTHAN</option>
+                                            <option value="SIKKIM">SIKKIM</option>
+                                            <option value="TAMIL NADU">TAMIL NADU</option>
+                                            <option value="TELANGANA">TELANGANA</option>
+                                            <option value="TRIPURA">TRIPURA</option>
+                                            <option value="UTTAR PRADESH">UTTAR PRADESH</option>
+                                            <option value="UTTARAKHAND">UTTARAKHAND</option>
+                                            <option value="WEST BENGAL">WEST BENGAL</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="ec-field-row">
+                                    <label for="editedSelectedCountry">Country <span
+                                            class="text-danger">*</span></label>
+                                    <div class="ec-field-input">
+                                        <select id="editedSelectedCountry" name="SelectedCountry" class="form-select">
+                                            <!-- <option value="">Select Country</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="createdby" id="createdby" class="form-control" required
+                                    value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="hidden" name="modifiedby" id="modifiedby" class="form-control" required
+                                    value="<?php echo $_SESSION['login_user']; ?>" />
+                                <input type="hidden" id="editedEnqId" name="editedEnqId">
                             </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Address line<span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="editedcustomerAddress"
-                                    placeholder="1234 Main St" name="customerAddress">
+                        <!-- ===== RIGHT: Looking For ===== -->
+                        <div class="col-lg-5">
+                            <div class="ec-panel">
+                                <div class="ec-panel-title">
+                                    <span class="ec-icon-badge"><i class="fas fa-tags"></i></span>
+                                    Looking For
+                                </div>
+                                <div class="ec-interest-wrap">
+                                    <div id="editCustomerInterestList">
+                                        <!-- populated by your existing JS — untouched -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">City <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control" id="editedcustomerCity" name="customerCity">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">State <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <select id="editedcustomerState" name="customerState" class="form-select" required>
-                                    <option selected="selected" value="">Select State</option>
-                                    <option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
-                                    <option value="ARUNACHAL PRADESH">ARUNACHAL PRADESH</option>
-                                    <option value="ASSAM">ASSAM</option>
-                                    <option value="BIHAR">BIHAR</option>
-                                    <option value="CHANDIGARH">CHANDIGARH</option>
-                                    <option value="CHATTISGARH">CHATTISGARH</option>
-                                    <option value="DADRA & NAGAR HAVELI">DADRA & NAGAR HAVELI</option>
-                                    <option value="DAMAN & DIU">DAMAN & DIU</option>
-                                    <option value="DELHI">DELHI</option>
-                                    <option value="GOA">GOA</option>
-                                    <option value="GUJARAT">GUJARAT</option>
-                                    <option value="HARYANA">HARYANA</option>
-                                    <option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
-                                    <option value="JAMMU & KASHMIR">JAMMU & KASHMIR</option>
-                                    <option value="JHARKHAND">JHARKHAND</option>
-                                    <option value="KARNATAKA">KARNATAKA</option>
-                                    <option value="KERALA">KERALA</option>
-                                    <option value="LAKSHADWEEP">LAKSHADWEEP</option>
-                                    <option value="MADHYA PRADESH">MADHYA PRADESH</option>
-                                    <option value="MAHARASHTRA">MAHARASHTRA</option>
-                                    <option value="MANIPUR">MANIPUR</option>
-                                    <option value="MEGHALAYA">MEGHALAYA</option>
-                                    <option value="MIZORAM">MIZORAM</option>
-                                    <option value="NAGALAND">NAGALAND</option>
-                                    <option value="ODISHA">ODISHA</option>
-                                    <option value="PONDICHERRY">PONDICHERRY</option>
-                                    <option value="PUNJAB">PUNJAB</option>
-                                    <option value="RAJASTHAN">RAJASTHAN</option>
-                                    <option value="SIKKIM">SIKKIM</option>
-                                    <option value="TAMIL NADU">TAMIL NADU</option>
-                                    <option value="TELANGANA">TELANGANA</option>
-                                    <option value="TRIPURA">TRIPURA</option>
-                                    <option value="UTTAR PRADESH">UTTAR PRADESH</option>
-                                    <option value="UTTARAKHAND">UTTARAKHAND</option>
-                                    <option value="WEST BENGAL">WEST BENGAL</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="row">
-                            <label class="col-md-4 text-right">Country <span class="text-danger">*</span></label>
-                            <div class="col-md-8">
-                                <select id="editedSelectedCountry" name="SelectedCountry" class="form-select">
-                                    <!-- <option value="">Select Country</option> -->
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Looking For</label>
-                        <div id="editCustomerInterestList"></div>
-                    </div>
-
-
-                    <div class="col-md-8">
-                        <input type="hidden" name="createdby" id="createdby" class="form-control" required
-                            value="<?php echo $_SESSION['login_user']; ?>" />
-                        <input type="hidden" name="modifiedby" id="modifiedby" class="form-control" required
-                            value="<?php echo $_SESSION['login_user']; ?>" />
                     </div>
                 </div>
-                <input type="hidden" id="editedEnqId" name="editedEnqId">
 
-
-                <div class="modal-footer">
+                <!-- ===== Footer ===== -->
+                <div class="ec-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
-                    <input type="submit" name="submit" id="editCustomer" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" name="submit" id="editCustomer" value="Save" class="btn btn-ec-save">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button type="button" class="btn btn-ec-close" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Close
+                    </button>
                 </div>
+
             </div>
         </form>
     </div>
 </div>
-<div class="modal fade" id=infoCustomerModal tabindex=-1 role=dialog aria-hidden=true>
+
+<style>
+    #infoCustomerModal .ic-content {
+        border: none;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #infoCustomerModal .ic-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    #infoCustomerModal .ic-header .ic-header-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, .2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    #infoCustomerModal .ic-header h4 {
+        margin: 0;
+        flex-grow: 1;
+        font-weight: 600;
+        font-size: 1.2rem;
+    }
+
+    #infoCustomerModal .ic-header .close {
+        color: #fff;
+        opacity: .9;
+        font-size: 1.6rem;
+        font-weight: 400;
+        text-shadow: none;
+    }
+
+    #infoCustomerModal .ic-header .close:hover {
+        opacity: 1;
+    }
+
+    #infoCustomerModal .ic-body {
+        background: #f4f5fb;
+        padding: 20px;
+    }
+
+    #infoCustomerModal .ic-panel {
+        background: #fff;
+        border-radius: 10px;
+        padding: 18px 22px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        margin-bottom: 18px;
+    }
+
+    #infoCustomerModal .ic-panel:last-child {
+        margin-bottom: 0;
+    }
+
+    #infoCustomerModal .ic-panel-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        color: #4a3fbf;
+        font-size: 1.02rem;
+        margin-bottom: 4px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #6a5cf5;
+    }
+
+    #infoCustomerModal .ic-panel-title .ic-icon-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: #ece9fd;
+        color: #6a5cf5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .9rem;
+    }
+
+    #infoCustomerModal .ic-toggle {
+        margin-left: auto;
+        background: none;
+        border: none;
+        color: #6a5cf5;
+        font-size: .82rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    #infoCustomerModal .ic-detail-row {
+        display: flex;
+        align-items: center;
+        padding: 12px 4px;
+        border-bottom: 1px solid #f0f0f5;
+    }
+
+    #infoCustomerModal .ic-detail-row:last-child {
+        border-bottom: none;
+    }
+
+    #infoCustomerModal .ic-detail-row label {
+        width: 220px;
+        flex-shrink: 0;
+        margin: 0;
+        color: #6b6b7b;
+        font-size: .92rem;
+        font-weight: 500;
+    }
+
+    #infoCustomerModal .ic-detail-row .ic-value {
+        margin: 0;
+        font-weight: 600;
+        color: #2d2d3a;
+        font-size: 1rem;
+    }
+
+    #infoCustomerModal .ic-table-wrap {
+        overflow-x: auto;
+        border-radius: 8px;
+        border: 1px solid #eee;
+    }
+
+    #infoCustomerModal #quotationdetails_table {
+        margin-bottom: 0;
+    }
+
+    #infoCustomerModal #quotationdetails_table thead th {
+        background: #ece9fd;
+        color: #4a3fbf;
+        font-size: .82rem;
+        font-weight: 700;
+        white-space: nowrap;
+        border-color: #ece9fd;
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px 10px;
+    }
+
+    #infoCustomerModal #quotationdetails_table tbody td {
+        font-size: .9rem;
+        color: #2d2d3a;
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px 10px;
+    }
+
+    /* Best-effort status badge styling. Have your JS add class="ic-status-approved"
+       or class="ic-status-pending" (etc.) on the status cell's inner element when
+       it renders each row, and these will pick up the pill look automatically.
+       See comment block at bottom for details / how to adjust. */
+    #infoCustomerModal .ic-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: .8rem;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    #infoCustomerModal .ic-status-approved {
+        background: #29b06b;
+    }
+
+    #infoCustomerModal .ic-status-pending {
+        background: #f0a020;
+    }
+
+    #infoCustomerModal .ic-status-rejected {
+        background: #e5546b;
+    }
+
+    #infoCustomerModal .ic-footer {
+        background: #fff;
+        padding: 14px 24px;
+        display: flex;
+        justify-content: flex-end;
+        border-top: 1px solid #eee;
+    }
+
+    #infoCustomerModal .ic-footer .btn {
+        border-radius: 6px;
+        font-weight: 500;
+        padding: 9px 22px;
+    }
+
+    #infoCustomerModal .btn-ic-close {
+        background: #e5546b;
+        border-color: #e5546b;
+        color: #fff;
+    }
+</style>
+
+<div class="modal fade" id="infoCustomerModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal_title">Customer Info</h4>
+        <div class="modal-content ic-content">
+
+            <!-- ===== Header ===== -->
+            <div class="ic-header">
+                <div class="ic-header-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <h4 id="modal_title">
+                    Customer Info - 
+                    <span id="displaycustomerNameHeader" class="customer-name"></span>
+                </h4>
+
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displayusername">Customer Id</label>
-                                    </div>
-                                    <input type="hidden" id="customerId" name="customerId" value="">
-                                    <div class="col-8">
-                                        <h5 class="card-title" id="displayusername"></h5>
-                                    </div>
 
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerName">Name</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <h5 class="card-title" id="displaycustomerName"></h5>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerDov">Date Of Enquiry</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerDov"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerEmail">Email</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerEmail"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerPhone">Mobile Number</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerPhone"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerAddress">Address</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerAddress"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerCity">City</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerCity"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerState">State</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerState"></p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-4">
-                                        <label for="displaycustomerCountry">Country</label>
-                                    </div>
-                                    <div class="col-8">
-                                        <p class="card-title" id="displaycustomerCountry"></p>
-                                    </div>
-                                </div>
-                            </div>
+            <div class="ic-body">
 
-                            <div class="row">
-                                <table class="table table-bordered" id="quotationdetails_table" width="100%"
-                                    cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>Quote Id</th>
-                                            <th>Date</th>
-                                            <th>Description </th>
-                                            <th>Quote Value</th>
-                                            <th>Quote Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                <!-- ===== Customer Details (collapsible) ===== -->
+                <div class="ic-panel">
+                    <div class="ic-panel-title">
+                        <span class="ic-icon-badge"><i class="fas fa-user"></i></span>
+                        Customer Details
+                        <button type="button" class="ic-toggle" id="toggleCustomerDetails" data-toggle="collapse"
+                            data-target="#customerDetailsCollapse" aria-expanded="true"
+                            aria-controls="customerDetailsCollapse">Hide</button>
+                    </div>
 
-                                    </tbody>
-                                </table>
-                            </div>
+                    <div id="customerDetailsCollapse" class="collapse show">
+                        <input type="hidden" id="customerId" name="customerId" value="">
+
+                        <div class="ic-detail-row">
+                            <label for="displayusername">Customer Id</label>
+                            <h5 class="ic-value" id="displayusername"></h5>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerName">Name</label>
+                            <h5 class="ic-value" id="displaycustomerName"></h5>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerDov">Date Of Enquiry</label>
+                            <p class="ic-value" id="displaycustomerDov"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerEmail">Email</label>
+                            <p class="ic-value" id="displaycustomerEmail"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerPhone">Mobile Number</label>
+                            <p class="ic-value" id="displaycustomerPhone"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerAddress">Address</label>
+                            <p class="ic-value" id="displaycustomerAddress"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerCity">City</label>
+                            <p class="ic-value" id="displaycustomerCity"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerState">State</label>
+                            <p class="ic-value" id="displaycustomerState"></p>
+                        </div>
+                        <div class="ic-detail-row">
+                            <label for="displaycustomerCountry">Country</label>
+                            <p class="ic-value" id="displaycustomerCountry"></p>
                         </div>
                     </div>
                 </div>
+
+                <!-- ===== Quotation History ===== -->
+                <div class="ic-panel">
+                    <div class="ic-panel-title">
+                        <span class="ic-icon-badge"><i class="fas fa-file-invoice"></i></span>
+                        Quotation History
+                    </div>
+                    <div class="ic-table-wrap">
+                        <table class="table table-bordered mb-0" id="quotationdetails_table" width="100%"
+                            cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Quote Id</th>
+                                    <th>Date</th>
+                                    <th>Description</th>
+                                    <th>Quote Value</th>
+                                    <th>Quote Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- rows injected here by your existing JS — untouched -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
-            <div class="modal-footer">
+
+            <!-- ===== Footer ===== -->
+            <div class="ic-footer">
                 <input type="hidden" name="hidden_id" id="hidden_id" />
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-ic-close" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
             </div>
+
         </div>
     </div>
 </div>
-<div class="modal fade" id=quoteModal tabindex=-1 role=dialog aria-hidden=true>
-    <div class="modal-dialog modal-xl">
-        <form class="" method="POST" id="quote_form" enctype="multipart/form-data">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Quotation Details</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body ">
-                    <div class="accordion accordion-flush" id="accordionFlushExample">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#flush-collapseOne" aria-expanded="false"
-                                    aria-controls="flush-collapseOne">
-                                    Customer Details
-                                </button>
-                            </h2>
-                            <div id="flush-collapseOne" class="accordion-collapse collapse"
-                                aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-                                <div class="accordion-body row g-3">
-                                    <div class="col-md-12">
-                                        <label for="State" class="form-label">Customer Id</label>
-                                        <input id="quotecustomerCode" name="customerCode" class="form-control" required
-                                            readonly />
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label for="quotecustomerName" class="form-label">Name</label>
-                                        <input type="text" class="form-control" id="quotecustomerName"
-                                            name="customerName" readonly>
-                                        <input type="hidden" class="form-control" id="quoteenqId" name="enqId" />
-                                        <input type="hidden" class="form-control" id="quotecustomerId"
-                                            name="customerId" />
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="quotecustomerDov" class="form-label">Date of Enquiry</label>
-                                        <input type="date" class="form-control" id="quotecustomerDov" name="customerDov"
-                                            readonly>
-                                    </div>
-                                    <div class="col-md-8">
-                                        <label for="quotecustomerEmail" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="quotecustomerEmail"
-                                            name="customerEmail" readonly>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label for="quotecustomerPhone" class="form-label">Mobile</label>
-                                        <input type="text" class="form-control" id="quotecustomerPhone"
-                                            name="customerPhone" readonly>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="quotecustomerAddress" class="form-label">Address line</label>
-                                        <input type="text" class="form-control" id="quotecustomerAddress"
-                                            name="customerAddress" readonly>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="quotecustomerCity" class="form-label">City</label>
-                                        <input type="text" class="form-control" id="quotecustomerCity"
-                                            name="customerCity" readonly>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="State" class="form-label">State</label>
-                                        <input id="quotecustomerState" name="customerState" class="form-control"
-                                            required readonly />
-                                    </div>
 
-                                    <div class="col-md-8">
+<script>
+    // Flips the "Hide"/"Show" label on the Customer Details toggle.
+    // Purely cosmetic — doesn't touch any of your existing logic.
+    (function () {
+        var btn = document.getElementById('toggleCustomerDetails');
+        var section = document.getElementById('customerDetailsCollapse');
+        if (!btn || !section) return;
+        btn.addEventListener('click', function () {
+            setTimeout(function () {
+                var isOpen = section.classList.contains('show');
+                btn.textContent = isOpen ? 'Hide' : 'Show';
+            }, 0);
+        });
+    })();
+</script>
+
+
+<div class="modal fade" id="quoteModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <form method="POST" id="quote_form" enctype="multipart/form-data">
+            <div class="modal-content qm-content">
+
+                <!-- ===== Header ===== -->
+                <div class="qm-header">
+                    <h5 id="exampleModalLabel">Add Quotation Details</h5>
+
+                    <div class="d-flex align-items-center">
+
+                        <!-- Collapse -->
+                        <button type="button" class="btn btn-sm btn-light mr-2" id="quoteCollapseBtn" title="Collapse">
+                            <i class="fas fa-compress-alt"></i>
+                        </button>
+
+                        <!-- Close -->
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="qm-body">
+                    <div class="row g-3">
+
+                        <!-- ===== LEFT: Customer + Quotation Information ===== -->
+                        <div class="col-lg-5">
+                            <div class="qm-panel">
+
+                                <!-- Customer Details kept fully intact, collapsed by default to match the
+                                     screenshot's single-panel look (all original fields/ids preserved) -->
+                                <div class="qm-panel-title">
+                                    <i class="fas fa-user"></i> Customer Details
+                                    <button type="button" class="qm-toggle" data-toggle="collapse"
+                                        data-target="#flush-collapseOne" aria-expanded="false"
+                                        aria-controls="flush-collapseOne">Show / Hide</button>
+                                </div>
+                                <div id="flush-collapseOne" class="collapse">
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-md-12 qm-field">
+                                            <label for="quotecustomerCode">Customer Id</label>
+                                            <input id="quotecustomerCode" name="customerCode" class="form-control"
+                                                required readonly />
+                                        </div>
+                                        <div class="col-md-8 qm-field">
+                                            <label for="quotecustomerName">Name</label>
+                                            <input type="text" class="form-control" id="quotecustomerName"
+                                                name="customerName" readonly>
+                                            <input type="hidden" class="form-control" id="quoteenqId" name="enqId" />
+                                            <input type="hidden" class="form-control" id="quotecustomerId"
+                                                name="customerId" />
+                                        </div>
+                                        <div class="col-md-4 qm-field">
+                                            <label for="quotecustomerDov">Date of Enquiry</label>
+                                            <input type="date" class="form-control" id="quotecustomerDov"
+                                                name="customerDov" readonly>
+                                        </div>
+                                        <div class="col-md-8 qm-field">
+                                            <label for="quotecustomerEmail">Email</label>
+                                            <input type="email" class="form-control" id="quotecustomerEmail"
+                                                name="customerEmail" readonly>
+                                        </div>
+                                        <div class="col-md-4 qm-field">
+                                            <label for="quotecustomerPhone">Mobile</label>
+                                            <input type="text" class="form-control" id="quotecustomerPhone"
+                                                name="customerPhone" readonly>
+                                        </div>
+                                        <div class="col-md-6 qm-field">
+                                            <label for="quotecustomerAddress">Address line</label>
+                                            <input type="text" class="form-control" id="quotecustomerAddress"
+                                                name="customerAddress" readonly>
+                                        </div>
+                                        <div class="col-md-3 qm-field">
+                                            <label for="quotecustomerCity">City</label>
+                                            <input type="text" class="form-control" id="quotecustomerCity"
+                                                name="customerCity" readonly>
+                                        </div>
+                                        <div class="col-md-3 qm-field">
+                                            <label for="quotecustomerState">State</label>
+                                            <input id="quotecustomerState" name="customerState" class="form-control"
+                                                required readonly />
+                                        </div>
+
                                         <input type="hidden" name="createdby" id="createdby" class="form-control"
                                             required data-parsley-type="integer" data-parsley-minlength="10"
                                             data-parsley-maxlength="12" data-parsley-trigger="keyup"
                                             value="<?php echo $_SESSION['login_user']; ?>" />
-                                    </div>
-                                    <div class="col-md-8">
                                         <input type="hidden" name="modifiedby" id="modifiedby" class="form-control"
                                             required data-parsley-type="integer" data-parsley-minlength="10"
                                             data-parsley-maxlength="12" data-parsley-trigger="keyup"
                                             value="<?php echo $_SESSION['login_user']; ?>" />
                                     </div>
                                 </div>
+
+                                <div class="qm-panel-title">
+                                    <i class="fas fa-file-invoice"></i> Quotation Information
+                                </div>
+
+                                <div class="row g-2">
+                                    <div class="col-md-6 qm-field">
+                                        <label>Quotation Type <span class="text-danger">*</span></label>
+                                        <select id="quoteType" class="form-select" required name="quoteType">
+                                            <option value='General'>General</option>
+                                            <option value='Bank'>Bank</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Quotation For <span class="text-danger">*</span></label>
+                                        <select id="enqCategory" class="form-select" required
+                                            name="enqCategory"></select>
+                                        <input type="hidden" name="encatName" id="encatName" class="form-control"
+                                            value="" />
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Input Type <span class="text-danger">*</span></label>
+                                        <select id="inputType" class="form-select" required name="inputType"></select>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Brand <span class="text-danger">*</span></label>
+                                        <select id="brand" class="form-select" required name="brand"></select>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field d-flex align-items-end">
+                                        <div class="flex-grow-1">
+                                            <label>Category Name <span class="text-danger">*</span></label>
+                                            <select id="itemCategory" class="form-select" required
+                                                name="itemCategory"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 qm-field d-flex align-items-end">
+                                        <div class="flex-grow-1">
+                                            <label>Sub Category Name <span class="text-danger">*</span></label>
+                                            <select id="itemsubCategory" class="form-select" required
+                                                name="itemsubCategory"></select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Name <span class="text-danger">*</span></label>
+                                        <select id="itemid" class="form-select" required name="itemid"></select>
+                                        <input type="hidden" name="selectedItemName" id="selectedItemName"
+                                            class="form-control" value="" />
+                                        <input type="hidden" name="unitFactor" id="unitFactor" class="form-control"
+                                            value="" />
+                                        <input type="hidden" name="spu" id="spu" class="form-control" value="" />
+                                        <input type="hidden" name="itemarticleNo" id="itemarticleNo"
+                                            class="form-control" value="" />
+                                        <input type="hidden" name="itemimage" id="itemimage" class="form-control"
+                                            value="" />
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Quantity <span class="text-danger">*</span></label>
+                                        <input type="text" name="itemquantity" id="itemquantity" class="form-control" />
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Per piece MRP <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                            <input type="text" name="itemppMRP" id="itemppMRP" class="form-control"
+                                                required readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Total Amount <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                            <input type="text" name="totalAmount" id="totalAmount" class="form-control"
+                                                required readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Company Discount</label>
+                                        <div class="input-group">
+                                            <input type="text" name="companyDiscount" id="companyDiscount"
+                                                class="form-control" readonly />
+                                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Company Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                            <input type="text" name="companyPrice" id="companyPrice"
+                                                class="form-control" readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Trade Discount</label>
+                                        <div class="input-group">
+                                            <input type="text" name="tradeDiscount" id="tradeDiscount"
+                                                class="form-control" />
+                                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Trade Price</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                            <input type="text" name="tradePrice" id="tradePrice" class="form-control"
+                                                readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>GST <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <input type="text" name="GST" id="GST" class="form-control" required
+                                                readonly />
+                                            <span class="input-group-text"><i class="fas fa-percentage"></i></span>
+                                            <input type="hidden" name="GSTAmount" id="GSTAmount" class="form-control"
+                                                value="" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Total Value <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                            <input type="text" name="totalValue" id="totalValue" class="form-control"
+                                                readonly />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 qm-field">
+                                        <label>Reference</label>
+                                        <input type="text" name="quoteReference" id="tradequoteReferencePrice"
+                                            class="form-control" placeholder="Enter reference" />
+                                    </div>
+                                    <div class="col-md-6 qm-field">
+                                        <label>Note</label>
+                                        <input type="text" name="quoteNote" id="quoteNote" class="form-control"
+                                            placeholder="Enter note" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="accordion-item">
-                            <h2 class="accordion-header" id="flush-headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#flush-collapseTwo" aria-expanded="false"
-                                    aria-controls="flush-collapseTwo">
-                                    Quotation Details
-                                </button>
-                            </h2>
-                            <div id="flush-collapseTwo" class="accordion-collapse collapse show"
-                                aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                <div class="accordion-body">
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Quotation Type <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="quoteType" class="form-select" required name="quoteType">
-                                                    <option value='General'>General</option>
-                                                    <option value='Bank'>Bank</option>
-                                                </select>
-                                            </div>
-                                            <label class="col-md-3 text-right">Quotation For<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="enqCategory" class="form-select" required
-                                                    name="enqCategory">
-                                                </select>
-                                                <input type="hidden" name="encatName" id="encatName"
-                                                    class="form-control" value="" />
-                                            </div>
-                                        </div>
+
+                        <!-- ===== RIGHT: Quotation Items ===== -->
+                        <div class="col-lg-7">
+                            <div class="qm-panel">
+                                <div class="qm-items-header">
+                                    <div class="qm-panel-title"><i class="fas fa-clipboard-list"></i> Quotation Items
                                     </div>
+                                    <div>
+                                        <!-- This is your original "Add" button (id="createQuote") — same id,
+                                             same behavior, just relocated + relabeled to match the screenshot -->
+                                        <button type="button" class="btn btn-add-item" id="createQuote">
+                                            <i class="fas fa-plus"></i> Add Item
+                                        </button>
+                                        <!-- New button, not wired to any existing logic. Hook this up to
+                                             whatever clears #lineItemTable tbody if/when you want it live. -->
 
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Input Type <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="inputType" class="form-select" required name="inputType">
-
-                                                </select>
-                                            </div>
-
-                                            <label class="col-md-3 text-right">Brand<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="brand" class="form-select" required name="brand">
-
-                                                </select>
-                                            </div>
-                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <div class="row">
+                                </div>
 
-
-                                            <label class="col-md-3 text-right">Category Name <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="itemCategory" class="form-select" required
-                                                    name="itemCategory">
-
-                                                </select>
-                                            </div>
-
-                                            <label class="col-md-3 text-right"> Sub Category Name <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="itemsubCategory" class="form-select" required
-                                                    name="itemsubCategory">
-
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right"> Name <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <select id="itemid" class="form-select" required name="itemid">
-
-                                                </select>
-                                                <input type="hidden" name="selectedItemName" id="selectedItemName"
-                                                    class="form-control" value="" />
-                                                <input type="hidden" name="unitFactor" id="unitFactor"
-                                                    class="form-control" value="" />
-                                                <input type="hidden" name="spu" id="spu" class="form-control"
-                                                    value="" />
-                                                <input type="hidden" name="itemarticleNo" id="itemarticleNo"
-                                                    class="form-control" value="" />
-                                                <input type="hidden" name="itemimage" id="itemimage"
-                                                    class="form-control" value="" />
-                                            </div>
-                                            <label class="col-md-3 text-right">Quantity <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3">
-                                                <input type="text" name="itemquantity" id="itemquantity"
-                                                    class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Per piece MRP <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="itemppMRP" id="itemppMRP" class="form-control"
-                                                    required readonly />
-                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
-                                            </div>
-
-                                            <label class="col-md-3 text-right">Total Amount <span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="totalAmount" id="totalAmount"
-                                                    class="form-control" required readonly />
-                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Company Discount</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="companyDiscount" id="companyDiscount"
-                                                    class="form-control" readonly />
-                                                <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                            </div>
-
-                                            <label class="col-md-3 text-right">Company Price</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="companyPrice" id="companyPrice"
-                                                    class="form-control" readonly />
-                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Trade Discount</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="tradeDiscount" id="tradeDiscount"
-                                                    class="form-control" />
-                                                <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                            </div>
-
-                                            <label class="col-md-3 text-right">Trade Price</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="tradePrice" id="tradePrice"
-                                                    class="form-control" readonly />
-                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">GST<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="GST" id="GST" class="form-control" required
-                                                    readonly />
-                                                <span class="input-group-text"><i class="fas fa-percentage"></i></span>
-                                                <input type="hidden" name="GSTAmount" id="GSTAmount"
-                                                    class="form-control" value="" />
-                                            </div>
-                                            <label class="col-md-3 text-right">Total Value<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="totalValue" id="totalValue"
-                                                    class="form-control" readonly />
-                                                <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                    <!-- <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <label for="quoteNote" class="form-label">Note</label>
-                                                <input type="text" class="form-control" id="quoteNote" name="quoteNote">
-                                            </div>
-                                            <div class="col-md-3">
-                                                <label for="quoteReference" class="form-label">Reference</label>
-                                                <input type="text" class="form-control" id="quoteReference"
-                                                    name="quoteReference">
-                                            </div>
-                                        </div>
-                                    </div> -->
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-md-3 text-right">Reference</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="quoteReference" id="tradequoteReferencePrice"
-                                                    class="form-control" />
-                                            </div>
-
-                                            <label class="col-md-3 text-right">Note</label>
-                                            <div class="col-md-3 input-group">
-                                                <input type="text" name="quoteNote" id="quoteNote"
-                                                    class="form-control" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <table class="table table-bordered" id="lineItemTable" width="100%" cellspacing="0">
+                                <div class="qm-table-wrap">
+                                    <table class="table table-bordered mb-0" id="lineItemTable" width="100%"
+                                        cellspacing="0">
                                         <thead>
                                             <tr>
                                                 <th>REF</th>
@@ -983,107 +1765,73 @@ require_once("../Model/enq_cat_mappingmodel.php");
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
-
                                         <tbody>
-
+                                            <!-- rows injected here by your existing JS — untouched -->
                                         </tbody>
-                                        <tfoot>
-
-                                        </tfoot>
+                                        <tfoot></tfoot>
                                     </table>
-                                    <!-- =================== Summary Totals Section =================== -->
-                                    <!-- =================== Centered Summary Totals =================== -->
-                                    <div class="form-group mt-4 text-center">
-                                        <div class="d-flex flex-wrap justify-content-center gap-4">
 
-                                            <div class="text-center">
-                                                <label for="sumTotalAmount"
-                                                    class="form-label fw-semibold text-uppercase small d-block">Sum
-                                                    Total Amount</label>
-                                                <div class="input-group justify-content-center">
-                                                    <input type="text" id="sumTotalAmount" name="sumTotalAmount"
-                                                        class="form-control text-center fw-bold" style="width:150px;"
-                                                        readonly>
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-rupee-sign"></i></span>
-                                                </div>
-                                            </div>
+                                    <!-- Empty-state placeholder — now sits inside the table area itself.
+                                         Show/hide this with your existing JS based on whether #lineItemTable
+                                         tbody has rows: document.getElementById('qmEmptyState').style.display
+                                         = hasRows ? 'none' : 'flex'; -->
 
-                                            <div class="text-center">
-                                                <label for="sumCompanyPrice"
-                                                    class="form-label fw-semibold text-uppercase small d-block">Sum
-                                                    Company Price</label>
-                                                <div class="input-group justify-content-center">
-                                                    <input type="text" id="sumCompanyPrice" name="sumCompanyPrice"
-                                                        class="form-control text-center fw-bold" style="width:150px;"
-                                                        readonly>
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-rupee-sign"></i></span>
-                                                </div>
-                                            </div>
+                                </div>
 
-                                            <div class="text-center">
-                                                <label for="sumTotalValue"
-                                                    class="form-label fw-semibold text-uppercase small d-block">Sum
-                                                    Total Value</label>
-                                                <div class="input-group justify-content-center">
-                                                    <input type="text" id="sumTotalValue" name="sumTotalValue"
-                                                        class="form-control text-center fw-bold" style="width:150px;"
-                                                        readonly>
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-rupee-sign"></i></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="text-center">
-                                                <label for="sumTradeValue"
-                                                    class="form-label fw-semibold text-uppercase small d-block">Sum
-                                                    Trade Price</label>
-                                                <div class="input-group justify-content-center">
-                                                    <input type="text" id="sumTradeValue" name="sumTradeValue"
-                                                        class="form-control text-center fw-bold" style="width:150px;"
-                                                        readonly>
-                                                    <span class="input-group-text"><i
-                                                            class="fas fa-rupee-sign"></i></span>
-                                                </div>
-                                            </div>
-
-                                            <div class="text-center">
-                                                <label for="quoteValue"
-                                                    class="form-label fw-semibold text-uppercase small text-primary d-block">Quote
-                                                    Value</label>
-                                                <div class="input-group justify-content-center">
-                                                    <input type="text" id="quoteValue" name="quoteValue"
-                                                        class="form-control text-center fw-bold text-primary border-primary"
-                                                        style="width:150px;">
-                                                    <span class="input-group-text text-primary"><i
-                                                            class="fas fa-rupee-sign"></i></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
+                                <div class="qm-summary">
+                                    <div class="qm-sum-card">
+                                        <label>Sum Total Amount</label>
+                                        <input type="text" id="sumTotalAmount" name="sumTotalAmount"
+                                            class="form-control text-center fw-bold border-0 bg-transparent p-0"
+                                            readonly>
                                     </div>
-                                    <!-- ============================================================ -->
-
-                                    <!-- ============================================================ -->
-
+                                    <div class="qm-sum-card">
+                                        <label>Sum Company Price</label>
+                                        <input type="text" id="sumCompanyPrice" name="sumCompanyPrice"
+                                            class="form-control text-center fw-bold border-0 bg-transparent p-0"
+                                            readonly>
+                                    </div>
+                                    <div class="qm-sum-card">
+                                        <label>Sum Total Value</label>
+                                        <input type="text" id="sumTotalValue" name="sumTotalValue"
+                                            class="form-control text-center fw-bold border-0 bg-transparent p-0"
+                                            readonly>
+                                    </div>
+                                    <div class="qm-sum-card">
+                                        <label>Sum Trade Price</label>
+                                        <input type="text" id="sumTradeValue" name="sumTradeValue"
+                                            class="form-control text-center fw-bold border-0 bg-transparent p-0"
+                                            readonly>
+                                    </div>
+                                    <div class="qm-sum-card qm-quote-value">
+                                        <label>Quote Value</label>
+                                        <input type="text" id="quoteValue" name="quoteValue"
+                                            class="form-control text-center fw-bold">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="createQuote">Add</button>
-                    <button type="submit" class="btn btn-primary" id="createQuote">Create Quote</button>
+
+                <!-- ===== Footer ===== -->
+                <div class="qm-footer">
+                    <button type="submit" class="btn btn-qm-create" id="submitQuoteBtn">Create Quote</button>
+                    <button type="button" class="btn btn-qm-close btn-danger" data-dismiss="modal">Close</button>
+                    <!-- New button, not wired to any existing logic yet -->
+                    <!-- Your original submit button, same purpose (submits #quote_form) -->
+
                 </div>
+
             </div>
         </form>
     </div>
 </div>
+
 <div class="modal fade" id=optiModal tabindex=-1 role=dialog aria-hidden=true>
     <div class="modal-dialog modal-xl">
-        <form class="" method="POST" id="quote_form" enctype="multipart/form-data">
+        <form class="" method="POST" id="" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Quotation Details</h5>
@@ -1093,14 +1841,14 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     <div class="accordion accordion-flush" id="accordionFlushExample">
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingOne">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                <button class="accordion-button collapsed" type="button" data-toggle="collapse"
+                                    data-target="#flush-collapseOne" aria-expanded="false"
                                     aria-controls="flush-collapseOne">
                                     Customer Details
                                 </button>
                             </h2>
                             <div id="flush-collapseOne" class="accordion-collapse collapse"
-                                aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                aria-labelledby="flush-headingOne" data-parent="#accordionFlushExample">
                                 <div class="accordion-body row g-3">
                                     <div class="col-md-12">
                                         <label for="State" class="form-label">Customer Id</label>
@@ -1163,14 +1911,14 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         </div>
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="flush-headingTwo">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#flush-collapseTwo" aria-expanded="false"
+                                <button class="accordion-button collapsed" type="button" data-toggle="collapse"
+                                    data-target="#flush-collapseTwo" aria-expanded="false"
                                     aria-controls="flush-collapseTwo">
                                     Opti Details
                                 </button>
                             </h2>
                             <div id="flush-collapseTwo" class="accordion-collapse collapse show"
-                                aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                aria-labelledby="flush-headingTwo" data-parent="#accordionFlushExample">
                                 <div class="accordion-body">
                                     <div class="form-group">
                                         <div class="row">
@@ -1464,7 +2212,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" id="">Add Item</button>
                     <button type="submit" class="btn btn-primary" id="">Create Quote</button>
                 </div>
@@ -1489,19 +2237,18 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<div class="modal fade" id="infoItemModal" tabindex="-1" data-bs-backdrop="false" data-bs-keyboard="true"
-    aria-hidden="true">
+<div class="modal fade" id="infoItemModal" tabindex="-1" data-backdrop="false" data-keyboard="true" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header py-2">
-                <h5 class="modal-title">Line Item Info</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Item Info/Material Info</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body">
@@ -1549,7 +2296,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             </div>
 
             <div class="modal-footer py-2">
-                <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -1558,8 +2305,8 @@ require_once("../Model/enq_cat_mappingmodel.php");
     <div class="modal-dialog modal-sm modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header py-2">
-                <h6 class="modal-title">Edit Line Item</h6>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h6 class="modal-title">Edit Item/Material</h6>
+                <button type="button" class="btn-close" data-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editLineItemId">
@@ -1585,7 +2332,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 </div>
             </div>
             <div class="modal-footer py-2">
-                <button class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-secondary btn-sm" data-dismiss="modal">Cancel</button>
                 <button class="btn btn-primary btn-sm" id="updateLineItemBtn">Save</button>
             </div>
         </div>
@@ -1705,7 +2452,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $tr.append($('<td/>').text(f['itemarticleNo'] || ''));
 
             // 5) Name
-            $tr.append($('<td/>').text(f['selectedItemName'] || ''));
+            const selectedName = $('#itemid option:selected').text();
+
+            $tr.append(
+                $('<td/>').text(selectedName)
+            );
 
             // 6) Quantity
             $tr.append($('<td/>').text(qty));
@@ -1743,7 +2494,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 id: rowId,
                 typeText,
                 code: f['itemarticleNo'] || '',
-                name: f['selectedItemName'] || '',
+                name: selectedName,
                 qty,
                 mrp,
                 gst,
@@ -1796,12 +2547,12 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
         function makeActionDropdown(payload) {
             const $wrap = $('<div class="dropdown"/>');
-            const $btn = $('<button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Actions</button>');
+            const $btn = $('<button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">Actions</button>');
             const $menu = $('<ul class="dropdown-menu dropdown-menu-end"></ul>');
 
             // Info
             // Info
-            const $info = $('<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#infoItemModal">Info</a>')
+            const $info = $('<a class="dropdown-item" href="#" data-toggle="modal" data-target="#infoItemModal">Info</a>')
                 .click(function (e) {
                     e.preventDefault();
                     const $tr = $(this).closest('tr');
@@ -1839,7 +2590,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             return $wrap;
         }
 
-        $(document).on('click', '.dropdown-item[data-bs-target="#infoItemModal"]', function (e) {
+        $(document).on('click', '.dropdown-item[data-target="#infoItemModal"]', function (e) {
             const $tr = $(this).closest('tr');
             const payload = $tr.data('rowPayload'); // ✅ Get latest data directly from row
             if (!payload) return;
@@ -1872,26 +2623,41 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
         // ==================== LIVE CALCULATION IN EDIT MODAL ====================
         function attachEditCalculations(payload) {
-            // Store original MRP and GST from the payload
+
             const MRP = Number(payload.mrp || 0);
             const GST = Number(payload.gst || 0);
 
-            // Listen for changes in Quantity or Trade Discount
-            $('#editItemQty, #editTradeDiscount').off('keyup change').on('keyup change', function () {
-                const qty = Number($('#editItemQty').val()) || 0;
-                const tDis = Number($('#editTradeDiscount').val()) || 0;
-                const uFac = Number(payload.unitFactor || $('#unitFactor').val()) || 1;
+            const companyBase = Number(payload.companyBase || 0);
+            const unitFactor = Number(payload.unitFactor || 1);
 
+            $('#editItemQty, #editTradeDiscount')
+                .off('keyup change')
+                .on('keyup change', function () {
 
-                let perPieceTrade = MRP;
-                if (tDis > 0) {
-                    const discounted = MRP - (MRP * (tDis / 100));
-                    perPieceTrade = discounted + (discounted * (GST / 100));
-                }
+                    const qty = Number($('#editItemQty').val()) || 0;
+                    const tDis = Number($('#editTradeDiscount').val()) || 0;
 
-                const totalTradePrice = perPieceTrade * qty * uFac;
-                $('#editTradePrice').val(totalTradePrice.toFixed(2));
-            });
+                    let tradeTotal;
+
+                    // ✅ No discount → Company Price
+                    if (tDis <= 0) {
+
+                        tradeTotal = companyBase * qty;
+
+                    } else {
+
+                        const discounted = MRP - (MRP * tDis / 100);
+
+                        const perPieceTrade =
+                            discounted + (discounted * GST / 100);
+
+                        tradeTotal = perPieceTrade * qty * unitFactor;
+                    }
+
+                    $('#editTradePrice').val(tradeTotal.toFixed(2));
+
+                });
+
         }
 
         // ==================== DELETE LINE ITEM ====================
@@ -1982,7 +2748,6 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#selectedItemName').val('');
             $('#itemarticleNo').val('');
             $('#itemimage').val('');
-            $('#unitFactor').val('');
         }
 
         $('#infoCustomerModal').on('show.bs.modal', function (e) {
@@ -2019,9 +2784,9 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                     if (status === 'Approved') {
                         badge = '<span class="badge bg-success">Approved</span>';
-                    } else if (status === 'pending') {
+                    } else if (status === 'Pending') {
                         badge = '<span class="badge bg-warning text-dark">Pending</span>';
-                    } else if (status === 'rejected') {
+                    } else if (status === 'Rejected') {
                         badge = '<span class="badge bg-danger">Rejected</span>';
                     }
 
@@ -2319,7 +3084,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         function setproductSubCategory(productcatid) {
             //debugger;
             var fetchsubcaturl = window.location.origin +
-                "/Acedecor/Admin/Controller/product_SubcategoryController.php/?productcatid=" +
+                "/Admin/Controller/product_SubcategoryController.php/?productcatid=" +
                 productcatid;
             $.getJSON(fetchsubcaturl, function (data) {
                 $('#productsubCategory').append(
@@ -2346,7 +3111,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         function setProductName(catId, subcatId, finishId, typeId) {
             //debugger;
             var fetchsubcaturl = window.location.origin +
-                "/Acedecor/Admin/Controller/productDefinitionController.php/?catId=" + catId + "&subcatId=" +
+                "/Admin/Controller/productDefinitionController.php/?catId=" + catId + "&subcatId=" +
                 subcatId + "&finishId=" + finishId + "&typeId=" + typeId;
             console.log(fetchsubcaturl);
             $.getJSON(fetchsubcaturl, function (data) {
@@ -2375,7 +3140,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
         function setMatName(thicknessId, catId, subcatId, brandId) {
             //debugger;
             var fetchsubcaturl = window.location.origin +
-                "/Acedecor/Admin/Controller/materialController.php/?thicknessId=" +
+                "/Admin/Controller/materialController.php/?thicknessId=" +
                 thicknessId + "&catId=" + catId + "&subcatId=" + subcatId + "&brandId=" + brandId;
             console.log(fetchsubcaturl);
             $.getJSON(fetchsubcaturl, function (data) {
@@ -2557,11 +3322,40 @@ require_once("../Model/enq_cat_mappingmodel.php");
         $('#editCustomerModal').on('show.bs.modal', function (e) {
 
             const button = $(e.relatedTarget);
+
+            // ✅ FIX
+            const enqIdFromBtn = button.data('enqid');
+            $('#editedEnqId').val(enqIdFromBtn);
+
+            const enqId = $('#editedEnqId').val();
+
+            console.log("CORRECT ENQ ID:", enqId);
+
+            let isQuoteGenerated = false;
+            let quotedCategories = []; // ✅ OUTSIDE
+
+            $.ajax({
+                url: "../Controller/quotationController.php",
+                type: "GET",
+                data: { checkQuoteByEnq: enqId },
+                async: false,
+
+                success: function (res) {
+                    quotedCategories = res;   // ✅ already array
+                }
+            });
+            console.log("TYPE:", typeof quotedCategories);
+            console.log("DATA:", quotedCategories);
+            console.log("BUTTON ENQ ID:", enqId);
+            console.log("QUOTE (attr):", $(e.relatedTarget).attr('data-quote'));
+            console.log("RAW:", button.data('quote'));
+            console.log("TYPE:", typeof button.data('quote'));
+            console.log("FINAL:", isQuoteGenerated);
+
             const customerId = button.data('id');
             $('#editedcustomerId').val(customerId);
 
-            const enqId = $('#editedEnqId').val();
-            if (!enqId) return;
+            // ✅ FIXED LINE
 
             $.getJSON("../Controller/enqcategoryController.php?type=enquiry", function (categories) {
 
@@ -2569,9 +3363,6 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                 $.getJSON("../Controller/enqcategorymappingController.php?enq_id=" + enqId, function (selected) {
 
-                    console.log("Selected mapping:", selected);
-
-                    // 🔥 FIXED HERE
                     const selectedIds = selected.map(x => String(x.catId));
 
                     categories.forEach(cat => {
@@ -2579,24 +3370,28 @@ require_once("../Model/enq_cat_mappingmodel.php");
                         const catId = String(cat.CatId);
                         const isChecked = selectedIds.includes(catId);
 
+                        // 🔥 ONLY disable if THIS category has quote
+                        const shouldDisable = quotedCategories.includes(catId);
+
                         const html = `
-                <div class="form-check">
-                    <input class="form-check-input"
-                           type="checkbox"
-                           name="interest_list[]"
-                           value="${catId}"
-                           ${isChecked ? 'checked' : ''}>
-                    <label class="form-check-label">${cat.catname}</label>
-                </div>`;
+<div class="form-check">
+    <input class="form-check-input"
+           type="checkbox"
+           name="interest_list[]"
+           value="${catId}"
+           ${isChecked ? 'checked' : ''}
+           ${shouldDisable ? 'disabled' : ''}>
+
+    ${shouldDisable ? `<input type="hidden" name="interest_list[]" value="${catId}">` : ''}
+
+    <label class="form-check-label">${cat.catname} ${shouldDisable ? '🔒' : ''}</label>
+</div>`;
 
                         $('#editCustomerInterestList').append(html);
                     });
                 });
             });
         });
-
-
-
         var dataTable = $('#Customer_table').DataTable({});
         var nEditing = null;
 
@@ -2700,6 +3495,82 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#tradequoteReferencePrice').val('');
             $('#quoteNote').val('');
             $('#lineItemTable tbody').empty();
+
+            // 🔥 LOAD EXISTING LINE ITEMS (WITH REF & NOTE)
+            const quoteId = $('#quoteenqId').val(); // ⚠️ confirm this is your quoteId
+
+            $.getJSON(
+                config.developmentPath + "/Admin/Controller/lineItemController.php?quoteId=" + quoteId,
+                function (data) {
+
+                    if (!data || !data.length) return;
+
+                    $('#lineItemTable tbody').empty();
+
+                    data.forEach(function (item) {
+
+                        const ref = item.reference || '-';
+                        const note = item.note || '';
+
+                        const $tr = $('<tr/>');
+
+                        // REF
+                        $tr.append($('<td/>').text(ref));
+
+                        // IMAGE
+                        $tr.append(
+                            $('<td/>').append(
+                                $('<img/>', {
+                                    src: "../uploads/" + item.image,
+                                    width: "70",
+                                    height: "70"
+                                })
+                            )
+                        );
+
+                        $tr.append($('<td/>').text(item.Type));
+                        $tr.append($('<td/>').text(item.lineItemId)); // or correct code field if needed
+                        $tr.append($('<td/>').text(item.Name));
+                        $tr.append($('<td/>').text(item.quantity));
+                        $tr.append($('<td/>').text(item.mrp));
+                        $tr.append($('<td/>').text(item.gst));
+                        $tr.append($('<td/>').text(item.companyDiscount));
+                        $tr.append($('<td/>').text(item.tradeDiscount));
+                        $tr.append($('<td/>').text(item.totalAmount));
+                        $tr.append($('<td/>').text(item.companyPrice));
+                        $tr.append($('<td/>').text(item.totalValue));
+                        $tr.append($('<td/>').text(item.tradePrice));
+
+                        // 🔥 VERY IMPORTANT (for edit/info to work)
+                        const payload = {
+                            id: item.lineItemId,
+                            ref: ref,
+                            note: note,
+                            qty: item.quantity,
+                            tAmt: item.totalAmount,
+                            cPri: item.companyPrice,
+                            tVal: item.totalValue,
+                            tPri: item.tradePrice,
+                            mrp: item.mrp,
+                            gst: item.gst,
+                            tDis: item.tradeDiscount,
+                            unitFactor: item.unitFactor,
+                            spu: item.spu,
+                            companyBase: item.companyPrice,
+                            baseTotalValue: item.totalValue,
+                            img: "../uploads/" + item.image
+                        };
+
+                        $tr.data('rowPayload', payload);
+
+                        $tr.append($('<td/>').append(makeActionDropdown(payload)));
+
+                        $('#lineItemTable tbody').append($tr);
+                    });
+
+                    recalcTotals();
+                }
+            );
         });
 
         $('#itemid').on('change', function (e) {
@@ -2816,48 +3687,46 @@ require_once("../Model/enq_cat_mappingmodel.php");
         let companyBasePrice = 0;
         // 1) Fetch everything we need for a picked item — FROM DB ONLY
         function fetchCompanyValues(itemId) {
-            console.log(config.developmentPath + "/Admin/Controller/item_detailscontroller.php?infoitemid=" + itemId,);
+
             $.getJSON(
                 config.developmentPath + "/Admin/Controller/item_detailscontroller.php?infoitemid=" + itemId,
-
                 function (data) {
+
                     if (!data || !data.length) return;
 
                     const r = data[0];
+
+                    $('#selectedItemName').val(r.itemname || '');
+                    $('#itemarticleNo').val(r.itemcode || '');
+                    // ✅ ADD THIS (VERY IMPORTANT)
+                    $('#itemimage').val(r.itemimage);
 
                     const mrp = parseFloat(r.itemMRP || 0);
                     const gst = parseFloat(r.itemGST || 18);
                     const cDisc = parseFloat(r.itemDiscount || 0);
                     const cPrice = parseFloat(r.itemPrice || 0);
                     const tVal = parseFloat(r.itemTotalValue || 0);
-                    console.log(r.spu);
-                    const spu = parseFloat(r.spu || 0);   // ✅ ensure this matches your JSON key exactly
-                    const uFact = parseFloat(r.unitFactor || 1);
+                    const spu = parseFloat(r.spu || 0);
+                    const uFact = parseFloat(r.unitfactor || r.unitFactor || 1);
+                    console.log("API unitfactor:", r.unitfactor, "unitFactor:", r.unitFactor);
+
+                    $('#unitFactor').val(uFact);
                     $('#spu').val(spu.toFixed(2));
                     $('#itemppMRP').val(mrp.toFixed(2));
                     $('#GST').val(gst.toFixed(2));
                     $('#companyDiscount').val(cDisc.toFixed(2));
                     $('#companyPrice').val(cPrice.toFixed(2));
-                    companyBasePrice = cPrice.toFixed(2);
-                    $('#companyPrice').data('base', cPrice);
                     $('#totalValue').val(tVal.toFixed(2));
 
-                    // ✅ add this — store SPU and base values
                     $('#totalValue').data('base', tVal);
                     $('#totalValue').data('spu', spu);
 
-                    // ✅ debugging line (to verify in console)
-                    console.log('SPU stored:', spu);
-
-                    const qty = parseFloat($('#itemquantity').val()) || 0;
-                    const totalAmount = mrp * qty * uFact;
-
-                    $('#totalAmount').val(totalAmount.toFixed(2));
-
+                    $('#companyPrice').data('base', cPrice);
                     $('#tradePrice').val(cPrice.toFixed(2));
                 }
             );
         }
+        console.log("Item Image Field:", $('#itemimage').val());
 
         // ✅ Unified handler: Quantity + Trade Discount + GST + SPU logic
         // ✅ Unified SPU Logic Calculation
@@ -2910,7 +3779,11 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 const mrp = Number($('#itemppMRP').val()) || 0;
                 const gst = Number($('#GST').val()) || 0;
                 const tDis = Number($('#tradeDiscount').val()) || 0;
-                const uFac = Number($('#unitFactor').val()) || 1;
+                let uFac = Number($('#unitFactor').val());
+                if (!uFac || uFac <= 0) {
+                    console.warn("⚠ unitFactor missing, defaulting to 1");
+                    uFac = 1;
+                }
                 const spu = Number($('#spu').val()) || 1;
                 const price = Number($('#companyPrice').val()) || 0;
 
@@ -2926,6 +3799,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
                 // 3️⃣ Trade Price
                 let tradeTotal = companyTotal;   // ✅ DEFAULT (NO trade discount)
+                console.log("uFac:", uFac, "TradeTotal:", tradeTotal);
 
                 if (tDis > 0) {
                     const discounted = mrp - (mrp * (tDis / 100));
@@ -3044,6 +3918,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#editedcustomerDov').val(this.cells[2].innerHTML);
             $('#displayusername').text(this.cells[0].innerHTML);
             $('#displaycustomerName').text(this.cells[1].innerHTML);
+            $('#displaycustomerNameHeader').text(" " + this.cells[1].innerHTML);
             $('#displaycustomerPhone').text(this.cells[6].innerHTML);
             $('#displaycustomerEmail').text(this.cells[7].innerHTML);
             $('#displaycustomerAddress').text(this.cells[8].innerHTML);
@@ -3073,7 +3948,9 @@ require_once("../Model/enq_cat_mappingmodel.php");
             $('#displaycustomerCountry').text(this.cells[11].innerHTML);
 
         });
-
+        $('#infoCustomerModal').on('hidden.bs.modal', function () {
+            $('#displaycustomerNameHeader').text('');
+        });
         $('#editedCustomer_form').submit(function (event) {
             event.preventDefault();   // 🔥 ADD THIS
 
@@ -3210,7 +4087,7 @@ require_once("../Model/enq_cat_mappingmodel.php");
                 dataType: 'json',
                 success: function (response) {
                     if (response.status === 'success') {
-                        alert('✅ Line item updated successfully!');
+                        alert('✅Updated successfully!');
 
                         // Read the new values directly from the edit modal
                         const newRef = $('#editQuoteRef').val();
@@ -3240,12 +4117,22 @@ require_once("../Model/enq_cat_mappingmodel.php");
                             const companyTotal = companyBase * qty;
 
                             // 3️⃣ Trade Price
-                            let perPieceTrade = companyBase;
-                            if (tDis > 0) {
-                                const discounted = mrp - (mrp * (tDis / 100));
-                                perPieceTrade = discounted + (discounted * (gst / 100));
+                            let tradeTotal;
+
+                            if (tDis <= 0) {
+
+                                // ✅ No Trade Discount
+                                tradeTotal = companyTotal;
+
+                            } else {
+
+                                const discounted = mrp - (mrp * tDis / 100);
+
+                                const perPieceTrade =
+                                    discounted + (discounted * gst / 100);
+
+                                tradeTotal = perPieceTrade * qty * unitFactor;
                             }
-                            const tradeTotal = perPieceTrade * qty * unitFactor;
 
                             // 4️⃣ Total Value (SPU logic)
                             let totalValue = 0;
@@ -3379,5 +4266,511 @@ require_once("../Model/enq_cat_mappingmodel.php");
 
 
 
+    $(function () {
+
+        $("#quoteCollapseBtn").on("click", function () {
+
+            $("#quoteModal").toggleClass("modal-collapsed");
+
+            var icon = $(this).find("i");
+
+            if ($("#quoteModal").hasClass("modal-collapsed")) {
+                icon.removeClass("fa-compress-alt")
+                    .addClass("fa-expand-alt");
+
+                $(this).attr("title", "Expand");
+            } else {
+                icon.removeClass("fa-expand-alt")
+                    .addClass("fa-compress-alt");
+
+                $(this).attr("title", "Collapse");
+            }
+
+        });
+
+        // Reset every time modal opens
+        $('#quoteModal').on('shown.bs.modal', function () {
+
+            $("#quoteModal").removeClass("modal-collapsed");
+
+            $("#quoteCollapseBtn i")
+                .removeClass("fa-expand-alt")
+                .addClass("fa-compress-alt");
+
+            $("#quoteCollapseBtn").attr("title", "Collapse");
+
+        });
+
+    });
+
+
 </script>
 <script src="../vendor/jquery-ui-1.12.1/jquery-ui.js"></script>
+
+
+<style id="customer-page-responsive">
+/* =========================================================
+   CUSTOMER MANAGEMENT - RESPONSIVE OVERRIDES
+   Scoped to this page/modal IDs so existing logic is untouched.
+   ========================================================= */
+
+/* Main customer table: allow horizontal scrolling on small screens. */
+.card-body #Customer_table {
+    min-width: 900px;
+}
+
+.card-body .table-responsive {
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#Customer_table_wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+}
+
+#Customer_table th,
+#Customer_table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+#Customer_table td:nth-child(2),
+#Customer_table td:nth-child(5),
+#Customer_table td:nth-child(6) {
+    white-space: normal;
+}
+
+#Customer_table td ul {
+    padding-left: 18px;
+    margin-bottom: 0;
+}
+
+#Customer_table .dropdown-menu {
+    z-index: 1060;
+}
+
+/* All customer-page modals: keep them within the viewport. */
+#customerModal .modal-dialog,
+#editCustomerModal .modal-dialog,
+#infoCustomerModal .modal-dialog,
+#quoteModal .modal-dialog,
+#infoItemModal .modal-dialog,
+#editItemModal .modal-dialog,
+#deleteUserModal .modal-dialog {
+    width: calc(100vw - 32px);
+    max-width: calc(100vw - 32px);
+    margin: 16px auto;
+}
+
+#customerModal .modal-content,
+#editCustomerModal .modal-content,
+#infoCustomerModal .modal-content,
+#quoteModal .modal-content,
+#infoItemModal .modal-content,
+#editItemModal .modal-content,
+#deleteUserModal .modal-content {
+    max-height: calc(100vh - 32px);
+}
+
+#customerModal .modal-body,
+#editCustomerModal .modal-body,
+#infoCustomerModal .modal-body,
+#quoteModal .qm-body,
+#infoItemModal .modal-body,
+#editItemModal .modal-body,
+#deleteUserModal .modal-body {
+    overflow-y: auto;
+}
+
+/* Normal desktop widths. */
+@media (min-width: 992px) {
+    #customerModal .modal-dialog {
+        max-width: 650px;
+    }
+
+    #editCustomerModal .modal-dialog {
+        max-width: 1050px;
+    }
+
+    #infoCustomerModal .modal-dialog {
+        max-width: 900px;
+    }
+
+    #quoteModal .modal-dialog {
+        max-width: 1100px;
+    }
+
+    #infoItemModal .modal-dialog {
+        max-width: 480px;
+    }
+
+    #editItemModal .modal-dialog {
+        max-width: 650px;
+    }
+
+    #deleteUserModal .modal-dialog {
+        max-width: 500px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    #customerModal .modal-dialog {
+        max-width: 620px;
+    }
+
+    #editCustomerModal .modal-dialog {
+        max-width: 760px;
+    }
+
+    #infoCustomerModal .modal-dialog {
+        max-width: 720px;
+    }
+
+    #quoteModal .modal-dialog {
+        max-width: 760px;
+    }
+
+    #editCustomerModal .ec-body,
+    #infoCustomerModal .ic-body,
+    #quoteModal .qm-body {
+        padding: 16px;
+    }
+
+    /* Edit Customer: let the two panels stack when necessary. */
+    #editCustomerModal .ec-field-row {
+        gap: 12px;
+    }
+
+    #editCustomerModal .ec-field-row label {
+        width: 135px;
+    }
+
+    #infoCustomerModal .ic-detail-row label {
+        width: 180px;
+    }
+
+    #quoteModal .qm-table-wrap {
+        height: 340px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767.98px) {
+    /* Page heading/card spacing. */
+    .card-body {
+        padding: 12px !important;
+    }
+
+    .card-header {
+        padding: 12px !important;
+    }
+
+    .card-header h6 {
+        font-size: 1rem !important;
+    }
+
+    /* Keep table usable without shrinking every column into unreadable text. */
+    .card-body #Customer_table {
+        min-width: 850px;
+    }
+
+    /* Modal safe width. */
+    #customerModal .modal-dialog,
+    #editCustomerModal .modal-dialog,
+    #infoCustomerModal .modal-dialog,
+    #quoteModal .modal-dialog,
+    #infoItemModal .modal-dialog,
+    #editItemModal .modal-dialog,
+    #deleteUserModal .modal-dialog {
+        width: calc(100vw - 20px) !important;
+        max-width: calc(100vw - 20px) !important;
+        margin: 10px auto !important;
+    }
+
+    #customerModal .modal-content,
+    #editCustomerModal .modal-content,
+    #infoCustomerModal .modal-content,
+    #quoteModal .modal-content,
+    #infoItemModal .modal-content,
+    #editItemModal .modal-content,
+    #deleteUserModal .modal-content {
+        max-height: calc(100vh - 20px);
+    }
+
+    /* Add Customer form: labels above controls. */
+    #customerModal .modal-body .row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    #customerModal .modal-body .row > label {
+        max-width: 100%;
+        flex: 0 0 100%;
+        text-align: left !important;
+        padding-left: 0;
+        padding-right: 0;
+        margin-bottom: 5px;
+    }
+
+    #customerModal .modal-body .row > .col-md-8 {
+        max-width: 100%;
+        flex: 0 0 100%;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* Edit Customer form: switch horizontal label/input rows to vertical. */
+    #editCustomerModal .ec-body {
+        padding: 12px;
+    }
+
+    #editCustomerModal .ec-panel {
+        padding: 14px;
+    }
+
+    #editCustomerModal .ec-field-row {
+        display: block;
+        margin-bottom: 14px;
+    }
+
+    #editCustomerModal .ec-field-row label {
+        width: auto;
+        display: block;
+        text-align: left;
+        margin-bottom: 5px;
+        font-size: .84rem;
+    }
+
+    #editCustomerModal .ec-field-row .ec-field-input {
+        width: 100%;
+    }
+
+    #editCustomerModal .ec-interest-wrap {
+        max-height: 300px;
+    }
+
+    #editCustomerModal .ec-footer,
+    #infoCustomerModal .ic-footer {
+        padding: 10px 12px;
+    }
+
+    /* Customer Info: stack labels and values. */
+    #infoCustomerModal .ic-body {
+        padding: 12px;
+    }
+
+    #infoCustomerModal .ic-panel {
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+
+    #infoCustomerModal .ic-detail-row {
+        display: block;
+        padding: 10px 2px;
+    }
+
+    #infoCustomerModal .ic-detail-row label {
+        width: auto;
+        display: block;
+        margin-bottom: 3px;
+        font-size: .8rem;
+    }
+
+    #infoCustomerModal .ic-detail-row .ic-value {
+        font-size: .9rem;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    #infoCustomerModal .ic-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #infoCustomerModal #quotationdetails_table {
+        min-width: 650px;
+    }
+
+    /* Quote modal. */
+    #quoteModal .qm-header {
+        padding: 12px 14px;
+    }
+
+    #quoteModal .qm-header h5 {
+        font-size: .98rem;
+        max-width: 70%;
+    }
+
+    #quoteModal .qm-body {
+        padding: 10px;
+    }
+
+    #quoteModal .qm-panel {
+        padding: 12px;
+    }
+
+    #quoteModal .qm-panel-title {
+        font-size: .9rem;
+    }
+
+    #quoteModal .qm-items-header {
+        align-items: flex-start;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    #quoteModal .btn-add-item,
+    #quoteModal .btn-clear-all {
+        font-size: .76rem;
+        padding: 5px 9px;
+        margin-left: 0;
+    }
+
+    #quoteModal .qm-table-wrap {
+        height: 280px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #quoteModal #lineItemTable {
+        min-width: 1050px;
+    }
+
+    #quoteModal .qm-summary {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    #quoteModal .qm-sum-card {
+        min-width: 0;
+        padding: 8px 6px;
+    }
+
+    #quoteModal .qm-sum-card .val {
+        font-size: .9rem;
+        overflow-wrap: anywhere;
+    }
+
+    #quoteModal .qm-footer {
+        padding: 10px 12px;
+        flex-wrap: wrap;
+        justify-content: stretch;
+    }
+
+    #quoteModal .qm-footer .btn {
+        flex: 1 1 100%;
+        padding: 8px 12px;
+    }
+
+    /* Small item/info modals. */
+    #infoItemModal .modal-body,
+    #editItemModal .modal-body {
+        padding: 12px;
+    }
+
+    #infoItemModal input,
+    #infoItemModal textarea {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Make modal headers usable as a consistent drag handle if draggable is enabled. */
+    #customerModal .modal-header,
+    #editCustomerModal .ec-header,
+    #infoCustomerModal .ic-header,
+    #quoteModal .qm-header,
+    #infoItemModal .modal-header,
+    #editItemModal .modal-header,
+    #deleteUserModal .modal-header {
+        cursor: move;
+        user-select: none;
+    }
+}
+
+/* Very small phones */
+@media (max-width: 399.98px) {
+    #quoteModal .qm-summary {
+        grid-template-columns: 1fr;
+    }
+
+    #quoteModal .qm-header h5 {
+        font-size: .9rem;
+    }
+
+    #editCustomerModal .ec-footer .btn,
+    #infoCustomerModal .ic-footer .btn {
+        width: 100%;
+    }
+
+    #editCustomerModal .ec-footer,
+    #infoCustomerModal .ic-footer {
+        flex-direction: column;
+    }
+}
+
+/* Prevent accidental horizontal page overflow from wide modal/table content. */
+html,
+body {
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   Customer Modal Responsive Scrolling
+   - Only controls modal layout/scrolling.
+   - Does not change PHP, JS, form IDs, or existing logic.
+   ========================================================= */
+
+#editCustomerModal .ec-content,
+#infoCustomerModal .ic-content {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 32px);
+}
+
+#editCustomerModal .ec-header,
+#editCustomerModal .ec-footer,
+#infoCustomerModal .ic-header,
+#infoCustomerModal .ic-footer {
+    flex: 0 0 auto;
+}
+
+#editCustomerModal .ec-body,
+#infoCustomerModal .ic-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Keep the existing inner "Looking For" and quotation-table scrolling. */
+#editCustomerModal .ec-interest-wrap,
+#infoCustomerModal .ic-table-wrap {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Tablet / mobile: leave a little more usable viewport space. */
+@media (max-width: 991.98px) {
+    #editCustomerModal .ec-content,
+    #infoCustomerModal .ic-content {
+        max-height: calc(100vh - 20px);
+    }
+}
+
+/* Mobile: the modal body becomes the only vertical scroll area. */
+@media (max-width: 767.98px) {
+    #editCustomerModal .ec-body,
+    #infoCustomerModal .ic-body {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
+</style>

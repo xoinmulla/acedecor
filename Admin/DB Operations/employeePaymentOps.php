@@ -25,7 +25,8 @@ class DBEmployeePayment
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->bind_param("isdsss", $emp_id, $payment_date, $amount, $payment_type, $status, $remarks);
-        return $stmt->execute();
+        $stmt->execute();
+        return $conn->insert_id; // this is employee_payment.id (payment_id)
     }
 
     // ✏️ Update Payment

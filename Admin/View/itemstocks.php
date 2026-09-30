@@ -18,10 +18,11 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3"
+        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">Purchase Order</h6>
+                <h6 class="m-0 font-weight-bold text-white">Purchase Order</h6>
 
             </div>
             <div class=col align='right'>
@@ -133,8 +134,14 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                                     <td id="POIDprint_' . $count . '" style="display:none">' . $POItem->get_POID() . '</td>
                                     <td  id="Stockprint_' . $count . '"  style="display:none">' . $POItem->getStockId() . '</td>
                                     <td>' . $POItem->getItemcode() . '</td>
-                                    <td><img src="../img/items/' . $POItem->getItemImage() . '" style="width:100px;height:100px;"></td>
-                                    <td>' . $POItem->getName() . '</td>
+<td><img src="' .
+                        (
+                            $POItem->getInventoryType() == "material"
+                            ? "../img/materials/"
+                            : "../img/items/"
+                        )
+                        . $POItem->getItemImage() .
+                        '" style="width:100px;height:100px;"></td>                                    <td>' . $POItem->getName() . '</td>
                                     <td>' . $POItem->getBrand() . '</td>
                                     <td id="Itemidprint_' . $count . '" style="display:none">' . $POItem->get_itemid() . '</td>
                                     <td id="quantity_' . $POItem->get_POlineitemId() . '">' . $POItem->get_quantity() . '</td>
@@ -266,7 +273,8 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
         <div class="modal-dialog ">
             <form method="post" id="editInward" enctype="multipart/form-data" action="">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h4 class="modal-title" id="modal_title">Edit Inward</h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
@@ -450,7 +458,8 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
         <div class="modal-dialog">
             <form id="inlineEditForm">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header text-white"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                         <h5 class="modal-title">Edit Inward Entry</h5>
                         <button class="btn-close" data-dismiss="modal"></button>
                     </div>
@@ -798,7 +807,21 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 processData: false,
                 contentType: false
             }).done(function (data) {
-                console.log(data);
+                let response = data;
+                if (typeof data === 'string') {
+                    try { response = JSON.parse(data); } catch (e) {}
+                }
+                if (response && response.status === 'success') {
+                    $('#form_message').html('<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="fas fa-check-circle mr-2"></i>' + response.message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    setTimeout(function () {
+                        $('#editinwardModal').modal('hide');
+                        location.reload();
+                    }, 1200);
+                } else {
+                    $('#form_message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>' + ((response && response.message) ? response.message : 'Unable to update inward entry.') + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+            }).fail(function () {
+                $('#form_message').html('<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>Unable to update inward entry. Please try again.</div>');
             });
         });
 
@@ -808,7 +831,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 var BalanceQty = 0;
                 if (parseInt($("#ReceivedQty").val()) > parseInt($("#quantity").val())) {
                     $("#BalanceQty").val(parseInt($("#quantity").val()) - $(this).val());
-                    alert("Enter Valid Quantity");
+                    $("#form_message").html('<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>Enter Valid Quantity</div>');
                     $("#editInwardbtn").addClass('disabled');
                 } else {
                     $("#BalanceQty").val(parseInt($("#quantity").val()) - $(this).val());
@@ -816,7 +839,7 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                 }
             } else {
                 if (parseInt($("#ReceivedQty").val()) > parseInt($("#BalanceQty").val())) {
-                    alert("Enter Valid Quantity");
+                    $("#form_message").html('<div class="alert alert-danger" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>Enter Valid Quantity</div>');
                     $("#editInwardbtn").addClass('disabled');
                 } else {
                     $("#BalanceQty").val(parseInt($("#BalanceQty").val()) - $(this).val());
@@ -1032,10 +1055,50 @@ $purchaseOrder = DBpurchase::GetPurchaseOrderBasedOnId($id);
                     BalanceQty: $('#inlineBalance').val()
                 },
                 dataType: "json",
-                success: function () {
-                    $('#inlineEditModal').modal('hide');
+                success: function (response) {
+                    if (typeof response === 'string') {
+                        try { response = JSON.parse(response); } catch (e) {}
+                    }
+                    let message = response && response.message ? response.message : 'Inward entry updated successfully.';
+                    if (response && response.status === 'success') {
+                        $('#inlineEditModal .modal-body').prepend('<div id="inlineEditMessage" class="alert alert-success alert-dismissible fade show" role="alert"><i class="fas fa-check-circle mr-2"></i>' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                        setTimeout(function () {
+                            $('#inlineEditModal').modal('hide');
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        $('#inlineEditModal .modal-body').prepend('<div id="inlineEditMessage" class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>' + message + '<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                    }
+                },
+                error: function () {
+                    $('#inlineEditModal .modal-body').prepend('<div id="inlineEditMessage" class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-exclamation-circle mr-2"></i>Unable to update inward entry. Please try again.</div>');
                 }
             });
+        });
+
+    });
+    $('.modal').on('shown.bs.modal', function () {
+
+        var $dialog = $(this).find('.modal-dialog');
+
+        if ($dialog.hasClass("ui-draggable")) {
+            $dialog.draggable("destroy");
+        }
+
+        var offset = $dialog.offset();
+
+        $dialog.css({
+            margin: 0,
+            position: "fixed",
+            left: offset.left,
+            top: offset.top,
+            transform: "none"
+        });
+
+        $dialog.draggable({
+            handle: ".modal-header",
+            containment: "window",
+            scroll: false
         });
 
     });

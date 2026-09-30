@@ -11,6 +11,9 @@ $db = ConnectDb::getInstance();
 $conn = $db->getConnection();
 $user_id = (int) $_GET['id'];
 
+$userQuery = $conn->query("SELECT user_name, user_password FROM user WHERE user_id = $user_id");
+$userData = $userQuery->fetch_assoc();
+
 // Data Fetching (Keep your existing logic)
 $modules = $conn->query("SELECT * FROM modules");
 $existing = [];
@@ -37,7 +40,35 @@ while ($row = $resActions->fetch_assoc()) { $existingActions[$row['action_id']] 
                 </ol>
             </nav>
             <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Access Control</h1>
-            <p class="text-muted">Configure granular permissions for User ID: <strong>#<?= $user_id ?></strong></p>
+            <div style="max-width: 420px; margin-top: 15px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,0.08); font-family: 'Segoe UI', sans-serif;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #4e73df, #224abe); padding: 15px 20px; color: #fff;">
+        <h5 style="margin: 0;"> <i class='fas fa-user-alt' style='font-size:20px;color:white'></i> User Details</h5>
+    </div>
+
+    <!-- Body -->
+    <div style="background: #fff; padding: 20px;">
+        
+        <div style="margin-bottom: 12px;">
+            <span style="color: #6c757d; font-size: 13px;">Username</span><br>
+            <strong style="font-size: 16px;"><?= $userData['user_name'] ?></strong>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <span style="color: #6c757d; font-size: 13px;">Password</span><br>
+            <strong style="font-size: 16px; "><?= $userData['user_password'] ?></strong>
+        </div>
+
+        <div style="margin-top: 15px;">
+            <span style="padding: 5px 10px; background: #e3fcef; color: #1cc88a; border-radius: 20px; font-size: 12px;">
+                Active User
+            </span>
+        </div>
+
+    </div>
+
+</div>
         </div>
         <div class="btn-group shadow-sm">
             <button class="btn btn-white border" id="collapseAllBtn"><i class="fas fa-compress-alt mr-1"></i> Collapse</button>

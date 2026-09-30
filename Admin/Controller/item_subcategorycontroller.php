@@ -15,10 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $result = DBitemsubcategory::delete($_POST["id"]);
 
+    if (strpos($result, "alert-danger") !== false) {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => strip_tags($result)
+      ]);
+      exit;
+    }
+
     echo json_encode([
       "status" => "success",
-      "message" => "SubCategory deleted",
-      "html" => $result
+      "message" => "SubCategory deleted successfully."
     ]);
     exit;
   }
@@ -37,7 +45,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $subcat->set_itemsubcatcreatedby(Sanitization::test_input($_POST["itemsubcatcreatedby"]));
     $subcat->set_itemsubcatmodifiedby(Sanitization::test_input($_POST["itemsubcatmodifiedby"]));
 
+    if (
+      DBitemsubcategory::isSubCategoryExists(
+        $subcat->get_itemsubcatname(),
+        $subcat->get_itemcatid(),
+        $subcat->get_itemsubcatid()
+      )
+    ) {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => "SubCategory already exists."
+      ]);
+      exit;
+    }
+
     DBitemsubcategory::update($subcat);
+
+    echo json_encode([
+      "status" => "success",
+      "message" => "SubCategory updated successfully."
+    ]);
+    exit;
 
     echo json_encode([
       "status" => "success",
@@ -48,8 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   /* ----------------------------------------
      INSERT SUBCATEGORY
-  ---------------------------------------- */ 
-  else {
+  ---------------------------------------- */ else {
 
     $subcat = new Item_Subcategory();
 
@@ -59,12 +87,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $subcat->set_itemsubcatcreatedby(Sanitization::test_input($_POST["itemsubcatcreatedby"]));
     $subcat->set_itemsubcatmodifiedby(Sanitization::test_input($_POST["itemsubcatmodifiedby"]));
 
-     DBitemsubcategory::insert($subcat);
+    $result = DBitemsubcategory::insert($subcat);
+
+    if ($result["status"] == "error") {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => $result["message"]
+      ]);
+      exit;
+    }
 
     echo json_encode([
       "status" => "success",
-      "message" => "SubCategory added successfully"
-      
+      "message" => "SubCategory added successfully."
     ]);
     exit;
   }

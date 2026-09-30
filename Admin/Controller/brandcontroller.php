@@ -26,7 +26,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo "<div class='alert alert-danger'>Brand is used in Inventory, cannot delete</div>";
             exit;
         }
-        DBbrand::delete($id);
+        if (DBbrand::delete($id)) {
+            echo "<div class='alert alert-success alert-dismissible fade show'>
+            <strong>Success!</strong> Brand deleted successfully.
+            <button type='button' class='close' data-dismiss='alert'>&times;</button>
+          </div>";
+        } else {
+            echo "<div class='alert alert-danger alert-dismissible fade show'>
+            <strong>Error!</strong> Unable to delete brand.
+            <button type='button' class='close' data-dismiss='alert'>&times;</button>
+          </div>";
+        }
         exit;
     }
 

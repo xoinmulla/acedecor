@@ -67,7 +67,7 @@
 <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
     <script>
     var config = {
-    "developmentPath":window.location.origin+"/acedecor",
+    "developmentPath":window.location.origin,
     "productionPath":window.location.origin
 };
     </script>

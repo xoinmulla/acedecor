@@ -11,12 +11,16 @@ if (!hasActionPermission('payments', 'pay_subcategory')) {
 
 $subcategories = DBGeneralSubcategory::getAll();
 ?>
-
+<style>
+    .card-body #generalSubcategoryTable th {
+        font-weight: 500;
+    }
+</style>
 <div class="card shadow mb-4 mt-4 mx-4">
     <div class="card-header py-3">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary">General Subcategory</h6>
+                <h6 class="m-0 text-primary">General Subcategory</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle="modal" data-target="#generalSubcategoryModal">
@@ -32,7 +36,7 @@ $subcategories = DBGeneralSubcategory::getAll();
         <div id="message"></div>
         <div class="table-responsive">
             <table class="table table-bordered" id="generalSubcategoryTable" width="100%">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>Subcategory Name</th>
                         <th>Action</th>

@@ -26,8 +26,10 @@ class DBitemstock
     error_log($sql);
 
     if ($connectionObj->query($sql) === true) {
+      return ['success' => true];
     } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      error_log("DBitemstock::insert Error: " . $connectionObj->error);
+      return ['success' => false, 'error' => $connectionObj->error];
     }
 
   }
@@ -99,8 +101,10 @@ class DBitemstock
     error_log($sql);
 
     if ($connectionObj->query($sql) === true) {
+      return ['success' => true];
     } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      error_log("DBitemstock::update Error: " . $connectionObj->error);
+      return ['success' => false, 'error' => $connectionObj->error];
     }
 
   }
@@ -111,10 +115,8 @@ class DBitemstock
     $connectionObj = $db->getConnection();
     $sql = "UPDATE item_stock SET ";
 
-    $sql .= "stockPDFName='" . $stockObj->get_stockPDFName();
-
-    //  $sql.= "', modifiedby='" . $purchaseObj->get_modifiedby() .
-    "' WHERE item_stockidid=" . $stockObj->get_StockId();
+    $sql .= "stockPDFName='" . $stockObj->get_stockPDFName() .
+      "' WHERE item_stockid=" . $stockObj->get_StockId();
     error_log($sql);
     if ($connectionObj->query($sql) === TRUE) {
     } else {
@@ -266,7 +268,12 @@ GROUP BY
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
-    $stmt->execute();
+    if ($stmt->execute()) {
+      return ['success' => true, 'affected_rows' => $stmt->affected_rows];
+    }
+
+    error_log("DBitemstock::updateInwardRow Error: " . $stmt->error);
+    return ['success' => false, 'error' => $stmt->error];
   }
 
   public static function updateItemInwardRow($stockId, $qty, $amt, $balance)
@@ -285,9 +292,13 @@ GROUP BY
     // i = int, d = double
     $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
 
-    $stmt->execute();
+    if ($stmt->execute()) {
+      error_log("Rows affected: " . $stmt->affected_rows);
+      return ['success' => true, 'affected_rows' => $stmt->affected_rows];
+    }
 
-    error_log("Rows affected: " . $stmt->affected_rows);
+    error_log("DBitemstock::updateItemInwardRow Error: " . $stmt->error);
+    return ['success' => false, 'error' => $stmt->error];
   }
 
 
@@ -304,9 +315,13 @@ GROUP BY
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("idii", $qty, $amt, $balance, $stockId);
-    $stmt->execute();
+    if ($stmt->execute()) {
+      error_log("Material Rows affected: " . $stmt->affected_rows);
+      return ['success' => true, 'affected_rows' => $stmt->affected_rows];
+    }
 
-    error_log("Material Rows affected: " . $stmt->affected_rows);
+    error_log("DBitemstock::updateMaterialInwardRow Error: " . $stmt->error);
+    return ['success' => false, 'error' => $stmt->error];
   }
 
 
@@ -465,8 +480,10 @@ GROUP BY
     $connectionObj = $db->getConnection();
     $sql = "DELETE from item_stock where item_stockid='" . $stockObj . "'";
     if ($connectionObj->query($sql) === TRUE) {
+      return ['success' => true, 'affected_rows' => $connectionObj->affected_rows];
     } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      error_log("DBitemstock::delete Error: " . $connectionObj->error);
+      return ['success' => false, 'error' => $connectionObj->error];
     }
 
   }

@@ -1,0 +1,1040 @@
+[13-Mar-2026 09:39:56 UTC] POST
+[13-Mar-2026 09:39:56 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php:10
+Stack trace:
+#0 /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php(10): mysqli->__construct()
+#1 /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php(20): ConnectDb->__construct()
+#2 /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php(7): ConnectDb::getInstance()
+#3 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php on line 10
+[13-Mar-2026 09:40:39 UTC] POST
+[13-Mar-2026 09:40:39 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: NO) in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php:10
+Stack trace:
+#0 /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php(10): mysqli->__construct()
+#1 /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php(20): ConnectDb->__construct()
+#2 /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php(7): ConnectDb::getInstance()
+#3 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/dbconnection.php on line 10
+[13-Mar-2026 09:45:21 UTC] POST
+[13-Mar-2026 09:45:21 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[13-Mar-2026 09:45:21 UTC] 
+[13-Mar-2026 09:45:21 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[13-Mar-2026 09:45:21 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[13-Mar-2026 09:45:21 UTC] 
+[13-Mar-2026 09:45:21 UTC] info@acedecors.in
+[13-Mar-2026 09:48:00 UTC] POST
+[13-Mar-2026 09:48:00 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[13-Mar-2026 09:48:00 UTC] 
+[13-Mar-2026 09:48:00 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[13-Mar-2026 09:48:00 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[13-Mar-2026 09:48:00 UTC] 
+[13-Mar-2026 09:48:00 UTC] info@acedecors.in
+[13-Mar-2026 10:15:51 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:15:51 UTC] PHP Warning:  getimagesize(/tmp/phpBz6Hzx): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[13-Mar-2026 10:15:51 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'enquirybg.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 10:16:15 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:16:15 UTC] PHP Warning:  getimagesize(/tmp/phpCx76CK): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[13-Mar-2026 10:16:15 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'pic27.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 10:16:35 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:16:35 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            '',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 10:17:04 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:17:04 UTC] PHP Warning:  getimagesize(/tmp/phpYvSmu6): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[13-Mar-2026 10:17:04 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'pic.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 10:18:13 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:18:13 UTC] PHP Warning:  getimagesize(/tmp/php3i869P): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[13-Mar-2026 10:18:13 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            '1760032896_TV Unit.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 10:18:38 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[13-Mar-2026 10:18:38 UTC] PHP Warning:  getimagesize(/tmp/phpTqZdtd): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[13-Mar-2026 10:18:38 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            '1758387060_AD-Kitchen01.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[13-Mar-2026 11:34:58 UTC] POST
+[13-Mar-2026 11:34:58 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[13-Mar-2026 11:34:58 UTC] 
+[13-Mar-2026 11:34:58 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[13-Mar-2026 11:34:58 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[13-Mar-2026 11:34:58 UTC] 
+[13-Mar-2026 11:34:58 UTC] info@acedecors.in
+[16-Mar-2026 11:02:00 UTC] POST
+[16-Mar-2026 11:02:00 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[16-Mar-2026 11:02:00 UTC] 
+[16-Mar-2026 11:02:00 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[16-Mar-2026 11:02:00 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[16-Mar-2026 11:02:00 UTC] 
+[16-Mar-2026 11:02:00 UTC] info@acedecors.in
+[16-Mar-2026 11:41:02 UTC] POST
+[16-Mar-2026 11:41:02 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[16-Mar-2026 11:41:02 UTC] 
+[16-Mar-2026 11:41:02 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[16-Mar-2026 11:41:02 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[16-Mar-2026 11:41:02 UTC] 
+[16-Mar-2026 11:41:02 UTC] info@acedecors.in
+[16-Mar-2026 12:25:16 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[16-Mar-2026 12:26:06 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[16-Mar-2026 12:26:39 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[16-Mar-2026 12:30:31 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[16-Mar-2026 12:30:45 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[16-Mar-2026 12:32:23 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[16-Mar-2026 12:32:27 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[17-Mar-2026 00:36:11 UTC] POST
+[17-Mar-2026 00:36:11 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[17-Mar-2026 00:36:11 UTC] 
+[17-Mar-2026 00:36:11 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[17-Mar-2026 00:36:11 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[17-Mar-2026 00:36:11 UTC] 
+[17-Mar-2026 00:36:11 UTC] info@acedecors.in
+[17-Mar-2026 00:37:14 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:37:20 UTC] 2
+[17-Mar-2026 00:37:20 UTC] Error: subCatId is null, empty, or invalid for postId 88
+[17-Mar-2026 00:37:23 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:37:27 UTC] 2
+[17-Mar-2026 00:37:27 UTC] Error: subCatId is null, empty, or invalid for postId 85
+[17-Mar-2026 00:37:30 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 86
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:37:36 UTC] 2
+[17-Mar-2026 00:37:36 UTC] Error: subCatId is null, empty, or invalid for postId 86
+[17-Mar-2026 00:37:39 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:37:42 UTC] 2
+[17-Mar-2026 00:37:42 UTC] Error: subCatId is null, empty, or invalid for postId 87
+[17-Mar-2026 00:39:11 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:39:21 UTC] 2
+[17-Mar-2026 00:39:38 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 00:39:41 UTC] 2
+[17-Mar-2026 00:39:41 UTC] Error: subCatId is null, empty, or invalid for postId 85
+[17-Mar-2026 06:32:02 UTC] POST
+[17-Mar-2026 06:32:02 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[17-Mar-2026 06:32:02 UTC] 
+[17-Mar-2026 06:32:02 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[17-Mar-2026 06:32:02 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[17-Mar-2026 06:32:02 UTC] 
+[17-Mar-2026 06:32:02 UTC] info@acedecors.in
+[17-Mar-2026 07:28:31 UTC] POST
+[17-Mar-2026 07:28:31 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[17-Mar-2026 07:28:31 UTC] 
+[17-Mar-2026 07:28:31 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[17-Mar-2026 07:28:31 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[17-Mar-2026 07:28:31 UTC] 
+[17-Mar-2026 07:28:31 UTC] info@acedecors.in
+[17-Mar-2026 07:30:07 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 07:30:21 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 07:32:19 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 180
+[17-Mar-2026 07:32:19 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 181
+[17-Mar-2026 07:32:19 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 182
+[17-Mar-2026 07:32:19 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 183
+[17-Mar-2026 07:32:19 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 184
+[17-Mar-2026 07:33:07 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[17-Mar-2026 07:36:05 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 62
+[17-Mar-2026 07:36:05 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[17-Mar-2026 07:36:22 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 07:36:25 UTC] 2
+[17-Mar-2026 07:36:25 UTC] Error: subCatId is null, empty, or invalid for postId 88
+[17-Mar-2026 07:36:34 UTC] 3
+[17-Mar-2026 07:36:55 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[17-Mar-2026 07:37:03 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[17-Mar-2026 07:37:13 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[17-Mar-2026 07:37:28 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 63
+[17-Mar-2026 08:28:41 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[17-Mar-2026 08:29:02 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[18-Mar-2026 08:58:33 UTC] POST
+[18-Mar-2026 08:58:33 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[18-Mar-2026 08:58:33 UTC] 
+[18-Mar-2026 08:58:33 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[18-Mar-2026 08:58:33 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[18-Mar-2026 08:58:33 UTC] 
+[18-Mar-2026 08:58:33 UTC] info@acedecors.in
+[18-Mar-2026 09:00:20 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[18-Mar-2026 09:00:20 UTC] PHP Warning:  getimagesize(/tmp/phpuiNp5B): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[18-Mar-2026 09:00:20 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            '1760033852_DMLS-001.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '85',
+            'image',
+            '',
+            ''
+        )
+[18-Mar-2026 09:00:34 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[18-Mar-2026 09:00:34 UTC] PHP Warning:  getimagesize(/tmp/phpUrIlMm): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[18-Mar-2026 09:00:34 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'post5.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '85',
+            'image',
+            '',
+            ''
+        )
+[18-Mar-2026 09:01:04 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[18-Mar-2026 09:01:04 UTC] PHP Warning:  getimagesize(/tmp/phpfmeHQn): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[18-Mar-2026 09:01:04 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'p7.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '88',
+            'image',
+            '',
+            ''
+        )
+[18-Mar-2026 09:01:13 UTC] PHP Warning:  Undefined array key "alternateText" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/sliderImageController.php on line 27
+[18-Mar-2026 09:01:13 UTC] PHP Warning:  getimagesize(/tmp/phpIuGxCg): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[18-Mar-2026 09:01:13 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'post3.jpg',
+            '',
+            '',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '88',
+            'image',
+            '',
+            ''
+        )
+[18-Mar-2026 09:01:48 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[18-Mar-2026 09:01:56 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[18-Mar-2026 11:12:39 UTC] POST
+[18-Mar-2026 11:12:39 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[18-Mar-2026 11:12:39 UTC] 
+[18-Mar-2026 11:12:39 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[18-Mar-2026 11:12:39 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[18-Mar-2026 11:12:39 UTC] 
+[18-Mar-2026 11:12:39 UTC] info@acedecors.in
+[19-Mar-2026 08:40:13 UTC] POST
+[19-Mar-2026 08:40:13 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[19-Mar-2026 08:40:13 UTC] 
+[19-Mar-2026 08:40:13 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[19-Mar-2026 08:40:13 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[19-Mar-2026 08:40:13 UTC] 
+[19-Mar-2026 08:40:13 UTC] info@acedecors.in
+[19-Mar-2026 08:50:59 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:51:05 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:55:59 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:56:02 UTC] 2
+[19-Mar-2026 08:56:04 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:56:07 UTC] 2
+[19-Mar-2026 08:56:10 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 86
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:56:14 UTC] 2
+[19-Mar-2026 08:56:18 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[19-Mar-2026 08:56:24 UTC] 2
+[20-Mar-2026 06:36:49 UTC] POST
+[20-Mar-2026 06:36:49 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[20-Mar-2026 06:36:49 UTC] 
+[20-Mar-2026 06:36:49 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[20-Mar-2026 06:36:49 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[20-Mar-2026 06:36:49 UTC] 
+[20-Mar-2026 06:36:49 UTC] info@acedecors.in
+[20-Mar-2026 06:37:44 UTC] PHP Warning:  getimagesize(/tmp/phpHaQOTr): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[20-Mar-2026 06:37:44 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'SHowroom Image001.jpg',
+            '',
+            'Ace Decors',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[20-Mar-2026 09:39:34 UTC] POST
+[20-Mar-2026 09:39:34 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[20-Mar-2026 09:39:34 UTC] 
+[20-Mar-2026 09:39:34 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[20-Mar-2026 09:39:34 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[20-Mar-2026 09:39:34 UTC] 
+[20-Mar-2026 09:39:34 UTC] info@acedecors.in
+[20-Mar-2026 09:40:35 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[21-Apr-2026 15:16:55 UTC] POST
+[21-Apr-2026 15:16:55 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[21-Apr-2026 15:16:55 UTC] 
+[21-Apr-2026 15:16:55 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[21-Apr-2026 15:16:55 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[21-Apr-2026 15:16:55 UTC] 
+[21-Apr-2026 15:16:55 UTC] info@acedecors.in
+[21-Apr-2026 15:17:44 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[21-Apr-2026 15:17:51 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[21-Apr-2026 15:18:02 UTC] 2
+[26-Apr-2026 09:26:24 UTC] POST
+[26-Apr-2026 09:26:24 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[26-Apr-2026 09:26:24 UTC] 
+[26-Apr-2026 09:26:24 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[26-Apr-2026 09:26:24 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[26-Apr-2026 09:26:24 UTC] 
+[26-Apr-2026 09:26:24 UTC] info@acedecors.in
+[29-Apr-2026 07:24:18 UTC] POST
+[29-Apr-2026 07:24:18 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[29-Apr-2026 07:24:18 UTC] 
+[29-Apr-2026 07:24:18 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[29-Apr-2026 07:24:18 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[29-Apr-2026 07:24:18 UTC] 
+[29-Apr-2026 07:24:18 UTC] info@acedecors.in
+[04-Jun-2026 18:44:38 UTC] POST
+[04-Jun-2026 18:44:38 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[04-Jun-2026 18:44:38 UTC] 
+[04-Jun-2026 18:44:38 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[04-Jun-2026 18:44:38 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[04-Jun-2026 18:44:38 UTC] 
+[04-Jun-2026 18:44:38 UTC] info@acedecors.in
+[04-Jun-2026 18:45:15 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:15 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:18 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:18 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:20 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:20 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:21 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:45:21 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 18:50:10 UTC] PHP Warning:  getimagesize(/tmp/phpgMTMUx): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[04-Jun-2026 18:50:10 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'TV Unit-1.jpg',
+            '',
+            'TV Unit',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[04-Jun-2026 18:50:50 UTC] PHP Warning:  getimagesize(/tmp/phpvlpXUZ): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[04-Jun-2026 18:50:50 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'AD-Wardrobe-001.jpg',
+            '',
+            'Wardrobes',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[04-Jun-2026 18:52:29 UTC] PHP Warning:  getimagesize(/tmp/phpH5qURb): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[04-Jun-2026 18:52:29 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'AD-Kitchen01.jpg',
+            '',
+            'Modular Kitchen',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '0',
+            'image',
+            '',
+            ''
+        )
+[04-Jun-2026 18:53:05 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 18:53:17 UTC] 2
+[04-Jun-2026 18:53:17 UTC] Error: subCatId is null, empty, or invalid for postId 88
+[04-Jun-2026 18:53:21 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 18:53:25 UTC] 2
+[04-Jun-2026 18:53:25 UTC] Error: subCatId is null, empty, or invalid for postId 85
+[04-Jun-2026 18:53:28 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 86
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 18:53:34 UTC] 2
+[04-Jun-2026 18:53:34 UTC] Error: subCatId is null, empty, or invalid for postId 86
+[04-Jun-2026 18:53:39 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 18:53:44 UTC] 2
+[04-Jun-2026 18:53:44 UTC] Error: subCatId is null, empty, or invalid for postId 87
+[04-Jun-2026 18:54:20 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 18:55:51 UTC] PHP Warning:  getimagesize(/tmp/phpJ1cuQT): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[04-Jun-2026 18:55:51 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'AD-Sliding Wardrobe-001.jpg',
+            '',
+            'Sliding Wardrobe',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '85',
+            'image',
+            '',
+            ''
+        )
+[04-Jun-2026 18:56:40 UTC] 3
+[04-Jun-2026 18:56:43 UTC] UPDATE category SET HasSubcategory = 0 WHERE categoryId = 63
+[04-Jun-2026 18:56:45 UTC] 3
+[04-Jun-2026 18:57:18 UTC] 3
+[04-Jun-2026 18:57:22 UTC] 3
+[04-Jun-2026 18:57:25 UTC] UPDATE category SET HasSubcategory = 0 WHERE categoryId = 62
+[04-Jun-2026 18:57:25 UTC] UPDATE category SET HasSubcategory = 0 WHERE categoryId = 61
+[04-Jun-2026 18:58:16 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 180
+[04-Jun-2026 18:58:16 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 181
+[04-Jun-2026 18:58:16 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 182
+[04-Jun-2026 18:58:16 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 183
+[04-Jun-2026 18:58:16 UTC] PHP Notice:  Only variables should be passed by reference in /home/edeu0cbxah1p/public_html/cmsadmin/dblayer/categoryOps.php on line 184
+[04-Jun-2026 18:59:20 UTC] 3
+[04-Jun-2026 18:59:35 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[04-Jun-2026 18:59:39 UTC] 3
+[04-Jun-2026 18:59:53 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[04-Jun-2026 18:59:55 UTC] SELECT * FROM category ORDER BY categoryId DESC
+[04-Jun-2026 19:00:07 UTC] UPDATE category SET HasSubcategory = 1 WHERE categoryId = 61
+[04-Jun-2026 19:00:31 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 19:01:01 UTC] 2
+[04-Jun-2026 19:02:26 UTC] PHP Warning:  getimagesize(/tmp/phpfaxQ0N): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/Utilities/Helper.php on line 21
+[04-Jun-2026 19:02:26 UTC] Insert SQL: INSERT INTO sliderimages (
+            `image`, 
+            `imageCaption`,
+            `alternatetext`, 
+            `createdBy`, 
+            `modifiedBY`,
+            `postId`,
+            `fileType`,
+            `videoUrl`,
+            `videoFile`
+            
+        ) VALUES (
+            'AD-Kitchen01.jpg',
+            '',
+            'L Shaped Kitchen',
+            'info@acedecors.in',
+            'info@acedecors.in',
+            '88',
+            'image',
+            '',
+            ''
+        )
+[04-Jun-2026 19:06:31 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 85
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 19:06:35 UTC] 2
+[04-Jun-2026 19:06:41 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 86
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 19:06:46 UTC] 2
+[04-Jun-2026 19:06:50 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 87
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 19:06:54 UTC] 2
+[04-Jun-2026 19:18:01 UTC] getMappedSubCategories SQL: SELECT sub.subCategoryId, sub.subCategoryName,
+                       CASE WHEN TEMP.postId IS NULL THEN FALSE ELSE TRUE END AS postId
+                FROM subcategory AS sub
+                LEFT JOIN (
+                    SELECT p.postId AS postId,
+                    M.subCatId AS subCatId
+                    FROM post AS p
+                    LEFT JOIN postsubcatmapping AS M ON p.postId = M.postId
+                    WHERE p.postId = 88
+                ) AS TEMP
+                ON sub.subCategoryId = TEMP.subCatId
+[04-Jun-2026 19:19:35 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:35 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:36 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:36 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:38 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:38 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:40 UTC] PHP Warning:  require(../DBlayer/businessOps.php): Failed to open stream: No such file or directory in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:19:40 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '../DBlayer/businessOps.php' (include_path='.:/opt/alt/php83/usr/share/pear:/opt/alt/php83/usr/share/php:/usr/share/pear:/usr/share/php') in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php:6
+Stack trace:
+#0 {main}
+  thrown in /home/edeu0cbxah1p/public_html/cmsadmin/controller/businessInfoController.php on line 6
+[04-Jun-2026 19:20:31 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:20:33 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:20:34 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:20:35 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:20:39 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:25:38 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[04-Jun-2026 19:25:39 UTC] PHP Warning:  Undefined array key "action" in /home/edeu0cbxah1p/public_html/cmsadmin/controller/brandController.php on line 4
+[05-Jun-2026 05:27:26 UTC] POST
+[05-Jun-2026 05:27:26 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[05-Jun-2026 05:27:26 UTC] 
+[05-Jun-2026 05:27:26 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[05-Jun-2026 05:27:26 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[05-Jun-2026 05:27:26 UTC] 
+[05-Jun-2026 05:27:26 UTC] info@acedecors.in
+[19-Jun-2026 12:01:30 UTC] POST
+[19-Jun-2026 12:01:30 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[19-Jun-2026 12:01:30 UTC] 
+[19-Jun-2026 12:01:30 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[19-Jun-2026 12:01:30 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[19-Jun-2026 12:01:30 UTC] 
+[19-Jun-2026 12:01:30 UTC] info@acedecors.in
+[22-Jul-2026 05:41:59 UTC] POST
+[22-Jul-2026 05:41:59 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 12
+[22-Jul-2026 05:41:59 UTC] 
+[22-Jul-2026 05:41:59 UTC] SELECT * FROM  user WHERE user_name = 'info@acedecors.in' AND user_password = 'Acedecors@123'
+[22-Jul-2026 05:41:59 UTC] PHP Warning:  Undefined variable $sql in /home/edeu0cbxah1p/public_html/cmsadmin/controller/login.php on line 16
+[22-Jul-2026 05:41:59 UTC] 
+[22-Jul-2026 05:41:59 UTC] info@acedecors.in

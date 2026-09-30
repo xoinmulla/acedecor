@@ -15,8 +15,8 @@ class DBExpense
 
         $stmt = $conn->prepare("
         INSERT INTO expense 
-        (category, subcategory_id, subcategory_name, amount, expense_date, payment_type, notes, type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+(category, subcategory_id, subcategory_name, amount, expense_date, payment_type, notes, type, payment_id)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
         $subcategory_id = $e->getSubcategoryId();
@@ -26,12 +26,12 @@ class DBExpense
         $payment_type = $e->getPaymentType();
         $notes = $e->getNotes();
         $type = $e->getType();
-
+        $payment_id = $e->getPaymentId();
         $category = $e->getCategory();
 
 
         $stmt->bind_param(
-            "sisdssss",
+            "sisdssssi",
             $category,
             $subcategory_id,
             $subcategory_name,
@@ -39,7 +39,8 @@ class DBExpense
             $expense_date,
             $payment_type,
             $notes,
-            $type
+            $type,
+            $payment_id
         );
 
 
@@ -93,9 +94,57 @@ class DBExpense
     public static function delete($id)
     {
         $conn = self::getConn();
-        $stmt = $conn->prepare("DELETE FROM expense WHERE id=?");
+
+        // 1️⃣ Get expense row first
+        $stmt = $conn->prepare("SELECT * FROM expense WHERE id = ?");
         $stmt->bind_param("i", $id);
-        return $stmt->execute();
+        $stmt->execute();
+        $exp = $stmt->get_result()->fetch_assoc();
+
+        if (!$exp)
+            return false;
+
+        // 2️⃣ DELETE CUSTOMER PAYMENT (if Customer)
+        if ($exp['category'] === 'Customer' && !empty($exp['payment_id'])) {
+
+            $stmt2 = $conn->prepare("
+        DELETE FROM customerpaymentinfo 
+        WHERE payment_id = ?
+    ");
+
+            $stmt2->bind_param("i", $exp['payment_id']);
+            $stmt2->execute();
+            error_log("Deleting customer payment with ID: " . $exp['payment_id']);
+        }
+
+        // 3️⃣ DELETE SUPPLIER PAYMENT (if Supplier)
+        if ($exp['category'] === 'Suppliers') {
+
+            $stmt3 = $conn->prepare("
+            DELETE FROM supplierpaymentinfo 
+            WHERE supplierId = ? AND POID = ?
+        ");
+            $stmt3->bind_param("ii", $exp['supplier_id'], $exp['po_id']);
+            $stmt3->execute();
+        }
+
+        // 4️⃣ DELETE EMPLOYEE PAYMENT
+        if ($exp['category'] === 'Employee' && !empty($exp['payment_id'])) {
+
+            $stmtEmp = $conn->prepare("
+        DELETE FROM employee_payment 
+        WHERE id = ?
+    ");
+
+            $stmtEmp->bind_param("i", $exp['payment_id']);
+            $stmtEmp->execute();
+        }
+        
+        // 4️⃣ DELETE EXPENSE (MAIN)
+        $stmt4 = $conn->prepare("DELETE FROM expense WHERE id = ?");
+        $stmt4->bind_param("i", $id);
+
+        return $stmt4->execute();
     }
 
     public static function readAll()

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Mar 12, 2026 at 11:04 AM
--- Server version: 9.1.0
--- PHP Version: 8.3.14
+-- Host: localhost:3306
+-- Generation Time: Jul 30, 2026 at 02:06 AM
+-- Server version: 10.11.18-MariaDB-cll-lve
+-- PHP Version: 8.4.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,51 +27,30 @@ SET time_zone = "+00:00";
 -- Table structure for table `attendance`
 --
 
-DROP TABLE IF EXISTS `attendance`;
-CREATE TABLE IF NOT EXISTS `attendance` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `emp_id` int NOT NULL,
+CREATE TABLE `attendance` (
+  `id` int(11) NOT NULL,
+  `emp_id` int(11) NOT NULL,
   `date` date NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT '',
   `in_time` time DEFAULT NULL,
   `out_time` time DEFAULT NULL,
-  `remarks` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `worked_hours` decimal(5,2) DEFAULT '0.00',
-  `ot_hours` decimal(5,2) DEFAULT '0.00',
-  `ot_pay` decimal(10,2) DEFAULT '0.00',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=112 DEFAULT CHARSET=utf8mb4 ;
-
---
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`id`, `emp_id`, `date`, `status`, `in_time`, `out_time`, `remarks`, `created_at`, `worked_hours`, `ot_hours`, `ot_pay`) VALUES
-(92, 39, '2026-02-18', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-04 12:41:46', 2.50, 0.00, 0.00),
-(90, 38, '2026-02-18', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-04 11:18:52', 2.50, 0.00, 0.00),
-(93, 39, '2026-02-19', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:14:25', 2.50, 0.00, 0.00),
-(94, 38, '2026-02-19', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:14:59', 2.50, 0.00, 0.00),
-(95, 39, '2026-02-20', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:17:39', 2.50, 0.00, 0.00),
-(96, 38, '2026-02-20', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:18:00', 2.50, 0.00, 0.00),
-(97, 39, '2026-02-21', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:18:23', 2.50, 0.00, 0.00),
-(98, 38, '2026-02-21', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:18:49', 2.50, 0.00, 0.00),
-(99, 38, '2026-02-22', 'Present', '11:00:00', '20:00:00', 'Full Day', '2026-02-25 01:19:11', 9.00, 1.00, 100.00),
-(100, 39, '2026-02-23', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:19:51', 2.50, 0.00, 0.00),
-(101, 38, '2026-02-23', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:20:11', 2.50, 0.00, 0.00),
-(102, 39, '2026-02-24', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:21:01', 2.50, 0.00, 0.00),
-(103, 38, '2026-02-24', 'Hourly', '07:00:00', '09:30:00', 'Evening', '2026-02-25 01:21:24', 2.50, 0.00, 0.00),
-(104, 39, '2026-02-25', 'Present', '11:00:00', '20:00:00', '', '2026-02-25 06:10:18', 9.00, 1.00, 100.00),
-(105, 40, '2026-02-14', 'Present', '11:00:00', '20:00:00', 'zxczxc', '2026-02-25 06:12:10', 9.00, 1.00, 100.00),
-(106, 40, '2026-02-13', 'Hourly', '07:00:00', '09:30:00', 'zxczxc', '2026-02-25 06:12:41', 2.50, 0.00, 0.00),
-(107, 40, '2026-03-02', 'Present', '11:00:00', '19:30:00', '', '2026-03-02 07:42:22', 8.50, 0.50, 50.00),
-(108, 40, '2026-02-23', 'Hourly', '10:00:00', '19:00:00', 'sASas', '2026-03-02 07:51:40', 9.00, 0.00, 0.00),
-(109, 40, '2026-03-04', 'Absent', '00:00:00', '00:00:00', 'sdsd', '2026-03-02 07:52:24', 0.00, 0.00, 0.00),
-(110, 40, '2026-03-05', '2 Days', '00:00:00', '00:00:00', 'CC', '2026-03-02 07:53:07', 0.00, 0.00, 0.00),
-(111, 38, '2026-02-27', 'Half-day', '00:00:00', '00:00:00', 'adsas', '2026-03-02 08:38:53', 0.00, 0.00, 0.00);
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `worked_hours` decimal(5,2) DEFAULT 0.00,
+  `ot_hours` decimal(5,2) DEFAULT 0.00,
+  `ot_pay` decimal(10,2) DEFAULT 0.00
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
+--
+-- Stand-in structure for view `availableqty`
+-- (See below for the actual view)
+--
+CREATE TABLE `availableqty` (
+`AvailableQty` decimal(33,0)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -79,25 +58,29 @@ INSERT INTO `attendance` (`id`, `emp_id`, `date`, `status`, `in_time`, `out_time
 -- Table structure for table `brands`
 --
 
-DROP TABLE IF EXISTS `brands`;
-CREATE TABLE IF NOT EXISTS `brands` (
-  `brand_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `brands` (
+  `brand_id` int(11) NOT NULL,
   `brand_name` varchar(200) NOT NULL,
   `brand_description` varchar(500) DEFAULT NULL,
   `brand_createdby` varchar(200) NOT NULL,
   `brand_modifiedby` varchar(200) NOT NULL,
-  `brand_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `brand_modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`brand_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=271 DEFAULT CHARSET=utf8mb3;
+  `brand_createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `brand_modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `brands`
 --
 
 INSERT INTO `brands` (`brand_id`, `brand_name`, `brand_description`, `brand_createdby`, `brand_modifiedby`, `brand_createdon`, `brand_modifiedon`) VALUES
-(264, 'Saraf', NULL, 'info@acedecors.in', 'info@acedecors.in', '2025-12-15 11:01:04', '2025-12-15 11:01:04'),
-(263, 'Godrej', NULL, 'info@acedecors.in', 'info@acedecors.in', '2025-12-15 11:00:54', '2025-12-15 11:00:54');
+(277, 'GP', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 21:49:19', '2026-07-29 09:07:22'),
+(276, 'Te', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 21:49:04', '2026-07-29 09:05:08'),
+(274, 'eb', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 21:47:50', '2026-07-29 09:04:54'),
+(273, 'He', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 12:13:42', '2026-07-29 09:04:38'),
+(280, 'GR', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:22:37', '2026-07-29 11:22:37'),
+(279, 'ME', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 09:59:58', '2026-07-29 10:00:26'),
+(281, 'VI', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 13:28:51', '2026-07-29 13:28:51'),
+(282, 'we', NULL, 'info@acedecors.in', 'info@acedecors.in', '2026-07-30 00:27:51', '2026-07-30 00:27:51');
 
 -- --------------------------------------------------------
 
@@ -105,17 +88,14 @@ INSERT INTO `brands` (`brand_id`, `brand_name`, `brand_description`, `brand_crea
 -- Table structure for table `brand_category_mapping`
 --
 
-DROP TABLE IF EXISTS `brand_category_mapping`;
-CREATE TABLE IF NOT EXISTS `brand_category_mapping` (
-  `brandId` int NOT NULL,
-  `item_categoryId` int NOT NULL,
+CREATE TABLE `brand_category_mapping` (
+  `brandId` int(11) NOT NULL,
+  `item_categoryId` int(11) NOT NULL,
   `createdby` varchar(100) NOT NULL,
   `modifiedby` varchar(100) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY `brandId` (`brandId`),
-  KEY `item_categoryId` (`item_categoryId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `brand_category_mapping`
@@ -228,7 +208,12 @@ INSERT INTO `brand_category_mapping` (`brandId`, `item_categoryId`, `createdby`,
 (263, 122, 'info@acedecors.in', 'info@acedecors.in', '2025-12-15 11:04:11', '2025-12-15 11:04:11'),
 (264, 122, 'info@acedecors.in', 'info@acedecors.in', '2025-12-15 11:04:11', '2025-12-15 11:04:11'),
 (262, 121, '', '', '2026-02-12 15:29:57', '2026-02-12 15:29:57'),
-(262, 124, 'info@acedecors.in', 'info@acedecors.in', '2026-01-06 17:45:30', '2026-01-06 17:45:30');
+(262, 124, 'info@acedecors.in', 'info@acedecors.in', '2026-01-06 17:45:30', '2026-01-06 17:45:30'),
+(271, 126, 'info@acedecors.in', 'info@acedecors.in', '2026-03-20 02:52:46', '2026-03-20 02:52:46'),
+(282, 131, 'info@acedecors.in', 'info@acedecors.in', '2026-07-30 00:28:31', '2026-07-30 00:28:31'),
+(274, 130, '', '', '2026-07-29 11:23:49', '2026-07-29 11:23:49'),
+(277, 130, '', '', '2026-07-29 11:23:49', '2026-07-29 11:23:49'),
+(273, 130, '', '', '2026-07-29 11:23:49', '2026-07-29 11:23:49');
 
 -- --------------------------------------------------------
 
@@ -236,17 +221,14 @@ INSERT INTO `brand_category_mapping` (`brandId`, `item_categoryId`, `createdby`,
 -- Table structure for table `brand_matcat_mapping`
 --
 
-DROP TABLE IF EXISTS `brand_matcat_mapping`;
-CREATE TABLE IF NOT EXISTS `brand_matcat_mapping` (
-  `brandId` int NOT NULL,
-  `material_categoryId` int NOT NULL,
+CREATE TABLE `brand_matcat_mapping` (
+  `brandId` int(11) NOT NULL,
+  `material_categoryId` int(11) NOT NULL,
   `createdby` varchar(100) NOT NULL,
   `modifiedby` varchar(100) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY `brandId` (`brandId`),
-  KEY `material_categoryId` (`material_categoryId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `brand_matcat_mapping`
@@ -257,7 +239,10 @@ INSERT INTO `brand_matcat_mapping` (`brandId`, `material_categoryId`, `createdby
 (264, 37, 'info@acedecors.in', 'info@acedecors.in', '2026-02-13 15:24:35', '2026-02-13 15:24:35'),
 (270, 38, 'info@acedecors.in', 'info@acedecors.in', '2026-02-13 15:24:45', '2026-02-13 15:24:45'),
 (264, 39, 'info@acedecors.in', 'info@acedecors.in', '2026-02-19 13:31:39', '2026-02-19 13:31:39'),
-(270, 39, 'info@acedecors.in', 'info@acedecors.in', '2026-02-19 13:31:39', '2026-02-19 13:31:39');
+(270, 39, 'info@acedecors.in', 'info@acedecors.in', '2026-02-19 13:31:39', '2026-02-19 13:31:39'),
+(276, 43, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 13:34:21', '2026-07-29 13:34:21'),
+(277, 42, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 13:28:04', '2026-07-29 13:28:04'),
+(281, 43, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 13:34:21', '2026-07-29 13:34:21');
 
 -- --------------------------------------------------------
 
@@ -265,9 +250,8 @@ INSERT INTO `brand_matcat_mapping` (`brandId`, `material_categoryId`, `createdby
 -- Table structure for table `businessdetails`
 --
 
-DROP TABLE IF EXISTS `businessdetails`;
-CREATE TABLE IF NOT EXISTS `businessdetails` (
-  `businessId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `businessdetails` (
+  `businessId` int(11) NOT NULL,
   `businessName` varchar(250) NOT NULL,
   `businessAddress` varchar(250) NOT NULL,
   `businessContact` varchar(15) NOT NULL,
@@ -275,17 +259,16 @@ CREATE TABLE IF NOT EXISTS `businessdetails` (
   `businessTagLine` varchar(500) NOT NULL,
   `businessEmail` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `ModifiedDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `createdDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedDate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `createdDate` datetime NOT NULL DEFAULT current_timestamp(),
   `businessGSTIN` varchar(15) DEFAULT NULL,
   `logoImage` varchar(100) DEFAULT NULL,
   `aboutBusiness` longtext NOT NULL,
   `aboutHeader` varchar(255) DEFAULT NULL,
   `aboutSubheading` varchar(500) DEFAULT NULL,
   `aboutImage` varchar(255) DEFAULT NULL,
-  `aboutTitle` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`businessId`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+  `aboutTitle` varchar(255) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `businessdetails`
@@ -300,18 +283,15 @@ INSERT INTO `businessdetails` (`businessId`, `businessName`, `businessAddress`, 
 -- Table structure for table `business_media`
 --
 
-DROP TABLE IF EXISTS `business_media`;
-CREATE TABLE IF NOT EXISTS `business_media` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `businessId` int NOT NULL,
+CREATE TABLE `business_media` (
+  `id` int(11) NOT NULL,
+  `businessId` int(11) NOT NULL,
   `mediaType` enum('image','video') NOT NULL,
   `fileName` varchar(255) DEFAULT NULL,
   `videoUrl` varchar(255) DEFAULT NULL,
   `caption` varchar(255) DEFAULT NULL,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `businessId` (`businessId`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+  `created_at` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `business_media`
@@ -327,22 +307,12 @@ INSERT INTO `business_media` (`id`, `businessId`, `mediaType`, `fileName`, `vide
 -- Table structure for table `cabinettype`
 --
 
-DROP TABLE IF EXISTS `cabinettype`;
-CREATE TABLE IF NOT EXISTS `cabinettype` (
-  `CabinetType_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `cabinettype` (
+  `CabinetType_Id` int(11) NOT NULL,
   `CabinetType` varchar(100) NOT NULL,
   `CreatedBy` varchar(50) NOT NULL,
-  `ModifiedBy` varchar(50) NOT NULL,
-  PRIMARY KEY (`CabinetType_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `cabinettype`
---
-
-INSERT INTO `cabinettype` (`CabinetType_Id`, `CabinetType`, `CreatedBy`, `ModifiedBy`) VALUES
-(4, 'Back', 'info@acedecors.in', 'info@acedecors.in'),
-(5, 'Front', 'info@acedecors.in', 'info@acedecors.in');
+  `ModifiedBy` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -350,30 +320,27 @@ INSERT INTO `cabinettype` (`CabinetType_Id`, `CabinetType`, `CreatedBy`, `Modifi
 -- Table structure for table `category`
 --
 
-DROP TABLE IF EXISTS `category`;
-CREATE TABLE IF NOT EXISTS `category` (
-  `categoryId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `category` (
+  `categoryId` int(11) NOT NULL,
   `categoryName` varchar(200) NOT NULL,
   `categoryDescription` varchar(500) NOT NULL,
-  `categoryCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `categoryCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `categoryCreatedBy` varchar(200) NOT NULL,
-  `categoryModifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `categoryModifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `categorytModifiedBy` varchar(200) NOT NULL,
   `HasSubcategory` varchar(120) NOT NULL,
-  `createdOn` datetime DEFAULT CURRENT_TIMESTAMP,
-  `modifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`categoryId`),
-  UNIQUE KEY `categoryName` (`categoryName`)
-) ENGINE=MyISAM AUTO_INCREMENT=61 DEFAULT CHARSET=latin1;
+  `createdOn` datetime DEFAULT current_timestamp(),
+  `modifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `category`
 --
 
 INSERT INTO `category` (`categoryId`, `categoryName`, `categoryDescription`, `categoryCreatedOn`, `categoryCreatedBy`, `categoryModifiedOn`, `categorytModifiedBy`, `HasSubcategory`, `createdOn`, `modifiedOn`) VALUES
-(59, 'Bed Rooms', 'Bed Rooms', '2025-10-08 13:54:08', 'info@acedecors.in', '2025-10-08 13:54:55', 'info@acedecors.in', '1', '2025-10-08 13:54:08', '2025-10-08 13:54:55'),
-(60, 'Living Room', 'Living Room', '2025-10-08 13:55:31', 'info@acedecors.in', '2025-10-08 13:55:40', 'info@acedecors.in', '1', '2025-10-08 13:55:31', '2025-10-08 13:55:40'),
-(54, 'Wordrobe', 'Wordrobe', '2025-10-07 16:49:29', 'info@acedecors.in', '2025-10-08 13:55:11', 'info@acedecors.in', '1', '2025-10-07 16:49:29', '2025-10-08 13:55:11');
+(65, 'Inspiration', 'Inspiration', '2026-06-04 11:59:15', 'info@acedecors.in', '2026-06-04 11:59:15', 'info@acedecors.in', '0', '2026-06-04 11:59:15', '2026-06-04 11:59:15'),
+(64, 'Furniture', 'Furniture', '2026-06-04 11:58:40', 'info@acedecors.in', '2026-06-04 11:58:40', 'info@acedecors.in', '0', '2026-06-04 11:58:40', '2026-06-04 11:58:40'),
+(61, 'Interiors', 'Interiors', '2026-03-16 04:47:18', 'info@acedecors.in', '2026-06-04 11:59:35', 'info@acedecors.in', '1', '2026-03-16 04:47:18', '2026-06-04 11:59:35');
 
 -- --------------------------------------------------------
 
@@ -381,11 +348,10 @@ INSERT INTO `category` (`categoryId`, `categoryName`, `categoryDescription`, `ca
 -- Table structure for table `catsubcatmapping`
 --
 
-DROP TABLE IF EXISTS `catsubcatmapping`;
-CREATE TABLE IF NOT EXISTS `catsubcatmapping` (
-  `catId` int NOT NULL,
-  `sucatId` int NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `catsubcatmapping` (
+  `catId` int(11) NOT NULL,
+  `sucatId` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `catsubcatmapping`
@@ -396,7 +362,10 @@ INSERT INTO `catsubcatmapping` (`catId`, `sucatId`) VALUES
 (60, 90),
 (54, 71),
 (60, 91),
-(59, 90);
+(59, 90),
+(61, 96),
+(61, 94),
+(61, 93);
 
 -- --------------------------------------------------------
 
@@ -404,12 +373,10 @@ INSERT INTO `catsubcatmapping` (`catId`, `sucatId`) VALUES
 -- Table structure for table `cl_dimension`
 --
 
-DROP TABLE IF EXISTS `cl_dimension`;
-CREATE TABLE IF NOT EXISTS `cl_dimension` (
-  `CLDimensionId` int NOT NULL AUTO_INCREMENT,
-  `CL_Dimensions` varchar(50) NOT NULL,
-  PRIMARY KEY (`CLDimensionId`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+CREATE TABLE `cl_dimension` (
+  `CLDimensionId` int(11) NOT NULL,
+  `CL_Dimensions` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `cl_dimension`
@@ -423,12 +390,53 @@ INSERT INTO `cl_dimension` (`CLDimensionId`, `CL_Dimensions`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `cms_brands`
+--
+
+CREATE TABLE `cms_brands` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `cms_brands`
+--
+
+INSERT INTO `cms_brands` (`id`, `name`, `image`, `status`, `created_at`) VALUES
+(19, 'ebco', '1780601176_ebco.png', 1, '2026-06-04 19:26:16'),
+(18, 'Tesa', '1780601049_Tesa.png', 1, '2026-06-04 19:24:09'),
+(17, 'Royal Touche', '1780600977_RT.png', 1, '2026-06-04 19:22:57');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cms_brand_section`
+--
+
+CREATE TABLE `cms_brand_section` (
+  `id` int(11) NOT NULL,
+  `heading` varchar(255) DEFAULT NULL,
+  `paragraph` text DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `cms_brand_section`
+--
+
+INSERT INTO `cms_brand_section` (`id`, `heading`, `paragraph`) VALUES
+(2, 'Our Signature Brand Collective', 'Our Signature Brand Collective\r\n');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `company_details`
 --
 
-DROP TABLE IF EXISTS `company_details`;
-CREATE TABLE IF NOT EXISTS `company_details` (
-  `companyid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `company_details` (
+  `companyid` int(11) NOT NULL,
   `company_name` varchar(250) NOT NULL,
   `company_address` varchar(250) NOT NULL,
   `company_contact` varchar(15) NOT NULL,
@@ -436,14 +444,13 @@ CREATE TABLE IF NOT EXISTS `company_details` (
   `company_branches` varchar(250) NOT NULL,
   `company_email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `ModifiedDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `ModifiedDate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_date` datetime NOT NULL DEFAULT current_timestamp(),
   `company_GSTIN` varchar(15) DEFAULT NULL,
   `company_BankName` varchar(100) DEFAULT NULL,
   `company_BankAccountNumber` varchar(100) DEFAULT NULL,
-  `company_BankIFSC` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`companyid`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
+  `company_BankIFSC` varchar(20) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `company_details`
@@ -458,17 +465,15 @@ INSERT INTO `company_details` (`companyid`, `company_name`, `company_address`, `
 -- Table structure for table `contents`
 --
 
-DROP TABLE IF EXISTS `contents`;
-CREATE TABLE IF NOT EXISTS `contents` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `contents` (
+  `id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `paragraph` text NOT NULL,
   `image` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `brief` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `brief` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `contents`
@@ -484,28 +489,25 @@ INSERT INTO `contents` (`id`, `title`, `type`, `paragraph`, `image`, `created_at
 -- Table structure for table `content_media`
 --
 
-DROP TABLE IF EXISTS `content_media`;
-CREATE TABLE IF NOT EXISTS `content_media` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `content_id` int NOT NULL,
+CREATE TABLE `content_media` (
+  `id` int(11) NOT NULL,
+  `content_id` int(11) NOT NULL,
   `file_type` enum('image','video') NOT NULL,
   `image_file` varchar(255) DEFAULT NULL,
   `video_url` varchar(500) DEFAULT NULL,
   `video_file` varchar(255) DEFAULT NULL,
-  `caption` text,
+  `caption` text DEFAULT NULL,
   `alt_text` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `fk_content_media_content` (`content_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `content_media`
 --
 
 INSERT INTO `content_media` (`id`, `content_id`, `file_type`, `image_file`, `video_url`, `video_file`, `caption`, `alt_text`, `created_at`) VALUES
-(1, 6, 'image', '1760618463_03-kitchen.jpg', NULL, NULL, '', '', '2025-10-16 12:41:03'),
-(5, 6, 'image', '1760620294_02-kitchen.jpg', NULL, NULL, '', '', '2025-10-16 13:11:34');
+(6, 6, 'image', '1780599930_DMLS-001.jpg', NULL, NULL, '', '', '2026-06-04 19:05:30'),
+(7, 6, 'image', '1780599940_DMLS-002.jpg', NULL, NULL, '', '', '2026-06-04 19:05:40');
 
 -- --------------------------------------------------------
 
@@ -513,10 +515,9 @@ INSERT INTO `content_media` (`id`, `content_id`, `file_type`, `image_file`, `vid
 -- Table structure for table `customer`
 --
 
-DROP TABLE IF EXISTS `customer`;
-CREATE TABLE IF NOT EXISTS `customer` (
-  `customerId` int NOT NULL AUTO_INCREMENT,
-  `enq_id` int NOT NULL,
+CREATE TABLE `customer` (
+  `customerId` int(11) NOT NULL,
+  `enq_id` int(11) NOT NULL,
   `customerCode` varchar(100) NOT NULL,
   `customerName` varchar(200) NOT NULL,
   `customerContactNumber` varchar(15) NOT NULL,
@@ -525,32 +526,43 @@ CREATE TABLE IF NOT EXISTS `customer` (
   `customerState` varchar(200) NOT NULL,
   `customerCountry` varchar(50) NOT NULL,
   `customerCity` varchar(200) NOT NULL,
-  `isQuoteGenerated` tinyint(1) NOT NULL DEFAULT '0',
+  `isQuoteGenerated` tinyint(1) NOT NULL DEFAULT 0,
   `createdby` varchar(200) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `modifiedby` varchar(200) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `customerDOV` date NOT NULL,
-  PRIMARY KEY (`customerId`),
-  KEY `enq_id` (`enq_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=29 DEFAULT CHARSET=latin1;
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `customerDOV` date NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `customer`
 --
 
 INSERT INTO `customer` (`customerId`, `enq_id`, `customerCode`, `customerName`, `customerContactNumber`, `customerEmail`, `customerAddress`, `customerState`, `customerCountry`, `customerCity`, `isQuoteGenerated`, `createdby`, `createdon`, `modifiedby`, `modifiedon`, `customerDOV`) VALUES
-(28, 85, 'AD-202602-M28', 'Mustafa1', '7896541230', 'fdsfdf9f@gmail.com', 'Dharwad', 'GOA', 'India', 'Mumbais', 1, 'info@acedecors.in', '2026-02-19 12:37:06', 'info@acedecors.in', '2026-02-26 11:51:19', '2026-02-19'),
-(26, 83, 'AD-202602-M26', 'Moin8', '9517532488', 'taukeer8@gmail.com', 'Tippu Nagar Hubli, Old Hubli8', 'GOA', 'India', 'Hubli8', 1, 'info@acedecors.in', '2026-02-17 19:43:27', 'info@acedecors.in', '2026-02-26 11:30:23', '2026-02-17'),
-(27, 84, 'AD-202602-T27', 'Taukeer23', '9517532482', 'taukeer2@gmail.com', 'Tippu Nagar Hubli, Old Hubl2', 'CHANDIGARH', 'India', 'Goa2', 0, 'info@acedecors.in', '2026-02-18 12:24:04', 'info@acedecors.in', '2026-02-19 12:33:28', '2026-02-18');
+(34, 88, 'AD-202607-RA34', 'Riyaz Ahmed', '9517532486', '123@gmail.com', 'Gandhi Nagar', 'KARNATAKA', 'India', 'Dharwad', 1, 'info@acedecors.in', '2026-07-29 13:36:51', 'info@acedecors.in', '2026-07-29 13:46:14', '2026-07-30');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `customerbalanceamt`
+-- (See below for the actual view)
+--
+CREATE TABLE `customerbalanceamt` (
+`Total` decimal(33,0)
+,`Id` varchar(100)
+,`CustomerId` varchar(100)
+);
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `customerlastm`
+-- (See below for the actual view)
+--
+CREATE TABLE `customerlastm` (
+`Customers` bigint(21)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -558,46 +570,42 @@ INSERT INTO `customer` (`customerId`, `enq_id`, `customerCode`, `customerName`, 
 -- Table structure for table `customerpaymentinfo`
 --
 
-DROP TABLE IF EXISTS `customerpaymentinfo`;
-CREATE TABLE IF NOT EXISTS `customerpaymentinfo` (
-  `payment_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `customerpaymentinfo` (
+  `payment_id` int(11) NOT NULL,
   `quotation_id` varchar(50) DEFAULT NULL,
   `customer_id` varchar(100) NOT NULL,
-  `total_amount` int DEFAULT NULL,
-  `paid_amount` int DEFAULT NULL,
-  `received_amount` int NOT NULL,
-  `pending_amount` int DEFAULT NULL,
-  `creditDiscount` decimal(10,2) DEFAULT '0.00',
+  `total_amount` int(11) DEFAULT NULL,
+  `paid_amount` int(11) DEFAULT NULL,
+  `received_amount` int(11) NOT NULL,
+  `pending_amount` int(11) DEFAULT NULL,
+  `creditDiscount` decimal(10,2) DEFAULT 0.00,
   `payment_plan` varchar(100) NOT NULL,
   `payment_mode` varchar(100) NOT NULL,
   `RTGS_no` varchar(50) DEFAULT NULL,
   `cheque_img` varchar(100) NOT NULL,
   `due_date` date DEFAULT NULL,
   `payment_description` varchar(100) NOT NULL,
-  `modifieddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modified_by` varchar(100) NOT NULL,
-  PRIMARY KEY (`payment_id`),
-  KEY `customer_id` (`customer_id`),
-  KEY `quotation_id` (`quotation_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=368 DEFAULT CHARSET=utf8mb3;
+  `modifieddate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `modified_by` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `customerpaymentinfo`
 --
 
 INSERT INTO `customerpaymentinfo` (`payment_id`, `quotation_id`, `customer_id`, `total_amount`, `paid_amount`, `received_amount`, `pending_amount`, `creditDiscount`, `payment_plan`, `payment_mode`, `RTGS_no`, `cheque_img`, `due_date`, `payment_description`, `modifieddate`, `modified_by`) VALUES
-(366, 'M28-SW-01', 'AD-202602-M28', 1200, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 14:42:54', '0'),
-(365, 'M28-SW-01', 'AD-202602-M28', 1200, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 14:41:47', '0'),
-(364, 'M26-TU-01', 'AD-202602-M26', 10000, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 13:00:03', '0'),
-(363, 'M26-TU-01', 'AD-202602-M26', 4500, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 12:59:30', '0'),
-(361, 'M26-TU-01', 'AD-202602-M26', 4500, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 12:28:11', '0'),
-(362, 'M26-TU-01', 'AD-202602-M26', 4500, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 12:58:37', '0'),
-(360, 'M26-TU-01', 'AD-202602-M26', 4500, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-02-27 12:26:49', '0'),
-(367, NULL, 'AD-202602-M28', 1200, NULL, 200, NULL, 0.00, 'Part Payment', 'Cash', NULL, '', NULL, 'sddsads', '2026-03-02 13:47:48', 'Admin');
+(394, 'RA34-SW-01', 'AD-202607-RA34', 15000, NULL, 0, NULL, 0.00, '0', '0', NULL, '', NULL, '0', '2026-07-29 14:09:35', '0');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `customerpaymentlastq`
+-- (See below for the actual view)
+--
+CREATE TABLE `customerpaymentlastq` (
+`ReceivedAmt` decimal(32,0)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -605,20 +613,26 @@ INSERT INTO `customerpaymentinfo` (`payment_id`, `quotation_id`, `customer_id`, 
 -- Table structure for table `designimages`
 --
 
-DROP TABLE IF EXISTS `designimages`;
-CREATE TABLE IF NOT EXISTS `designimages` (
-  `designImgId` int NOT NULL AUTO_INCREMENT,
-  `customerId` int NOT NULL,
+CREATE TABLE `designimages` (
+  `designImgId` int(11) NOT NULL,
+  `customerId` int(11) NOT NULL,
   `designFilePath` varchar(200) NOT NULL,
   `designDescription` varchar(500) NOT NULL,
   `createdby` varchar(200) NOT NULL,
   `modifiedby` varchar(200) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `designCategory` int DEFAULT NULL,
-  PRIMARY KEY (`designImgId`),
-  KEY `customerId` (`customerId`)
-) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `designCategory` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `designimages`
+--
+
+INSERT INTO `designimages` (`designImgId`, `customerId`, `designFilePath`, `designDescription`, `createdby`, `modifiedby`, `modifiedon`, `createdon`, `designCategory`) VALUES
+(41, 29, '6db3e2883e74d92c7d153ae4bc5a0110.jpg', 'Shoe Cabinet', 'info@acedecors.in', 'info@acedecors.in', '2026-04-01 04:50:25', '2026-04-01 04:50:25', 22),
+(42, 29, 'aston-martin-car-outline-vector-illustration_507315-64.jpg', 'Car', 'info@acedecors.in', 'info@acedecors.in', '2026-04-01 04:50:44', '2026-04-01 04:50:44', 27),
+(43, 34, '972add52-35a5-46d9-9d06-ae51e54fbb90.png', 'Living Room', 'info@acedecors.in', 'info@acedecors.in', '2026-07-30 01:38:44', '2026-07-30 01:38:44', 22);
 
 -- --------------------------------------------------------
 
@@ -626,20 +640,18 @@ CREATE TABLE IF NOT EXISTS `designimages` (
 -- Table structure for table `dimensions`
 --
 
-DROP TABLE IF EXISTS `dimensions`;
-CREATE TABLE IF NOT EXISTS `dimensions` (
-  `dimensionsId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `dimensions` (
+  `dimensionsId` int(11) NOT NULL,
   `dimensionsName` varchar(200) NOT NULL,
   `dimensionsDescription` varchar(500) NOT NULL,
-  `length` int DEFAULT NULL,
-  `breadth` int DEFAULT NULL,
-  `thickness` int DEFAULT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `length` int(11) DEFAULT NULL,
+  `breadth` int(11) DEFAULT NULL,
+  `thickness` int(11) DEFAULT NULL,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
   `createdBy` varchar(200) NOT NULL,
-  `modifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modifiedBy` varchar(200) NOT NULL,
-  PRIMARY KEY (`dimensionsId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `modifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `modifiedBy` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -647,14 +659,12 @@ CREATE TABLE IF NOT EXISTS `dimensions` (
 -- Table structure for table `eb`
 --
 
-DROP TABLE IF EXISTS `eb`;
-CREATE TABLE IF NOT EXISTS `eb` (
-  `EB_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `eb` (
+  `EB_Id` int(11) NOT NULL,
   `EB` varchar(50) NOT NULL,
   `CreatedBy` varchar(50) NOT NULL,
-  `ModifiedBy` varchar(50) NOT NULL,
-  PRIMARY KEY (`EB_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  `ModifiedBy` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -662,21 +672,12 @@ CREATE TABLE IF NOT EXISTS `eb` (
 -- Table structure for table `eb_lw`
 --
 
-DROP TABLE IF EXISTS `eb_lw`;
-CREATE TABLE IF NOT EXISTS `eb_lw` (
-  `EBLW_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `eb_lw` (
+  `EBLW_Id` int(11) NOT NULL,
   `EB_LW` varchar(100) NOT NULL,
   `CreatedBy` varchar(50) NOT NULL,
-  `ModifiedBy` varchar(50) NOT NULL,
-  PRIMARY KEY (`EBLW_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `eb_lw`
---
-
-INSERT INTO `eb_lw` (`EBLW_Id`, `EB_LW`, `CreatedBy`, `ModifiedBy`) VALUES
-(3, '12', 'info@acedecors.in', 'info@acedecors.in');
+  `ModifiedBy` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -684,9 +685,8 @@ INSERT INTO `eb_lw` (`EBLW_Id`, `EB_LW`, `CreatedBy`, `ModifiedBy`) VALUES
 -- Table structure for table `employee`
 --
 
-DROP TABLE IF EXISTS `employee`;
-CREATE TABLE IF NOT EXISTS `employee` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `employee` (
+  `id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `designation` varchar(100) DEFAULT NULL,
   `contact` varchar(20) DEFAULT NULL,
@@ -696,22 +696,20 @@ CREATE TABLE IF NOT EXISTS `employee` (
   `salary_type` enum('Daily','Weekly','Monthly') DEFAULT 'Daily',
   `salary_amount` decimal(10,2) DEFAULT NULL,
   `hourly_rate` decimal(10,2) DEFAULT NULL,
-  `working_hours` decimal(4,1) NOT NULL DEFAULT '8.0',
-  `notes` text,
+  `working_hours` decimal(4,1) NOT NULL DEFAULT 8.0,
+  `notes` text DEFAULT NULL,
   `photo` varchar(255) DEFAULT NULL,
-  `createdOn` datetime DEFAULT CURRENT_TIMESTAMP,
-  `weekly_off_day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') DEFAULT 'Sunday',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=41 DEFAULT CHARSET=utf8mb4 ;
+  `createdOn` datetime DEFAULT current_timestamp(),
+  `weekly_off_day` enum('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday') DEFAULT 'Sunday'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
 INSERT INTO `employee` (`id`, `name`, `designation`, `contact`, `email`, `address`, `doj`, `salary_type`, `salary_amount`, `hourly_rate`, `working_hours`, `notes`, `photo`, `createdOn`, `weekly_off_day`) VALUES
-(39, 'Raju', 'Technician', '9999999991', 'raju1@gmail.com', 'Lakhmanhalli Dharwad', '2026-01-01', 'Daily', 600.00, 100.00, 8.0, 'asdasdasd', 'uploads/employee/1770204396_ChatGPT Image Feb 3, 2026, 11_34_05 AM.jpg', '2026-02-04 16:56:36', 'Friday'),
-(38, 'Narendra', 'Technician', '9999999992', 'narendra1@gmail.com', 'Lakhmanhalli Dharwad', '2026-01-01', 'Daily', 600.00, 100.00, 8.0, '', 'uploads/employee/1770203912_ChatGPT Image Feb 3, 2026, 11_34_05 AM.jpg', '2026-02-04 16:48:32', 'Friday'),
-(40, 'Taukeer', 'Electric Engineer', '8797854627', 'taukeer123@gmail.com', 'dfsdf', '2026-02-01', 'Daily', 800.00, 100.00, 8.0, 'sdf', 'uploads/employee/1771999916_Sunset+over+Lake+Washington,+Kirkland,+WA.webp', '2026-02-25 11:41:56', 'Sunday');
+(42, 'Narendra', 'Technician', '8722773751', '123@gmail.com', 'Gandhinagar', '2026-01-01', 'Daily', 600.00, 100.00, 8.0, '', 'uploads/employee/1781242032_Screenshot 2025-06-14 002019.png', '2026-06-09 12:06:07', 'Friday'),
+(41, 'Raju', 'Technician', '8722773751', 'raju@gmail.com', 'Gandhinagar', '2026-03-01', 'Daily', 600.00, 100.00, 8.0, 'Contract Employees', 'uploads/employee/1776182028_employe icon.jpg', '2026-04-01 05:09:18', 'Friday');
 
 -- --------------------------------------------------------
 
@@ -719,30 +717,16 @@ INSERT INTO `employee` (`id`, `name`, `designation`, `contact`, `email`, `addres
 -- Table structure for table `employee_payment`
 --
 
-DROP TABLE IF EXISTS `employee_payment`;
-CREATE TABLE IF NOT EXISTS `employee_payment` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `emp_id` int NOT NULL,
+CREATE TABLE `employee_payment` (
+  `id` int(11) NOT NULL,
+  `emp_id` int(11) NOT NULL,
   `payment_date` date NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `payment_type` enum('Cash','Bank Transfer','UPI','Cheque') DEFAULT 'Cash',
   `status` enum('Paid','Pending') DEFAULT 'Paid',
-  `remarks` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `emp_id` (`emp_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 ;
-
---
--- Dumping data for table `employee_payment`
---
-
-INSERT INTO `employee_payment` (`id`, `emp_id`, `payment_date`, `amount`, `payment_type`, `status`, `remarks`, `created_at`) VALUES
-(128, 39, '2026-02-25', 100.00, 'Cash', 'Paid', 'xzxzxzxz', '2026-02-25 10:40:41'),
-(127, 40, '2026-02-25', 50.00, 'Cash', 'Paid', 'dsdfs', '2026-02-25 10:40:07'),
-(129, 39, '2026-03-02', 100.00, 'Cash', 'Paid', 'asd', '2026-03-02 08:16:43'),
-(130, 38, '2026-03-02', 200.00, 'Cash', 'Paid', 'ssad', '2026-03-02 08:17:08'),
-(131, 40, '2026-03-02', 850.00, 'Cash', 'Paid', 'sd', '2026-03-02 08:17:19');
+  `remarks` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -750,9 +734,8 @@ INSERT INTO `employee_payment` (`id`, `emp_id`, `payment_date`, `amount`, `payme
 -- Table structure for table `enquiry`
 --
 
-DROP TABLE IF EXISTS `enquiry`;
-CREATE TABLE IF NOT EXISTS `enquiry` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `enquiry` (
+  `id` int(11) NOT NULL,
   `Name` varchar(50) NOT NULL,
   `Email` varchar(100) NOT NULL,
   `Phone` varchar(12) NOT NULL,
@@ -761,14 +744,20 @@ CREATE TABLE IF NOT EXISTS `enquiry` (
   `Internship` varchar(40) NOT NULL,
   `Demo` varchar(100) NOT NULL,
   `Services` varchar(100) NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '1',
-  `Modified_Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb3;
+  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `Modified_Date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `enquirylastm`
+-- (See below for the actual view)
+--
+CREATE TABLE `enquirylastm` (
+`Enquiries` bigint(21)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -776,29 +765,27 @@ CREATE TABLE IF NOT EXISTS `enquiry` (
 -- Table structure for table `enquiry_category`
 --
 
-DROP TABLE IF EXISTS `enquiry_category`;
-CREATE TABLE IF NOT EXISTS `enquiry_category` (
-  `enq_catid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `enquiry_category` (
+  `enq_catid` int(11) NOT NULL,
   `enq_cat_name` varchar(200) NOT NULL,
-  `enq_cat_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `enq_cat_createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `enq_cat_createdby` varchar(200) NOT NULL,
-  `enq_cat_modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `enq_cat_modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `enq_cat_modifiedby` varchar(200) NOT NULL,
-  `enq_cat_type` varchar(100) NOT NULL DEFAULT 'Enquiry Category',
-  PRIMARY KEY (`enq_catid`),
-  UNIQUE KEY `uniq_cat_name_type` (`enq_cat_name`,`enq_cat_type`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
+  `enq_cat_type` varchar(100) NOT NULL DEFAULT 'Enquiry Category'
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `enquiry_category`
 --
 
 INSERT INTO `enquiry_category` (`enq_catid`, `enq_cat_name`, `enq_cat_createdon`, `enq_cat_createdby`, `enq_cat_modifiedon`, `enq_cat_modifiedby`, `enq_cat_type`) VALUES
-(26, 'Kitchensas', '2026-02-17 18:04:10', 'info@acedecors.in', '2026-02-17 18:04:10', 'info@acedecors.in', 'Enquiry Category'),
+(26, 'Kitchen', '2026-02-17 18:04:10', 'info@acedecors.in', '2026-03-30 22:20:05', 'info@acedecors.in', 'Enquiry Category'),
 (25, 'Living Room', '2026-02-07 18:31:01', 'info@acedecors.in', '2026-02-07 18:31:01', 'info@acedecors.in', 'Enquiry Category'),
 (24, 'Sliding Wardrobe', '2026-02-07 18:30:50', 'info@acedecors.in', '2026-02-07 18:30:50', 'info@acedecors.in', 'Enquiry Category'),
 (22, 'Living Room', '2026-02-07 18:30:28', 'info@acedecors.in', '2026-02-07 18:30:28', 'info@acedecors.in', 'Design'),
-(23, 'TV Unit', '2026-02-07 18:30:44', 'info@acedecors.in', '2026-02-07 18:30:44', 'info@acedecors.in', 'Enquiry Category');
+(23, 'TV Unit', '2026-02-07 18:30:44', 'info@acedecors.in', '2026-04-13 22:33:04', 'info@acedecors.in', 'Enquiry Category'),
+(27, 'Pooja Unit', '2026-03-19 23:40:47', 'info@acedecors.in', '2026-03-19 23:40:47', 'info@acedecors.in', 'Design');
 
 -- --------------------------------------------------------
 
@@ -806,9 +793,8 @@ INSERT INTO `enquiry_category` (`enq_catid`, `enq_cat_name`, `enq_cat_createdon`
 -- Table structure for table `enquiry_details`
 --
 
-DROP TABLE IF EXISTS `enquiry_details`;
-CREATE TABLE IF NOT EXISTS `enquiry_details` (
-  `enqid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `enquiry_details` (
+  `enqid` int(11) NOT NULL,
   `enq_name` varchar(200) NOT NULL,
   `enq_email` varchar(200) NOT NULL,
   `enq_address` varchar(500) NOT NULL,
@@ -817,22 +803,20 @@ CREATE TABLE IF NOT EXISTS `enquiry_details` (
   `enq_country` varchar(50) NOT NULL,
   `enq_phone` varchar(10) NOT NULL,
   `enqStatus` enum('Attended','Unattended') CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL DEFAULT 'Unattended',
-  `isCustomerCreated` tinyint(1) NOT NULL DEFAULT '0',
-  `enq_createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `enq_modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `isCustomerCreated` tinyint(1) NOT NULL DEFAULT 0,
+  `enq_createdOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `enq_modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `enq_modifiedBy` varchar(200) NOT NULL,
-  `enq_preffered_contact_mode` varchar(20) NOT NULL,
-  PRIMARY KEY (`enqid`)
-) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
+  `enq_preffered_contact_mode` varchar(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `enquiry_details`
 --
 
 INSERT INTO `enquiry_details` (`enqid`, `enq_name`, `enq_email`, `enq_address`, `enq_city`, `enq_state`, `enq_country`, `enq_phone`, `enqStatus`, `isCustomerCreated`, `enq_createdOn`, `enq_modifiedOn`, `enq_modifiedBy`, `enq_preffered_contact_mode`) VALUES
-(85, 'Mustafa1', 'fdsfdf9f@gmail.com', 'Dharwad', 'Mumbais', 'GOA', 'India', '7896541230', 'Attended', 1, '2026-02-19 12:36:44', '2026-02-19 12:37:54', '', ''),
-(83, 'Moin8', 'taukeer8@gmail.com', 'Tippu Nagar Hubli, Old Hubli8', 'Hubli8', 'GOA', 'India', '9517532488', 'Attended', 1, '2026-02-17 19:43:16', '2026-02-17 20:05:18', '', ''),
-(84, 'Taukeer23', 'taukeer2@gmail.com', 'Tippu Nagar Hubli, Old Hubl2', 'Goa2', 'CHANDIGARH', 'India', '9517532482', 'Attended', 1, '2026-02-18 12:23:52', '2026-02-19 12:33:28', '', '');
+(89, 'vijay L', 'admin@boutique.com', 'hubli', '', '', 'India', '999999999', 'Attended', 0, '2026-04-21 08:20:16', '2026-07-22 23:45:53', '', ''),
+(88, 'Riyaz Ahmed', '123@gmail.com', 'Gandhi Nagar', 'Dharwad', 'KARNATAKA', 'India', '9517532486', 'Attended', 1, '2026-04-04 01:17:58', '2026-07-29 13:36:51', '', '');
 
 -- --------------------------------------------------------
 
@@ -840,77 +824,21 @@ INSERT INTO `enquiry_details` (`enqid`, `enq_name`, `enq_email`, `enq_address`, 
 -- Table structure for table `enquiry_followups`
 --
 
-DROP TABLE IF EXISTS `enquiry_followups`;
-CREATE TABLE IF NOT EXISTS `enquiry_followups` (
-  `followupid` int NOT NULL AUTO_INCREMENT,
-  `followup_enq_id` int NOT NULL,
+CREATE TABLE `enquiry_followups` (
+  `followupid` int(11) NOT NULL,
+  `followup_enq_id` int(11) NOT NULL,
   `followup_comments` varchar(500) NOT NULL,
-  `followup_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `followup_by` varchar(200) NOT NULL,
-  PRIMARY KEY (`followupid`),
-  KEY `followup_enq_id` (`followup_enq_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=70 DEFAULT CHARSET=latin1;
+  `followup_createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `followup_by` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `enquiry_followups`
 --
 
 INSERT INTO `enquiry_followups` (`followupid`, `followup_enq_id`, `followup_comments`, `followup_createdon`, `followup_by`) VALUES
-(25, 0, '', '2025-11-26 16:54:02', 'info@acedecors.in'),
-(24, 0, '', '2025-11-26 16:53:48', 'info@acedecors.in'),
-(23, 0, '', '2025-11-26 16:53:33', 'info@acedecors.in'),
-(22, 0, '', '2025-11-26 16:53:06', 'info@acedecors.in'),
-(21, 0, '', '2025-11-22 17:38:48', 'info@acedecors.in'),
-(20, 0, '', '2025-11-07 18:02:43', 'info@acedecors.in'),
-(19, 0, '', '2025-11-07 18:02:21', 'info@acedecors.in'),
-(18, 0, '', '2025-11-07 18:02:03', 'info@acedecors.in'),
-(17, 0, '', '2025-11-07 18:01:36', 'info@acedecors.in'),
-(16, 0, '', '2025-11-07 16:37:22', 'info@acedecors.in'),
-(15, 0, '', '2025-10-24 16:40:58', 'info@acedecors.in'),
-(26, 0, '', '2026-02-06 17:43:26', 'info@acedecors.in'),
-(27, 0, '', '2026-02-06 18:05:35', 'info@acedecors.in'),
-(28, 0, '', '2026-02-07 17:47:52', 'info@acedecors.in'),
-(29, 0, '', '2026-02-07 18:30:19', 'info@acedecors.in'),
-(30, 0, '', '2026-02-07 18:31:16', 'info@acedecors.in'),
-(31, 0, '', '2026-02-09 18:20:30', 'info@acedecors.in'),
-(32, 0, '', '2026-02-12 12:50:04', 'info@acedecors.in'),
-(33, 0, '', '2026-02-12 12:50:22', 'info@acedecors.in'),
-(34, 0, '', '2026-02-17 15:30:04', 'info@acedecors.in'),
-(35, 0, '', '2026-02-17 15:31:33', 'info@acedecors.in'),
-(36, 0, '', '2026-02-17 15:32:18', 'info@acedecors.in'),
-(37, 0, '', '2026-02-17 15:32:55', 'info@acedecors.in'),
-(38, 0, '', '2026-02-17 15:43:46', 'info@acedecors.in'),
-(39, 0, '', '2026-02-17 15:44:01', 'info@acedecors.in'),
-(40, 0, '', '2026-02-17 15:44:19', 'info@acedecors.in'),
-(41, 0, '', '2026-02-17 16:25:01', 'info@acedecors.in'),
-(42, 0, '', '2026-02-17 16:41:19', 'info@acedecors.in'),
-(43, 0, '', '2026-02-17 16:42:33', 'info@acedecors.in'),
-(44, 0, '', '2026-02-17 16:43:00', 'info@acedecors.in'),
-(45, 0, '', '2026-02-17 16:55:29', 'info@acedecors.in'),
-(46, 0, '', '2026-02-17 17:06:53', 'info@acedecors.in'),
-(47, 0, '', '2026-02-17 17:11:08', 'info@acedecors.in'),
-(48, 0, '', '2026-02-17 17:25:13', 'info@acedecors.in'),
-(49, 0, '', '2026-02-17 18:29:04', 'info@acedecors.in'),
-(50, 0, '', '2026-02-17 18:29:26', 'info@acedecors.in'),
-(51, 0, '', '2026-02-17 18:47:20', 'info@acedecors.in'),
-(52, 0, '', '2026-02-17 18:47:47', 'info@acedecors.in'),
-(53, 0, '', '2026-02-17 18:52:50', 'info@acedecors.in'),
-(54, 0, '', '2026-02-17 19:16:06', 'info@acedecors.in'),
-(55, 0, '', '2026-02-17 19:17:03', 'info@acedecors.in'),
-(56, 0, '', '2026-02-17 19:41:11', 'info@acedecors.in'),
-(57, 0, '', '2026-02-17 19:43:16', 'info@acedecors.in'),
-(58, 0, '', '2026-02-17 19:43:27', 'info@acedecors.in'),
-(59, 0, '', '2026-02-17 19:45:21', 'info@acedecors.in'),
-(60, 0, '', '2026-02-17 19:52:58', 'info@acedecors.in'),
-(61, 0, '', '2026-02-17 19:55:47', 'info@acedecors.in'),
-(62, 0, '', '2026-02-17 20:05:18', 'info@acedecors.in'),
-(63, 0, '', '2026-02-18 12:23:17', 'info@acedecors.in'),
-(64, 0, '', '2026-02-18 12:23:52', 'info@acedecors.in'),
-(65, 0, '', '2026-02-18 12:24:04', 'info@acedecors.in'),
-(66, 0, '', '2026-02-18 12:28:35', 'info@acedecors.in'),
-(67, 84, '', '2026-02-19 12:33:28', 'info@acedecors.in'),
-(68, 0, '', '2026-02-19 12:36:44', 'info@acedecors.in'),
-(69, 85, '', '2026-02-19 12:37:06', 'info@acedecors.in');
+(75, 89, 'interested', '2026-04-21 08:22:07', 'info@acedecors.in'),
+(74, 88, 'interested', '2026-04-21 08:21:43', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -918,11 +846,10 @@ INSERT INTO `enquiry_followups` (`followupid`, `followup_enq_id`, `followup_comm
 -- Table structure for table `enq_cat_mapping`
 --
 
-DROP TABLE IF EXISTS `enq_cat_mapping`;
-CREATE TABLE IF NOT EXISTS `enq_cat_mapping` (
-  `enq_id` int NOT NULL,
-  `cat_id` int NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+CREATE TABLE `enq_cat_mapping` (
+  `enq_id` int(11) NOT NULL,
+  `cat_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `enq_cat_mapping`
@@ -991,15 +918,23 @@ INSERT INTO `enq_cat_mapping` (`enq_id`, `cat_id`) VALUES
 (79, 25),
 (79, 23),
 (80, 23),
-(83, 23),
+(86, 24),
 (81, 23),
 (81, 25),
 (82, 25),
 (82, 26),
-(83, 25),
+(83, 23),
 (84, 23),
 (84, 24),
-(85, 24);
+(85, 24),
+(83, 25),
+(86, 26),
+(87, 24),
+(87, 25),
+(88, 24),
+(88, 26),
+(89, 26),
+(88, 23);
 
 -- --------------------------------------------------------
 
@@ -1007,40 +942,22 @@ INSERT INTO `enq_cat_mapping` (`enq_id`, `cat_id`) VALUES
 -- Table structure for table `expense`
 --
 
-DROP TABLE IF EXISTS `expense`;
-CREATE TABLE IF NOT EXISTS `expense` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `expense` (
+  `id` int(11) NOT NULL,
   `category` varchar(100) NOT NULL,
-  `project_id` int DEFAULT NULL,
-  `supplier_id` int DEFAULT NULL,
-  `po_id` int DEFAULT NULL,
+  `project_id` int(11) DEFAULT NULL,
+  `supplier_id` int(11) DEFAULT NULL,
+  `po_id` int(11) DEFAULT NULL,
   `amount` decimal(10,2) NOT NULL,
   `expense_date` date NOT NULL,
   `payment_type` enum('Cash','Bank Transfer','UPI','Cheque') DEFAULT 'Cash',
-  `notes` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `subcategory_id` int DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `subcategory_id` int(11) DEFAULT NULL,
   `subcategory_name` varchar(100) DEFAULT NULL,
-  `type` varchar(20) CHARACTER SET utf8mb4 DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=354 DEFAULT CHARSET=utf8mb4 ;
-
---
--- Dumping data for table `expense`
---
-
-INSERT INTO `expense` (`id`, `category`, `project_id`, `supplier_id`, `po_id`, `amount`, `expense_date`, `payment_type`, `notes`, `created_at`, `subcategory_id`, `subcategory_name`, `type`) VALUES
-(346, 'Employee', NULL, NULL, NULL, 50.00, '2026-02-25', 'Cash', 'Employee Salary Payment', '2026-02-25 10:40:07', NULL, NULL, 'Expense'),
-(343, 'Projects', 71, NULL, NULL, 100.00, '2026-02-25', 'Cash', 'cxvcvxcvx', '2026-02-25 08:41:02', 16, '', 'Expense'),
-(341, ' General', NULL, NULL, NULL, 100.00, '2026-02-25', 'Cash', 'dgfggh', '2026-02-25 08:39:17', NULL, NULL, 'Expense'),
-(347, 'Employee', NULL, NULL, NULL, 100.00, '2026-02-25', 'Cash', 'Employee Salary Payment', '2026-02-25 10:40:41', NULL, NULL, 'Expense'),
-(345, 'Customer', NULL, NULL, NULL, 1000.00, '2026-02-25', 'Cash', 'gmmn', '2026-02-25 09:37:06', 0, 'Projects', 'Income'),
-(348, 'Suppliers', NULL, 15, NULL, 350.00, '2026-02-25', 'Cash', 'bcvxbcv', '2026-02-25 11:14:10', NULL, NULL, 'Expense'),
-(349, 'Suppliers', NULL, 15, NULL, 100.00, '2026-02-25', 'Cash', 'jghghj', '2026-02-25 11:20:49', NULL, NULL, 'Expense'),
-(350, 'Employee', NULL, NULL, NULL, 100.00, '2026-03-02', 'Cash', 'Employee Salary Payment', '2026-03-02 08:16:43', NULL, NULL, 'Expense'),
-(351, 'Employee', NULL, NULL, NULL, 200.00, '2026-03-02', 'Cash', 'Employee Salary Payment', '2026-03-02 08:17:08', NULL, NULL, 'Expense'),
-(352, 'Employee', NULL, NULL, NULL, 850.00, '2026-03-02', 'Cash', 'Employee Salary Payment', '2026-03-02 08:17:19', NULL, NULL, 'Expense'),
-(353, 'Customer', NULL, NULL, NULL, 200.00, '2026-03-02', 'Cash', 'sddsads', '2026-03-02 08:17:48', 0, 'Projects', 'Income');
+  `type` varchar(20) DEFAULT NULL,
+  `payment_id` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1048,23 +965,11 @@ INSERT INTO `expense` (`id`, `category`, `project_id`, `supplier_id`, `po_id`, `
 -- Table structure for table `expense_category`
 --
 
-DROP TABLE IF EXISTS `expense_category`;
-CREATE TABLE IF NOT EXISTS `expense_category` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `expense_category` (
+  `id` int(11) NOT NULL,
   `name` varchar(150) NOT NULL,
-  `type` enum('Expense','Income') NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 ;
-
---
--- Dumping data for table `expense_category`
---
-
-INSERT INTO `expense_category` (`id`, `name`, `type`) VALUES
-(5, 'Moin', 'Income'),
-(4, 'Food', 'Expense'),
-(6, 'Petrol', 'Expense'),
-(7, 'Taukeer', 'Income');
+  `type` enum('Expense','Income') NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -1072,14 +977,12 @@ INSERT INTO `expense_category` (`id`, `name`, `type`) VALUES
 -- Table structure for table `finish`
 --
 
-DROP TABLE IF EXISTS `finish`;
-CREATE TABLE IF NOT EXISTS `finish` (
-  `FinishId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `finish` (
+  `FinishId` int(11) NOT NULL,
   `Finish` varchar(59) NOT NULL,
   `CreatedBy` varchar(100) NOT NULL,
-  `ModifiedBy` varchar(100) NOT NULL,
-  PRIMARY KEY (`FinishId`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  `ModifiedBy` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `finish`
@@ -1096,24 +999,19 @@ INSERT INTO `finish` (`FinishId`, `Finish`, `CreatedBy`, `ModifiedBy`) VALUES
 -- Table structure for table `general_subcategory`
 --
 
-DROP TABLE IF EXISTS `general_subcategory`;
-CREATE TABLE IF NOT EXISTS `general_subcategory` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `general_subcategory` (
+  `id` int(11) NOT NULL,
   `subcategory_name` varchar(150) NOT NULL,
   `category` varchar(50) DEFAULT 'General',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 ;
+  `created_at` timestamp NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `general_subcategory`
 --
 
 INSERT INTO `general_subcategory` (`id`, `subcategory_name`, `category`, `created_at`) VALUES
-(16, 'Petrols', 'General', '2025-12-22 07:30:29'),
-(17, 'Petrol', 'General', '2025-12-22 09:40:07'),
-(18, 'DFGDFSDF', 'General', '2025-12-22 09:40:12'),
-(19, 'ASDASD', 'General', '2025-12-22 09:40:16');
+(20, 'hARDWARE', 'General', '2026-04-01 12:15:53');
 
 -- --------------------------------------------------------
 
@@ -1121,12 +1019,10 @@ INSERT INTO `general_subcategory` (`id`, `subcategory_name`, `category`, `create
 -- Table structure for table `gl`
 --
 
-DROP TABLE IF EXISTS `gl`;
-CREATE TABLE IF NOT EXISTS `gl` (
-  `GL_Id` int NOT NULL AUTO_INCREMENT,
-  `GL` varchar(50) NOT NULL,
-  PRIMARY KEY (`GL_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+CREATE TABLE `gl` (
+  `GL_Id` int(11) NOT NULL,
+  `GL` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `gl`
@@ -1143,12 +1039,10 @@ INSERT INTO `gl` (`GL_Id`, `GL`) VALUES
 -- Table structure for table `inputtype`
 --
 
-DROP TABLE IF EXISTS `inputtype`;
-CREATE TABLE IF NOT EXISTS `inputtype` (
-  `InputTypeId` int NOT NULL AUTO_INCREMENT,
-  `InputType` varchar(100) NOT NULL,
-  PRIMARY KEY (`InputTypeId`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+CREATE TABLE `inputtype` (
+  `InputTypeId` int(11) NOT NULL,
+  `InputType` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `inputtype`
@@ -1166,15 +1060,14 @@ INSERT INTO `inputtype` (`InputTypeId`, `InputType`) VALUES
 -- Table structure for table `inputtype_brand_mapping`
 --
 
-DROP TABLE IF EXISTS `inputtype_brand_mapping`;
-CREATE TABLE IF NOT EXISTS `inputtype_brand_mapping` (
-  `brandId` int NOT NULL,
-  `InputTypeId` int NOT NULL,
-  `ModifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE `inputtype_brand_mapping` (
+  `brandId` int(11) NOT NULL,
+  `InputTypeId` int(11) NOT NULL,
+  `ModifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ModifiedBy` varchar(100) NOT NULL,
   `CreatedBy` varchar(100) NOT NULL,
-  `CreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `CreatedOn` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `inputtype_brand_mapping`
@@ -1511,11 +1404,31 @@ INSERT INTO `inputtype_brand_mapping` (`brandId`, `InputTypeId`, `ModifiedOn`, `
 (269, 1, '2026-02-10 17:52:26', 'info@acedecors.in', 'info@acedecors.in', '2026-02-10 17:52:26'),
 (270, 1, '2026-02-26 11:47:47', 'info@acedecors.in', 'info@acedecors.in', '2026-02-26 11:47:47'),
 (263, 2, '2026-02-25 15:57:50', 'info@acedecors.in', 'info@acedecors.in', '2026-02-25 15:57:50'),
-(263, 1, '2026-02-25 15:57:50', 'info@acedecors.in', 'info@acedecors.in', '2026-02-25 15:57:50');
+(263, 1, '2026-02-25 15:57:50', 'info@acedecors.in', 'info@acedecors.in', '2026-02-25 15:57:50'),
+(271, 1, '2026-03-20 02:51:07', 'info@acedecors.in', 'info@acedecors.in', '2026-03-20 02:51:07'),
+(272, 2, '2026-03-20 02:51:23', 'info@acedecors.in', 'info@acedecors.in', '2026-03-20 02:51:23'),
+(273, 1, '2026-07-29 11:06:45', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:06:45'),
+(274, 1, '2026-07-29 11:06:11', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:06:11'),
+(275, 2, '2026-03-30 21:48:12', 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 21:48:12'),
+(279, 2, '2026-07-29 10:00:26', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 10:00:26'),
+(277, 1, '2026-07-29 09:07:22', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 09:07:22'),
+(278, 2, '2026-06-06 04:03:23', 'info@acedecors.in', 'info@acedecors.in', '2026-06-06 04:03:23'),
+(277, 2, '2026-07-29 09:07:22', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 09:07:22'),
+(276, 2, '2026-07-29 11:07:14', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:07:14'),
+(280, 1, '2026-07-29 11:22:37', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:22:37'),
+(281, 2, '2026-07-29 13:28:51', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 13:28:51'),
+(282, 1, '2026-07-30 00:27:51', 'info@acedecors.in', 'info@acedecors.in', '2026-07-30 00:27:51');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `inwardedlastq`
+-- (See below for the actual view)
+--
+CREATE TABLE `inwardedlastq` (
+`ReceivedQty` decimal(32,0)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -1523,24 +1436,25 @@ INSERT INTO `inputtype_brand_mapping` (`brandId`, `InputTypeId`, `ModifiedOn`, `
 -- Table structure for table `itemallocation`
 --
 
-DROP TABLE IF EXISTS `itemallocation`;
-CREATE TABLE IF NOT EXISTS `itemallocation` (
-  `item_stockId` int NOT NULL,
-  `ProjectId` int NOT NULL,
-  `ItemId` int NOT NULL,
+CREATE TABLE `itemallocation` (
+  `item_stockId` int(11) NOT NULL,
+  `ProjectId` int(11) NOT NULL,
+  `ItemId` int(11) NOT NULL,
   `InputName` varchar(50) NOT NULL,
-  `AllocatedQty` int NOT NULL,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  KEY `item_stockId` (`item_stockId`),
-  KEY `ProjectId` (`ProjectId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `AllocatedQty` int(11) NOT NULL,
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `itemallocation`
 --
 
 INSERT INTO `itemallocation` (`item_stockId`, `ProjectId`, `ItemId`, `InputName`, `AllocatedQty`, `modifiedOn`) VALUES
-(0, 74, 125, 'TV Units', 5, '2026-02-26 15:31:08');
+(0, 74, 125, 'TV Units', 5, '2026-02-26 15:31:08'),
+(0, 78, 127, 'Mat1', 10, '2026-04-01 05:32:24'),
+(0, 80, 185, '0CSCH-35', 0, '2026-04-08 08:07:44'),
+(206, 82, 188, '0CH', 2, '2026-07-29 05:00:22'),
+(206, 82, 188, '0CH', 2, '2026-07-29 05:00:22');
 
 -- --------------------------------------------------------
 
@@ -1548,28 +1462,15 @@ INSERT INTO `itemallocation` (`item_stockId`, `ProjectId`, `ItemId`, `InputName`
 -- Table structure for table `itemissues_followup`
 --
 
-DROP TABLE IF EXISTS `itemissues_followup`;
-CREATE TABLE IF NOT EXISTS `itemissues_followup` (
-  `followupId` int NOT NULL AUTO_INCREMENT,
-  `followupPOID` int NOT NULL,
-  `followup_ItemId` int NOT NULL,
+CREATE TABLE `itemissues_followup` (
+  `followupId` int(11) NOT NULL,
+  `followupPOID` int(11) NOT NULL,
+  `followup_ItemId` int(11) NOT NULL,
   `followup_comments` varchar(200) NOT NULL,
   `Status` varchar(100) DEFAULT 'Open',
-  `followup_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `followup_by` varchar(100) NOT NULL,
-  PRIMARY KEY (`followupId`),
-  KEY `followup_ItemId` (`followup_ItemId`),
-  KEY `followupPOID` (`followupPOID`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `itemissues_followup`
---
-
-INSERT INTO `itemissues_followup` (`followupId`, `followupPOID`, `followup_ItemId`, `followup_comments`, `Status`, `followup_createdon`, `followup_by`) VALUES
-(1, 4, 1, 'damaged', NULL, '2022-03-08 05:25:29', 'info@acedecors.in'),
-(2, 87, 162, 'assdasd', 'Closed', '2026-01-21 19:48:36', 'info@acedecors.in'),
-(3, 108, 175, 'broken', 'Open', '2026-02-25 06:21:53', 'info@acedecors.in');
+  `followup_createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `followup_by` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -1577,26 +1478,23 @@ INSERT INTO `itemissues_followup` (`followupId`, `followupPOID`, `followup_ItemI
 -- Table structure for table `item_category`
 --
 
-DROP TABLE IF EXISTS `item_category`;
-CREATE TABLE IF NOT EXISTS `item_category` (
-  `item_catid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `item_category` (
+  `item_catid` int(11) NOT NULL,
   `item_catName` varchar(200) NOT NULL,
   `item_catDescription` varchar(500) NOT NULL,
-  `item_catCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `item_catCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `item_catCreatedBy` varchar(200) NOT NULL,
-  `item_catModifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `item_catModifiedBy` varchar(200) NOT NULL,
-  PRIMARY KEY (`item_catid`)
-) ENGINE=MyISAM AUTO_INCREMENT=126 DEFAULT CHARSET=latin1;
+  `item_catModifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `item_catModifiedBy` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `item_category`
 --
 
 INSERT INTO `item_category` (`item_catid`, `item_catName`, `item_catDescription`, `item_catCreatedOn`, `item_catCreatedBy`, `item_catModifiedOn`, `item_catModifiedBy`) VALUES
-(122, 'Living Room', 'Sofas', '2025-12-15 11:04:11', 'info@acedecors.in', '2025-12-15 11:04:11', 'info@acedecors.in'),
-(121, 'Bed Rooms', 'Beds', '2025-12-15 11:01:31', 'info@acedecors.in', '2025-12-15 11:01:31', 'info@acedecors.in'),
-(124, 'CUSTOMISATIONS', 'Bed', '2026-01-06 17:45:30', 'info@acedecors.in', '2026-01-06 17:45:30', 'info@acedecors.in');
+(131, 'eI', 'H', '2026-07-30 00:28:31', 'info@acedecors.in', '2026-07-30 00:28:31', 'info@acedecors.in'),
+(130, 'H', 'H', '2026-07-29 11:10:12', 'info@acedecors.in', '2026-07-29 11:10:12', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -1604,9 +1502,8 @@ INSERT INTO `item_category` (`item_catid`, `item_catName`, `item_catDescription`
 -- Table structure for table `item_companydetails`
 --
 
-DROP TABLE IF EXISTS `item_companydetails`;
-CREATE TABLE IF NOT EXISTS `item_companydetails` (
-  `item_compid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `item_companydetails` (
+  `item_compid` int(11) NOT NULL,
   `item_compName` varchar(200) NOT NULL,
   `item_compContactName` varchar(200) DEFAULT NULL,
   `item_compContactNumber` varchar(20) DEFAULT NULL,
@@ -1619,20 +1516,21 @@ CREATE TABLE IF NOT EXISTS `item_companydetails` (
   `item_compAddress` varchar(1000) NOT NULL,
   `item_compLocation` varchar(150) NOT NULL,
   `item_compCreatedBy` varchar(200) NOT NULL,
-  `item_compCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `item_compCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `item_compModifiedBy` varchar(200) NOT NULL,
-  `item_compModifedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `item_complogo` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`item_compid`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
+  `item_compModifedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `item_complogo` varchar(100) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `item_companydetails`
 --
 
 INSERT INTO `item_companydetails` (`item_compid`, `item_compName`, `item_compContactName`, `item_compContactNumber`, `item_compDescription`, `item_compGSTIN`, `item_compAccountno`, `item_compAccountname`, `item_compaccIFSCcode`, `item_compaccMICRcode`, `item_compAddress`, `item_compLocation`, `item_compCreatedBy`, `item_compCreatedOn`, `item_compModifiedBy`, `item_compModifedOn`, `item_complogo`) VALUES
-(14, 'Moin The Distributer', NULL, NULL, 'fdfdgdfg', '29AAACH8849M1ZT', '45673456', 'Moin', 'ICIC12453', 'UIR012345', 'Tippu Nagar', 'Hubli', 'info@acedecors.in', '2026-01-20 16:38:27', 'info@acedecors.in', '2026-01-22 16:31:32', 'EKO & KALAMKAVAL.jpg'),
-(15, 'Moin', NULL, NULL, 'CNR LLP', '29AAACH8845M1ZT', '234234252', 'CNR LLP', 'ICIC124534', 'UIR0123453', 'Nekar nagar', 'Dharwad', 'info@acedecors.in', '2026-01-22 17:25:08', 'info@acedecors.in', '2026-01-22 17:25:08', '00c914113991421.603326681d18f.jpg');
+(17, 'RGLHBL', NULL, NULL, 'Hardware', '29AACFM6853B1ZB', '123456789', 'RGLHBL', 'abcdefgh', '123qwe', 'Industrial Area', 'Hubli', 'info@acedecors.in', '2026-03-30 22:01:40', 'info@acedecors.in', '2026-07-29 10:12:08', 'images.jpg'),
+(16, 'RHHBL', NULL, NULL, 'Hardware', '29AAACH8849M1ZT', '123456789', 'RHSHBL1', 'abcdefgh', '123qwe', 'Industrial Area', 'Hubli', 'info@acedecors.in', '2026-03-30 21:55:07', 'info@acedecors.in', '2026-07-29 10:13:43', 'images.png'),
+(18, 'SDHBL', NULL, NULL, 'Hardware', '29AAACH8845M1ZT', '123456789', 'SDHBL', 'abcdefgh', '123qwe', 'Industrial Area', 'Hubli', 'info@acedecors.in', '2026-03-30 22:10:08', 'info@acedecors.in', '2026-07-29 10:13:01', 'images (1).jpg'),
+(19, 'SLHBL', NULL, NULL, 'Hardware', '29BGNPM4181J1ZS', '1458697236', 'SLHBL', '4125639', '523689', 'Karwar Road', 'Hubli', 'info@acedecors.in', '2026-07-29 10:05:16', 'info@acedecors.in', '2026-07-29 10:14:37', 'images (2).jpg');
 
 -- --------------------------------------------------------
 
@@ -1640,46 +1538,45 @@ INSERT INTO `item_companydetails` (`item_compid`, `item_compName`, `item_compCon
 -- Table structure for table `item_details`
 --
 
-DROP TABLE IF EXISTS `item_details`;
-CREATE TABLE IF NOT EXISTS `item_details` (
-  `item_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `item_details` (
+  `item_id` int(11) NOT NULL,
   `item_name` varchar(200) NOT NULL,
   `item_description` varchar(500) NOT NULL,
-  `item_catid` int NOT NULL,
-  `item_subcatid` int NOT NULL,
-  `item_compid` int NOT NULL,
+  `item_catid` int(11) NOT NULL,
+  `item_subcatid` int(11) NOT NULL,
+  `item_compid` int(11) NOT NULL,
   `item_image` varchar(200) NOT NULL,
   `item_createdby` varchar(200) NOT NULL,
-  `item_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `item_createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `item_modifiedby` varchar(200) NOT NULL,
-  `item_modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `item_modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `item_HSNcode` varchar(100) NOT NULL,
   `item_ArticleNo` varchar(100) NOT NULL,
   `item_SAPId` varchar(25) DEFAULT NULL,
   `Item_OrderNumber` varchar(25) DEFAULT NULL,
-  `item_Size` int NOT NULL,
-  `item_PackingUnit` int NOT NULL,
+  `item_Size` int(11) NOT NULL,
+  `item_PackingUnit` int(11) NOT NULL,
   `item_MRP` double NOT NULL,
-  `item_Amount` double NOT NULL DEFAULT '0',
+  `item_Amount` double NOT NULL DEFAULT 0,
   `item_pp_MRP` double NOT NULL,
   `item_descriptionforcust` varchar(500) DEFAULT NULL,
-  `item_GST` int NOT NULL,
-  `item_Discount` decimal(10,2) DEFAULT '0.00',
-  `item_Price` decimal(10,2) DEFAULT '0.00',
-  `item_TotalValue` decimal(10,2) DEFAULT '0.00',
+  `item_GST` int(11) NOT NULL,
+  `item_Discount` decimal(10,2) DEFAULT 0.00,
+  `item_Price` decimal(10,2) DEFAULT 0.00,
+  `item_TotalValue` decimal(10,2) DEFAULT 0.00,
   `item_unit` varchar(100) NOT NULL,
   `item_unitFactor` double NOT NULL,
-  `item_totalMRP` double NOT NULL,
-  PRIMARY KEY (`item_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=184 DEFAULT CHARSET=latin1;
+  `item_totalMRP` double NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `item_details`
 --
 
 INSERT INTO `item_details` (`item_id`, `item_name`, `item_description`, `item_catid`, `item_subcatid`, `item_compid`, `item_image`, `item_createdby`, `item_createdon`, `item_modifiedby`, `item_modifiedon`, `item_HSNcode`, `item_ArticleNo`, `item_SAPId`, `Item_OrderNumber`, `item_Size`, `item_PackingUnit`, `item_MRP`, `item_Amount`, `item_pp_MRP`, `item_descriptionforcust`, `item_GST`, `item_Discount`, `item_Price`, `item_TotalValue`, `item_unit`, `item_unitFactor`, `item_totalMRP`) VALUES
-(182, 'Caoch', 'ffgdfgg', 122, 83, 263, '', 'info@acedecors.in', '2026-02-26 15:25:12', 'info@acedecors.in', '2026-02-26 16:22:25', '12343', '12344', NULL, NULL, 1, 10, 250, 12500, 0, NULL, 18, 20.00, 11800.00, 11800.00, '60', 30, 2500),
-(183, 'Sinks', 'gdsfgdfg', 122, 85, 263, '', 'info@acedecors.in', '2026-02-27 11:04:50', 'info@acedecors.in', '2026-02-27 11:04:50', '12343', '12344', NULL, NULL, 1, 10, 250, 1250, 0, NULL, 18, 10.00, 1327.50, 13275.00, '60', 30, 0);
+(192, '0CH', '0CHAH', 130, 92, 277, 'images (2).png', 'info@acedecors.in', '2026-07-29 11:26:41', 'info@acedecors.in', '2026-07-29 11:27:14', '123', '0CHAHGP', NULL, NULL, 1, 50, 180, 180, 0, NULL, 18, 30.00, 148.68, 7434.00, '63', 33, 0),
+(189, '0CH', '0CHAH', 130, 92, 274, 'images (1).png', 'info@acedecors.in', '2026-07-29 11:14:37', 'info@acedecors.in', '2026-07-29 11:24:27', '123', '0CHAHeb', NULL, NULL, 1, 50, 150, 150, 0, NULL, 18, 30.00, 123.90, 6195.00, '63', 33, 0),
+(191, '0CH', '0CHAH', 130, 92, 273, 'images.png', 'info@acedecors.in', '2026-07-29 11:21:18', 'info@acedecors.in', '2026-07-29 11:25:48', '123', '0CHAHHe', NULL, NULL, 1, 50, 215, 215, 0, NULL, 18, 30.00, 177.59, 8879.50, '63', 33, 0);
 
 -- --------------------------------------------------------
 
@@ -1687,43 +1584,16 @@ INSERT INTO `item_details` (`item_id`, `item_name`, `item_description`, `item_ca
 -- Table structure for table `item_pricingissues`
 --
 
-DROP TABLE IF EXISTS `item_pricingissues`;
-CREATE TABLE IF NOT EXISTS `item_pricingissues` (
-  `PricingIssues_Id` int NOT NULL AUTO_INCREMENT,
-  `InvoiceNo` int NOT NULL,
+CREATE TABLE `item_pricingissues` (
+  `PricingIssues_Id` int(11) NOT NULL,
+  `InvoiceNo` int(11) NOT NULL,
   `SupplierName` varchar(100) NOT NULL,
   `ItemName` varchar(100) NOT NULL,
   `POID` varchar(100) NOT NULL,
   `Status` varchar(100) NOT NULL,
-  `Issue_ModifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `ItemId` int DEFAULT NULL,
-  PRIMARY KEY (`PricingIssues_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `item_pricingissues`
---
-
-INSERT INTO `item_pricingissues` (`PricingIssues_Id`, `InvoiceNo`, `SupplierName`, `ItemName`, `POID`, `Status`, `Issue_ModifiedOn`, `ItemId`) VALUES
-(26, 0, '', '', '', '', '2026-01-22 13:04:58', NULL),
-(34, 0, '', '', '', '', '2026-01-22 16:12:05', NULL),
-(8, 20014123, 'Moin The Distributer', 'slides', 'AD-202601-MTD86', 'Open', '2026-01-21 19:36:26', NULL),
-(7, 20013, 'Moin The Distributer', 'slides', 'AD-202601-MTD86', 'Closed', '2026-01-21 19:35:37', NULL),
-(6, 20014654, 'Moin The Distributer', 'Caoch', 'AD-202601-MTD87', 'Closed', '2026-01-21 19:35:57', NULL),
-(12, 0, '', '', '', '', '2026-01-22 11:59:14', NULL),
-(11, 0, '', '', '', '', '2026-01-22 11:58:57', NULL),
-(18, 0, '', '', '', '', '2026-01-22 12:09:44', NULL),
-(21, 0, '', '', '', '', '2026-01-22 12:15:18', NULL),
-(19, 0, '', '', '', '', '2026-01-22 12:15:01', NULL),
-(20, 0, '', '', '', '', '2026-01-22 12:15:01', NULL),
-(17, 0, '', '', '', '', '2026-01-22 12:09:36', NULL),
-(22, 0, '', '', '', '', '2026-01-22 12:15:18', NULL),
-(23, 0, '', '', '', '', '2026-01-22 12:15:26', NULL),
-(24, 0, '', '', '', '', '2026-01-22 12:15:35', NULL),
-(25, 0, '', '', '', '', '2026-01-22 13:04:46', NULL),
-(30, 0, '', '', '', '', '2026-01-22 16:11:26', NULL),
-(29, 0, '', '', '', '', '2026-01-22 16:11:16', NULL),
-(33, 0, '', '', '', '', '2026-01-22 16:11:57', NULL);
+  `Issue_ModifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `ItemId` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -1731,46 +1601,24 @@ INSERT INTO `item_pricingissues` (`PricingIssues_Id`, `InvoiceNo`, `SupplierName
 -- Table structure for table `item_stock`
 --
 
-DROP TABLE IF EXISTS `item_stock`;
-CREATE TABLE IF NOT EXISTS `item_stock` (
-  `item_stockid` int NOT NULL AUTO_INCREMENT,
-  `item_id` int NOT NULL,
+CREATE TABLE `item_stock` (
+  `item_stockid` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
   `ItemCode` varchar(50) NOT NULL,
   `ItemName` varchar(50) NOT NULL,
-  `POID` int NOT NULL,
-  `InvoiceNo` int NOT NULL,
-  `Quantity` int NOT NULL,
+  `POID` int(11) NOT NULL,
+  `InvoiceNo` int(11) NOT NULL,
+  `Quantity` int(11) NOT NULL,
   `Unit` varchar(100) NOT NULL,
   `Price` decimal(10,2) DEFAULT NULL,
   `TotalAmount` decimal(12,2) DEFAULT NULL,
   `GST` varchar(50) DEFAULT NULL,
   `ReceivedQtyAmt` decimal(12,2) DEFAULT NULL,
-  `ReceivedQty` int DEFAULT NULL,
-  `BalanceQty` int DEFAULT '0',
+  `ReceivedQty` int(11) DEFAULT NULL,
+  `BalanceQty` int(11) DEFAULT 0,
   `stockPDFName` varchar(100) DEFAULT NULL,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`item_stockid`),
-  KEY `POID` (`POID`)
-) ENGINE=MyISAM AUTO_INCREMENT=199 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `item_stock`
---
-
-INSERT INTO `item_stock` (`item_stockid`, `item_id`, `ItemCode`, `ItemName`, `POID`, `InvoiceNo`, `Quantity`, `Unit`, `Price`, `TotalAmount`, `GST`, `ReceivedQtyAmt`, `ReceivedQty`, `BalanceQty`, `stockPDFName`, `modifiedOn`) VALUES
-(186, 175, '12344', 'slides', 108, 20012, 10, 'U2', 10000.50, 0.00, '18', 50.00, 5, 5, NULL, '2026-02-20 11:32:27'),
-(187, 177, '1234430', 'Caoch', 109, 20014, 10, 'U1', 94.40, 0.00, '18', 50.00, 1, 9, NULL, '2026-02-25 15:48:50'),
-(188, 177, '1234430', 'Caoch', 110, 20014, 5, 'U1', 94.40, 0.00, '18', 1350.00, 1, 4, NULL, '2026-02-25 15:50:47'),
-(189, 177, '1234430', 'Caoch', 111, 200146, 20, 'U1', 94.40, 0.00, '18', 460.00, 5, 15, NULL, '2026-02-25 15:51:49'),
-(190, 178, '12344', 'Caoch', 112, 20014, 10, 'U1', 94.40, 0.00, '18', 500.00, 1, 9, NULL, '2026-02-25 16:00:52'),
-(191, 122, '456', 'Sliding Door', 113, 20013, 10, 'U1', 492.80, 0.00, '10', 1350.00, 1, 9, NULL, '2026-02-25 16:01:32'),
-(192, 123, '0012', 'TV Units', 115, 20012, 10, 'U1', 361.08, 0.00, '18', 100.00, 5, 5, NULL, '2026-02-26 11:56:33'),
-(193, 124, '001265', 'Sliding Door', 116, 20014, 10, 'U1', 274.64, 0.00, '18', 50.00, 5, 5, NULL, '2026-02-26 11:56:48'),
-(194, 179, '12344', 'Caoch', 117, 20014, 10, 'U1', 94.40, 0.00, '18', 94.00, 5, 5, NULL, '2026-02-26 13:42:53'),
-(195, 180, '12344303', 'Sinks', 118, 20013, 10, 'U1', 265.50, 0.00, '18', 50.00, 2, 8, NULL, '2026-02-26 13:43:16'),
-(196, 182, '12344', 'Caoch', 119, 20012, 10, 'U1', 236.00, 0.00, '18', 50.00, 2, 8, NULL, '2026-02-26 15:29:37'),
-(197, 125, '0012', 'TV Units', 120, 200146, 10, 'U1', 94.40, 0.00, '18', 460.00, 5, 5, NULL, '2026-02-26 15:29:51'),
-(198, 183, '12344', 'Sinks', 121, 200146, 10, 'U11', 1327.50, 0.00, '18', 500.00, 5, 5, NULL, '2026-02-27 11:07:00');
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -1778,29 +1626,24 @@ INSERT INTO `item_stock` (`item_stockid`, `item_id`, `ItemCode`, `ItemName`, `PO
 -- Table structure for table `item_subcategory`
 --
 
-DROP TABLE IF EXISTS `item_subcategory`;
-CREATE TABLE IF NOT EXISTS `item_subcategory` (
-  `item_subcatid` int NOT NULL AUTO_INCREMENT,
-  `item_catid` int NOT NULL,
+CREATE TABLE `item_subcategory` (
+  `item_subcatid` int(11) NOT NULL,
+  `item_catid` int(11) NOT NULL,
   `item_subcatName` varchar(200) NOT NULL,
   `item_subcatDescription` varchar(500) NOT NULL,
   `item_subcatCreatedBy` varchar(200) NOT NULL,
-  `item_subcatCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `item_subcatCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `item_subcatModifiedBy` varchar(200) NOT NULL,
-  `item_subcatModifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`item_subcatid`),
-  KEY `item_catid` (`item_catid`)
-) ENGINE=MyISAM AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
+  `item_subcatModifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `item_subcategory`
 --
 
 INSERT INTO `item_subcategory` (`item_subcatid`, `item_catid`, `item_subcatName`, `item_subcatDescription`, `item_subcatCreatedBy`, `item_subcatCreatedOn`, `item_subcatModifiedBy`, `item_subcatModifiedon`) VALUES
-(79, 121, 'Sleeping Bed', 'For Sleeping', 'info@acedecors.in', '2025-12-15 11:03:36', 'info@acedecors.in', '2025-12-15 11:17:03'),
-(81, 124, 'Awesome Kitchen', 'Best Kitchens', 'info@acedecors.in', '2025-12-15 11:04:59', 'info@acedecors.in', '2026-01-06 17:45:47'),
-(83, 122, 'Best Kitchens', 'Best Kitchens', 'info@acedecors.in', '2026-01-12 13:57:53', 'info@acedecors.in', '2026-01-12 13:57:53'),
-(85, 122, 'Awesome KitcSASDASDSDhen', 'aSasASAS', 'info@acedecors.in', '2026-02-25 15:19:50', 'info@acedecors.in', '2026-02-25 15:20:28');
+(92, 130, 'AH', 'AH', 'info@acedecors.in', '2026-07-29 11:10:38', 'info@acedecors.in', '2026-07-29 11:10:38'),
+(93, 130, 'SC', 'SC', 'info@acedecors.in', '2026-07-29 11:21:50', 'info@acedecors.in', '2026-07-29 11:21:50');
 
 -- --------------------------------------------------------
 
@@ -1808,43 +1651,42 @@ INSERT INTO `item_subcategory` (`item_subcatid`, `item_catid`, `item_subcatName`
 -- Table structure for table `material`
 --
 
-DROP TABLE IF EXISTS `material`;
-CREATE TABLE IF NOT EXISTS `material` (
-  `Material_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `material` (
+  `Material_Id` int(11) NOT NULL,
   `Material_Name` varchar(100) NOT NULL,
   `Material_Code` varchar(100) NOT NULL,
   `Material_Description` varchar(100) NOT NULL,
   `Category` varchar(100) NOT NULL,
   `SubCategory` varchar(100) NOT NULL,
-  `Mat_Qty` int NOT NULL,
+  `Mat_Qty` int(11) NOT NULL,
   `Brand` varchar(100) NOT NULL,
   `Mat_Thickness` varchar(100) NOT NULL,
   `Mat_Unit` varchar(100) NOT NULL,
   `Mat_factor` double NOT NULL,
   `Mat_HSNCode` varchar(100) NOT NULL,
-  `Mat_SPU` int NOT NULL,
+  `Mat_SPU` int(11) NOT NULL,
   `Mat_MRP` double NOT NULL,
-  `Mat_GST` int NOT NULL,
-  `Mat_TotalMRP` int NOT NULL,
-  `Mat_PPMRP` int NOT NULL,
+  `Mat_GST` int(11) NOT NULL,
+  `Mat_TotalMRP` int(11) NOT NULL,
+  `Mat_PPMRP` int(11) NOT NULL,
   `Mat_Image` varchar(200) NOT NULL,
   `Mat_Grains` varchar(100) NOT NULL,
   `Mat_createdBy` varchar(100) NOT NULL,
   `Mat_modifiedBy` varchar(100) NOT NULL,
   `MaterialDiscount` decimal(10,2) DEFAULT NULL,
-  `MaterialAmount` double DEFAULT '0',
+  `MaterialAmount` double DEFAULT 0,
   `MaterialPrice` decimal(10,2) DEFAULT NULL,
-  `MaterialTotalValue` decimal(10,2) DEFAULT NULL,
-  PRIMARY KEY (`Material_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=127 DEFAULT CHARSET=latin1;
+  `MaterialTotalValue` decimal(10,2) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `material`
 --
 
 INSERT INTO `material` (`Material_Id`, `Material_Name`, `Material_Code`, `Material_Description`, `Category`, `SubCategory`, `Mat_Qty`, `Brand`, `Mat_Thickness`, `Mat_Unit`, `Mat_factor`, `Mat_HSNCode`, `Mat_SPU`, `Mat_MRP`, `Mat_GST`, `Mat_TotalMRP`, `Mat_PPMRP`, `Mat_Image`, `Mat_Grains`, `Mat_createdBy`, `Mat_modifiedBy`, `MaterialDiscount`, `MaterialAmount`, `MaterialPrice`, `MaterialTotalValue`) VALUES
-(126, 'Sturde1', '0012', 'ddfsd', '36', '33', 1, '263', '2', '60', 30, '2342', 10, 100, 18, 0, 0, '70530604_604.jpg', '3', 'info@acedecors.in', 'info@acedecors.in', 10.00, 500, 531.00, 5310.00),
-(125, 'TV Units', '0012', 'hgjghj', '36', '33', 10, '263', '1', '60', 30, '2342', 10, 100, 18, 0, 0, 'ChatGPT Image Feb 25, 2026, 05_35_56 PM.jpg', '4', 'info@acedecors.in', 'info@acedecors.in', 20.00, 100, 94.40, 944.00);
+(131, 'AEHF', 'AEHFVI', 'AEHF', '43', '40', 1, '281', '7', '64', 34, '456', 1, 120, 18, 0, 0, 'images.png', '2', 'info@acedecors.in', 'info@acedecors.in', 0.00, 4200, 4200.00, 4200.00),
+(130, 'ABR', 'ABRGP', 'ABR', '42', '39', 1, '277', '7', '64', 34, '456', 1, 100, 18, 0, 0, 'images.jpg', '1', 'info@acedecors.in', 'info@acedecors.in', 0.00, 3500, 3500.00, 3500.00),
+(132, 'AEHF', 'AEHFTe', 'AEHF', '43', '40', 1, '276', '7', '64', 34, '456', 1, 110, 18, 0, 0, 'images (1).png', '3', 'info@acedecors.in', 'info@acedecors.in', 0.00, 3850, 3850.00, 3850.00);
 
 -- --------------------------------------------------------
 
@@ -1852,26 +1694,15 @@ INSERT INTO `material` (`Material_Id`, `Material_Name`, `Material_Code`, `Materi
 -- Table structure for table `materialissues_followup`
 --
 
-DROP TABLE IF EXISTS `materialissues_followup`;
-CREATE TABLE IF NOT EXISTS `materialissues_followup` (
-  `followup_Id` int NOT NULL AUTO_INCREMENT,
-  `followup_POID` int NOT NULL,
-  `followup_MaterialId` int NOT NULL,
+CREATE TABLE `materialissues_followup` (
+  `followup_Id` int(11) NOT NULL,
+  `followup_POID` int(11) NOT NULL,
+  `followup_MaterialId` int(11) NOT NULL,
   `followup_comments` varchar(50) NOT NULL,
   `Status` varchar(20) NOT NULL DEFAULT 'Open',
-  `followup_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `followup_by` varchar(50) NOT NULL,
-  PRIMARY KEY (`followup_Id`),
-  KEY `followup_POID` (`followup_POID`),
-  KEY `followup_MaterialId` (`followup_MaterialId`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `materialissues_followup`
---
-
-INSERT INTO `materialissues_followup` (`followup_Id`, `followup_POID`, `followup_MaterialId`, `followup_comments`, `Status`, `followup_createdon`, `followup_by`) VALUES
-(2, 88, 96, 'kfhvj', 'Open', '2026-01-22 15:38:39', 'info@acedecors.in');
+  `followup_createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `followup_by` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -1879,27 +1710,23 @@ INSERT INTO `materialissues_followup` (`followup_Id`, `followup_POID`, `followup
 -- Table structure for table `material_category`
 --
 
-DROP TABLE IF EXISTS `material_category`;
-CREATE TABLE IF NOT EXISTS `material_category` (
-  `material_catId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `material_category` (
+  `material_catId` int(11) NOT NULL,
   `material_catName` varchar(100) NOT NULL,
   `material_catDescription` varchar(100) NOT NULL,
   `material_catCreatedBy` varchar(100) NOT NULL,
-  `material_catCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `material_catCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `material_catModifiedBy` varchar(50) NOT NULL,
-  `material_catModifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`material_catId`)
-) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=latin1;
+  `material_catModifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `material_category`
 --
 
 INSERT INTO `material_category` (`material_catId`, `material_catName`, `material_catDescription`, `material_catCreatedBy`, `material_catCreatedOn`, `material_catModifiedBy`, `material_catModifiedOn`) VALUES
-(39, 'PLCC', 'ddffcvcxv', 'info@acedecors.in', '2026-02-19 13:31:24', 'info@acedecors.in', '2026-02-19 13:31:39'),
-(38, 'Bed Rooms', 'Beds', 'info@acedecors.in', '2026-02-13 15:24:45', 'info@acedecors.in', '2026-02-13 15:24:45'),
-(37, 'Living Rooms', 'Beds', 'info@acedecors.in', '2026-02-13 15:24:35', 'info@acedecors.in', '2026-02-13 15:24:35'),
-(36, 'Card Boards', 'Boards', 'info@acedecors.in', '2026-02-13 15:24:17', 'info@acedecors.in', '2026-02-13 15:24:17');
+(43, 'HF', 'HF', 'info@acedecors.in', '2026-07-29 13:29:44', 'info@acedecors.in', '2026-07-29 13:29:44'),
+(42, 'PL', 'PL', 'info@acedecors.in', '2026-07-29 11:29:45', 'info@acedecors.in', '2026-07-29 11:29:45');
 
 -- --------------------------------------------------------
 
@@ -1907,17 +1734,15 @@ INSERT INTO `material_category` (`material_catId`, `material_catName`, `material
 -- Table structure for table `material_pricingissues`
 --
 
-DROP TABLE IF EXISTS `material_pricingissues`;
-CREATE TABLE IF NOT EXISTS `material_pricingissues` (
-  `PricingIssues_Id` int NOT NULL AUTO_INCREMENT,
-  `InvoiceNo` int NOT NULL,
+CREATE TABLE `material_pricingissues` (
+  `PricingIssues_Id` int(11) NOT NULL,
+  `InvoiceNo` int(11) NOT NULL,
   `SupplierName` varchar(50) NOT NULL,
   `MaterialName` varchar(50) NOT NULL,
   `POID` varchar(20) NOT NULL,
   `Status` varchar(10) NOT NULL DEFAULT 'Open',
-  `Issue_ModifiedOn` int NOT NULL,
-  PRIMARY KEY (`PricingIssues_Id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `Issue_ModifiedOn` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -1925,28 +1750,24 @@ CREATE TABLE IF NOT EXISTS `material_pricingissues` (
 -- Table structure for table `material_subcategory`
 --
 
-DROP TABLE IF EXISTS `material_subcategory`;
-CREATE TABLE IF NOT EXISTS `material_subcategory` (
-  `material_subcatId` int NOT NULL AUTO_INCREMENT,
-  `material_catId` int NOT NULL,
+CREATE TABLE `material_subcategory` (
+  `material_subcatId` int(11) NOT NULL,
+  `material_catId` int(11) NOT NULL,
   `material_subcatName` varchar(100) NOT NULL,
   `material_subcatDescription` varchar(100) NOT NULL,
   `material_subcatCreatedBy` varchar(100) NOT NULL,
-  `material_subcatCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `material_subcatCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `material_subcatModifiedBy` varchar(50) NOT NULL,
-  `material_subcatModifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`material_subcatId`)
-) ENGINE=MyISAM AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+  `material_subcatModifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `material_subcategory`
 --
 
 INSERT INTO `material_subcategory` (`material_subcatId`, `material_catId`, `material_subcatName`, `material_subcatDescription`, `material_subcatCreatedBy`, `material_subcatCreatedOn`, `material_subcatModifiedBy`, `material_subcatModifiedon`) VALUES
-(34, 39, 'CardBoard', 'For Sitting', 'info@acedecors.in', '2026-02-19 13:32:00', 'info@acedecors.in', '2026-02-19 13:32:12'),
-(33, 36, 'CardBoard', 'For Walls', 'info@acedecors.in', '2026-02-13 15:25:12', 'info@acedecors.in', '2026-02-13 15:25:12'),
-(32, 37, 'Sofa', 'For Sitting', 'info@acedecors.in', '2026-02-13 15:25:03', 'info@acedecors.in', '2026-02-13 15:25:03'),
-(31, 38, 'Beds', 'For Sleeping', 'info@acedecors.in', '2026-02-13 15:24:57', 'info@acedecors.in', '2026-02-13 15:24:57');
+(39, 42, 'BR', 'BR', 'info@acedecors.in', '2026-07-29 13:23:10', 'info@acedecors.in', '2026-07-29 13:23:10'),
+(40, 43, 'EHF', 'EHF', 'info@acedecors.in', '2026-07-29 13:30:39', 'info@acedecors.in', '2026-07-29 13:30:39');
 
 -- --------------------------------------------------------
 
@@ -1954,14 +1775,11 @@ INSERT INTO `material_subcategory` (`material_subcatId`, `material_catId`, `mate
 -- Table structure for table `modules`
 --
 
-DROP TABLE IF EXISTS `modules`;
-CREATE TABLE IF NOT EXISTS `modules` (
-  `module_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `modules` (
+  `module_id` int(11) NOT NULL,
   `module_name` varchar(100) NOT NULL,
-  `module_label` varchar(100) NOT NULL,
-  PRIMARY KEY (`module_id`),
-  UNIQUE KEY `module_name` (`module_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 ;
+  `module_label` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `modules`
@@ -1984,14 +1802,12 @@ INSERT INTO `modules` (`module_id`, `module_name`, `module_label`) VALUES
 -- Table structure for table `module_actions`
 --
 
-DROP TABLE IF EXISTS `module_actions`;
-CREATE TABLE IF NOT EXISTS `module_actions` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `module_actions` (
+  `id` int(11) NOT NULL,
   `module_name` varchar(50) DEFAULT NULL,
   `action_key` varchar(50) DEFAULT NULL,
-  `action_label` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 ;
+  `action_label` varchar(100) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `module_actions`
@@ -2049,14 +1865,12 @@ INSERT INTO `module_actions` (`id`, `module_name`, `action_key`, `action_label`)
 -- Table structure for table `permissions`
 --
 
-DROP TABLE IF EXISTS `permissions`;
-CREATE TABLE IF NOT EXISTS `permissions` (
-  `permission_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `permissions` (
+  `permission_id` int(11) NOT NULL,
   `module_name` varchar(100) NOT NULL,
-  `can_read` tinyint(1) DEFAULT '0',
-  `can_write` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`permission_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ;
+  `can_read` tinyint(1) DEFAULT 0,
+  `can_write` tinyint(1) DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2064,37 +1878,30 @@ CREATE TABLE IF NOT EXISTS `permissions` (
 -- Table structure for table `post`
 --
 
-DROP TABLE IF EXISTS `post`;
-CREATE TABLE IF NOT EXISTS `post` (
-  `postId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `post` (
+  `postId` int(11) NOT NULL,
   `postTitle` varchar(100) NOT NULL,
   `postUrl` varchar(100) NOT NULL,
-  `LinkUnder` int NOT NULL,
+  `LinkUnder` int(11) NOT NULL,
   `appearOnHome` varchar(1) NOT NULL DEFAULT '0',
   `postDescription` longtext CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `postCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `postCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `postCreatedBy` varchar(100) NOT NULL,
-  `postModifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `postModifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `titleTag` varchar(100) NOT NULL,
   `keywords` mediumtext NOT NULL,
-  `modifiedBy` varchar(100) NOT NULL,
-  PRIMARY KEY (`postId`)
-) ENGINE=MyISAM AUTO_INCREMENT=89 DEFAULT CHARSET=utf8mb3;
+  `modifiedBy` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `post`
 --
 
 INSERT INTO `post` (`postId`, `postTitle`, `postUrl`, `LinkUnder`, `appearOnHome`, `postDescription`, `postCreatedOn`, `postCreatedBy`, `postModifiedOn`, `titleTag`, `keywords`, `modifiedBy`) VALUES
-(71, 'Best-sofa', '/Best-sofa', 2, '0', '<p>Best-sofa\n<br />\n</p>\n', '2025-10-03 23:28:54', 'info@acedecors.in', '2025-10-03 23:28:54', 'Best-sofa', 'Best-sofa', 'info@acedecors.in'),
-(72, 'Best-sofa', '/Best-sofa', 2, '0', '<p>Best-sofa\n<br />\n</p>\n', '2025-10-03 23:29:17', 'info@acedecors.in', '2025-10-03 23:29:17', 'Best-sofa', 'Best-sofa', 'info@acedecors.in'),
-(73, 'Best-sofa', '/Best-sofa', 2, '1', '<p>Best-sofa\n<br />\n</p>\n', '2025-10-03 23:30:15', 'info@acedecors.in', '2025-10-03 23:30:15', 'Best-sofa', 'Best-sofa', 'info@acedecors.in'),
-(88, 'L Shaped Island Kitchen', '/L-Shaped-Island-Kitchen', 2, '1', '<p><span size=\"large\">A white acrylic island kitchen with a quartz top is the perfect solution for a clean, modern, and durable kitchen space. The bright, reflective white finish creates an airy, open feel, while the quartz top adds luxury and practicality â€” scratch-resistant, easy to clean, and highly durable.</span><span align=\"justify\">\n</span><br />\n\n<br />\n</p>\n', '2025-10-09 10:29:53', 'info@acedecors.in', '2025-10-09 10:29:53', 'L Shaped Island Kitchen', 'L Shaped Island Kitchen', 'info@acedecors.in'),
-(34, 'All Kitchen Accessories', '/All-Kitchen-Accessories', 1, '', '<p>xyz\n<br />\n</p>\n', '2022-01-22 17:27:48', 'info@acedecors.in', '2025-09-08 01:21:13', 'All Kitchen Accessories', 'All Kitchen Accessories', 'info@acedecors.in'),
-(85, 'Topline Sliding Wardrobes', '/Topline-Sliding-Wardrobes', 2, '1', '<p>Sliding wardrobes are the perfect solution when space optimization matters. They offer a sleek, modern appearance while providing practical storage that adapts to your lifestyle. The smooth operation and clean lines help create a clutter-free, minimalist atmosphere.<span align=\"justify\">\n</span><br />\n\n<br />\n</p>\n', '2025-10-09 09:20:14', 'info@acedecors.in', '2025-10-09 09:21:01', 'Topline Sliding Wardrobes', 'Topline Sliding Wardrobes', 'info@acedecors.in'),
-(86, 'Minimalist Wardrobes', '/Minimalist-Wardrobes', 2, '0', '<p>Minimalist wardrobes are the perfect blend of sleek design and smart storage. They focus on simplicity, allowing your space to feel open, organized, and calming. Whether you live in a compact apartment or a modern home, these wardrobes bring elegance and order without overwhelming the room.<span align=\"justify\">\n</span><br />\n\n<br />\n</p>\n', '2025-10-09 09:28:28', 'info@acedecors.in', '2025-10-09 09:28:28', 'Minimalist Wardrobes', 'Minimalist Wardrobes', 'info@acedecors.in'),
-(79, 'Best-sofa', '/Best-sofa', 2, '1', '<p>Best-sofa\n<br />\n</p>\n', '2025-10-04 22:45:23', 'info@acedecors.in', '2025-10-04 22:45:23', 'Best-sofa', 'Best-sofa', 'info@acedecors.in'),
-(87, 'The Aura Ensemble', '/The-Aura-Ensemble', 2, '1', '<p><span size=\"large\">Refined simplicity meets functional artistry in </span><em size=\"large\">The Aura Ensemble</em><span size=\"large\"> by </span><strong size=\"large\">Ace Decors</strong><span size=\"large\">. This modern wall-mounted TV unit is a symphony of clean lines, warm wood textures, and subtle lighting that enhances the ambiance of any contemporary living space. </span>\n\n</p>\n<p><span size=\"large\"> Thoughtfully designed with floating cabinets and open shelves, it blends sophistication with practicality â€” offering ample space for dÃ©cor accents, books, and entertainment essentials. The soft backlighting creates a serene visual frame, transforming your TV wall into a statement feature. </span>\n\n</p>\n<p><span size=\"large\"> Crafted with precision and a minimalist design philosophy, this unit embodies Ace Decorsâ€™ vision of </span><strong size=\"large\">modern comfort with timeless appeal</strong><span size=\"large\">. </span>\n<br />\n</p>\n', '2025-10-09 10:19:04', '', '2025-10-09 10:25:52', 'The Aura Ensemble', 'The Aura Ensemble', 'info@acedecors.in');
+(88, 'L Shaped Island Kitchen', '/L-Shaped-Island-Kitchen', 2, '1', '<p>A white acrylic island kitchen with a quartz top is the perfect solution for a clean, modern, and durable kitchen space. The bright, reflective white finish creates an airy, open feel, while the quartz top adds luxury and practicality â€” scratch-resistant, easy to clean, and highly durable. \n<br />\n \n<br />\n</p>\n', '2025-10-09 10:29:53', 'info@acedecors.in', '2026-06-04 12:01:01', 'L Shaped Island Kitchen', 'L Shaped Island Kitchen', 'info@acedecors.in'),
+(85, 'Topline Sliding Wardrobes', '/Topline-Sliding-Wardrobes', 2, '1', '<p>Sliding wardrobes are the perfect solution when space optimization matters. They offer a sleek, modern appearance while providing practical storage that adapts to your lifestyle. The smooth operation and clean lines help create a clutter-free, minimalist atmosphere. \n<br />\n \n<br />\n</p>\n', '2025-10-09 09:20:14', 'info@acedecors.in', '2026-03-16 17:39:41', 'Topline Sliding Wardrobes', 'Topline Sliding Wardrobes', 'info@acedecors.in'),
+(86, 'Minimalist Wardrobes', '/Minimalist-Wardrobes', 2, '0', '<p>Minimalist wardrobes are the perfect blend of sleek design and smart storage. They focus on simplicity, allowing your space to feel open, organized, and calming. Whether you live in a compact apartment or a modern home, these wardrobes bring elegance and order without overwhelming the room. \n<br />\n \n<br />\n</p>\n', '2025-10-09 09:28:28', 'info@acedecors.in', '2026-03-16 17:37:36', 'Minimalist Wardrobes', 'Minimalist Wardrobes', 'info@acedecors.in'),
+(87, 'The Aura Ensemble', '/The-Aura-Ensemble', 2, '1', '<p>Refined simplicity meets functional artistry in <em>The Aura Ensemble</em> by <strong>Ace Decors</strong>. This modern wall-mounted TV unit is a symphony of clean lines, warm wood textures, and subtle lighting that enhances the ambiance of any contemporary living space. \n<br />\n Thoughtfully designed with floating cabinets and open shelves, it blends sophistication with practicality â€” offering ample space for dÃ©cor accents, books, and entertainment essentials. The soft backlighting creates a serene visual frame, transforming your TV wall into a statement feature. \n<br />\n Crafted with precision and a minimalist design philosophy, this unit embodies Ace Decorsâ€™ vision of <strong>modern comfort with timeless appeal</strong>. \n<br />\n</p>\n', '2025-10-09 10:19:04', '', '2026-03-19 01:56:24', 'The Aura Ensemble', 'The Aura Ensemble', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -2102,11 +1909,10 @@ INSERT INTO `post` (`postId`, `postTitle`, `postUrl`, `LinkUnder`, `appearOnHome
 -- Table structure for table `postcatmapping`
 --
 
-DROP TABLE IF EXISTS `postcatmapping`;
-CREATE TABLE IF NOT EXISTS `postcatmapping` (
-  `postId` int NOT NULL,
-  `catId` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `postcatmapping` (
+  `postId` int(11) NOT NULL,
+  `catId` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `postcatmapping`
@@ -2152,27 +1958,22 @@ INSERT INTO `postcatmapping` (`postId`, `catId`) VALUES
 -- Table structure for table `postimages`
 --
 
-DROP TABLE IF EXISTS `postimages`;
-CREATE TABLE IF NOT EXISTS `postimages` (
-  `postImageId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `postimages` (
+  `postImageId` int(11) NOT NULL,
   `postImage` longblob NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `createdBy` varchar(100) NOT NULL,
   `modifiedBy` varchar(100) NOT NULL,
   `imageAlternateText` varchar(100) NOT NULL,
-  `postId` int NOT NULL,
-  PRIMARY KEY (`postImageId`)
-) ENGINE=MyISAM AUTO_INCREMENT=79 DEFAULT CHARSET=utf8mb3;
+  `postId` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `postimages`
 --
 
 INSERT INTO `postimages` (`postImageId`, `postImage`, `createdOn`, `modifiedOn`, `createdBy`, `modifiedBy`, `imageAlternateText`, `postId`) VALUES
-(16, 0x706f7374322e6a7067, '2022-01-21 16:16:28', '2025-09-08 01:27:25', 'info@acedecors.in', 'info@acedecors.in', 'Urban', 16),
-(15, 0x706f7374312e6a7067, '2022-01-21 16:14:21', '2025-09-08 05:24:03', 'info@acedecors.in', 'info@acedecors.in', 'Pure', 15),
-(17, 0x706f7374332e6a7067, '2022-01-21 16:20:31', '2025-09-08 05:24:03', 'info@acedecors.in', 'info@acedecors.in', 'Classic', 17),
 (78, 0x41442d4b69746368656e30312e6a7067, '2025-10-09 10:29:53', '2025-10-09 10:29:53', 'info@acedecors.in', 'info@acedecors.in', 'L Shaped Island Kitchen', 88),
 (75, 0x41442d536c6964696e672057617264726f62652d3030312e6a7067, '2025-10-09 09:20:14', '2025-10-09 09:20:14', 'info@acedecors.in', 'info@acedecors.in', 'Topline Sliding Wardrobes', 85),
 (76, 0x41442d57617264726f62652d3030312e6a7067, '2025-10-09 09:28:28', '2025-10-09 09:28:28', 'info@acedecors.in', 'info@acedecors.in', 'Minimalist Wardrobes', 86),
@@ -2184,16 +1985,14 @@ INSERT INTO `postimages` (`postImageId`, `postImage`, `createdOn`, `modifiedOn`,
 -- Table structure for table `postkeywords`
 --
 
-DROP TABLE IF EXISTS `postkeywords`;
-CREATE TABLE IF NOT EXISTS `postkeywords` (
-  `keywordId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `postkeywords` (
+  `keywordId` int(11) NOT NULL,
   `keyword` varchar(200) NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `createdBy` varchar(100) NOT NULL,
-  `modifiedBy` varchar(100) NOT NULL,
-  PRIMARY KEY (`keywordId`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+  `modifiedBy` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2201,21 +2000,20 @@ CREATE TABLE IF NOT EXISTS `postkeywords` (
 -- Table structure for table `postsubcatmapping`
 --
 
-DROP TABLE IF EXISTS `postsubcatmapping`;
-CREATE TABLE IF NOT EXISTS `postsubcatmapping` (
-  `postId` int NOT NULL,
-  `subCatId` int NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `postsubcatmapping` (
+  `postId` int(11) NOT NULL,
+  `subCatId` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `postsubcatmapping`
 --
 
 INSERT INTO `postsubcatmapping` (`postId`, `subCatId`) VALUES
-(87, 84),
-(86, 86),
-(88, 87),
-(85, 85);
+(87, 96),
+(86, 94),
+(85, 94),
+(88, 93);
 
 -- --------------------------------------------------------
 
@@ -2223,12 +2021,10 @@ INSERT INTO `postsubcatmapping` (`postId`, `subCatId`) VALUES
 -- Table structure for table `privacypolicy`
 --
 
-DROP TABLE IF EXISTS `privacypolicy`;
-CREATE TABLE IF NOT EXISTS `privacypolicy` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `description` longtext NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `privacypolicy` (
+  `id` int(11) NOT NULL,
+  `description` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `privacypolicy`
@@ -2252,14 +2048,12 @@ INSERT INTO `privacypolicy` (`id`, `description`) VALUES
 -- Table structure for table `processing`
 --
 
-DROP TABLE IF EXISTS `processing`;
-CREATE TABLE IF NOT EXISTS `processing` (
-  `ProcessingId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `processing` (
+  `ProcessingId` int(11) NOT NULL,
   `Processing` varchar(50) NOT NULL,
   `CreatedBy` varchar(100) NOT NULL,
-  `ModifiedBy` varchar(100) NOT NULL,
-  PRIMARY KEY (`ProcessingId`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  `ModifiedBy` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `processing`
@@ -2277,34 +2071,32 @@ INSERT INTO `processing` (`ProcessingId`, `Processing`, `CreatedBy`, `ModifiedBy
 -- Table structure for table `products`
 --
 
-DROP TABLE IF EXISTS `products`;
-CREATE TABLE IF NOT EXISTS `products` (
-  `product_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `products` (
+  `product_id` int(11) NOT NULL,
   `Name` varchar(200) NOT NULL,
-  `Length` int NOT NULL,
-  `Width` int NOT NULL,
-  `Quantity` int NOT NULL,
-  `CL_ID` int NOT NULL,
-  `CategoryId` int NOT NULL,
-  `SubcategoryId` int NOT NULL,
-  `FinishId` int NOT NULL,
+  `Length` int(11) NOT NULL,
+  `Width` int(11) NOT NULL,
+  `Quantity` int(11) NOT NULL,
+  `CL_ID` int(11) NOT NULL,
+  `CategoryId` int(11) NOT NULL,
+  `SubcategoryId` int(11) NOT NULL,
+  `FinishId` int(11) NOT NULL,
   `Code` varchar(100) NOT NULL,
   `CabinetType` varchar(100) NOT NULL,
-  `Mat_Brand` int NOT NULL,
-  `Rotation` int NOT NULL,
-  `Mat_Category` int NOT NULL,
-  `Mat_Subcategory` int NOT NULL,
-  `Thickness` int NOT NULL,
-  `Material` int NOT NULL,
+  `Mat_Brand` int(11) NOT NULL,
+  `Rotation` int(11) NOT NULL,
+  `Mat_Category` int(11) NOT NULL,
+  `Mat_Subcategory` int(11) NOT NULL,
+  `Thickness` int(11) NOT NULL,
+  `Material` int(11) NOT NULL,
   `PEB` varchar(50) NOT NULL,
   `PEB_Thickness` varchar(50) NOT NULL,
   `SEB` varchar(50) NOT NULL,
   `SEB_Thickness` varchar(50) NOT NULL,
   `Comments` varchar(100) NOT NULL,
   `product_createdby` varchar(100) NOT NULL,
-  `product_modifiedby` varchar(100) NOT NULL,
-  PRIMARY KEY (`product_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;
+  `product_modifiedby` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2312,25 +2104,15 @@ CREATE TABLE IF NOT EXISTS `products` (
 -- Table structure for table `product_category`
 --
 
-DROP TABLE IF EXISTS `product_category`;
-CREATE TABLE IF NOT EXISTS `product_category` (
-  `product_catid` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `product_category` (
+  `product_catid` int(11) NOT NULL,
   `product_catName` varchar(200) NOT NULL,
   `product_catDescription` varchar(200) NOT NULL,
   `product_catCreatedby` varchar(200) NOT NULL,
   `product_catModifiedby` varchar(200) NOT NULL,
-  `product_catCreatedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `product_catmodifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`product_catid`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
-
---
--- Dumping data for table `product_category`
---
-
-INSERT INTO `product_category` (`product_catid`, `product_catName`, `product_catDescription`, `product_catCreatedby`, `product_catModifiedby`, `product_catCreatedon`, `product_catmodifiedon`) VALUES
-(1, 'IC', 'IC', 'info@acedecors.in', 'info@acedecors.in', '2022-02-11 00:33:21', '2025-09-06 11:45:39'),
-(2, 'Table', 'tables', 'info@acedecors.in', 'info@acedecors.in', '2025-10-27 12:53:19', '2025-10-27 12:53:19');
+  `product_catCreatedon` datetime NOT NULL DEFAULT current_timestamp(),
+  `product_catmodifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2338,36 +2120,34 @@ INSERT INTO `product_category` (`product_catid`, `product_catName`, `product_cat
 -- Table structure for table `product_definition`
 --
 
-DROP TABLE IF EXISTS `product_definition`;
-CREATE TABLE IF NOT EXISTS `product_definition` (
-  `prodDefinition_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `product_definition` (
+  `prodDefinition_Id` int(11) NOT NULL,
   `Prod_Name` varchar(100) NOT NULL,
   `Prod_Description` varchar(100) NOT NULL,
-  `Rotation` int NOT NULL,
+  `Rotation` int(11) NOT NULL,
   `Override` varchar(10) NOT NULL,
-  `Type` int NOT NULL,
-  `Finish` int NOT NULL,
-  `Prod_Category` int NOT NULL,
-  `Prod_SubCategory` int NOT NULL,
-  `Quantity` int NOT NULL,
-  `LengthValue` int NOT NULL,
+  `Type` int(11) NOT NULL,
+  `Finish` int(11) NOT NULL,
+  `Prod_Category` int(11) NOT NULL,
+  `Prod_SubCategory` int(11) NOT NULL,
+  `Quantity` int(11) NOT NULL,
+  `LengthValue` int(11) NOT NULL,
   `Dimension1` varchar(50) NOT NULL,
-  `WidthValue` int NOT NULL,
+  `WidthValue` int(11) NOT NULL,
   `Dimension2` varchar(50) NOT NULL,
-  `DepthValue` int NOT NULL,
+  `DepthValue` int(11) NOT NULL,
   `Dimension3` varchar(50) NOT NULL,
   `CLFormula` varchar(50) NOT NULL,
   `CW` varchar(50) NOT NULL,
-  `GL` int NOT NULL,
+  `GL` int(11) NOT NULL,
   `FL` varchar(50) NOT NULL,
   `BL` varchar(50) NOT NULL,
   `RL` varchar(50) NOT NULL,
   `RW` varchar(50) NOT NULL,
-  `EB_LW` int NOT NULL,
+  `EB_LW` int(11) NOT NULL,
   `CreatedBy` varchar(50) NOT NULL,
-  `ModifiedBy` varchar(50) NOT NULL,
-  PRIMARY KEY (`prodDefinition_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  `ModifiedBy` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `product_definition`
@@ -2382,19 +2162,16 @@ INSERT INTO `product_definition` (`prodDefinition_Id`, `Prod_Name`, `Prod_Descri
 -- Table structure for table `product_subcategory`
 --
 
-DROP TABLE IF EXISTS `product_subcategory`;
-CREATE TABLE IF NOT EXISTS `product_subcategory` (
-  `product_subcatid` int NOT NULL AUTO_INCREMENT,
-  `product_catid` int DEFAULT NULL,
+CREATE TABLE `product_subcategory` (
+  `product_subcatid` int(11) NOT NULL,
+  `product_catid` int(11) DEFAULT NULL,
   `product_subcatName` varchar(200) NOT NULL,
   `product_subcatDescription` varchar(200) NOT NULL,
   `product_subcatCreatedby` varchar(100) NOT NULL,
   `product_subcatModifiedby` varchar(100) NOT NULL,
-  `product_subcatCreatedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `product_subcatModifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`product_subcatid`),
-  KEY `product_catid` (`product_catid`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
+  `product_subcatCreatedon` datetime NOT NULL DEFAULT current_timestamp(),
+  `product_subcatModifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `product_subcategory`
@@ -2410,32 +2187,34 @@ INSERT INTO `product_subcategory` (`product_subcatid`, `product_catid`, `product
 -- Table structure for table `projects`
 --
 
-DROP TABLE IF EXISTS `projects`;
-CREATE TABLE IF NOT EXISTS `projects` (
-  `projectId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `projects` (
+  `projectId` int(11) NOT NULL,
   `projectCode` varchar(100) NOT NULL,
   `customerName` varchar(50) NOT NULL,
   `custId` varchar(50) NOT NULL,
   `quoteId` varchar(50) NOT NULL,
   `project_status` varchar(50) NOT NULL DEFAULT 'In Progress',
   `progressNote` varchar(100) DEFAULT NULL,
-  `createdOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`projectId`),
-  KEY `quoteId` (`quoteId`),
-  KEY `custId` (`custId`)
-) ENGINE=MyISAM AUTO_INCREMENT=76 DEFAULT CHARSET=latin1;
+  `createdOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `projects`
 --
 
 INSERT INTO `projects` (`projectId`, `projectCode`, `customerName`, `custId`, `quoteId`, `project_status`, `progressNote`, `createdOn`) VALUES
-(74, 'AD-PROJ-0226 -M74', 'Moin8', 'AD-202602-M26', 'M26-TU-01', 'In Progress', NULL, '2026-02-26 11:32:06'),
-(75, 'AD-PROJ-0226 -M75', 'Mustafa1', 'AD-202602-M28', 'M28-SW-01', 'In Progress', '', '2026-03-09 13:08:18');
+(83, 'AD-PROJ-0726 -RA83', 'Riyaz Ahmed', 'AD-202607-RA34', 'RA34-SW-01', 'In Progress', NULL, '2026-07-29 14:09:35');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `projectslastm`
+-- (See below for the actual view)
+--
+CREATE TABLE `projectslastm` (
+`Projects` bigint(21)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -2443,20 +2222,18 @@ INSERT INTO `projects` (`projectId`, `projectCode`, `customerName`, `custId`, `q
 -- Table structure for table `projecttasks`
 --
 
-DROP TABLE IF EXISTS `projecttasks`;
-CREATE TABLE IF NOT EXISTS `projecttasks` (
-  `TaskId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `projecttasks` (
+  `TaskId` int(11) NOT NULL,
   `Date` date NOT NULL,
   `TaskDescription` varchar(100) NOT NULL,
   `ContactPerson` varchar(100) NOT NULL,
-  `ContactNo` int NOT NULL,
+  `ContactNo` int(11) NOT NULL,
   `Status` varchar(100) NOT NULL,
   `Task_modifiedBy` varchar(100) NOT NULL,
-  `Task_modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `Task_createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Task_createdBy` varchar(100) NOT NULL,
-  PRIMARY KEY (`TaskId`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+  `Task_modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `Task_createdOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `Task_createdBy` varchar(100) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -2464,30 +2241,19 @@ CREATE TABLE IF NOT EXISTS `projecttasks` (
 -- Table structure for table `project_issues`
 --
 
-DROP TABLE IF EXISTS `project_issues`;
-CREATE TABLE IF NOT EXISTS `project_issues` (
-  `IssueId` int NOT NULL AUTO_INCREMENT,
-  `Issue_ProjectId` int NOT NULL,
+CREATE TABLE `project_issues` (
+  `IssueId` int(11) NOT NULL,
+  `Issue_ProjectId` int(11) NOT NULL,
   `Issue_ProjCode` varchar(50) NOT NULL,
   `Issue_Description` varchar(100) NOT NULL,
   `Issue_ContactName` varchar(50) NOT NULL,
   `Issue_ContactDetails` varchar(50) NOT NULL,
   `Status` varchar(20) NOT NULL DEFAULT 'Open',
-  `Issue_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Issue_createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `Issue_createdby` varchar(100) NOT NULL,
   `Issue_modifiedby` varchar(50) NOT NULL,
-  `issue_modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`IssueId`),
-  KEY `followup_ProjCode` (`Issue_ProjCode`),
-  KEY `followup_ProjectId` (`Issue_ProjectId`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `project_issues`
---
-
-INSERT INTO `project_issues` (`IssueId`, `Issue_ProjectId`, `Issue_ProjCode`, `Issue_Description`, `Issue_ContactName`, `Issue_ContactDetails`, `Status`, `Issue_createdon`, `Issue_createdby`, `Issue_modifiedby`, `issue_modifiedOn`) VALUES
-(3, 68, 'AD-PROJ-0226', 'material delayed', 'chandrakanth', '9999999999', 'Open', '2026-02-25 06:23:34', 'info@acedecors.in', 'info@acedecors.in', '2026-02-25 06:23:34');
+  `issue_modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -2495,32 +2261,32 @@ INSERT INTO `project_issues` (`IssueId`, `Issue_ProjectId`, `Issue_ProjCode`, `I
 -- Table structure for table `purchaseorder_lineitem`
 --
 
-DROP TABLE IF EXISTS `purchaseorder_lineitem`;
-CREATE TABLE IF NOT EXISTS `purchaseorder_lineitem` (
-  `POlineitemId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `purchaseorder_lineitem` (
+  `POlineitemId` int(11) NOT NULL,
   `POID` varchar(100) DEFAULT NULL,
-  `Item_id` int DEFAULT NULL,
+  `Item_id` int(11) DEFAULT NULL,
   `InputName` varchar(50) NOT NULL,
-  `SupplierId` int NOT NULL,
+  `SupplierId` int(11) NOT NULL,
   `Quantity` varchar(20) DEFAULT NULL,
   `Price` varchar(20) DEFAULT NULL,
   `TotalAmt` varchar(20) NOT NULL DEFAULT '0',
   `GST` varchar(50) NOT NULL,
-  `Modified_Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`POlineitemId`),
-  KEY `Item_id` (`Item_id`),
-  KEY `POID` (`POID`),
-  KEY `SupplierId` (`SupplierId`)
-) ENGINE=MyISAM AUTO_INCREMENT=137 DEFAULT CHARSET=latin1;
+  `Modified_Date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `purchaseorder_lineitem`
 --
 
 INSERT INTO `purchaseorder_lineitem` (`POlineitemId`, `POID`, `Item_id`, `InputName`, `SupplierId`, `Quantity`, `Price`, `TotalAmt`, `GST`, `Modified_Date`) VALUES
-(136, '121', 183, 'Sinks', 15, '10', '', '0', '', '2026-02-27 11:06:47'),
-(135, '120', 125, 'TV Units', 15, '10', '', '0', '', '2026-02-26 15:29:23'),
-(134, '119', 182, 'Caoch', 15, '10', '', '0', '', '2026-02-26 15:27:33');
+(139, '124', 188, '0CH', 16, '3', '', '0', '', '2026-06-06 09:12:26'),
+(155, '134', 130, 'ABR', 18, '2', '', '0', '', '2026-07-30 01:50:58'),
+(156, '134', 191, '0CH', 18, '3', '', '0', '', '2026-07-30 01:50:58'),
+(158, '134', 192, '0CH', 18, '4', '0', '0', '', '2026-07-30 01:52:40'),
+(150, '132', 129, '9mm Boilo Plain', 17, '2', '', '0', '', '2026-07-29 05:57:17'),
+(152, '132', 128, '18mm Boilo Plain', 17, '5', '0', '0', '', '2026-07-29 05:57:39'),
+(153, '133', 188, '0CH', 18, '1', '', '0', '', '2026-07-29 06:06:21'),
+(154, '133', 128, '18mm Boilo Plain', 18, '3', '', '0', '', '2026-07-29 06:06:21');
 
 -- --------------------------------------------------------
 
@@ -2528,34 +2294,27 @@ INSERT INTO `purchaseorder_lineitem` (`POlineitemId`, `POID`, `Item_id`, `InputN
 -- Table structure for table `purchase_order`
 --
 
-DROP TABLE IF EXISTS `purchase_order`;
-CREATE TABLE IF NOT EXISTS `purchase_order` (
-  `Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `purchase_order` (
+  `Id` int(11) NOT NULL,
   `POcode` varchar(20) NOT NULL,
-  `SupplierId` int DEFAULT NULL,
-  `Item_id` int NOT NULL,
+  `SupplierId` int(11) DEFAULT NULL,
+  `Item_id` int(11) NOT NULL,
   `InventoryType` enum('item','material') NOT NULL,
   `ProjectId` varchar(11) DEFAULT NULL,
   `PurchasedDate` date NOT NULL,
-  `TotalAmt` int DEFAULT NULL,
+  `TotalAmt` int(11) DEFAULT NULL,
   `purchasePDFName` varchar(100) DEFAULT NULL,
-  `Status` int DEFAULT '0',
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Modified_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Id`),
-  KEY `SupplierId` (`SupplierId`),
-  KEY `Item_id` (`Item_id`),
-  KEY `ProjectId` (`ProjectId`)
-) ENGINE=MyISAM AUTO_INCREMENT=122 DEFAULT CHARSET=latin1;
+  `Status` int(11) DEFAULT 0,
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `Modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `purchase_order`
 --
 
 INSERT INTO `purchase_order` (`Id`, `POcode`, `SupplierId`, `Item_id`, `InventoryType`, `ProjectId`, `PurchasedDate`, `TotalAmt`, `purchasePDFName`, `Status`, `createdon`, `Modified_date`) VALUES
-(121, 'AD-202602-M121', 15, 183, 'item', '', '2026-02-27', NULL, NULL, 0, '2026-02-27 11:06:47', '2026-02-27 11:06:47'),
-(120, 'AD-202602-M120', 15, 125, 'material', '', '2026-02-26', NULL, NULL, 0, '2026-02-26 15:29:23', '2026-02-26 15:29:23'),
-(119, 'AD-202602-M119', 15, 182, 'item', '', '2026-02-26', NULL, NULL, 0, '2026-02-26 15:27:33', '2026-02-26 15:27:33');
+(134, 'AD-202607-S134', 18, 130, 'material', '0', '2026-07-30', NULL, NULL, 0, '2026-07-30 01:50:58', '2026-07-30 01:50:58');
 
 -- --------------------------------------------------------
 
@@ -2563,42 +2322,37 @@ INSERT INTO `purchase_order` (`Id`, `POcode`, `SupplierId`, `Item_id`, `Inventor
 -- Table structure for table `quotation_details`
 --
 
-DROP TABLE IF EXISTS `quotation_details`;
-CREATE TABLE IF NOT EXISTS `quotation_details` (
-  `quoteId` int NOT NULL AUTO_INCREMENT,
-  `quo_enq_id` int NOT NULL,
-  `enqCatId` int NOT NULL,
-  `customerId` int NOT NULL,
+CREATE TABLE `quotation_details` (
+  `quoteId` int(11) NOT NULL,
+  `quo_enq_id` int(11) NOT NULL,
+  `enqCatId` int(11) NOT NULL,
+  `customerId` int(11) NOT NULL,
   `quoteCode` varchar(100) NOT NULL,
   `quoteValue` decimal(10,2) DEFAULT NULL,
-  `unitId` int DEFAULT NULL,
-  `quantity` int DEFAULT NULL,
+  `tradePrice` decimal(10,2) DEFAULT 0.00,
+  `unitId` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
   `quoteDescription` varchar(500) DEFAULT NULL,
   `itemListName` varchar(200) DEFAULT NULL,
   `orderListName` varchar(200) DEFAULT NULL,
   `quo_type` enum('General','Bank') NOT NULL,
   `quo_pdf_name` varchar(100) DEFAULT NULL,
-  `inputType` int NOT NULL,
+  `inputType` int(11) NOT NULL,
   `quo_createdby` varchar(100) NOT NULL,
   `modifiedby` varchar(200) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `quo_status` enum('pending','rejected','Approved') NOT NULL DEFAULT 'pending',
   `quo_comments` varchar(500) DEFAULT NULL,
-  `quo_createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`quoteId`),
-  KEY `quo_enq_id` (`quo_enq_id`),
-  KEY `customerId` (`customerId`),
-  KEY `enqCatId` (`enqCatId`),
-  KEY `unitId` (`unitId`)
-) ENGINE=MyISAM AUTO_INCREMENT=265 DEFAULT CHARSET=latin1;
+  `quo_createdon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `quotation_details`
 --
 
-INSERT INTO `quotation_details` (`quoteId`, `quo_enq_id`, `enqCatId`, `customerId`, `quoteCode`, `quoteValue`, `unitId`, `quantity`, `quoteDescription`, `itemListName`, `orderListName`, `quo_type`, `quo_pdf_name`, `inputType`, `quo_createdby`, `modifiedby`, `modifiedon`, `quo_status`, `quo_comments`, `quo_createdon`) VALUES
-(263, 83, 23, 26, 'M26-TU-01', 10000.00, 60, 5, 'hfgghgh', '', '', '', '', 1, 'info@acedecors.in', 'info@acedecors.in', '2026-02-27 14:42:29', 'pending', 'ghfhfg', '2026-02-27 14:42:29'),
-(264, 85, 24, 28, 'M28-SW-01', 1200.00, 61, 5, 'asdsad', '', '', '', '', 2, 'info@acedecors.in', 'info@acedecors.in', '2026-02-27 14:42:54', 'Approved', 'dfsdfsdf', '2026-02-27 14:42:54');
+INSERT INTO `quotation_details` (`quoteId`, `quo_enq_id`, `enqCatId`, `customerId`, `quoteCode`, `quoteValue`, `tradePrice`, `unitId`, `quantity`, `quoteDescription`, `itemListName`, `orderListName`, `quo_type`, `quo_pdf_name`, `inputType`, `quo_createdby`, `modifiedby`, `modifiedon`, `quo_status`, `quo_comments`, `quo_createdon`) VALUES
+(278, 88, 24, 34, 'RA34-SW-01', 15000.00, 0.00, 63, 150, 'D1', '', '', '', '_BOQ_WOQ.pdf', 1, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 14:09:35', 'Approved', 'C1', '2026-07-29 14:09:35'),
+(279, 88, 26, 34, 'RA34-K-02', 3000.00, 0.00, NULL, NULL, '', '', '', '', '', 1, 'info@acedecors.in', 'info@acedecors.in', '2026-07-30 01:46:29', 'pending', '', '2026-07-30 01:46:29');
 
 -- --------------------------------------------------------
 
@@ -2606,16 +2360,15 @@ INSERT INTO `quotation_details` (`quoteId`, `quo_enq_id`, `enqCatId`, `customerI
 -- Table structure for table `quotelineitem`
 --
 
-DROP TABLE IF EXISTS `quotelineitem`;
-CREATE TABLE IF NOT EXISTS `quotelineitem` (
-  `lineItemId` int NOT NULL AUTO_INCREMENT,
-  `quoteId` int NOT NULL,
-  `itemId` int NOT NULL,
-  `inputType` int NOT NULL,
+CREATE TABLE `quotelineitem` (
+  `lineItemId` int(11) NOT NULL,
+  `quoteId` int(11) NOT NULL,
+  `itemId` int(11) NOT NULL,
+  `inputType` int(11) NOT NULL,
   `InputName` varchar(255) NOT NULL,
-  `item_catid` int NOT NULL,
-  `item_subcatid` int NOT NULL,
-  `quantity` int NOT NULL,
+  `item_catid` int(11) NOT NULL,
+  `item_subcatid` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
   `amount` decimal(10,2) NOT NULL,
   `value` decimal(10,0) NOT NULL,
   `totalValue` decimal(10,0) NOT NULL,
@@ -2629,20 +2382,30 @@ CREATE TABLE IF NOT EXISTS `quotelineitem` (
   `totalPrice` decimal(10,2) NOT NULL,
   `billedAmount` decimal(10,2) DEFAULT NULL,
   `createdby` varchar(200) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `modifiedby` varchar(200) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`lineItemId`)
-) ENGINE=MyISAM AUTO_INCREMENT=349 DEFAULT CHARSET=latin1;
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `reference` varchar(255) DEFAULT NULL,
+  `note` text DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `quotelineitem`
 --
 
-INSERT INTO `quotelineitem` (`lineItemId`, `quoteId`, `itemId`, `inputType`, `InputName`, `item_catid`, `item_subcatid`, `quantity`, `amount`, `value`, `totalValue`, `totalAmount`, `discount1`, `discount1Amt`, `discount2`, `discount2Amt`, `GSTAmount`, `GST`, `totalPrice`, `billedAmount`, `createdby`, `createdon`, `modifiedby`, `modifiedon`) VALUES
-(346, 263, 182, 1, 'Caoch', 122, 83, 10, 2360.00, 0, 2360, 2500.00, 10.00, 250.00, NULL, NULL, 405.00, 18.00, 2655.00, NULL, 'info@acedecors.in', '2026-02-26 15:26:54', 'info@acedecors.in', '2026-02-26 15:26:54'),
-(347, 263, 125, 2, 'TV Units', 36, 33, 15, 1416.00, 0, 1888, 1500.00, 5.00, 75.00, NULL, NULL, 256.50, 18.00, 1681.50, NULL, 'info@acedecors.in', '2026-02-26 15:26:54', 'info@acedecors.in', '2026-02-26 15:26:54'),
-(348, 264, 126, 2, 'Sturde1', 36, 33, 1, 531.00, 0, 5310, 500.00, 10.00, 50.00, NULL, NULL, 81.00, 18.00, 531.00, NULL, 'info@acedecors.in', '2026-02-27 14:39:06', 'info@acedecors.in', '2026-02-27 14:39:06');
+INSERT INTO `quotelineitem` (`lineItemId`, `quoteId`, `itemId`, `inputType`, `InputName`, `item_catid`, `item_subcatid`, `quantity`, `amount`, `value`, `totalValue`, `totalAmount`, `discount1`, `discount1Amt`, `discount2`, `discount2Amt`, `GSTAmount`, `GST`, `totalPrice`, `billedAmount`, `createdby`, `createdon`, `modifiedby`, `modifiedon`, `reference`, `note`) VALUES
+(371, 275, 187, 1, '0CH', 127, 90, 10, 826.00, 20, 4130, 1000.00, 30.00, 300.00, NULL, NULL, 0.00, 18.00, 944.00, NULL, 'info@acedecors.in', '2026-06-06 08:58:09', 'info@acedecors.in', '2026-06-06 08:58:09', 'BU', 'C7'),
+(370, 275, 129, 2, '9mm Boilo Plain', 41, 38, 1, 3500.00, 0, 3500, 3500.00, 0.00, 0.00, NULL, NULL, 0.00, 18.00, 3500.00, NULL, 'info@acedecors.in', '2026-06-06 08:56:37', 'info@acedecors.in', '2026-06-06 08:56:37', 'zxc', 'mnb'),
+(369, 275, 188, 1, '0CH', 127, 90, 2, 474.36, 25, 474, 600.00, 33.00, 198.00, NULL, NULL, 0.00, 18.00, 531.00, NULL, 'info@acedecors.in', '2026-06-06 06:56:29', 'info@acedecors.in', '2026-06-06 06:56:29', 'BU', 'C4'),
+(374, 278, 189, 1, '0CH', 130, 92, 5, 0.00, 0, 6195, 750.00, 15.00, 92.92, NULL, NULL, 0.00, 18.00, 752.25, NULL, 'info@acedecors.in', '2026-07-29 13:46:14', '', '2026-07-29 14:05:11', 'R1', 'N1'),
+(378, 278, 132, 2, 'AEHF', 43, 40, 2, 7700.00, 0, 7700, 7700.00, 0.00, 0.00, NULL, NULL, 0.00, 18.00, 7700.00, NULL, 'info@acedecors.in', '2026-07-29 14:05:56', 'info@acedecors.in', '2026-07-29 14:05:56', 'R4', 'N4'),
+(365, 275, 187, 1, '0CH', 127, 90, 1, 82.60, 0, 4130, 100.00, 10.00, 10.00, NULL, NULL, 16.20, 18.00, 106.20, NULL, 'info@acedecors.in', '2026-06-06 05:17:48', 'info@acedecors.in', '2026-06-06 05:17:48', 'OU', 'C5'),
+(367, 275, 128, 2, '18mm Boilo Plain', 41, 38, 3, 21000.00, 0, 21000, 21000.00, 0.00, 0.00, NULL, NULL, 3780.00, 18.00, 735000.00, NULL, 'info@acedecors.in', '2026-06-06 05:17:48', 'info@acedecors.in', '2026-06-06 05:17:48', 'BU', 'C3'),
+(366, 275, 128, 2, '18mm Boilo Plain', 41, 38, 2, 14000.00, 0, 14000, 14000.00, 0.00, 0.00, NULL, NULL, 2520.00, 18.00, 490000.00, NULL, 'info@acedecors.in', '2026-06-06 05:17:48', 'info@acedecors.in', '2026-06-06 05:17:48', 'BU', 'C6'),
+(376, 278, 191, 1, '0CH', 130, 92, 5, 887.95, 0, 8880, 1075.00, 20.00, 215.00, NULL, NULL, 154.80, 18.00, 1014.80, NULL, 'info@acedecors.in', '2026-07-29 13:46:14', 'info@acedecors.in', '2026-07-29 13:46:14', 'R2', 'N2'),
+(379, 279, 189, 1, '0CH', 130, 92, 1, 123.90, 0, 6195, 150.00, 10.00, 15.00, NULL, NULL, 24.30, 18.00, 159.30, NULL, 'info@acedecors.in', '2026-07-30 01:46:29', 'info@acedecors.in', '2026-07-30 01:46:29', 'R1', 'N1'),
+(377, 278, 130, 2, 'ABR', 42, 39, 1, 3500.00, 0, 3500, 3500.00, 0.00, 0.00, NULL, NULL, 630.00, 18.00, 3500.00, NULL, 'info@acedecors.in', '2026-07-29 13:46:14', 'info@acedecors.in', '2026-07-29 13:46:14', 'R3', 'N3'),
+(380, 279, 191, 1, '0CH', 130, 92, 1, 177.59, 0, 8880, 215.00, 25.00, 53.75, NULL, NULL, 29.03, 18.00, 190.28, NULL, 'info@acedecors.in', '2026-07-30 01:46:29', 'info@acedecors.in', '2026-07-30 01:46:29', 'R2', 'N2');
 
 -- --------------------------------------------------------
 
@@ -2650,12 +2413,10 @@ INSERT INTO `quotelineitem` (`lineItemId`, `quoteId`, `itemId`, `inputType`, `In
 -- Table structure for table `roles`
 --
 
-DROP TABLE IF EXISTS `roles`;
-CREATE TABLE IF NOT EXISTS `roles` (
-  `role_id` int NOT NULL AUTO_INCREMENT,
-  `role_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`role_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ;
+CREATE TABLE `roles` (
+  `role_id` int(11) NOT NULL,
+  `role_name` varchar(50) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2663,15 +2424,11 @@ CREATE TABLE IF NOT EXISTS `roles` (
 -- Table structure for table `role_permissions`
 --
 
-DROP TABLE IF EXISTS `role_permissions`;
-CREATE TABLE IF NOT EXISTS `role_permissions` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `role_id` int DEFAULT NULL,
-  `permission_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `role_id` (`role_id`),
-  KEY `permission_id` (`permission_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 ;
+CREATE TABLE `role_permissions` (
+  `id` int(11) NOT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `permission_id` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -2679,16 +2436,14 @@ CREATE TABLE IF NOT EXISTS `role_permissions` (
 -- Table structure for table `rotation`
 --
 
-DROP TABLE IF EXISTS `rotation`;
-CREATE TABLE IF NOT EXISTS `rotation` (
-  `rotationId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `rotation` (
+  `rotationId` int(11) NOT NULL,
   `sides` varchar(100) NOT NULL,
   `createdBy` varchar(100) NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
   `modifiedBy` varchar(100) NOT NULL,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`rotationId`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `rotation`
@@ -2698,7 +2453,7 @@ INSERT INTO `rotation` (`rotationId`, `sides`, `createdBy`, `createdOn`, `modifi
 (1, 'Left', 'info@acedecors.in', '2021-11-23 14:50:40', 'info@acedecors.in', '2025-09-06 11:45:39'),
 (2, 'Right', 'info@acedecors.in', '2021-11-23 14:50:52', 'info@acedecors.in', '2025-09-06 11:45:39'),
 (3, 'Top', 'info@acedecors.in', '2021-11-23 14:50:56', 'info@acedecors.in', '2025-09-06 11:45:39'),
-(5, 'Bottoms', 'info@acedecors.in', '2026-02-28 17:20:43', 'info@acedecors.in', '2026-02-28 17:20:52');
+(5, 'BY', 'info@acedecors.in', '2026-02-28 17:20:43', 'info@acedecors.in', '2026-03-30 12:07:32');
 
 -- --------------------------------------------------------
 
@@ -2706,22 +2461,20 @@ INSERT INTO `rotation` (`rotationId`, `sides`, `createdBy`, `createdOn`, `modifi
 -- Table structure for table `settings`
 --
 
-DROP TABLE IF EXISTS `settings`;
-CREATE TABLE IF NOT EXISTS `settings` (
-  `id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `settings` (
+  `id` int(11) NOT NULL,
   `currency` varchar(10) DEFAULT '₹',
-  `hours_per_day` decimal(5,2) DEFAULT '8.00',
-  `ot_multiplier` decimal(4,2) DEFAULT '1.50',
+  `hours_per_day` decimal(5,2) DEFAULT 8.00,
+  `ot_multiplier` decimal(4,2) DEFAULT 1.50,
   `half_day_threshold` decimal(5,2) DEFAULT NULL,
-  `weekly_off_paid` tinyint(1) DEFAULT '0',
-  `time_presets` text,
+  `weekly_off_paid` tinyint(1) DEFAULT 0,
+  `time_presets` text DEFAULT NULL,
   `org_name` varchar(255) DEFAULT '',
-  `org_address` text,
-  `auto_sync` tinyint(1) DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ;
+  `org_address` text DEFAULT NULL,
+  `auto_sync` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `settings`
@@ -2736,12 +2489,11 @@ INSERT INTO `settings` (`id`, `currency`, `hours_per_day`, `ot_multiplier`, `hal
 -- Table structure for table `sliderimages`
 --
 
-DROP TABLE IF EXISTS `sliderimages`;
-CREATE TABLE IF NOT EXISTS `sliderimages` (
-  `imageId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `sliderimages` (
+  `imageId` int(11) NOT NULL,
   `image` varchar(100) NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedOn` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `alternatetext` varchar(200) NOT NULL,
   `imageCaption` varchar(500) NOT NULL,
   `modifiedBY` varchar(100) NOT NULL,
@@ -2749,9 +2501,8 @@ CREATE TABLE IF NOT EXISTS `sliderimages` (
   `fileType` enum('image','video') DEFAULT 'image',
   `videoUrl` varchar(500) DEFAULT NULL,
   `videoFile` varchar(255) DEFAULT NULL,
-  `postId` int DEFAULT NULL,
-  PRIMARY KEY (`imageId`)
-) ENGINE=MyISAM AUTO_INCREMENT=63 DEFAULT CHARSET=utf8mb3;
+  `postId` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `sliderimages`
@@ -2760,12 +2511,12 @@ CREATE TABLE IF NOT EXISTS `sliderimages` (
 INSERT INTO `sliderimages` (`imageId`, `image`, `createdOn`, `modifiedOn`, `alternatetext`, `imageCaption`, `modifiedBY`, `createdBy`, `fileType`, `videoUrl`, `videoFile`, `postId`) VALUES
 (28, 'AD-Kitchen01.jpg', '2025-09-19 21:03:54', '2025-09-19 21:03:54', 'Kitchens', 'Kitchens', 'info@acedecors.in', 'info@acedecors.in', 'image', NULL, NULL, NULL),
 (29, 'AD-Wardrobe-001.jpg', '2025-09-19 21:04:24', '2025-09-19 21:04:24', 'Wardrobes', 'Wardrobes', 'info@acedecors.in', 'info@acedecors.in', 'image', NULL, NULL, NULL),
-(37, 'AD-Wardrobe-001.jpg', '2025-09-29 06:45:06', '2025-09-29 06:45:06', 'Minimalist Wardrobes', 'Minimalist Wardrobes', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
+(76, 'AD-Kitchen01.jpg', '2026-06-04 11:52:29', '2026-06-04 11:52:29', 'Modular Kitchen', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
 (32, 'AD-Sliding Wardrobe-001.jpg', '2025-09-27 00:05:07', '2025-09-27 00:05:07', 'TopLine Sliding', 'TopLine Sliding', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 60),
 (33, '', '2025-09-27 00:05:19', '2025-09-27 00:05:19', 'TopLine Sliding', 'TopLine Sliding', 'info@acedecors.in', 'info@acedecors.in', 'video', 'https://www.youtube.com/embed/dWryPSNXSv0?si=QVp_hxkjwd_-5807', '', 60),
 (34, 'post1.jpg', '2025-09-27 06:45:57', '2025-09-27 06:45:57', 'Sofa', 'Sofa', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 67),
-(36, 'AD-Sliding Wardrobe-001.jpg', '2025-09-29 06:44:36', '2025-09-29 06:44:36', 'Sliding Wardrobes', 'Sliding Wardrobes', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
-(62, '1760032800_DMLS-001.jpg', '2026-03-11 14:44:29', '2026-03-11 14:44:29', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
+(75, 'AD-Wardrobe-001.jpg', '2026-06-04 11:50:50', '2026-06-04 11:50:50', 'Wardrobes', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
+(74, 'TV Unit-1.jpg', '2026-06-04 11:50:10', '2026-06-04 11:50:10', 'TV Unit', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 0),
 (39, 'AD-Sliding Wardrobe-001.jpg', '2025-10-03 04:36:14', '2025-10-03 04:36:14', 'Minimalist Wardrobes', 'Minimalist Wardrobes', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 65),
 (40, '03-kitchen.jpg', '2025-10-03 04:41:09', '2025-10-03 04:41:09', 'Best-Kitchens', 'Best-Kitchens', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 68),
 (41, 'post3.jpg', '2025-10-03 04:43:04', '2025-10-03 04:43:04', 'Best-Doors', 'Best-Doors', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 69),
@@ -2778,12 +2529,11 @@ INSERT INTO `sliderimages` (`imageId`, `image`, `createdOn`, `modifiedOn`, `alte
 (50, 'AD-Sliding Wardrobe-001.jpg', '2025-10-04 22:44:06', '2025-10-04 22:44:06', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 78),
 (51, 'AD-Kitchen01.jpg', '2025-10-04 22:58:21', '2025-10-04 22:58:21', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 81),
 (52, 'AD-Sliding Wardrobe-001.jpg', '2025-10-07 08:26:31', '2025-10-07 08:26:31', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 82),
-(54, 'AD-Sliding Wardrobe-001.jpg', '2025-10-09 09:21:28', '2025-10-09 09:21:28', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 85),
 (55, 'AD-Wardrobe-001.jpg', '2025-10-09 09:29:09', '2025-10-09 09:29:09', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 86),
 (56, 'TV Unit.jpg', '2025-10-09 10:19:43', '2025-10-09 10:19:43', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 87),
 (57, 'TV Unit-1.jpg', '2025-10-09 10:20:18', '2025-10-09 10:20:18', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 87),
-(60, 'AD-Kitchen01.jpg', '2025-10-09 10:30:18', '2025-10-09 10:30:18', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 88),
-(61, '1000010432.jpg', '2025-10-10 10:44:40', '2025-10-10 10:44:40', '', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 85);
+(78, 'AD-Kitchen01.jpg', '2026-06-04 12:02:26', '2026-06-04 12:02:26', 'L Shaped Kitchen', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 88),
+(77, 'AD-Sliding Wardrobe-001.jpg', '2026-06-04 11:55:51', '2026-06-04 11:55:51', 'Sliding Wardrobe', '', 'info@acedecors.in', 'info@acedecors.in', 'image', '', '', 85);
 
 -- --------------------------------------------------------
 
@@ -2791,18 +2541,16 @@ INSERT INTO `sliderimages` (`imageId`, `image`, `createdOn`, `modifiedOn`, `alte
 -- Table structure for table `socialmediahandle`
 --
 
-DROP TABLE IF EXISTS `socialmediahandle`;
-CREATE TABLE IF NOT EXISTS `socialmediahandle` (
-  `Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `socialmediahandle` (
+  `Id` int(11) NOT NULL,
   `name` varchar(500) NOT NULL,
   `handle` varchar(500) NOT NULL,
   `icon` varchar(2000) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
   `createdBy` varchar(500) NOT NULL,
   `modifiedBy` varchar(500) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3;
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `socialmediahandle`
@@ -2820,30 +2568,36 @@ INSERT INTO `socialmediahandle` (`Id`, `name`, `handle`, `icon`, `createdon`, `c
 -- Table structure for table `subcategory`
 --
 
-DROP TABLE IF EXISTS `subcategory`;
-CREATE TABLE IF NOT EXISTS `subcategory` (
-  `subCategoryId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `subcategory` (
+  `subCategoryId` int(11) NOT NULL,
   `subCategoryName` varchar(200) NOT NULL,
   `subCategoryDescription` varchar(500) NOT NULL,
   `subCategoryCreatedBy` varchar(200) NOT NULL,
-  `subCategoryCreatedOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `subCategoryCreatedOn` datetime NOT NULL DEFAULT current_timestamp(),
   `subCategoryModifiedBy` varchar(200) NOT NULL,
-  `subCategoryModifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`subCategoryId`)
-) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=latin1;
+  `subCategoryModifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `subcategory`
 --
 
 INSERT INTO `subcategory` (`subCategoryId`, `subCategoryName`, `subCategoryDescription`, `subCategoryCreatedBy`, `subCategoryCreatedOn`, `subCategoryModifiedBy`, `subCategoryModifiedon`) VALUES
-(91, 'Best Kitchens', 'Best Kitchens', 'info@acedecors.in', '2025-10-08 13:56:04', 'info@acedecors.in', '2025-10-08 13:56:04'),
-(90, 'Awesome Kitchen', 'Awesome Kitchen', 'info@acedecors.in', '2025-10-08 13:54:30', 'info@acedecors.in', '2025-10-08 13:54:30'),
-(71, 'Ultimate Kitchen Designs', 'Ultimate Kitchen Designs', 'info@acedecors.in', '2025-09-23 14:10:16', 'info@acedecors.in', '2025-09-23 14:10:16');
+(93, 'Modular Kitchen', 'Modular Kitchen', 'info@acedecors.in', '2026-03-17 00:36:05', 'info@acedecors.in', '2026-06-04 11:59:35'),
+(94, 'Wardrobes', 'Wardrobes', 'info@acedecors.in', '2026-03-17 00:37:03', 'info@acedecors.in', '2026-06-04 11:59:53'),
+(96, 'TV Units', 'TV Units', 'info@acedecors.in', '2026-06-04 12:00:07', 'info@acedecors.in', '2026-06-04 12:00:07');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `supplierbalanceamt`
+-- (See below for the actual view)
+--
+CREATE TABLE `supplierbalanceamt` (
+`Total` decimal(33,0)
+,`Id` int(11)
+,`Supplier_id` int(11)
+);
 
 -- --------------------------------------------------------
 
@@ -2851,31 +2605,26 @@ INSERT INTO `subcategory` (`subCategoryId`, `subCategoryName`, `subCategoryDescr
 -- Table structure for table `suppliercontactdetails`
 --
 
-DROP TABLE IF EXISTS `suppliercontactdetails`;
-CREATE TABLE IF NOT EXISTS `suppliercontactdetails` (
-  `contactId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `suppliercontactdetails` (
+  `contactId` int(11) NOT NULL,
   `name` varchar(200) NOT NULL,
-  `supplierId` int NOT NULL,
+  `supplierId` int(11) NOT NULL,
   `emailId` varchar(200) NOT NULL,
   `designation` varchar(200) NOT NULL,
   `phone` varchar(10) NOT NULL,
   `createdby` varchar(200) NOT NULL,
   `modifiedby` varchar(200) NOT NULL,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`contactId`),
-  KEY `supplierId` (`supplierId`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `createdon` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `suppliercontactdetails`
 --
 
 INSERT INTO `suppliercontactdetails` (`contactId`, `name`, `supplierId`, `emailId`, `designation`, `phone`, `createdby`, `modifiedby`, `modifiedon`, `createdon`) VALUES
-(9, 'Shashi', 21, 'shashi@gmail.com', 'Sales', '9999999999', 'info@acedecors.in', 'info@acedecors.in', '2025-09-06 11:45:39', '2021-06-11 22:53:33'),
-(6, 'Athar Shaikh', 22, 'atharshaikh1@gmail.com', 'Manager', '8007961759', 'ACE DECORS', 'ACE DECORS', '2025-09-06 11:45:39', '2021-06-11 02:20:26'),
-(8, 'Reyaz', 21, 'ajayh@gmail.com', 'ASM', '9888888888', 'info@acedecors.in', 'info@acedecors.in', '2025-09-06 11:45:39', '2021-06-11 22:52:48'),
-(10, 'Moin', 14, 'taukeer123@gmail.com', 'hfjf', '9517532486', 'info@acedecors.in', 'info@acedecors.in', '2026-01-21 18:38:48', '2026-01-21 18:38:48');
+(12, 'Contact 1', 17, 'Des@gmail.com', 'Designation1', '987654321', 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 10:20:44', '2026-07-29 10:20:44'),
+(11, 'RH-EMP1', 16, 'rhemp1@gmail.com', 'Sales Head', '999999999', 'info@acedecors.in', 'info@acedecors.in', '2026-03-30 21:57:51', '2026-03-30 21:57:51');
 
 -- --------------------------------------------------------
 
@@ -2883,15 +2632,14 @@ INSERT INTO `suppliercontactdetails` (`contactId`, `name`, `supplierId`, `emailI
 -- Table structure for table `supplierpaymentinfo`
 --
 
-DROP TABLE IF EXISTS `supplierpaymentinfo`;
-CREATE TABLE IF NOT EXISTS `supplierpaymentinfo` (
-  `supplierpaymentId` int NOT NULL AUTO_INCREMENT,
-  `supplierId` int NOT NULL,
-  `POID` int NOT NULL,
-  `total_amount` int NOT NULL,
-  `paid_amount` int NOT NULL,
-  `received_amount` int NOT NULL,
-  `pending_amount` int NOT NULL,
+CREATE TABLE `supplierpaymentinfo` (
+  `supplierpaymentId` int(11) NOT NULL,
+  `supplierId` int(11) NOT NULL,
+  `POID` int(11) NOT NULL,
+  `total_amount` int(11) NOT NULL,
+  `paid_amount` int(11) NOT NULL,
+  `received_amount` int(11) NOT NULL,
+  `pending_amount` int(11) NOT NULL,
   `payment_plan` varchar(50) NOT NULL,
   `payment_mode` varchar(50) NOT NULL,
   `RTGS_no` varchar(100) NOT NULL,
@@ -2899,29 +2647,27 @@ CREATE TABLE IF NOT EXISTS `supplierpaymentinfo` (
   `due_date` date DEFAULT NULL,
   `payment_description` varchar(200) NOT NULL,
   `paymentPDFName` varchar(100) DEFAULT NULL,
-  `modifieddate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modified_by` varchar(25) NOT NULL,
-  PRIMARY KEY (`supplierpaymentId`),
-  KEY `supplierId` (`supplierId`),
-  KEY `POID` (`POID`)
-) ENGINE=MyISAM AUTO_INCREMENT=127 DEFAULT CHARSET=latin1;
+  `modifieddate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `modified_by` varchar(25) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `supplierpaymentinfo`
 --
 
 INSERT INTO `supplierpaymentinfo` (`supplierpaymentId`, `supplierId`, `POID`, `total_amount`, `paid_amount`, `received_amount`, `pending_amount`, `payment_plan`, `payment_mode`, `RTGS_no`, `cheque_img`, `due_date`, `payment_description`, `paymentPDFName`, `modifieddate`, `modified_by`) VALUES
-(126, 15, 121, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-27 11:06:47', ''),
-(125, 15, 120, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 15:29:23', ''),
-(124, 15, 119, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 15:27:33', ''),
-(123, 15, 118, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 13:42:29', ''),
-(122, 14, 117, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 13:38:41', ''),
-(121, 15, 116, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 11:56:13', ''),
-(120, 15, 115, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-02-26 11:55:56', '');
+(139, 18, 134, 0, 0, 0, 0, '0', '0', '', '', NULL, '0', NULL, '2026-07-30 01:50:58', '');
 
 -- --------------------------------------------------------
 
-
+--
+-- Stand-in structure for view `supplierpaymentlastq`
+-- (See below for the actual view)
+--
+CREATE TABLE `supplierpaymentlastq` (
+`PaidAmt` decimal(32,0)
+,`MONTH` varchar(9)
+);
 
 -- --------------------------------------------------------
 
@@ -2929,16 +2675,14 @@ INSERT INTO `supplierpaymentinfo` (`supplierpaymentId`, `supplierId`, `POID`, `t
 -- Table structure for table `supplier_brand_mapping`
 --
 
-DROP TABLE IF EXISTS `supplier_brand_mapping`;
-CREATE TABLE IF NOT EXISTS `supplier_brand_mapping` (
-  `supplierId` int NOT NULL,
-  `brandId` int NOT NULL,
+CREATE TABLE `supplier_brand_mapping` (
+  `supplierId` int(11) NOT NULL,
+  `brandId` int(11) NOT NULL,
   `createdby` varchar(200) NOT NULL,
   `modifiedby` varchar(200) NOT NULL,
-  `createdon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modifiedon` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`supplierId`,`brandId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `createdon` datetime NOT NULL DEFAULT current_timestamp(),
+  `modifiedon` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `supplier_brand_mapping`
@@ -2968,7 +2712,13 @@ INSERT INTO `supplier_brand_mapping` (`supplierId`, `brandId`, `createdby`, `mod
 (14, 263, 'info@acedecors.in', 'info@acedecors.in', '2026-01-22 20:10:38', '2026-01-22 20:10:38'),
 (15, 264, 'info@acedecors.in', 'info@acedecors.in', '2026-01-22 17:25:08', '2026-01-22 17:25:08'),
 (15, 263, 'info@acedecors.in', 'info@acedecors.in', '2026-01-22 17:25:08', '2026-01-22 17:25:08'),
-(15, 262, 'info@acedecors.in', 'info@acedecors.in', '2026-01-22 17:25:08', '2026-01-22 17:25:08');
+(15, 262, 'info@acedecors.in', 'info@acedecors.in', '2026-01-22 17:25:08', '2026-01-22 17:25:08'),
+(16, 274, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:08:18', '2026-07-29 11:08:18'),
+(17, 276, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 10:12:08', '2026-07-29 10:12:08'),
+(18, 277, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:08:56', '2026-07-29 11:08:56'),
+(18, 273, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:08:56', '2026-07-29 11:08:56'),
+(19, 279, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 10:14:37', '2026-07-29 10:14:37'),
+(16, 273, 'info@acedecors.in', 'info@acedecors.in', '2026-07-29 11:08:18', '2026-07-29 11:08:18');
 
 -- --------------------------------------------------------
 
@@ -2976,27 +2726,26 @@ INSERT INTO `supplier_brand_mapping` (`supplierId`, `brandId`, `createdby`, `mod
 -- Table structure for table `tax_table`
 --
 
-DROP TABLE IF EXISTS `tax_table`;
-CREATE TABLE IF NOT EXISTS `tax_table` (
-  `tax_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `tax_table` (
+  `tax_id` int(11) NOT NULL,
   `GST` decimal(4,2) NOT NULL,
   `SGST` decimal(4,2) DEFAULT NULL,
   `CGST` decimal(4,2) DEFAULT NULL,
   `IGST` decimal(4,2) DEFAULT NULL,
-  `Modified_Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `Created_Date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `Created_By` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  `Modified_By` varchar(200) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
-  PRIMARY KEY (`tax_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  `Modified_Date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `Created_Date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `Created_By` varchar(200) NOT NULL,
+  `Modified_By` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `tax_table`
 --
 
 INSERT INTO `tax_table` (`tax_id`, `GST`, `SGST`, `CGST`, `IGST`, `Modified_Date`, `Created_Date`, `Created_By`, `Modified_By`) VALUES
-(51, 12.00, 6.00, 18.00, NULL, '2026-02-28 16:49:54', '2026-02-28 16:49:54', 'info@acedecors.in', 'info@acedecors.in'),
-(52, 18.00, NULL, NULL, 18.00, '2026-02-28 16:49:43', '2026-02-28 16:49:43', 'info@acedecors.in', 'info@acedecors.in');
+(51, 18.00, 9.00, 9.00, NULL, '2026-03-30 12:11:58', '2026-03-30 12:11:58', 'info@acedecors.in', 'info@acedecors.in'),
+(52, 18.00, NULL, NULL, 18.00, '2026-02-28 16:49:43', '2026-02-28 16:49:43', 'info@acedecors.in', 'info@acedecors.in'),
+(54, 12.00, 6.00, 6.00, NULL, '2026-03-30 12:14:07', '2026-03-30 12:14:07', 'info@acedecors.in', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -3004,12 +2753,10 @@ INSERT INTO `tax_table` (`tax_id`, `GST`, `SGST`, `CGST`, `IGST`, `Modified_Date
 -- Table structure for table `termsandconditions`
 --
 
-DROP TABLE IF EXISTS `termsandconditions`;
-CREATE TABLE IF NOT EXISTS `termsandconditions` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `description` longtext NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb3;
+CREATE TABLE `termsandconditions` (
+  `id` int(11) NOT NULL,
+  `description` longtext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `termsandconditions`
@@ -3036,22 +2783,22 @@ INSERT INTO `termsandconditions` (`id`, `description`) VALUES
 -- Table structure for table `thickness`
 --
 
-DROP TABLE IF EXISTS `thickness`;
-CREATE TABLE IF NOT EXISTS `thickness` (
-  `Thickness_Id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `thickness` (
+  `Thickness_Id` int(11) NOT NULL,
   `Thickness` varchar(20) NOT NULL,
   `Thickness_createdby` varchar(20) NOT NULL,
-  `Thickness_modifiedby` varchar(20) NOT NULL,
-  PRIMARY KEY (`Thickness_Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 ;
+  `Thickness_modifiedby` varchar(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `thickness`
 --
 
 INSERT INTO `thickness` (`Thickness_Id`, `Thickness`, `Thickness_createdby`, `Thickness_modifiedby`) VALUES
-(2, '6', 'info@acedecors.in', 'info@acedecors.in'),
-(4, '15', 'info@acedecors.in', 'info@acedecors.in');
+(6, '12', 'info@acedecors.in', 'info@acedecors.in'),
+(5, '6', 'info@acedecors.in', 'info@acedecors.in'),
+(7, '18', 'info@acedecors.in', 'info@acedecors.in'),
+(8, '24', 'info@acedecors.in', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -3059,26 +2806,27 @@ INSERT INTO `thickness` (`Thickness_Id`, `Thickness`, `Thickness_createdby`, `Th
 -- Table structure for table `units`
 --
 
-DROP TABLE IF EXISTS `units`;
-CREATE TABLE IF NOT EXISTS `units` (
-  `unitId` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `units` (
+  `unitId` int(11) NOT NULL,
   `unitName` varchar(200) NOT NULL,
   `unitDescription` varchar(500) NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
   `createdBy` varchar(200) NOT NULL,
-  `modifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modifiedBy` varchar(200) NOT NULL,
-  PRIMARY KEY (`unitId`)
-) ENGINE=MyISAM AUTO_INCREMENT=63 DEFAULT CHARSET=latin1;
+  `modifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `modifiedBy` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `units`
 --
 
 INSERT INTO `units` (`unitId`, `unitName`, `unitDescription`, `createdOn`, `createdBy`, `modifiedOn`, `modifiedBy`) VALUES
-(60, 'U11', 'testfgh', '2025-12-18 13:17:50', 'info@acedecors.in', '2026-02-26 16:22:02', 'info@acedecors.in'),
-(61, 'U2', 'fsdsdffghhfgghf', '2026-02-16 10:43:33', 'info@acedecors.in', '2026-02-19 13:27:44', 'info@acedecors.in'),
-(62, 'U3', 'sdsdfasl', '2026-02-19 13:28:02', 'info@acedecors.in', '2026-02-19 13:28:02', 'info@acedecors.in');
+(65, 'U145', 'Unit3', '2026-03-30 12:04:08', 'info@acedecors.in', '2026-03-30 21:46:49', 'info@acedecors.in'),
+(64, 'U35', 'Unit3', '2026-03-30 12:03:54', 'info@acedecors.in', '2026-07-29 10:33:44', 'info@acedecors.in'),
+(63, 'U1', 'Unit1', '2026-03-30 12:03:41', 'info@acedecors.in', '2026-03-30 12:11:06', 'info@acedecors.in'),
+(66, 'U200', 'Unit4', '2026-03-30 12:14:43', 'info@acedecors.in', '2026-03-30 21:47:00', 'info@acedecors.in'),
+(67, 'U10', 'Unit10', '2026-03-30 23:05:59', 'info@acedecors.in', '2026-03-30 23:05:59', 'info@acedecors.in'),
+(68, 'U1', 'Set', '2026-07-29 10:33:59', 'info@acedecors.in', '2026-07-29 10:33:59', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -3086,28 +2834,28 @@ INSERT INTO `units` (`unitId`, `unitName`, `unitDescription`, `createdOn`, `crea
 -- Table structure for table `unitsfactor`
 --
 
-DROP TABLE IF EXISTS `unitsfactor`;
-CREATE TABLE IF NOT EXISTS `unitsfactor` (
-  `unitFactorId` int NOT NULL AUTO_INCREMENT,
-  `unitId` int NOT NULL,
-  `unitFactor` int NOT NULL,
+CREATE TABLE `unitsfactor` (
+  `unitFactorId` int(11) NOT NULL,
+  `unitId` int(11) NOT NULL,
+  `unitFactor` int(11) NOT NULL,
   `unitFactorDescription` varchar(500) NOT NULL,
-  `createdOn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdOn` datetime NOT NULL DEFAULT current_timestamp(),
   `createdBy` varchar(200) NOT NULL,
-  `modifiedOn` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `modifiedBy` varchar(200) NOT NULL,
-  PRIMARY KEY (`unitFactorId`),
-  KEY `unitId` (`unitId`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+  `modifiedOn` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `modifiedBy` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `unitsfactor`
 --
 
 INSERT INTO `unitsfactor` (`unitFactorId`, `unitId`, `unitFactor`, `unitFactorDescription`, `createdOn`, `createdBy`, `modifiedOn`, `modifiedBy`) VALUES
-(30, 60, 5, 'test', '2025-12-18 13:18:18', 'info@acedecors.in', '2026-02-26 16:22:25', 'info@acedecors.in'),
-(31, 61, 10, 'test', '2026-02-16 10:43:50', 'info@acedecors.in', '2026-02-16 10:43:50', 'info@acedecors.in'),
-(32, 62, 2, 'testret', '2026-02-19 13:28:21', 'info@acedecors.in', '2026-02-19 13:28:21', 'info@acedecors.in');
+(35, 65, 145, 'Hundred Forty Five', '2026-03-30 12:05:27', 'info@acedecors.in', '2026-03-30 21:45:44', 'info@acedecors.in'),
+(34, 64, 35, 'Thirty Five', '2026-03-30 12:05:13', 'info@acedecors.in', '2026-03-30 12:05:13', 'info@acedecors.in'),
+(33, 63, 1, 'One', '2026-03-30 12:04:39', 'info@acedecors.in', '2026-03-30 12:04:39', 'info@acedecors.in'),
+(36, 66, 200, 'Two Hundred', '2026-03-30 12:16:35', 'info@acedecors.in', '2026-03-30 12:16:35', 'info@acedecors.in'),
+(38, 67, 10, 'Ten', '2026-03-30 23:06:15', 'info@acedecors.in', '2026-03-30 23:06:15', 'info@acedecors.in'),
+(39, 63, 1, 'ufgytftf5', '2026-07-29 10:35:27', 'info@acedecors.in', '2026-07-29 10:35:27', 'info@acedecors.in');
 
 -- --------------------------------------------------------
 
@@ -3115,21 +2863,18 @@ INSERT INTO `unitsfactor` (`unitFactorId`, `unitId`, `unitFactor`, `unitFactorDe
 -- Table structure for table `user`
 --
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE IF NOT EXISTS `user` (
-  `user_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `user` (
+  `user_id` int(11) NOT NULL,
   `user_name` varchar(250) NOT NULL,
   `user_contact` varchar(15) NOT NULL,
   `user_email` varchar(250) NOT NULL,
   `user_password` varchar(250) NOT NULL,
   `user_type` enum('Admin','Manager') NOT NULL,
   `user_status` enum('Enable','Disable') NOT NULL,
-  `user_created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `ModifiedDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `role_id` int DEFAULT NULL,
-  PRIMARY KEY (`user_id`),
-  KEY `role_id` (`role_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb3;
+  `user_created_on` datetime NOT NULL DEFAULT current_timestamp(),
+  `ModifiedDate` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `role_id` int(11) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 
 --
 -- Dumping data for table `user`
@@ -3145,34 +2890,62 @@ INSERT INTO `user` (`user_id`, `user_name`, `user_contact`, `user_email`, `user_
 -- Table structure for table `user_action_permissions`
 --
 
-DROP TABLE IF EXISTS `user_action_permissions`;
-CREATE TABLE IF NOT EXISTS `user_action_permissions` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `action_id` int DEFAULT NULL,
-  `allowed` tinyint(1) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=498 DEFAULT CHARSET=utf8mb4 ;
+CREATE TABLE `user_action_permissions` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `action_id` int(11) DEFAULT NULL,
+  `allowed` tinyint(1) DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user_action_permissions`
 --
 
 INSERT INTO `user_action_permissions` (`id`, `user_id`, `action_id`, `allowed`) VALUES
-(497, 11, 42, 1),
-(496, 11, 37, 1),
-(495, 11, 34, 1),
-(494, 11, 32, 1),
-(493, 11, 29, 1),
-(492, 11, 26, 1),
-(491, 11, 24, 1),
-(490, 11, 19, 1),
-(489, 11, 16, 1),
-(488, 11, 13, 1),
-(487, 11, 10, 1),
-(486, 11, 9, 1),
-(485, 11, 4, 1),
-(484, 11, 3, 1);
+(629, 11, 47, 1),
+(628, 11, 46, 1),
+(627, 11, 45, 1),
+(626, 11, 44, 1),
+(625, 11, 42, 1),
+(624, 11, 43, 1),
+(623, 11, 38, 1),
+(622, 11, 37, 1),
+(621, 11, 36, 1),
+(620, 11, 35, 1),
+(619, 11, 34, 1),
+(618, 11, 33, 1),
+(617, 11, 32, 1),
+(616, 11, 31, 1),
+(615, 11, 30, 1),
+(614, 11, 29, 1),
+(613, 11, 28, 1),
+(612, 11, 27, 1),
+(611, 11, 26, 1),
+(610, 11, 25, 1),
+(609, 11, 24, 1),
+(608, 11, 23, 1),
+(607, 11, 22, 1),
+(606, 11, 21, 1),
+(605, 11, 20, 1),
+(604, 11, 19, 1),
+(603, 11, 18, 1),
+(602, 11, 17, 1),
+(601, 11, 16, 1),
+(600, 11, 15, 1),
+(599, 11, 14, 1),
+(598, 11, 13, 1),
+(597, 11, 12, 1),
+(596, 11, 11, 1),
+(595, 11, 10, 1),
+(594, 11, 9, 1),
+(593, 11, 8, 1),
+(592, 11, 7, 1),
+(591, 11, 6, 1),
+(590, 11, 5, 1),
+(589, 11, 4, 1),
+(588, 11, 3, 1),
+(587, 11, 2, 1),
+(586, 11, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -3180,21 +2953,1106 @@ INSERT INTO `user_action_permissions` (`id`, `user_id`, `action_id`, `allowed`) 
 -- Table structure for table `user_permissions`
 --
 
-DROP TABLE IF EXISTS `user_permissions`;
-CREATE TABLE IF NOT EXISTS `user_permissions` (
-  `permission_id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
+CREATE TABLE `user_permissions` (
+  `permission_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `module_name` varchar(100) NOT NULL,
-  `can_read` tinyint(1) DEFAULT '0',
-  `can_write` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`permission_id`),
-  KEY `user_id` (`user_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 ;
+  `can_read` tinyint(1) DEFAULT 0,
+  `can_write` tinyint(1) DEFAULT 0
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `attendance`
+--
+ALTER TABLE `attendance`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `brands`
+--
+ALTER TABLE `brands`
+  ADD PRIMARY KEY (`brand_id`);
+
+--
+-- Indexes for table `brand_category_mapping`
+--
+ALTER TABLE `brand_category_mapping`
+  ADD KEY `brandId` (`brandId`),
+  ADD KEY `item_categoryId` (`item_categoryId`);
+
+--
+-- Indexes for table `brand_matcat_mapping`
+--
+ALTER TABLE `brand_matcat_mapping`
+  ADD KEY `brandId` (`brandId`),
+  ADD KEY `material_categoryId` (`material_categoryId`);
+
+--
+-- Indexes for table `businessdetails`
+--
+ALTER TABLE `businessdetails`
+  ADD PRIMARY KEY (`businessId`);
+
+--
+-- Indexes for table `business_media`
+--
+ALTER TABLE `business_media`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `businessId` (`businessId`);
+
+--
+-- Indexes for table `cabinettype`
+--
+ALTER TABLE `cabinettype`
+  ADD PRIMARY KEY (`CabinetType_Id`);
+
+--
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`categoryId`),
+  ADD UNIQUE KEY `categoryName` (`categoryName`);
+
+--
+-- Indexes for table `cl_dimension`
+--
+ALTER TABLE `cl_dimension`
+  ADD PRIMARY KEY (`CLDimensionId`);
+
+--
+-- Indexes for table `cms_brands`
+--
+ALTER TABLE `cms_brands`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `cms_brand_section`
+--
+ALTER TABLE `cms_brand_section`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `company_details`
+--
+ALTER TABLE `company_details`
+  ADD PRIMARY KEY (`companyid`);
+
+--
+-- Indexes for table `contents`
+--
+ALTER TABLE `contents`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `content_media`
+--
+ALTER TABLE `content_media`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_content_media_content` (`content_id`);
+
+--
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`customerId`),
+  ADD KEY `enq_id` (`enq_id`);
+
+--
+-- Indexes for table `customerpaymentinfo`
+--
+ALTER TABLE `customerpaymentinfo`
+  ADD PRIMARY KEY (`payment_id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `quotation_id` (`quotation_id`);
+
+--
+-- Indexes for table `designimages`
+--
+ALTER TABLE `designimages`
+  ADD PRIMARY KEY (`designImgId`),
+  ADD KEY `customerId` (`customerId`);
+
+--
+-- Indexes for table `dimensions`
+--
+ALTER TABLE `dimensions`
+  ADD PRIMARY KEY (`dimensionsId`);
+
+--
+-- Indexes for table `eb`
+--
+ALTER TABLE `eb`
+  ADD PRIMARY KEY (`EB_Id`);
+
+--
+-- Indexes for table `eb_lw`
+--
+ALTER TABLE `eb_lw`
+  ADD PRIMARY KEY (`EBLW_Id`);
+
+--
+-- Indexes for table `employee`
+--
+ALTER TABLE `employee`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `employee_payment`
+--
+ALTER TABLE `employee_payment`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `emp_id` (`emp_id`);
+
+--
+-- Indexes for table `enquiry`
+--
+ALTER TABLE `enquiry`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `enquiry_category`
+--
+ALTER TABLE `enquiry_category`
+  ADD PRIMARY KEY (`enq_catid`),
+  ADD UNIQUE KEY `uniq_cat_name_type` (`enq_cat_name`,`enq_cat_type`);
+
+--
+-- Indexes for table `enquiry_details`
+--
+ALTER TABLE `enquiry_details`
+  ADD PRIMARY KEY (`enqid`);
+
+--
+-- Indexes for table `enquiry_followups`
+--
+ALTER TABLE `enquiry_followups`
+  ADD PRIMARY KEY (`followupid`),
+  ADD KEY `followup_enq_id` (`followup_enq_id`);
+
+--
+-- Indexes for table `expense`
+--
+ALTER TABLE `expense`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `expense_category`
+--
+ALTER TABLE `expense_category`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `finish`
+--
+ALTER TABLE `finish`
+  ADD PRIMARY KEY (`FinishId`);
+
+--
+-- Indexes for table `general_subcategory`
+--
+ALTER TABLE `general_subcategory`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `gl`
+--
+ALTER TABLE `gl`
+  ADD PRIMARY KEY (`GL_Id`);
+
+--
+-- Indexes for table `inputtype`
+--
+ALTER TABLE `inputtype`
+  ADD PRIMARY KEY (`InputTypeId`);
+
+--
+-- Indexes for table `itemallocation`
+--
+ALTER TABLE `itemallocation`
+  ADD KEY `item_stockId` (`item_stockId`),
+  ADD KEY `ProjectId` (`ProjectId`);
+
+--
+-- Indexes for table `itemissues_followup`
+--
+ALTER TABLE `itemissues_followup`
+  ADD PRIMARY KEY (`followupId`),
+  ADD KEY `followup_ItemId` (`followup_ItemId`),
+  ADD KEY `followupPOID` (`followupPOID`);
+
+--
+-- Indexes for table `item_category`
+--
+ALTER TABLE `item_category`
+  ADD PRIMARY KEY (`item_catid`);
+
+--
+-- Indexes for table `item_companydetails`
+--
+ALTER TABLE `item_companydetails`
+  ADD PRIMARY KEY (`item_compid`);
+
+--
+-- Indexes for table `item_details`
+--
+ALTER TABLE `item_details`
+  ADD PRIMARY KEY (`item_id`);
+
+--
+-- Indexes for table `item_pricingissues`
+--
+ALTER TABLE `item_pricingissues`
+  ADD PRIMARY KEY (`PricingIssues_Id`);
+
+--
+-- Indexes for table `item_stock`
+--
+ALTER TABLE `item_stock`
+  ADD PRIMARY KEY (`item_stockid`),
+  ADD KEY `POID` (`POID`);
+
+--
+-- Indexes for table `item_subcategory`
+--
+ALTER TABLE `item_subcategory`
+  ADD PRIMARY KEY (`item_subcatid`),
+  ADD KEY `item_catid` (`item_catid`);
+
+--
+-- Indexes for table `material`
+--
+ALTER TABLE `material`
+  ADD PRIMARY KEY (`Material_Id`);
+
+--
+-- Indexes for table `materialissues_followup`
+--
+ALTER TABLE `materialissues_followup`
+  ADD PRIMARY KEY (`followup_Id`),
+  ADD KEY `followup_POID` (`followup_POID`),
+  ADD KEY `followup_MaterialId` (`followup_MaterialId`);
+
+--
+-- Indexes for table `material_category`
+--
+ALTER TABLE `material_category`
+  ADD PRIMARY KEY (`material_catId`);
+
+--
+-- Indexes for table `material_pricingissues`
+--
+ALTER TABLE `material_pricingissues`
+  ADD PRIMARY KEY (`PricingIssues_Id`);
+
+--
+-- Indexes for table `material_subcategory`
+--
+ALTER TABLE `material_subcategory`
+  ADD PRIMARY KEY (`material_subcatId`);
+
+--
+-- Indexes for table `modules`
+--
+ALTER TABLE `modules`
+  ADD PRIMARY KEY (`module_id`),
+  ADD UNIQUE KEY `module_name` (`module_name`);
+
+--
+-- Indexes for table `module_actions`
+--
+ALTER TABLE `module_actions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `permissions`
+--
+ALTER TABLE `permissions`
+  ADD PRIMARY KEY (`permission_id`);
+
+--
+-- Indexes for table `post`
+--
+ALTER TABLE `post`
+  ADD PRIMARY KEY (`postId`);
+
+--
+-- Indexes for table `postimages`
+--
+ALTER TABLE `postimages`
+  ADD PRIMARY KEY (`postImageId`);
+
+--
+-- Indexes for table `postkeywords`
+--
+ALTER TABLE `postkeywords`
+  ADD PRIMARY KEY (`keywordId`);
+
+--
+-- Indexes for table `privacypolicy`
+--
+ALTER TABLE `privacypolicy`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `processing`
+--
+ALTER TABLE `processing`
+  ADD PRIMARY KEY (`ProcessingId`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`product_id`);
+
+--
+-- Indexes for table `product_category`
+--
+ALTER TABLE `product_category`
+  ADD PRIMARY KEY (`product_catid`);
+
+--
+-- Indexes for table `product_definition`
+--
+ALTER TABLE `product_definition`
+  ADD PRIMARY KEY (`prodDefinition_Id`);
+
+--
+-- Indexes for table `product_subcategory`
+--
+ALTER TABLE `product_subcategory`
+  ADD PRIMARY KEY (`product_subcatid`),
+  ADD KEY `product_catid` (`product_catid`);
+
+--
+-- Indexes for table `projects`
+--
+ALTER TABLE `projects`
+  ADD PRIMARY KEY (`projectId`),
+  ADD KEY `quoteId` (`quoteId`),
+  ADD KEY `custId` (`custId`);
+
+--
+-- Indexes for table `projecttasks`
+--
+ALTER TABLE `projecttasks`
+  ADD PRIMARY KEY (`TaskId`);
+
+--
+-- Indexes for table `project_issues`
+--
+ALTER TABLE `project_issues`
+  ADD PRIMARY KEY (`IssueId`),
+  ADD KEY `followup_ProjCode` (`Issue_ProjCode`),
+  ADD KEY `followup_ProjectId` (`Issue_ProjectId`);
+
+--
+-- Indexes for table `purchaseorder_lineitem`
+--
+ALTER TABLE `purchaseorder_lineitem`
+  ADD PRIMARY KEY (`POlineitemId`),
+  ADD KEY `Item_id` (`Item_id`),
+  ADD KEY `POID` (`POID`),
+  ADD KEY `SupplierId` (`SupplierId`);
+
+--
+-- Indexes for table `purchase_order`
+--
+ALTER TABLE `purchase_order`
+  ADD PRIMARY KEY (`Id`),
+  ADD KEY `SupplierId` (`SupplierId`),
+  ADD KEY `Item_id` (`Item_id`),
+  ADD KEY `ProjectId` (`ProjectId`);
+
+--
+-- Indexes for table `quotation_details`
+--
+ALTER TABLE `quotation_details`
+  ADD PRIMARY KEY (`quoteId`),
+  ADD KEY `quo_enq_id` (`quo_enq_id`),
+  ADD KEY `customerId` (`customerId`),
+  ADD KEY `enqCatId` (`enqCatId`),
+  ADD KEY `unitId` (`unitId`);
+
+--
+-- Indexes for table `quotelineitem`
+--
+ALTER TABLE `quotelineitem`
+  ADD PRIMARY KEY (`lineItemId`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`role_id`);
+
+--
+-- Indexes for table `role_permissions`
+--
+ALTER TABLE `role_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `role_id` (`role_id`),
+  ADD KEY `permission_id` (`permission_id`);
+
+--
+-- Indexes for table `rotation`
+--
+ALTER TABLE `rotation`
+  ADD PRIMARY KEY (`rotationId`);
+
+--
+-- Indexes for table `settings`
+--
+ALTER TABLE `settings`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `sliderimages`
+--
+ALTER TABLE `sliderimages`
+  ADD PRIMARY KEY (`imageId`);
+
+--
+-- Indexes for table `socialmediahandle`
+--
+ALTER TABLE `socialmediahandle`
+  ADD PRIMARY KEY (`Id`);
+
+--
+-- Indexes for table `subcategory`
+--
+ALTER TABLE `subcategory`
+  ADD PRIMARY KEY (`subCategoryId`);
+
+--
+-- Indexes for table `suppliercontactdetails`
+--
+ALTER TABLE `suppliercontactdetails`
+  ADD PRIMARY KEY (`contactId`),
+  ADD KEY `supplierId` (`supplierId`);
+
+--
+-- Indexes for table `supplierpaymentinfo`
+--
+ALTER TABLE `supplierpaymentinfo`
+  ADD PRIMARY KEY (`supplierpaymentId`),
+  ADD KEY `supplierId` (`supplierId`),
+  ADD KEY `POID` (`POID`);
+
+--
+-- Indexes for table `supplier_brand_mapping`
+--
+ALTER TABLE `supplier_brand_mapping`
+  ADD PRIMARY KEY (`supplierId`,`brandId`);
+
+--
+-- Indexes for table `tax_table`
+--
+ALTER TABLE `tax_table`
+  ADD PRIMARY KEY (`tax_id`);
+
+--
+-- Indexes for table `termsandconditions`
+--
+ALTER TABLE `termsandconditions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `thickness`
+--
+ALTER TABLE `thickness`
+  ADD PRIMARY KEY (`Thickness_Id`);
+
+--
+-- Indexes for table `units`
+--
+ALTER TABLE `units`
+  ADD PRIMARY KEY (`unitId`);
+
+--
+-- Indexes for table `unitsfactor`
+--
+ALTER TABLE `unitsfactor`
+  ADD PRIMARY KEY (`unitFactorId`),
+  ADD KEY `unitId` (`unitId`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`user_id`),
+  ADD KEY `role_id` (`role_id`);
+
+--
+-- Indexes for table `user_action_permissions`
+--
+ALTER TABLE `user_action_permissions`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `user_permissions`
+--
+ALTER TABLE `user_permissions`
+  ADD PRIMARY KEY (`permission_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `attendance`
+--
+ALTER TABLE `attendance`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
+
+--
+-- AUTO_INCREMENT for table `brands`
+--
+ALTER TABLE `brands`
+  MODIFY `brand_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=283;
+
+--
+-- AUTO_INCREMENT for table `businessdetails`
+--
+ALTER TABLE `businessdetails`
+  MODIFY `businessId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `business_media`
+--
+ALTER TABLE `business_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `cabinettype`
+--
+ALTER TABLE `cabinettype`
+  MODIFY `CabinetType_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+  MODIFY `categoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+
+--
+-- AUTO_INCREMENT for table `cl_dimension`
+--
+ALTER TABLE `cl_dimension`
+  MODIFY `CLDimensionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `cms_brands`
+--
+ALTER TABLE `cms_brands`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `cms_brand_section`
+--
+ALTER TABLE `cms_brand_section`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `company_details`
+--
+ALTER TABLE `company_details`
+  MODIFY `companyid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `contents`
+--
+ALTER TABLE `contents`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `content_media`
+--
+ALTER TABLE `content_media`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `customerId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT for table `customerpaymentinfo`
+--
+ALTER TABLE `customerpaymentinfo`
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=395;
+
+--
+-- AUTO_INCREMENT for table `designimages`
+--
+ALTER TABLE `designimages`
+  MODIFY `designImgId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT for table `dimensions`
+--
+ALTER TABLE `dimensions`
+  MODIFY `dimensionsId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `eb`
+--
+ALTER TABLE `eb`
+  MODIFY `EB_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `eb_lw`
+--
+ALTER TABLE `eb_lw`
+  MODIFY `EBLW_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `employee`
+--
+ALTER TABLE `employee`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+
+--
+-- AUTO_INCREMENT for table `employee_payment`
+--
+ALTER TABLE `employee_payment`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
+
+--
+-- AUTO_INCREMENT for table `enquiry`
+--
+ALTER TABLE `enquiry`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `enquiry_category`
+--
+ALTER TABLE `enquiry_category`
+  MODIFY `enq_catid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+
+--
+-- AUTO_INCREMENT for table `enquiry_details`
+--
+ALTER TABLE `enquiry_details`
+  MODIFY `enqid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
+
+--
+-- AUTO_INCREMENT for table `enquiry_followups`
+--
+ALTER TABLE `enquiry_followups`
+  MODIFY `followupid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+
+--
+-- AUTO_INCREMENT for table `expense`
+--
+ALTER TABLE `expense`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=375;
+
+--
+-- AUTO_INCREMENT for table `expense_category`
+--
+ALTER TABLE `expense_category`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `finish`
+--
+ALTER TABLE `finish`
+  MODIFY `FinishId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `general_subcategory`
+--
+ALTER TABLE `general_subcategory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `gl`
+--
+ALTER TABLE `gl`
+  MODIFY `GL_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `inputtype`
+--
+ALTER TABLE `inputtype`
+  MODIFY `InputTypeId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `itemissues_followup`
+--
+ALTER TABLE `itemissues_followup`
+  MODIFY `followupId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `item_category`
+--
+ALTER TABLE `item_category`
+  MODIFY `item_catid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=132;
+
+--
+-- AUTO_INCREMENT for table `item_companydetails`
+--
+ALTER TABLE `item_companydetails`
+  MODIFY `item_compid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
+-- AUTO_INCREMENT for table `item_details`
+--
+ALTER TABLE `item_details`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=193;
+
+--
+-- AUTO_INCREMENT for table `item_pricingissues`
+--
+ALTER TABLE `item_pricingissues`
+  MODIFY `PricingIssues_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT for table `item_stock`
+--
+ALTER TABLE `item_stock`
+  MODIFY `item_stockid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
+
+--
+-- AUTO_INCREMENT for table `item_subcategory`
+--
+ALTER TABLE `item_subcategory`
+  MODIFY `item_subcatid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+
+--
+-- AUTO_INCREMENT for table `material`
+--
+ALTER TABLE `material`
+  MODIFY `Material_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
+
+--
+-- AUTO_INCREMENT for table `materialissues_followup`
+--
+ALTER TABLE `materialissues_followup`
+  MODIFY `followup_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `material_category`
+--
+ALTER TABLE `material_category`
+  MODIFY `material_catId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+--
+-- AUTO_INCREMENT for table `material_pricingissues`
+--
+ALTER TABLE `material_pricingissues`
+  MODIFY `PricingIssues_Id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `material_subcategory`
+--
+ALTER TABLE `material_subcategory`
+  MODIFY `material_subcatId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `modules`
+--
+ALTER TABLE `modules`
+  MODIFY `module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `module_actions`
+--
+ALTER TABLE `module_actions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+
+--
+-- AUTO_INCREMENT for table `permissions`
+--
+ALTER TABLE `permissions`
+  MODIFY `permission_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `post`
+--
+ALTER TABLE `post`
+  MODIFY `postId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+
+--
+-- AUTO_INCREMENT for table `postimages`
+--
+ALTER TABLE `postimages`
+  MODIFY `postImageId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+
+--
+-- AUTO_INCREMENT for table `postkeywords`
+--
+ALTER TABLE `postkeywords`
+  MODIFY `keywordId` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `privacypolicy`
+--
+ALTER TABLE `privacypolicy`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `processing`
+--
+ALTER TABLE `processing`
+  MODIFY `ProcessingId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `product_category`
+--
+ALTER TABLE `product_category`
+  MODIFY `product_catid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `product_definition`
+--
+ALTER TABLE `product_definition`
+  MODIFY `prodDefinition_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `product_subcategory`
+--
+ALTER TABLE `product_subcategory`
+  MODIFY `product_subcatid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `projects`
+--
+ALTER TABLE `projects`
+  MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=84;
+
+--
+-- AUTO_INCREMENT for table `projecttasks`
+--
+ALTER TABLE `projecttasks`
+  MODIFY `TaskId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `project_issues`
+--
+ALTER TABLE `project_issues`
+  MODIFY `IssueId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `purchaseorder_lineitem`
+--
+ALTER TABLE `purchaseorder_lineitem`
+  MODIFY `POlineitemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=159;
+
+--
+-- AUTO_INCREMENT for table `purchase_order`
+--
+ALTER TABLE `purchase_order`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
+
+--
+-- AUTO_INCREMENT for table `quotation_details`
+--
+ALTER TABLE `quotation_details`
+  MODIFY `quoteId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=280;
+
+--
+-- AUTO_INCREMENT for table `quotelineitem`
+--
+ALTER TABLE `quotelineitem`
+  MODIFY `lineItemId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=381;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `role_permissions`
+--
+ALTER TABLE `role_permissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `rotation`
+--
+ALTER TABLE `rotation`
+  MODIFY `rotationId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `settings`
+--
+ALTER TABLE `settings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `sliderimages`
+--
+ALTER TABLE `sliderimages`
+  MODIFY `imageId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
+
+--
+-- AUTO_INCREMENT for table `socialmediahandle`
+--
+ALTER TABLE `socialmediahandle`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT for table `subcategory`
+--
+ALTER TABLE `subcategory`
+  MODIFY `subCategoryId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
+
+--
+-- AUTO_INCREMENT for table `suppliercontactdetails`
+--
+ALTER TABLE `suppliercontactdetails`
+  MODIFY `contactId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `supplierpaymentinfo`
+--
+ALTER TABLE `supplierpaymentinfo`
+  MODIFY `supplierpaymentId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+
+--
+-- AUTO_INCREMENT for table `tax_table`
+--
+ALTER TABLE `tax_table`
+  MODIFY `tax_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+
+--
+-- AUTO_INCREMENT for table `termsandconditions`
+--
+ALTER TABLE `termsandconditions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `thickness`
+--
+ALTER TABLE `thickness`
+  MODIFY `Thickness_Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `units`
+--
+ALTER TABLE `units`
+  MODIFY `unitId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
+
+--
+-- AUTO_INCREMENT for table `unitsfactor`
+--
+ALTER TABLE `unitsfactor`
+  MODIFY `unitFactorId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+
+--
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `user_action_permissions`
+--
+ALTER TABLE `user_action_permissions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=630;
+
+--
+-- AUTO_INCREMENT for table `user_permissions`
+--
+ALTER TABLE `user_permissions`
+  MODIFY `permission_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 -- --------------------------------------------------------
 
+--
+-- Structure for view `availableqty`
+--
+DROP TABLE IF EXISTS `availableqty`;
 
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `availableqty`  AS SELECT sum(`s`.`ReceivedQty`) - `a`.`AllocatedQty` AS `AvailableQty`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM (`item_stock` `s` join `itemallocation` `a`) WHERE monthname(`s`.`modifiedOn`) = monthname(current_timestamp() + interval -2 month)union select sum(`s`.`ReceivedQty`) - `a`.`AllocatedQty` AS `AvailableQty`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from (`item_stock` `s` join `itemallocation` `a`) where monthname(`s`.`modifiedOn`) = monthname(current_timestamp() + interval -1 month) union select sum(`s`.`ReceivedQty`) - `a`.`AllocatedQty` AS `AvailableQty`,monthname(current_timestamp() - 1) AS `MONTH` from (`item_stock` `s` join `itemallocation` `a`) where monthname(`s`.`modifiedOn`) = monthname(current_timestamp() - 1)  ;
 
+-- --------------------------------------------------------
+
+--
+-- Structure for view `customerbalanceamt`
+--
+DROP TABLE IF EXISTS `customerbalanceamt`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `customerbalanceamt`  AS SELECT sum(`cp`.`total_amount`) - sum(`cp`.`received_amount`) AS `Total`, `cp`.`customer_id` AS `Id`, `c`.`customerCode` AS `CustomerId` FROM (`customerpaymentinfo` `cp` join `customer` `c` on(convert(`c`.`customerCode` using utf8mb3) = `cp`.`customer_id`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `customerlastm`
+--
+DROP TABLE IF EXISTS `customerlastm`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `customerlastm`  AS SELECT count(0) AS `Customers`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `quotation_details` WHERE monthname(`quotation_details`.`modifiedon`) = monthname(current_timestamp() + interval -2 month) AND `quotation_details`.`quo_status` = 'Approved'union select count(0) AS `Customers`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `quotation_details` where monthname(`quotation_details`.`modifiedon`) = monthname(current_timestamp() + interval -1 month) and `quotation_details`.`quo_status` = 'Approved' union select count(0) AS `Customers`,monthname(current_timestamp() - 1) AS `MONTH` from `quotation_details` where monthname(`quotation_details`.`modifiedon`) = monthname(current_timestamp() - 1) and `quotation_details`.`quo_status` = 'Approved'  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `customerpaymentlastq`
+--
+DROP TABLE IF EXISTS `customerpaymentlastq`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `customerpaymentlastq`  AS SELECT sum(`customerpaymentinfo`.`received_amount`) AS `ReceivedAmt`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `customerpaymentinfo` WHERE monthname(`customerpaymentinfo`.`modifieddate`) = monthname(current_timestamp() + interval -2 month)union select sum(`customerpaymentinfo`.`received_amount`) AS `ReceivedAmt`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `customerpaymentinfo` where monthname(`customerpaymentinfo`.`modifieddate`) = monthname(current_timestamp() + interval -1 month) union select sum(`customerpaymentinfo`.`received_amount`) AS `ReceivedAmt`,monthname(current_timestamp() - 1) AS `MONTH` from `customerpaymentinfo` where monthname(`customerpaymentinfo`.`modifieddate`) = monthname(current_timestamp() - 1)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `enquirylastm`
+--
+DROP TABLE IF EXISTS `enquirylastm`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `enquirylastm`  AS SELECT count(0) AS `Enquiries`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `enquiry_details` WHERE monthname(`enquiry_details`.`enq_createdOn`) = monthname(current_timestamp() + interval -2 month)union select count(0) AS `Enqueries`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `enquiry_details` where monthname(`enquiry_details`.`enq_createdOn`) = monthname(current_timestamp() + interval -1 month) union select count(0) AS `Enqueries`,monthname(current_timestamp() - 1) AS `MONTH` from `enquiry_details` where monthname(`enquiry_details`.`enq_createdOn`) = monthname(current_timestamp() - 1)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `inwardedlastq`
+--
+DROP TABLE IF EXISTS `inwardedlastq`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `inwardedlastq`  AS SELECT sum(`item_stock`.`ReceivedQty`) AS `ReceivedQty`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `item_stock` WHERE monthname(`item_stock`.`modifiedOn`) = monthname(current_timestamp() + interval -2 month)union select sum(`item_stock`.`ReceivedQty`) AS `ReceivedQty`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `item_stock` where monthname(`item_stock`.`modifiedOn`) = monthname(current_timestamp() + interval -1 month) union select sum(`item_stock`.`ReceivedQty`) AS `ReceivedQty`,monthname(current_timestamp() - 1) AS `MONTH` from `item_stock` where monthname(`item_stock`.`modifiedOn`) = monthname(current_timestamp() - 1)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `projectslastm`
+--
+DROP TABLE IF EXISTS `projectslastm`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `projectslastm`  AS SELECT count(0) AS `Projects`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `projects` WHERE `projects`.`project_status` = 'Completed' AND monthname(`projects`.`createdOn`) = monthname(current_timestamp() + interval -2 month)union select count(0) AS `Projects`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `projects` where `projects`.`project_status` = 'Completed' and monthname(`projects`.`createdOn`) = monthname(current_timestamp() + interval -1 month) union select count(0) AS `Projects`,monthname(current_timestamp() - 1) AS `MONTH` from `projects` where `projects`.`project_status` = 'Completed' and monthname(`projects`.`createdOn`) = monthname(current_timestamp() - 1)  ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `supplierbalanceamt`
+--
+DROP TABLE IF EXISTS `supplierbalanceamt`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `supplierbalanceamt`  AS SELECT `sp`.`total_amount`- sum(`sp`.`received_amount`) AS `Total`, `sp`.`supplierId` AS `Id`, `s`.`item_compid` AS `Supplier_id` FROM (`supplierpaymentinfo` `sp` join `item_companydetails` `s` on(convert(`s`.`item_compid` using utf8mb3) = `sp`.`supplierId`)) GROUP BY `sp`.`supplierId` ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `supplierpaymentlastq`
+--
+DROP TABLE IF EXISTS `supplierpaymentlastq`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=``@`localhost` SQL SECURITY DEFINER VIEW `supplierpaymentlastq`  AS SELECT sum(`supplierpaymentinfo`.`received_amount`) AS `PaidAmt`, monthname(current_timestamp() + interval -2 month) AS `MONTH` FROM `supplierpaymentinfo` WHERE monthname(`supplierpaymentinfo`.`modifieddate`) = monthname(current_timestamp() + interval -2 month)union select sum(`supplierpaymentinfo`.`received_amount`) AS `PaidAmt`,monthname(current_timestamp() + interval -1 month) AS `MONTH` from `supplierpaymentinfo` where monthname(`supplierpaymentinfo`.`modifieddate`) = monthname(current_timestamp() + interval -1 month) union select sum(`supplierpaymentinfo`.`received_amount`) AS `PaidAmt`,monthname(current_timestamp() - 1) AS `MONTH` from `supplierpaymentinfo` where monthname(`supplierpaymentinfo`.`modifieddate`) = monthname(current_timestamp() - 1)  ;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

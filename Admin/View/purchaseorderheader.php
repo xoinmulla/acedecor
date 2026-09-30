@@ -231,11 +231,7 @@
                     <i class='fab fa-quora'></i>
                     <span>View Purchase Order</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="purchaseorder.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>General Purchase Order</span></a>
-            </li>
+            
 
 
             <!-- <li class="nav-item">
@@ -310,6 +306,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

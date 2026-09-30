@@ -366,12 +366,9 @@ class DBDashboard
         $conn = $db->getConnection();
 
         $query = "
-        SELECT COUNT(*) AS total
-        FROM projects P
-        JOIN quotation_details Q 
-            ON P.quoteId = Q.quoteCode
-        WHERE P.project_status = 'In Progress'
-          AND Q.quo_status = 'Approved'
+    SELECT COUNT(DISTINCT SUBSTRING_INDEX(quoteId, '-', 1)) AS total
+    FROM projects
+    WHERE project_status = 'In Progress'
     ";
 
         $result = mysqli_query($conn, $query);

@@ -174,6 +174,7 @@ GROUP BY PO.Id";
     PO.ProjectId as ProjectId,
     PO.PurchasedDate as PurchasedDate,
     PO.SupplierId AS SupplierId, 
+    PO.InventoryType AS InventoryType,
     CO.item_compname AS SupplierName,
     CO.item_compAddress AS SupplierAddress,
     CO.item_compLocation AS SupplierLocation,   
@@ -212,6 +213,7 @@ GROUP BY PO.Id";
         $purchase->setPOcode($row["POcode"]);
         $purchase->setpaymentmode($row["PaymentMode"]);
         $purchase->set_supplier($row["SupplierId"]);
+        $purchase->setInventoryType($row["InventoryType"]);
         $purchase->setSupplierName($row["SupplierName"]);
         $purchase->setSupplierAddress($row["SupplierAddress"]);
         $purchase->setSupplierLocation($row["SupplierLocation"]);
@@ -232,8 +234,8 @@ GROUP BY PO.Id";
     $connectionObj = $db->getConnection();
     $sql = "SELECT
     P.Id AS Id,
-    P.Item_id AS ItemId,
-    PO.TotalAmt as TotalAmt,
+    PO.Item_id AS ItemId,
+    (PO.Quantity * PO.Price) AS TotalAmt,
     P.POcode as POcode,
     P.PurchasedDate as PurchasedDate,
     P.SupplierId AS SupplierId, 
@@ -248,12 +250,17 @@ GROUP BY PO.Id";
     PO.POID as Purchaseid,
     PO.Quantity as Quantity,
     U.unitName as UnitName
-    FROM `purchase_order` AS P
-    JOIN `item_companydetails` CO ON CO.item_compid=P.SupplierId 
-    JOIN `item_details`  I ON I.item_id =P.Item_id
-    JOIN `purchaseorder_lineitem`  PO ON PO.POID =P.Id
-    JOIN `units`  U  ON U.unitId =I.item_unit
-    WHERE P.Id=" . $id;
+FROM `purchase_order` AS P
+
+JOIN `purchaseorder_lineitem` PO ON PO.POID = P.Id
+
+LEFT JOIN `item_details` I ON I.item_id = PO.Item_id   -- ✅ FIXED
+
+LEFT JOIN `units` U ON U.unitId = I.item_unit          -- ✅ SAFE
+
+JOIN `item_companydetails` CO ON CO.item_compid = P.SupplierId
+
+WHERE P.Id = " . $id;
     $result = $connectionObj->query($sql);
     $count = mysqli_num_rows($result);
     error_log($sql);

@@ -135,18 +135,19 @@ class DBbrand
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
+
     $sql = "DELETE FROM brands WHERE brand_id = ?";
     $stmt = $connectionObj->prepare($sql);
     $stmt->bind_param("i", $brandId);
-    $stmt->execute();
-    $stmt->close();
 
-    error_log($sql);
-    if ($connectionObj->query($sql) === TRUE) {
+    if ($stmt->execute()) {
+      $stmt->close();
+      return true;
     } else {
-      echo "Error: " . $sql . "<br>" . $connectionObj->error;
+      echo "Error: " . $stmt->error;
+      $stmt->close();
+      return false;
     }
-
   }
 
 

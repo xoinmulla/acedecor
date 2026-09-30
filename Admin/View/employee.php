@@ -601,8 +601,11 @@ if(!hasActionPermission('employees','employee')){
                     <div class="col-md-6">
                       <div class="info-card"><strong><i class="bi bi-calendar2-week"></i> Weekly Off</strong><span><?= htmlspecialchars($emp['weekly_off_day']); ?></span></div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="info-card"><strong><i class="bi bi-cash-stack"></i> Salary</strong><span><?= htmlspecialchars($emp['salary_type']); ?> — ₹<?= htmlspecialchars($emp['salary_amount']); ?></span></div>
+                    <div class="col-md-3">
+                      <div class="info-card"><strong><i class="bi bi-cash-stack"></i> Salary</strong><span><?= htmlspecialchars($emp['salary_type']); ?> : ₹<?= htmlspecialchars($emp['salary_amount']); ?></span></div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="info-card"><strong><i class="bi bi-briefcase-fill"></i> Hourly Rate</strong><span><?= htmlspecialchars($emp['hourly_rate']); ?></span></div>
                     </div>
                     <div class="col-12">
                       <div class="info-card"><strong><i class="bi bi-journal-text"></i> Notes</strong><span><?= nl2br(htmlspecialchars($emp['notes'])); ?></span></div>

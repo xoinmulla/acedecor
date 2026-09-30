@@ -38,18 +38,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     DBitemcompdetails::update($compdetails);
+
+    $_SESSION['message'] = "Supplier updated successfully.";
+    $_SESSION['message_type'] = "success";
   } else if ($_POST["action"] == 'delete') {
 
     $supplierId = intval($_POST['id']);
 
     // 🔒 HARD SAFETY CHECK
     if (DBitemcompdetails::isSupplierUsedInPO($supplierId)) {
-        echo "❌ Cannot delete supplier. Supplier is already used in Purchase Orders.";
-        exit;
+      echo "❌ Cannot delete supplier. Supplier is already used in Purchase Orders.";
+      exit;
     }
 
     DBitemcompdetails::delete($supplierId);
-} else {
+
+    $_SESSION['message'] = "Supplier deleted successfully.";
+    $_SESSION['message_type'] = "success";
+  } else {
     $compdetails = new Item_Companydetails();
     $compdetails->set_itemcompname(Sanitization::test_input($_POST["itemcompname"]));
     $compdetails->set_itemcompdescription(Sanitization::test_input($_POST["itemcompdescription"]));
@@ -78,6 +84,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $compdetails->set_brandList($_POST["brand_list"]);
     }
     DBitemcompdetails::insert($compdetails);
+
+    $_SESSION['message'] = "Supplier added successfully.";
+    $_SESSION['message_type'] = "success";
+    
   }
   header("location: ../View/itemcompany.php");
 }

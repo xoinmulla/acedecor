@@ -39,7 +39,9 @@ class DBLineItem
       `value`,
       `totalValue`,
       `createdby`,  
-      `modifiedby`
+      `modifiedby`,
+      `reference`,
+      `note`
     ) VALUES (
   '{$esc($lineItemObj->get_quoteId())}',
   '{$esc($lineItemObj->get_itemid())}',
@@ -58,7 +60,9 @@ class DBLineItem
   '{$esc($lineItemObj->get_value())}',
   '{$esc($lineItemObj->get_totalValue())}',     -- Total Value
   '{$esc($lineItemObj->get_createdby())}',
-  '{$esc($lineItemObj->get_modifiedby())}'
+  '{$esc($lineItemObj->get_modifiedby())}',
+  '{$esc($lineItemObj->get_reference())}',
+  '{$esc($lineItemObj->get_note())}'
 )";
 
 
@@ -93,7 +97,9 @@ SELECT
     QLI.amount AS companyPrice,
     QLI.totalValue AS totalValue,
     QLI.totalPrice AS totalPrice,
-    U.unitName AS Units
+    U.unitName AS Units,
+    QLI.reference AS reference,
+    QLI.note AS note
 FROM quotelineitem QLI
 JOIN item_details I 
     ON QLI.itemId = I.item_id AND QLI.InputType = 1
@@ -118,7 +124,9 @@ SELECT
     QLI.amount AS companyPrice,
     QLI.totalValue AS totalValue,
     QLI.totalPrice AS totalPrice,
-    U.unitName AS Units
+    U.unitName AS Units,
+    QLI.reference AS reference,
+    QLI.note AS note
 FROM quotelineitem QLI
 JOIN material M 
     ON QLI.itemId = M.Material_Id AND QLI.InputType = 2
@@ -201,121 +209,105 @@ ORDER BY lineItemId ASC
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT 
-        QLI.lineItemId AS lineItemId,
+    $sql = "SELECT
+        QLI.lineItemId,
         QLI.itemId AS Id,
-        case When TEMP1.ItemId=TEMP.ItemId Then 
-        case when PO.ProjectId=PR.ProjectId  Then 'Received'
-              else 'Not Received'end 
-            else 'Not Received' end as InwardStatus,
-        case When QLI.itemid=TEMP1.ItemId then
-      	      case when PO.Id=TEMP1.POID  Then 
-               case when PO.ProjectId=PR.ProjectId then 'Raised'
-                   else 'Not Raised' end 
-                    else 'Not Raised' end 
-        else 'Not Raised' end as POStatus,
+
+        CASE
+            WHEN PO.ProjectId = PR.projectId THEN 'Received'
+            ELSE 'Not Received'
+        END AS InwardStatus,
+
+        CASE
+            WHEN POL.Item_id IS NOT NULL THEN
+                CASE
+                    WHEN PO.ProjectId = PR.projectId THEN 'Raised'
+                    ELSE 'Not Raised'
+                END
+            ELSE 'Not Raised'
+        END AS POStatus,
+
         I.item_image AS Image,
         I.item_name AS Name,
-        I.item_ArticleNo as ItemCode,
-        B.brand_name AS Brand, 
+        I.item_ArticleNo AS ItemCode,
+        B.brand_name AS Brand,
         I.item_description AS Description,
+
         QLI.quantity AS Quantity,
+
         U.unitName AS Units,
-        Q.quotecode as Quotecode,
-        Q.inputType as InputType,
-        I.item_id as ItemId,
-        TEMP.StockId as StockId,
-        COALESCE(TEMP.ReceivedQty,0) as AvailableQty,
-        COALESCE(AI.AllocatedQty,0) as AllocatedQty,
-        PO.Id as POID,
-        case When TEMP.StockId=AI.item_stockId then '1'
-        else '0' end as AllocatedStatus,
-         PR.projectId as ProjectId
-        FROM `quotelineitem` AS QLI 
-        JOIN `item_details` AS I ON QLI.itemId = I.item_id
-        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoteId 
-        JOIN `brands` AS B ON I.item_compid=B.brand_id 
-        JOIN units AS U ON U.unitId=I.item_unit
-        JOIN `projects` AS PR ON PR.quoteId=Q.quoteCode 
-        LEFT JOIN `itemallocation` AS AI on AI.ProjectId=PR.projectId and AI.ItemId=QLI.itemid
-        LEFT JOIN (SELECT 
-        item_id as ItemId,
-        Quantity as Quantity,
-        SupplierId as SupplierId,
-        POID as POID
-        from purchaseorder_lineitem) AS TEMP1 on QLI.itemId=TEMP1.ItemId and QLI.quantity=TEMP1.Quantity
-        LEFT JOIN `purchase_order` AS PO ON  PO.Id=TEMP1.POID and PO.SupplierId=TEMP1.SupplierId
-        LEFT JOIN (SELECT 
-   	    SUM(ReceivedQty)As ReceivedQty,
-        item_stockid  as StockId,
-        item_id as ItemId,
-        ItemName as ItemName,
-        POID as POID
-        from item_stock) AS TEMP on QLI.InputName=TEMP.ItemName
-         where PR.projectId=$projectId
-        group by Name,ItemId
-        -- UNION
-        -- SELECT 
-        -- QLI.lineItemId AS lineItemId,
-        -- QLI.itemId AS Id,
-        -- case When TEMP1.ItemId=TEMP.ItemId Then 
-        -- case when PO.ProjectId=PR.ProjectId  Then 'Received'
-        --       else 'Not Received'end 
-        --     else 'Not Received' end as InwardStatus,
-        -- case When QLI.itemid=TEMP1.ItemId then
-      	--       case when PO.Id=TEMP1.POID  Then 
-        --        case when PO.ProjectId=PR.ProjectId then 'Raised'
-        --            else 'Not Raised' end 
-        --             else 'Not Raised' end 
-        -- else 'Not Raised' end as POStatus,
-        -- M.Mat_Image AS Image,
-        -- M.Material_Name AS Name,
-        -- M.Material_Code as ItemCode,
-        -- B.brand_name AS Brand, 
-        -- M.Material_Description AS Description,
-        -- QLI.quantity AS Quantity,
-        -- U.unitName AS Units,
-        -- Q.quotecode as Quotecode,
-        -- Q.inputType as InputType,
-        -- M.Material_Id  as ItemId,
-        -- TEMP.StockId as StockId,
-        -- COALESCE(TEMP.ReceivedQty,0) as AvailableQty,
-        -- COALESCE(AI.AllocatedQty,0) as AllocatedQty,
-        -- PO.Id as POID,
-        -- case When TEMP.StockId=AI.item_stockId then '1'
-        -- else '0' end as AllocatedStatus,
-        --  PR.projectId as ProjectId
-        -- FROM `quotelineitem` AS QLI 
-        -- JOIN `material` AS M ON QLI.itemid=M.Material_Id 
-        -- JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoid 
-        -- JOIN `brands` AS B ON M.Brand=B.brand_id 
-        -- JOIN units AS U ON U.unitId=M.Mat_Unit
-        -- JOIN `projects` AS PR ON PR.quoteId=Q.quoteCode 
-        -- LEFT JOIN `itemallocation` AS AI on AI.ProjectId=PR.projectId and AI.ItemId=QLI.itemid
-        -- LEFT JOIN (SELECT 
-        -- item_id as ItemId,
-        -- Quantity as Quantity,
-        -- SupplierId as SupplierId,
-        -- POID as POID
-        -- from purchaseorder_lineitem) AS TEMP1 on QLI.itemId=TEMP1.ItemId and QLI.quantity=TEMP1.Quantity
-        -- LEFT JOIN `purchase_order` AS PO ON  PO.Id=TEMP1.POID and PO.SupplierId=TEMP1.SupplierId
-        -- LEFT JOIN (SELECT 
-   	    -- SUM(ReceivedQty)As ReceivedQty,
-        -- item_stockid  as StockId,
-        -- item_id as ItemId,
-        -- POID as POID
-        -- from item_stock) AS TEMP on QLI.itemId=TEMP.ItemId
-        --  where PR.projectId=" . $projectId . "
-        -- group by Name,ItemId
-        ";
-    error_log($sql);
+        Q.quotecode AS Quotecode,
+        Q.inputType AS InputType,
+
+        I.item_id AS ItemId,
+
+        IFNULL(ST.StockId,0) AS StockId,
+        IFNULL(ST.AvailableQty,0) AS AvailableQty,
+        IFNULL(AI.AllocatedQty,0) AS AllocatedQty,
+
+        IFNULL(PO.Id,0) AS POID,
+
+        CASE
+            WHEN AI.item_stockId IS NOT NULL THEN '1'
+            ELSE '0'
+        END AS AllocatedStatus,
+
+        PR.projectId
+
+FROM quotelineitem QLI
+
+INNER JOIN item_details I
+        ON I.item_id = QLI.itemId
+
+INNER JOIN quotation_details Q
+        ON Q.quoteId = QLI.quoteId
+
+INNER JOIN brands B
+        ON B.brand_id = I.item_compid
+
+INNER JOIN units U
+        ON U.unitId = I.item_unit
+
+INNER JOIN projects PR
+        ON PR.quoteId = Q.quoteCode
+
+LEFT JOIN
+(
+    SELECT
+        item_stockid AS StockId,
+        item_id,
+        SUM(ReceivedQty) AS AvailableQty
+    FROM item_stock
+    GROUP BY item_id,item_stockid
+) ST
+ON ST.item_id = QLI.itemId
+
+LEFT JOIN itemallocation AI
+ON AI.ProjectId = PR.projectId
+AND AI.ItemId = QLI.itemId
+
+LEFT JOIN purchaseorder_lineitem POL
+ON POL.Item_id = QLI.itemId
+
+LEFT JOIN purchase_order PO
+ON PO.Id = POL.POID
+
+WHERE
+PR.projectId = $projectId
+
+ORDER BY QLI.lineItemId";
+
     $result = $connectionObj->query($sql);
+
     $count = mysqli_num_rows($result);
 
     $itemList = [];
+
     if ($count > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+
         $item = new lineItem();
+
         $item->set_lineItemId($row["lineItemId"]);
         $item->set_itemid($row["Id"]);
         $item->setImage($row["Image"]);
@@ -331,9 +323,11 @@ ORDER BY lineItemId ASC
         $item->setUnits($row["Units"]);
         $item->setStockId($row["StockId"]);
         $item->set_inputType($row["InputType"]);
-        array_push($itemList, $item);
+
+        $itemList[] = $item;
       }
     }
+
     header('Content-Type: application/json');
     echo json_encode($itemList);
   }
@@ -359,6 +353,8 @@ ORDER BY lineItemId ASC
         QLI.amount AS companyPrice,
         QLI.totalValue AS totalValue,
         QLI.totalPrice AS totalPrice,
+        QLI.reference AS Reference,
+        QLI.note AS Note,
         QLI.InputType AS Type
     FROM quotelineitem QLI
     JOIN item_details I 
@@ -385,6 +381,8 @@ ORDER BY lineItemId ASC
         QLI.amount AS companyPrice,
         QLI.totalValue AS totalValue,
         QLI.totalPrice AS totalPrice,
+        QLI.reference AS Reference,
+        QLI.note AS Note,
         QLI.InputType AS Type
     FROM quotelineitem QLI
     JOIN material M 
@@ -440,7 +438,9 @@ ORDER BY lineItemId ASC
     QLI.totalValue as totalValue,
     QLI.value as Value,
     UF.unitFactor AS unitFactor,
-    I.item_pp_MRP AS MRP
+    I.item_pp_MRP AS MRP,
+    QLI.reference AS reference,
+QLI.note AS note
 
         FROM `quotelineitem` AS QLI 
         JOIN `item_details` AS I ON QLI.itemId = I.item_id
@@ -479,7 +479,9 @@ ORDER BY lineItemId ASC
         QLI.totalValue as totalValue,
         QLI.value as Value,
         UF.unitFactor AS unitFactor,
-        M.Mat_PPMRP AS MRP
+        M.Mat_PPMRP AS MRP,
+        QLI.reference AS reference,
+QLI.note AS note
         FROM `quotelineitem` AS QLI 
         JOIN `material` AS M ON QLI.itemId = M.Material_Id
         JOIN material_category C ON M.Category=C.material_catId 
@@ -528,6 +530,8 @@ ORDER BY lineItemId ASC
         $item->setQuoteCode($row['quoteCode']);
         $item->set_companyDiscount($row['CompanyDiscount']);
         $item->set_companyPrice($row['CompanyPrice']);
+        $item->set_reference($row['reference']);
+        $item->set_note($row['note']);
 
         array_push($itemList, $item);
       }
@@ -616,68 +620,113 @@ ORDER BY lineItemId ASC
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT 
-        QLI.lineItemId AS lineItemId,
+
+    $sql = "
+    SELECT
+        QLI.lineItemId,
         QLI.itemId AS Id,
-        case When TEMP1.ItemId=TEMP.ItemId Then 
-        case when PO.ProjectId=PR.ProjectId  Then 'Received'
-              else 'Not Received'end 
-            else 'Not Received' end as InwardStatus,
-        case When QLI.itemid=TEMP1.ItemId then
-      	      case when PO.Id=TEMP1.POID  Then 
-               case when PO.ProjectId=PR.ProjectId then 'Raised'
-                   else 'Not Raised' end 
-                    else 'Not Raised' end 
-        else 'Not Raised' end as POStatus,
+
+        CASE
+            WHEN PO.ProjectId = PR.projectId THEN 'Received'
+            ELSE 'Not Received'
+        END AS InwardStatus,
+
+        CASE
+            WHEN POL.Item_id IS NOT NULL THEN
+                CASE
+                    WHEN PO.ProjectId = PR.projectId THEN 'Raised'
+                    ELSE 'Not Raised'
+                END
+            ELSE 'Not Raised'
+        END AS POStatus,
+
         M.Mat_Image AS Image,
         M.Material_Name AS Name,
-        M.Material_Code as ItemCode,
-        B.brand_name AS Brand, 
+        M.Material_Code AS ItemCode,
+        B.brand_name AS Brand,
         M.Material_Description AS Description,
+
         QLI.quantity AS Quantity,
+
         U.unitName AS Units,
-        Q.quotecode as Quotecode,
-        Q.inputType as InputType,
-        M.Material_Id  as ItemId,
-        TEMP.StockId as StockId,
-        COALESCE(TEMP.ReceivedQty,0) as AvailableQty,
-        COALESCE(AI.AllocatedQty,0) as AllocatedQty,
-        PO.Id as POID,
-        case When TEMP.StockId=AI.item_stockId then '1'
-        else '0' end as AllocatedStatus,
-         PR.projectId as ProjectId
-        FROM `quotelineitem` AS QLI 
-        JOIN `material` AS M ON QLI.InputName=M.Material_Name 
-        JOIN `quotation_details` AS Q ON QLI.quoteId=Q.quoteId 
-        JOIN `brands` AS B ON M.Brand=B.brand_id 
-        JOIN units AS U ON U.unitId=M.Mat_Unit
-        JOIN `projects` AS PR ON PR.quoteId=Q.quoteCode 
-        LEFT JOIN `itemallocation` AS AI on AI.ProjectId=PR.projectId and AI.ItemId=QLI.itemid
-        LEFT JOIN (SELECT 
-        item_id as ItemId,
-                   InputName as InputName,
-        Quantity as Quantity,
-        SupplierId as SupplierId,
-        POID as POID
-        from purchaseorder_lineitem) AS TEMP1 on QLI.InputName=TEMP1.InputName and QLI.quantity=TEMP1.Quantity
-        LEFT JOIN `purchase_order` AS PO ON  PO.Id=TEMP1.POID and PO.SupplierId=TEMP1.SupplierId
-        LEFT JOIN (SELECT 
-   	    SUM(ReceivedQty)As ReceivedQty,
-        item_stockid  as StockId,
-        item_id as ItemId,
-        POID as POID
-        from item_stock) AS TEMP on QLI.itemId=TEMP.ItemId
-         where PR.projectId=" . $projectId . "
-        group by Name,ItemId";
+        Q.quoteCode AS Quotecode,
+        Q.inputType AS InputType,
+
+        M.Material_Id AS ItemId,
+
+        IFNULL(ST.StockId,0) AS StockId,
+        IFNULL(ST.AvailableQty,0) AS AvailableQty,
+        IFNULL(AI.AllocatedQty,0) AS AllocatedQty,
+
+        IFNULL(PO.Id,0) AS POID,
+
+        CASE
+            WHEN AI.item_stockId IS NOT NULL THEN '1'
+            ELSE '0'
+        END AS AllocatedStatus,
+
+        PR.projectId
+
+    FROM quotelineitem QLI
+
+    INNER JOIN material M
+        ON M.Material_Id = QLI.itemId
+
+    INNER JOIN quotation_details Q
+        ON Q.quoteId = QLI.quoteId
+
+    INNER JOIN brands B
+        ON B.brand_id = M.Brand
+
+    INNER JOIN units U
+        ON U.unitId = M.Mat_Unit
+
+    INNER JOIN projects PR
+        ON PR.quoteId = Q.quoteCode
+
+    LEFT JOIN
+    (
+        SELECT
+            MIN(item_stockid) AS StockId,
+            item_id,
+            SUM(ReceivedQty) AS AvailableQty
+        FROM item_stock
+        GROUP BY item_id
+    ) ST
+    ON ST.item_id = QLI.itemId
+
+    LEFT JOIN itemallocation AI
+        ON AI.ProjectId = PR.projectId
+        AND AI.ItemId = QLI.itemId
+
+    LEFT JOIN
+    (
+        SELECT
+            Item_id,
+            MIN(POID) AS POID
+        FROM purchaseorder_lineitem
+        GROUP BY Item_id
+    ) POL
+    ON POL.Item_id = QLI.itemId
+
+    LEFT JOIN purchase_order PO
+        ON PO.Id = POL.POID
+
+    WHERE
+        PR.projectId = $projectId
+
+    ORDER BY QLI.lineItemId";
 
     error_log($sql);
+
     $result = $connectionObj->query($sql);
-    $count = mysqli_num_rows($result);
 
     $itemList = [];
-    if ($count > 0) {
+
+    if (mysqli_num_rows($result) > 0) {
       while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
         $item = new lineItem();
+
         $item->set_lineItemId($row["lineItemId"]);
         $item->set_itemid($row["Id"]);
         $item->setImage($row["Image"]);
@@ -693,9 +742,11 @@ ORDER BY lineItemId ASC
         $item->setUnits($row["Units"]);
         $item->setStockId($row["StockId"]);
         $item->set_inputType($row["InputType"]);
-        array_push($itemList, $item);
+
+        $itemList[] = $item;
       }
     }
+
     header('Content-Type: application/json');
     echo json_encode($itemList);
   }
@@ -735,7 +786,9 @@ ORDER BY lineItemId ASC
             totalPrice = {$lineItemObj->get_totalPrice()},
             totalValue = {$lineItemObj->get_totalValue()},
             value = {$lineItemObj->get_value()},
-            modifiedby = '{$lineItemObj->get_modifiedby()}'
+            modifiedby = '{$lineItemObj->get_modifiedby()}',
+            reference = '{$lineItemObj->get_reference()}',
+            note = '{$lineItemObj->get_note()}'
         WHERE lineItemId = {$lineItemObj->get_lineItemId()}";
 
     error_log($sql);

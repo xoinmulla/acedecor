@@ -58,13 +58,13 @@
         border: none;
         padding: 40px;
         border-radius: 0;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.35);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
         transition: var(--transition);
     }
 
     .form-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.45);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
     }
 
     label {
@@ -74,7 +74,8 @@
         margin-bottom: 6px;
     }
 
-    .form-control, .form-select {
+    .form-control,
+    .form-select {
         background: #2a2a2a;
         border: 1px solid #3a3a3a;
         color: var(--white);
@@ -82,7 +83,8 @@
         padding: 12px;
     }
 
-    .form-control:focus, .form-select:focus {
+    .form-control:focus,
+    .form-select:focus {
         background: #333;
         border-color: var(--gold);
         outline: none;
@@ -110,11 +112,20 @@
     }
 
     @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
-    .animate-fade-in-up { animation: fadeInUp 0.8s ease forwards; }
+    .animate-fade-in-up {
+        animation: fadeInUp 0.8s ease forwards;
+    }
 
     /* ✅ Success message styling */
     .enquiry-success {
@@ -139,14 +150,28 @@
     }
 
     @keyframes fadeInSmooth {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     /* Auto-hide fade out */
     @keyframes fadeOutSmooth {
-        from { opacity: 1; transform: translateY(0); }
-        to { opacity: 0; transform: translateY(-10px); }
+        from {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
     }
 </style>
 
@@ -170,12 +195,12 @@
         <div class="col-lg-8">
             <div class="form-card animate-fade-in-up">
                 <form method="POST" id="customer_form" enctype="multipart/form-data"
-                      action="/acedecor/Admin/Controller/newenquiry.php">
-                    
+                    action="/Admin/Controller/newenquiry.php">
+
                     <div class="mb-4">
                         <label for="name">Full Name *</label>
                         <input type="text" name="name" id="name" class="form-control" required maxlength="150"
-                               style="text-transform: capitalize;">
+                            style="text-transform: capitalize;">
                         <input type="hidden" name="front" value="front">
                     </div>
 
@@ -216,58 +241,58 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const animatedElements = document.querySelectorAll('.animate-fade-in-up');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.visibility = 'visible';
-                entry.target.classList.add('animate-fade-in-up');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-    animatedElements.forEach(el => {
-        el.style.visibility = 'hidden';
-        observer.observe(el);
-    });
-
-    // Load enquiry categories dynamically
-    fetch('../Admin/Controller/enqcategoryController.php')
-        .then(response => response.json())
-        .then(data => {
-            const checkboxesDiv = document.getElementById('checkboxes');
-            data.forEach(cat => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'form-check mb-2';
-                const input = document.createElement('input');
-                input.type = 'checkbox';
-                input.className = 'form-check-input';
-                input.name = 'interest_list[]';
-                input.value = cat.CatId;
-                input.id = 'cat_' + cat.CatId;
-                const label = document.createElement('label');
-                label.className = 'form-check-label';
-                label.htmlFor = input.id;
-                label.textContent = cat.catname;
-                wrapper.appendChild(input);
-                wrapper.appendChild(label);
-                checkboxesDiv.appendChild(wrapper);
+    document.addEventListener('DOMContentLoaded', function () {
+        const animatedElements = document.querySelectorAll('.animate-fade-in-up');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.visibility = 'visible';
+                    entry.target.classList.add('animate-fade-in-up');
+                    observer.unobserve(entry.target);
+                }
             });
-        })
-        .catch(() => {
-            document.getElementById('checkboxes').innerHTML = '<em>Could not load categories.</em>';
+        }, { threshold: 0.1 });
+        animatedElements.forEach(el => {
+            el.style.visibility = 'hidden';
+            observer.observe(el);
         });
 
-    // ✅ Auto-hide success message after 5 seconds
-    const successMsg = document.getElementById('successMessage');
-    if (successMsg) {
-        setTimeout(() => {
-            successMsg.style.animation = "fadeOutSmooth 0.8s ease forwards";
-            setTimeout(() => successMsg.remove(), 800);
-        }, 5000);
-    }
-});
+        // Load enquiry categories dynamically
+        fetch('../Admin/Controller/enqcategoryController.php?type=enquiry')
+            .then(response => response.json())
+            .then(data => {
+                const checkboxesDiv = document.getElementById('checkboxes');
+                data.forEach(cat => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'form-check mb-2';
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.className = 'form-check-input';
+                    input.name = 'interest_list[]';
+                    input.value = cat.CatId;
+                    input.id = 'cat_' + cat.CatId;
+                    const label = document.createElement('label');
+                    label.className = 'form-check-label';
+                    label.htmlFor = input.id;
+                    label.textContent = cat.catname;
+                    wrapper.appendChild(input);
+                    wrapper.appendChild(label);
+                    checkboxesDiv.appendChild(wrapper);
+                });
+            })
+            .catch(() => {
+                document.getElementById('checkboxes').innerHTML = '<em>Could not load categories.</em>';
+            });
+
+        // ✅ Auto-hide success message after 5 seconds
+        const successMsg = document.getElementById('successMessage');
+        if (successMsg) {
+            setTimeout(() => {
+                successMsg.style.animation = "fadeOutSmooth 0.8s ease forwards";
+                setTimeout(() => successMsg.remove(), 800);
+            }, 5000);
+        }
+    });
 </script>
 
 <?php require_once("footer.php"); ?>

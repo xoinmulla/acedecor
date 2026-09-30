@@ -112,7 +112,7 @@
                                         <div class="text-center">
                                             <h1 class="h4 text-gray-900 mb-4">CMS</h1>
                                         </div>
-                                        <form method="post" id="login_form" action="/acedecor/cmsadmin/controller/login.php">
+                                        <form method="post" id="login_form" action="/cmsadmin/controller/login.php">
                                             <div class="form-group">
                                                 <input type="text" name="user_email" id="user_email"
                                                     class="form-control" required data-parsley-type="email"

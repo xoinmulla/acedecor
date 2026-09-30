@@ -4,14 +4,38 @@ include('unitheader.php');
 require_once("../DB Operations/unitOps.php");
 require_once("../Model/unitsModel.php");
 ?>
-<h1 class="h3 mb-4 text-gray-800">Units Management</h1>
+<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
+<style>
+    .card-body #units_table th {
+        font-weight: 500;
+    }
+
+    /* Modal positioning only - existing page/table logic remains unchanged */
+    .modal-dialog {
+        margin: 0 !important;
+    }
+
+    .modal-dialog.modal-positioned {
+        position: fixed !important;
+        margin: 0 !important;
+        transform: none !important;
+        z-index: 1051;
+    }
+
+    @media (max-width: 767.98px) {
+        .modal-dialog {
+            width: calc(100% - 20px) !important;
+            max-width: calc(100% - 20px) !important;
+        }
+    }
+</style>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Unit</h6>
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Unit List</h6>
             </div>
             <div class="col" align="right">
                 <span data-toggle=modal data-target=#unitModal>
@@ -24,10 +48,10 @@ require_once("../Model/unitsModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="units_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>Unit Name</th>
-                        <th>Unit Description.</th>
+                        <th>Unit Description</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -88,7 +112,7 @@ require_once("../Model/unitsModel.php");
     <div class="modal-dialog">
         <form method="post" id="user_form" enctype="multipart/form-data" action="../Controller/unitsContoller.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Add Units</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -141,7 +165,7 @@ require_once("../Model/unitsModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -152,7 +176,7 @@ require_once("../Model/unitsModel.php");
     <div class="modal-dialog">
         <form method="post" id="unit_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Edit Units</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -208,7 +232,7 @@ require_once("../Model/unitsModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="editbutton" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -219,7 +243,7 @@ require_once("../Model/unitsModel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_category_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Item Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -232,7 +256,7 @@ require_once("../Model/unitsModel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -351,6 +375,62 @@ require_once("../Model/unitsModel.php");
                         alert(res.message);
                         location.reload();
                     }
+                }
+            });
+        });
+
+        /*
+         * Keep every Unit modal horizontally centered and near the top
+         * of the browser viewport.
+         *
+         * Existing DataTable, AJAX, CRUD, validation and mapping logic
+         * is intentionally untouched.
+         */
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            $dialog.addClass('modal-positioned');
+
+            var dialogWidth = $dialog.outerWidth();
+            var windowWidth = $(window).width();
+            var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+            $dialog.css({
+                position: "fixed",
+                left: left + "px",
+                top: "20px",
+                margin: 0,
+                transform: "none"
+            });
+
+            // Preserve the existing draggable modal functionality.
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
+        });
+
+        // Re-center an open modal after a device/browser resize.
+        $(window).on('resize', function () {
+            $('.modal.show').each(function () {
+                var $dialog = $(this).find('.modal-dialog');
+
+                if (!$dialog.hasClass("ui-draggable-dragging")) {
+                    var dialogWidth = $dialog.outerWidth();
+                    var windowWidth = $(window).width();
+                    var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+                    $dialog.css({
+                        left: left + "px",
+                        top: "20px"
+                    });
                 }
             });
         });

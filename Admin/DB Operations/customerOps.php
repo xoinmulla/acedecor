@@ -52,24 +52,26 @@ class DBcustomer
     {
         $db = ConnectDb::getInstance();
         $connectionObj = $db->getConnection();
-        $sql = "SELECT C.customerId  as customerId ,
-        C.customerCode as customerCode,
-        C.customerName as customerName,
-        C.customerContactNumber as customerContactNumber,
-        C.customerEmail as customerEmail,
-        C.customerAddress as customerAddress,
-        C.customerState as customerState,
-        C.customerCity as customerCity,
-        C.customerDOV as customerDOV,
-        C.customerCountry as customerCountry,
-        C.enq_id  as enq_id,
-        Count(Q.quoteId) as QuotationCount
-        FROM customer C
-        LEFT JOIN quotation_details Q 
-    ON Q.customerId = C.customerId 
-    AND Q.quo_status = 'Approved'
+        $sql = "SELECT 
+C.customerId as customerId,
+C.customerCode as customerCode,
+C.customerName as customerName,
+C.customerContactNumber as customerContactNumber,
+C.customerEmail as customerEmail,
+C.customerAddress as customerAddress,
+C.customerState as customerState,
+C.customerCity as customerCity,
+C.customerDOV as customerDOV,
+C.customerCountry as customerCountry,
+C.enq_id as enq_id,
+COUNT(Q.quoteId) as QuotationCount
 
-        group by customerId ";
+FROM customer C
+
+LEFT JOIN quotation_details Q 
+ON Q.customerId = C.customerId   -- ✅ MUST KEEP THIS
+
+GROUP BY C.customerId";
         $result = $connectionObj->query($sql);
         $count = mysqli_num_rows($result);
         $customerList = [];

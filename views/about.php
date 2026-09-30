@@ -1,6 +1,6 @@
 <?php 
 require_once("navigation.php"); 
-require_once $_SERVER['DOCUMENT_ROOT']."/acedecor/cmsadmin/dblayer/businessOps.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/cmsadmin/dblayer/businessOps.php";
 
 $business = DBbusiness::getBusinessDetails();
 ?>
@@ -134,12 +134,12 @@ $business = DBbusiness::getBusinessDetails();
                         ?>
                         <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
                             <?php if ($mediaType === 'image'): ?>
-                                <img src="/acedecor/cmsadmin/img/Slider/<?= $fileName ?>" class="about-image" alt="">
+                                <img src="/cmsadmin/img/Slider/<?= $fileName ?>" class="about-image" alt="">
                             <?php elseif ($mediaType === 'video' && !empty($url)): ?>
                                 <iframe class="yt-video" src="<?= $url ?>" allow="autoplay; fullscreen"></iframe>
                             <?php else: ?>
                                 <video class="about-image local-video" muted controls preload="metadata">
-                                    <source src="/acedecor/cmsadmin/img/Slider/<?= $fileName ?>" type="video/mp4">
+                                    <source src="/cmsadmin/img/Slider/<?= $fileName ?>" type="video/mp4">
                                 </video>
                             <?php endif; ?>
                             <?php if (!empty($caption)): ?>
@@ -168,7 +168,7 @@ $business = DBbusiness::getBusinessDetails();
                     <div class="about-text"><?= $business->getBusinessAboutBusiness(); ?></div>
                 <?php endif; ?>
 
-                <a href="/acedecor/views/contact/" class="btn btn-discover">Get In Touch</a>
+                <a href="/views/contact/" class="btn btn-discover">Get In Touch</a>
             </div>
         </div>
     </div>

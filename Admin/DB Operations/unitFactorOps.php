@@ -216,6 +216,49 @@ class DBunitFactor
   }
 
 
+  public static function isUnitFactorExists($unitId, $unitFactor, $unitFactorId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
 
+    if ($unitFactorId > 0) {
+
+      $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM unitsfactor
+            WHERE unitId = ?
+            AND unitFactor = ?
+            AND unitFactorId != ?
+        ");
+
+      $stmt->bind_param(
+        "idi",
+        $unitId,
+        $unitFactor,
+        $unitFactorId
+      );
+
+    } else {
+
+      $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM unitsfactor
+            WHERE unitId = ?
+            AND unitFactor = ?
+        ");
+
+      $stmt->bind_param(
+        "id",
+        $unitId,
+        $unitFactor
+      );
+    }
+
+    $stmt->execute();
+
+    $result = $stmt->get_result()->fetch_assoc();
+
+    return ($result["total"] > 0);
+  }
 
 }

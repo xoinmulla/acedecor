@@ -315,7 +315,7 @@ $mainprojects = DBDashboard::MainProjects();
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 text-primary" style="font-size: 1.5rem; font-weight: bolder;">DASHBOARD</h6>
+            <h6 class="m-0 text-primary" style="font-size: 1.5rem;">Dashboard</h6>
         </div>
         <ul class="nav nav-pills mb-4 p-4" id="dashboardTabs">
             <li class="nav-item">

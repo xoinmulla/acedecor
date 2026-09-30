@@ -14,7 +14,17 @@ class Expense
     private $project_id;
 
     private $supplier_id;
+    private $payment_id;
 
+    public function setPaymentId($id)
+    {
+        $this->payment_id = $id;
+    }
+
+    public function getPaymentId()
+    {
+        return $this->payment_id;
+    }
     public function setSupplierId($supplier_id)
     {
         $this->supplier_id = $supplier_id;

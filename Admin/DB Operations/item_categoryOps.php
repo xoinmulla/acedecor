@@ -12,14 +12,13 @@ class DBitemcategory
     $connectionObj = $db->getConnection();
 
     // CHECK duplicate
-    $sql = "SELECT * from item_category WHERE item_catName='" . $itemcatObj->get_itemcatname() . "'";
-    $result = $connectionObj->query($sql);
+    if (self::isCategoryExists($itemcatObj->get_itemcatname())) {
 
-    if (mysqli_num_rows($result) > 0) {
       return [
         "status" => "error",
-        "message" => "Category already exists"
+        "message" => "Category already exists."
       ];
+
     }
 
     // INSERT CATEGORY
@@ -60,6 +59,26 @@ class DBitemcategory
       "status" => "error",
       "message" => "Database error: " . $connectionObj->error
     ];
+  }
+
+  public static function isCategoryExists($categoryName, $categoryId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $categoryName = mysqli_real_escape_string($connectionObj, trim($categoryName));
+
+    $sql = "SELECT item_catid
+            FROM item_category
+            WHERE LOWER(TRIM(item_catName)) = LOWER(TRIM('$categoryName'))";
+
+    if ($categoryId > 0) {
+      $sql .= " AND item_catid != " . (int) $categoryId;
+    }
+
+    $result = $connectionObj->query($sql);
+
+    return mysqli_num_rows($result) > 0;
   }
 
 

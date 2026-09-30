@@ -232,7 +232,11 @@ require_once("../Utilities/permissionHelper.php");
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-
+            <li class="nav-item">
+                <a class="nav-link" href="enquiry.php">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Enquiries</span></a>
+            </li>
             <?php if (hasPermission('customers', 'read') || hasAnyActionPermission('customers')) { ?>
                 <li class="nav-item">
                     <a class="nav-link" href="customer.php">
@@ -250,9 +254,10 @@ require_once("../Utilities/permissionHelper.php");
                     </a>
                 </li>
             <?php } ?>
+                
             <br>
             <hr class="sidebar-divider">
-
+            
             <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
                     <i class="fas fa-home"></i>
@@ -280,7 +285,7 @@ require_once("../Utilities/permissionHelper.php");
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div class="sidebar-brand-text mx-3 font-weight-600 text-dark">
+                    <div class="sidebar-brand-text mx-3 font-weight-600" style="font-size: 16px;">
                         <i class="fas fa-user-circle text-primary mr-2"></i>
                         <?php echo $_SESSION['login_user']; ?>
                     </div>
@@ -312,6 +317,10 @@ require_once("../Utilities/permissionHelper.php");
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

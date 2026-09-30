@@ -96,4 +96,38 @@ class DBrotation
             echo "Error: " . $sql . "<br>" . $connectionObj->error;
         }
     }
+
+    public static function isRotationExists($side, $rotationId = 0)
+    {
+        $db = ConnectDb::getInstance();
+        $conn = $db->getConnection();
+
+        if ($rotationId > 0) {
+
+            $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM rotation
+            WHERE LOWER(TRIM(sides)) = LOWER(TRIM(?))
+            AND rotationId != ?
+        ");
+
+            $stmt->bind_param("si", $side, $rotationId);
+
+        } else {
+
+            $stmt = $conn->prepare("
+            SELECT COUNT(*) AS total
+            FROM rotation
+            WHERE LOWER(TRIM(sides)) = LOWER(TRIM(?))
+        ");
+
+            $stmt->bind_param("s", $side);
+        }
+
+        $stmt->execute();
+
+        $result = $stmt->get_result()->fetch_assoc();
+
+        return ($result['total'] > 0);
+    }
 }

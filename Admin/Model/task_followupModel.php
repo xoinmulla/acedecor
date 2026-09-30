@@ -8,9 +8,9 @@ class Taskfollowup implements JsonSerializable
     private $FollowUp_createdOn;
     private $FollowUp_modifiedBy;
     private $Followup_Status;
-    
-    private $table_name="taskfollowups";
-    
+
+    private $table_name = "taskfollowups";
+
     public function getFollowUp_Id()
     {
         return $this->FollowUp_Id;
@@ -22,7 +22,7 @@ class Taskfollowup implements JsonSerializable
         return $this;
     }
 
-    
+
     public function getTaskID()
     {
         return $this->TaskID;
@@ -34,7 +34,7 @@ class Taskfollowup implements JsonSerializable
         return $this;
     }
 
-  
+
     public function getFollowUp_Comments()
     {
         return $this->FollowUp_Comments;
@@ -46,7 +46,7 @@ class Taskfollowup implements JsonSerializable
         return $this;
     }
 
-    
+
     public function getFollowUp_createdBy()
     {
         return $this->FollowUp_createdBy;
@@ -58,7 +58,7 @@ class Taskfollowup implements JsonSerializable
         return $this;
     }
 
-   
+
     public function getFollowUp_modifiedBy()
     {
         return $this->FollowUp_modifiedBy;
@@ -92,21 +92,22 @@ class Taskfollowup implements JsonSerializable
         return $this;
     }
 
+    #[\ReturnTypeWillChange]
 
     public function jsonSerialize()
     {
         return [
-                'FollowUp_Id' => $this->FollowUp_Id,
-                'TaskID' => $this->TaskID,
-                'FollowUp_Comments'=>$this->FollowUp_Comments,
-                'FollowUp_createdBy'=>$this->FollowUp_createdBy,
-                'FollowUp_modifiedBy'=>$this->FollowUp_modifiedBy,
-                'Followup_Status'=>$this->Followup_Status,
-                'FollowUp_createdOn'=>$this->FollowUp_createdOn,
+            'FollowUp_Id' => $this->FollowUp_Id,
+            'TaskID' => $this->TaskID,
+            'FollowUp_Comments' => $this->FollowUp_Comments,
+            'FollowUp_createdBy' => $this->FollowUp_createdBy,
+            'FollowUp_modifiedBy' => $this->FollowUp_modifiedBy,
+            'Followup_Status' => $this->Followup_Status,
+            'FollowUp_createdOn' => $this->FollowUp_createdOn,
         ];
     }
 
 
-   
-    
+
+
 }

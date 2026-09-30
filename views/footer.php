@@ -7,6 +7,7 @@
      <div class="footer-line"></div>
     <p class="footer-text">
         <?php 
+        $business = DBbusiness::getBusinessDetails();
             $string = strip_tags($business->getBusinessAboutBusiness());
             if (strlen($string) > 350) {
                 $stringCut = substr($string, 0, 340);
@@ -25,11 +26,11 @@
                 <h5 class="footer-title">Quick Links</h5>
                 <div class="footer-line"></div>
                 <ul class="footer-links">
-                    <li><a href="/acedecor/">Home</a></li>
-                    <li><a href="views/about">About</a></li>
-                    <li><a href="views/contact">Contact</a></li>
-                    <li><a href="views/termsandconditions">Terms & Conditions</a></li>
-                    <li><a href="views/PrivacyPolicy">Privacy Policy</a></li>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/contact/">Contact</a></li>
+                    <li><a href="/termsandconditions/">Terms & Conditions</a></li>
+                    <li><a href="/PrivacyPolicy/">Privacy Policy</a></li>
 
                 </ul>
             </div>
@@ -54,7 +55,7 @@
                 <p class="footer-text"><i class="far fa-envelope"></i> <?php echo $business->getBusinessEmail(); ?></p>
                 <p class="footer-text"><i class="fas fa-phone-alt"></i> <?php echo $business->getBusinessContact(); ?>, <?php echo $business->getBusinessContact2(); ?></p>
                 <p class="footer-text"><i class="fas fa-map-marker-alt"></i> <?php echo $business->getBusinessAddress(); ?></p>
-                <a href="/acedecor/views/contact" class="btn-discover">Enquiry</a>
+                <a href="../views/contact/" class="btn-discover">Enquiry</a>
             </div>
         </div>
 

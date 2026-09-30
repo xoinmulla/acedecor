@@ -25,7 +25,10 @@ class PurchaseOrder implements JsonSerializable
 
     private $InventoryType;
     private $HasInward;
-
+    private $Name;
+    private $ArticleNo;
+    private $Description;
+    private $unitName;
     private $SupplierLocation;
     public function setSupplierLocation($SupplierLocation)
     {

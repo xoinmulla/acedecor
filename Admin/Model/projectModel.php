@@ -23,10 +23,18 @@ class Project implements JsonSerializable
     private $DayCount;
     private $InputType;
     private $table_name = "projects";
+    private $tradePrice;
 
 
     private $customerCity;
-
+    public function set_tradePrice($tradePrice)
+    {
+        $this->tradePrice = $tradePrice;
+    }
+    public function get_tradePrice()
+    {
+        return $this->tradePrice;
+    }
     public function set_customerCity($customerCity)
     {
         $this->customerCity = $customerCity;
@@ -228,6 +236,7 @@ class Project implements JsonSerializable
             'DOA' => $this->DOA,
             'InputType' => $this->InputType,
             'customerCity' => $this->customerCity,
+            'tradePrice' => $this->tradePrice,
 
         ];
     }

@@ -11,7 +11,7 @@ require_once "../DB Operations/enq_categoryOps.php";
  * design.php
  * - Sanitizes/validates incoming id
  * - Escapes outputs with htmlspecialchars
- * - Uses Bootstrap 5 data-bs-* attributes
+ * - Uses Bootstrap 5 data-* attributes
  * - Generates carousel indicators/items safely
  * - Uses unique element IDs
  * - Uses FormData for file upload AJAX
@@ -77,7 +77,7 @@ $csrf_token = $_SESSION['csrf_token'];
         object-fit: contain;
     }
 </style>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <h1 class="h3 mb-4 text-gray-800">Customer Management</h1>
 <!-- message placeholder -->
 <span id="message"></span>
@@ -89,9 +89,9 @@ $csrf_token = $_SESSION['csrf_token'];
                 <h6 class="m-0 font-weight-bold text-primary">Design Files</h6>
             </div>
             <div class="col text-end">
-                <!-- Bootstrap 5 modal trigger (data-bs-*) -->
+                <!-- Bootstrap 5 modal trigger (data-*) -->
                 <button type="button" class="btn btn-success btn-circle btn-sm" data-bs-toggle="modal"
-                    data-bs-target="#addDesignModal" data-id="<?= $id ?>">
+                    data-bs-target="#addDesignModal" dataid="<?= $id ?>">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
@@ -162,7 +162,10 @@ foreach ($rawDesigns as $catId => $group) {
         ];
     }
 
-    $grouped[$catName] = $imgList;
+    $grouped[$catId] = [
+        'name' => $catName,
+        'images' => $imgList
+    ];
 }
 
 $groupJsonEscaped = json_encode($grouped);
@@ -178,22 +181,21 @@ $designCategories = DBcategory::selectDesignCategories();
 
     <ul class="nav nav-tabs" id="designTabs">
         <?php $i = 0;
-        foreach ($grouped as $catName => $items): ?>
+        foreach ($grouped as $catId => $items): ?>
             <li class="nav-item">
-                <button class="nav-link <?= ($i == 0 ? 'active' : '') ?>" data-cat="<?= htmlspecialchars($catName) ?>"
-                    type="button" role="tab">
-                    <?= htmlspecialchars($catName) ?>
-                </button>
+                <button class="nav-link <?= ($i == 0 ? 'active' : '') ?>" data-cat="<?= $catId ?>" type="button">
 
+                    <?= htmlspecialchars($items['name']) ?>
+                </button>
             </li>
             <?php $i++; endforeach; ?>
     </ul>
 
-    <div id="carouselExampleDark" class="carousel carousel-dark slide" data-bs-ride="carousel">
+    <div id="carouselExampleDark" class="carousel carousel-dark slide" data-ride="carousel">
         <div class="carousel-inner">
             <?php
             $firstKey = array_key_first($grouped);
-            $images = $grouped[$firstKey];
+            $images = $grouped[$firstKey]['images'];
 
             foreach ($images as $index => $img):
                 $active = ($index == 0 ? 'active' : '');  // ⭐ REQUIRED
@@ -235,9 +237,10 @@ $designCategories = DBcategory::selectDesignCategories();
         <form method="POST" id="DesginFiles_form" enctype="multipart/form-data"
             action="../Controller/designFileController.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Add Design Files</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
@@ -301,9 +304,10 @@ $designCategories = DBcategory::selectDesignCategories();
     <div class="modal-dialog">
         <form method="POST" id="deleteDesignFile_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
                     <h4 class="modal-title">Delete Design File</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
@@ -316,7 +320,7 @@ $designCategories = DBcategory::selectDesignCategories();
                     <input type="hidden" name="hidden_delete_id" id="hidden_delete_id" />
                     <input type="submit" name="submit_delete" id="deletebutton" class="btn btn-danger"
                         value="Confirm" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -413,7 +417,7 @@ require_once("footer.php");
 
         // Tabs click -> move carousel
         $(document).on('click', '#designTabs .nav-link', function () {
-            let cat = $(this).data('cat');
+            let cat = parseInt($(this).data('cat'));
             $('#designTabs .nav-link').removeClass('active');
             $(this).addClass('active');
             renderCarouselForCategory(cat);
@@ -424,21 +428,37 @@ require_once("footer.php");
         $('#carouselExampleDark').on('slid.bs.carousel', function (e) {
             let index = $(e.relatedTarget).index();
 
-            $('.nav-link[data-slide-index]').removeClass('active');
-            $('.nav-link[data-slide-index="' + index + '"]').addClass('active');
+            $('.nav-link[dataslide-index]').removeClass('active');
+            $('.nav-link[dataslide-index="' + index + '"]').addClass('active');
         });
-
+        const firstTab = $('#designTabs .nav-link').first();
+        const firstCat = parseInt(firstTab.data('cat'));
+        renderCarouselForCategory(firstCat);
     });
     const groupedDesigns = <?= $groupJsonEscaped ?>;
 
-    function renderCarouselForCategory(catName) {
-        const images = groupedDesigns[catName] || [];
+    function renderCarouselForCategory(catId) {
+        catId = parseInt(catId);
+        const images = groupedDesigns[catId]?.images || [];
 
         const carouselEl = document.getElementById("carouselExampleDark");
 
         // Dispose existing carousel FIRST
-        let existing = bootstrap.Carousel.getInstance(carouselEl);
-        if (existing) existing.dispose();
+        if ($(carouselEl).data('bs.carousel')) {
+            $(carouselEl).carousel('dispose');
+        }
+        // 🔥 FORCE FULL RESET
+        carouselEl.innerHTML = `
+    <div class="carousel-inner"></div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+`;
 
         const container = carouselEl.querySelector(".carousel-inner");
 
@@ -476,40 +496,66 @@ require_once("footer.php");
         }
 
         // re-initialize
-        new bootstrap.Carousel(carouselEl);
+        $(carouselEl).carousel();
     }
 
 
 
     // on tab click:
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabButtons = document.querySelectorAll('#designTabs .nav-link');
-        if (tabButtons.length === 0) return;
+    // document.addEventListener('DOMContentLoaded', function () {
+    //     const tabButtons = document.querySelectorAll('#designTabs .nav-link');
 
-        // initial render of first tab (keep your existing first draw too)
-        const firstBtn = tabButtons[0];
-        const firstCat = firstBtn.dataset.cat || firstBtn.textContent.trim();
-        renderCarouselForCategory(firstCat);
+    //     if (tabButtons.length === 0) return;
 
-        tabButtons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                tabButtons.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const cat = this.dataset.cat || this.textContent.trim();
-                renderCarouselForCategory(cat);
-            });
+    //     // initial render of first tab (keep your existing first draw too)
+    //     const firstBtn = tabButtons[0];
+    //     const firstCat = firstBtn.dataset.cat || firstBtn.textContent.trim();
+    //     renderCarouselForCategory(firstCat);
+
+    //     tabButtons.forEach(btn => {
+    //         btn.addEventListener('click', function () {
+    //             tabButtons.forEach(b => b.classList.remove('active'));
+    //             this.classList.add('active');
+    //             const cat = this.dataset.cat || this.textContent.trim();
+    //             renderCarouselForCategory(cat);
+    //         });
+    //     });
+    // });
+    $('.modal').on('shown.bs.modal', function () {
+
+        var $dialog = $(this).find('.modal-dialog');
+
+        if ($dialog.hasClass("ui-draggable")) {
+            $dialog.draggable("destroy");
+        }
+
+        var offset = $dialog.offset();
+
+        $dialog.css({
+            margin: 0,
+            position: "fixed",
+            left: offset.left,
+            top: offset.top,
+            transform: "none"
         });
+
+        $dialog.draggable({
+            handle: ".modal-header",
+            containment: "window",
+            scroll: false
+        });
+
     });
 
 </script>
 <script>
-function escapeHtml(text) {
-    if (text == null) return "";
-    return text
-       .replace(/&/g, "&amp;")
-       .replace(/</g, "&lt;")
-       .replace(/>/g, "&gt;")
-       .replace(/"/g, "&quot;")
-       .replace(/'/g, "&#039;");
-}
+    function escapeHtml(text) {
+        if (text == null) return "";
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 </script>

@@ -1,6 +1,6 @@
 <?php
 require_once "dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/acedecor/cmsadmin/model/businessModel.php";
+require_once __DIR__ . "/../model/businessModel.php";
 
 class DBbusiness
 {

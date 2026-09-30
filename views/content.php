@@ -1,7 +1,7 @@
 <?php
 require_once "navigation.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/acedecor/cmsadmin/dblayer/dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT']."/acedecor/cmsadmin/dblayer/contentOps.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/cmsadmin/dblayer/dbconnection.php";
+require_once $_SERVER['DOCUMENT_ROOT']."/cmsadmin/dblayer/contentOps.php";
 
 $maincontent = DBcontent::getLatestContent(type: "main");
 $allContents = DBcontent::getAll();
@@ -118,7 +118,7 @@ body {
                 <?php foreach ($mediaList as $i => $m): ?>
                 <div class="carousel-item <?= $i===0 ? 'active' : '' ?>">
                     <?php if ($m['file_type'] === 'image'): ?>
-                        <img src="/acedecor/cmsadmin/img/Slider/<?= htmlspecialchars($m['image_file']) ?>" alt="<?= htmlspecialchars($m['alt_text'] ?? $maincontent->getTitle()) ?>">
+                        <img src="/cmsadmin/img/Slider/<?= htmlspecialchars($m['image_file']) ?>" alt="<?= htmlspecialchars($m['alt_text'] ?? $maincontent->getTitle()) ?>">
                     <?php elseif ($m['file_type'] === 'video'): ?>
                         <?php if (!empty($m['video_url'])): ?>
                             <div class="ratio ratio-16x9">
@@ -146,7 +146,7 @@ body {
             </button>
         </div>
     <?php elseif ($maincontent && $maincontent->getImage()): ?>
-        <img src="/acedecor/cmsadmin/img/<?= htmlspecialchars($maincontent->getImage()) ?>" class="w-100" alt="<?= htmlspecialchars($maincontent->getTitle()) ?>">
+        <img src="/cmsadmin/img/<?= htmlspecialchars($maincontent->getImage()) ?>" class="w-100" alt="<?= htmlspecialchars($maincontent->getTitle()) ?>">
     <?php endif; ?>
 
     <div class="section-text">

@@ -15,7 +15,7 @@ if (!empty($_SERVER['HTTP_X_REQUESTED_WITH'])) {
     ini_set('display_errors', 0);
     error_reporting(E_ALL);
 }
-if ($_GET['action'] === 'checkQuotePaymentLock') {
+if (isset($_GET['action']) && $_GET['action'] === 'checkQuotePaymentLock') {
 
     $quoteCode = $_GET['quoteCode'] ?? '';
     $customerCode = $_GET['customerCode'] ?? '';
@@ -63,7 +63,7 @@ if (
         $pay->set_paymentdescription(Sanitization::test_input($_POST["paymentdescription"]));
         $pay->set_modifiedby("Admin");
 
-        DBpayment::insert($pay);
+        $payment_id = DBpayment::insert($pay);
 
         // ================= ADD TO EXPENSE TABLE (PROJECT INCOME) =================
         $expense = new Expense();
@@ -76,6 +76,7 @@ if (
         $expense->setPaymentType($_POST['paymentmode']);
         $expense->setNotes($_POST['paymentdescription'] ?? 'Project Income');
         $expense->setType('Income');                   // 🔑 VERY IMPORTANT
+        $expense->setPaymentId($payment_id);
 
         DBExpense::insert($expense);
 
@@ -114,7 +115,11 @@ if (
     }
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["action"] !== "project_income") {
+if (
+    $_SERVER["REQUEST_METHOD"] == "POST" &&
+    isset($_POST["action"]) &&
+    $_POST["action"] !== "project_income"
+) {
     error_log('POST action: ' . $_POST['action']);
     if ($_POST['action'] === 'credit') {
         error_log('POST action: ' . $_POST['action']);

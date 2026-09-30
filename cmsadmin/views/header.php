@@ -80,12 +80,12 @@
                     <span>Post</span>
                 </a>
             </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="enquiry.php">
+            <li class="nav-item">
+                <a class="nav-link" href="brands.php">
                 <i class="fas fa-question-circle"></i>
-                    <span>Enquiry</span>
+                    <span>Brands</span>
                 </a>
-            </li> -->
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="termsandconditions.php">
                 <i class="fas fa-question-circle"></i>

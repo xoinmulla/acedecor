@@ -11,6 +11,8 @@ require_once "../DB Operations/monthlyReportOps.php"; // ✅ For accurate due lo
 
 $salaryPayData = DBMonthlyReport::getAllEmployeeSummary();
 
+$displayMonth = date('F'); // Current month name, e.g. August
+
 $conn = ConnectDb::getInstance()->getConnection();
 
 // ---- Summary Cards ---- //
@@ -24,7 +26,6 @@ $otHours = $conn->query("SELECT COALESCE(SUM(ot_hours),0) AS total FROM attendan
 $attBreak = $conn->query("
     SELECT status, COUNT(*) AS total 
     FROM attendance 
-    WHERE DATE_FORMAT(date,'%Y-%m') = DATE_FORMAT(CURDATE(),'%Y-%m')
     GROUP BY status
 ");
 
@@ -329,7 +330,7 @@ $otTrend = $conn->query("
       ]);
 
       var options = {
-        title: 'Overtime Hours (This Month)',
+        title: 'Overtime Hours (<?= $displayMonth ?>)',
         curveType: 'function',
         colors: ['#6610f2'],
         hAxis: { title: 'Day of Month', format: '0' },
@@ -360,7 +361,7 @@ $otTrend = $conn->query("
         </button>
       </li>
     </ul>
-
+    <br><br>
     <!-- Summary Cards -->
     <div class="tab-content">
       <!-- ================= DASHBOARD TAB ================= -->
@@ -368,7 +369,7 @@ $otTrend = $conn->query("
 
         <div class="row g-5 full-height align-content-center">
 
-          <div class="col-xl-6 col-lg-6 col-md-12 d-flex justify-content-center">
+          <div class="col-xl-4 col-lg-4 col-md-10 d-flex justify-content-center">
             <div class="emp-card bg-emp-blue">
               <div class="emp-icon"><i class="fa-solid fa-users"></i></div>
               <div class="emp-title">TOTAL EMPLOYEES</div>
@@ -376,7 +377,7 @@ $otTrend = $conn->query("
             </div>
           </div>
 
-          <div class="col-xl-6 col-lg-6 col-md-12 d-flex justify-content-center">
+          <div class="col-xl-4 col-lg-4 col-md-10 d-flex justify-content-center">
             <div class="emp-card bg-emp-green">
               <div class="emp-icon"><i class="fa-solid fa-user-check"></i></div>
               <div class="emp-title">PRESENT TODAY</div>
@@ -384,18 +385,10 @@ $otTrend = $conn->query("
             </div>
           </div>
 
-          <div class="col-xl-6 col-lg-6 col-md-12 d-flex justify-content-center">
-            <div class="emp-card bg-emp-red">
-              <div class="emp-icon"><i class="fa-solid fa-user-xmark"></i></div>
-              <div class="emp-title">ABSENT TODAY</div>
-              <div class="emp-value"><?= $absentToday ?></div>
-            </div>
-          </div>
-
-          <div class="col-xl-6 col-lg-6 col-md-12 d-flex justify-content-center">
+          <div class="col-xl-4 col-lg-4 col-md-10 d-flex justify-content-center">
             <div class="emp-card bg-emp-purple">
               <div class="emp-icon"><i class="fa-solid fa-clock"></i></div>
-              <div class="emp-title">OT HOURS (MONTH)</div>
+              <div class="emp-title">OT HOURS (<?= strtoupper($displayMonth) ?>)</div>
               <div class="emp-value"><?= number_format($otHours, 2) ?></div>
             </div>
           </div>
@@ -415,7 +408,7 @@ $otTrend = $conn->query("
             <div class="chart-card">
               <h6 class="text-primary text-center">
                 <i class="fa-solid fa-chart-pie me-2"></i>
-                Attendance Breakdown
+                Attendance Breakdown (All Time)
               </h6>
               <div id="att_chart" style="flex:1;"></div>
             </div>

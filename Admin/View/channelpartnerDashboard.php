@@ -295,13 +295,13 @@ $totalsuppliers = DBDashboard::totalsupplierscount();
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 text-primary" style="font-size: 1.5rem; font-weight: bolder;">Channel Partners Dashboard</h6>
+            <h6 class="m-0 text-primary" style="font-size: 1.5rem;">Channel Partners Dashboard</h6>
         </div></br>
         <div class="dashboard-cards">
 
             <!-- Total Brands -->
             <div class="dashboard-card card-brands">
-                <div class="dashboard-icon">
+                <div class="dashboard-icon" style="align-items: center;">
                     <i class="fas fa-cubes"></i>
                 </div>
                 <div class="dashboard-title">Total Brands</div>

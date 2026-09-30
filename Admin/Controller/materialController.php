@@ -143,10 +143,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Call DB update
         try {
+
+            if (
+                DBmaterialdetails::isDuplicateMaterialForUpdate(
+                    $materialId,
+                    post("editedmaterialname"),
+                    post("editedmaterialbrand"),
+                    post("editedmaterialCategory"),
+                    post("editedsubCategory")
+                )
+            ) {
+
+                jsonResponse([
+                    "status" => "error",
+                    "message" => "Material already exists with the same Name, Brand, Category and Subcategory."
+                ]);
+            }
+
             DBmaterialdetails::update($details);
-            jsonResponse(["status" => "success", "message" => "Material updated successfully"]);
+
+            jsonResponse([
+                "status" => "success",
+                "message" => "Material updated successfully"
+            ]);
+
         } catch (Exception $e) {
-            jsonResponse(["status" => "error", "message" => "Update failed: " . $e->getMessage()], 500);
+
+            jsonResponse([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ], 500);
+
         }
     }
 
@@ -232,10 +259,36 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     try {
+
+        if (
+            DBmaterialdetails::isDuplicateMaterial(
+                post("materialname"),
+                post("company"),
+                post("materialCategory"),
+                post("materialsubCategory")
+            )
+        ) {
+
+            jsonResponse([
+                "status" => "error",
+                "message" => "Material already exists with the same Name, Brand, Category and Subcategory."
+            ]);
+        }
+
         DBmaterialdetails::insert($details);
-        jsonResponse(["status" => "success", "message" => "Material added successfully"]);
+
+        jsonResponse([
+            "status" => "success",
+            "message" => "Material added successfully"
+        ]);
+
     } catch (Exception $e) {
-        jsonResponse(["status" => "error", "message" => "Insert failed: " . $e->getMessage()], 500);
+
+        jsonResponse([
+            "status" => "error",
+            "message" => "Insert failed : " . $e->getMessage()
+        ], 500);
+
     }
 }
 if (isset($_GET['infomatid'])) {

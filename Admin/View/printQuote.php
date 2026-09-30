@@ -2,8 +2,14 @@
 include('session.php');
 require_once "lineitemNavigation.php";
 include('../DB Operations/quotationOps.php');
-$customerId = $_GET['id'];
-$quotation = DBQuotation::getQuotationsForPrint($customerId);
+$quoteId = intval($_GET['id']);
+
+$quotation = DBQuotation::getQuotationsForPrint($quoteId);
+
+if (empty($quotation)) {
+    die("<h3>No Approved quotation found.</h3>");
+}
+
 $firstquote = $quotation[0];
 
 function numberToWords($number)
@@ -38,11 +44,11 @@ function numberToWords($number)
 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
 
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile"
+        <button class="nav-link" id="pills-profile-tab" data-toggle="pill" data-target="#pills-profile"
             type="button" role="tab" aria-controls="pills-profile" aria-selected="false">PROFORMA INVOICE</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home"
+        <button class="nav-link active" id="pills-home-tab" data-toggle="pill" data-target="#pills-home"
             type="button" role="tab" aria-controls="pills-home" aria-selected="true">General</button>
     </li>
 
@@ -74,14 +80,13 @@ function numberToWords($number)
                 </tr>
             </table>
 
-            <hr>
-
+            <br>
             <!-- Customer Row -->
             <table width="100%" cellpadding="5">
                 <tr>
-                    <td><strong>Customer Name:</strong> <?php echo $firstquote->get_customerName() ?></td>
-                    <td align="center"><strong>Customer Id:</strong> <?php echo $firstquote->getCustomerCode() ?></td>
-                    <td align="right"><strong>Quote Id:</strong> <?php echo $firstquote->getQuoteCode() ?></td>
+                    <td width="38%"><strong>Customer Name:</strong> <?php echo $firstquote->get_customerName() ?></td>
+                    <td align="center" width="30%"><strong>Customer Id:</strong> <?php echo $firstquote->getCustomerCode() ?></td>
+                    <td align="right" width="29%"><strong>Quote Id:</strong> <?php echo $firstquote->getQuoteCode() ?></td>
                 </tr>
             </table>
 
@@ -90,11 +95,11 @@ function numberToWords($number)
             <!-- Item Table -->
             <table width="100%" border="1" cellspacing="0" cellpadding="8">
                 <tr style="background:#3c434a; color:#fff;">
-                    <th style="text-align:center;">#</th>
-                    <th style="text-align:center;">Description</th>
-                    <th style="text-align:center;">Qty</th>
-                    <th style="text-align:center;">Unit</th>
-                    <th style="text-align:center;">Amount</th>
+                    <th style="text-align:center;" width="5%">#</th>
+                    <th style="text-align:center;" width="55%">Description</th>
+                    <th style="text-align:center;" width="10%">Qty</th>
+                    <th style="text-align:center;" width="10%">Unit</th>
+                    <th style="text-align:center;" width="20%">Amount</th>
                 </tr>
 
 
@@ -138,7 +143,7 @@ function numberToWords($number)
 
             <table width="100%">
                 <tr>
-                    <td>Authorized Signature</td>
+                    <td width="39%">Authorized Signature</td>
                     <td align="right">Thank you for your business!</td>
                 </tr>
             </table>
@@ -168,7 +173,7 @@ function numberToWords($number)
             <!-- Header -->
             <table width="100%" cellspacing="0" cellpadding="5">
                 <tr>
-                    <td width="70%">
+                    <td width="55%">
                         <h2 style="margin:0;">ACE DECORS</h2><br>
                         <p style="margin:0;">
                             Manufacturers and Suppliers of Modular Kitchen, Wardrobe & Cabinets<br>
@@ -178,7 +183,7 @@ function numberToWords($number)
                         </p>
                         <p style="margin:0;">GSTIN:29ABQFA0355B1ZM</p>
                     </td>
-                    <td width="30%" align="right">
+                    <td width="23%" align="right">
                         <h3>PROFORMA INVOICE</h3>
                     </td>
                 </tr>
@@ -187,10 +192,10 @@ function numberToWords($number)
             <hr>
 
             <!-- Customer Details -->
-            <table width="100%" cellpadding="5">
-                <tr>
-                    <td><strong>Name:</strong> <?php echo $firstquote->get_customerName() ?></td>
-                    <td align="center"><strong>Invoice No:</strong> <?php echo $firstquote->getQuoteCode() ?></td>
+            <table height="100%" cellpadding="5">
+                <tr font-size="20px">
+                    <td font-size="20px"><strong>Name:</strong> <?php echo $firstquote->get_customerName() ?></td>
+                    <td align="center" width="41%"><strong>Invoice No:</strong> <?php echo $firstquote->getQuoteCode() ?></td>
                     <td align="right"><strong>Date Issued:</strong> <?php echo date("d/M/Y"); ?></td>
                 </tr>
                 <tr>
@@ -208,11 +213,11 @@ function numberToWords($number)
             <!-- Product Table -->
             <table width="100%" border="1" cellspacing="0" cellpadding="8">
                 <tr style="background:#3c434a; color:#fff;">
-                    <th style="text-align:center;">Sl No.</th>
-                    <th style="text-align:center;">Description</th>
-                    <th style="text-align:center;">Qty</th>
-                    <th style="text-align:center;">Unit</th>
-                    <th style="text-align:center;">Amount</th>
+                    <th style="text-align:center;" width="5%">#</th>
+                    <th style="text-align:center;" width="55%">Description</th>
+                    <th style="text-align:center;" width="10%">Qty</th>
+                    <th style="text-align:center;" width="10%">Unit</th>
+                    <th style="text-align:center;" width="20%">Amount</th>
                 </tr>
 
 
@@ -249,7 +254,7 @@ function numberToWords($number)
 
             <table width="100%" border="1" cellspacing="0" cellpadding="8">
                 <tr>
-                    <td width="50%">
+                    <td width="34%">
                         <strong>Bank Details</strong><br><br>
                         Bank Name: ICICI Bank<br>
                         Branch Name: Dharwad Gandhinagar<br>
@@ -271,7 +276,7 @@ function numberToWords($number)
 
             <table width="100%" border="1" cellspacing="0" cellpadding="12">
                 <tr>
-                    <td width="50%">
+                    <td width="30%">
                         Authorized Signature
                     </td>
 

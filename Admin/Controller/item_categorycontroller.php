@@ -18,11 +18,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $result = DBitemcategory::delete($_POST["id"]);
 
-    echo json_encode([
-      "status" => "success",
-      "message" => "Category deleted",
-      "html" => $result   // Your delete() returns HTML message
-    ]);
+    if (strpos($result, "alert-danger") !== false) {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => "Category cannot be deleted because it is in use."
+      ]);
+
+    } else {
+
+      echo json_encode([
+        "status" => "success",
+        "message" => "Category deleted successfully."
+      ]);
+
+    }
+
+    exit;
     exit;
   }
 
@@ -38,6 +50,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $category->set_itemcatdescription(Sanitization::test_input($_POST["itemcatdescription"]));
     $category->set_itemcatcreatedby(Sanitization::test_input($_POST["itemcatcreatedby"]));
     $category->set_itemcatmodifiedby(Sanitization::test_input($_POST["itemcatmodifiedby"]));
+
+    if (
+      DBitemcategory::isCategoryExists(
+        $category->get_itemcatname(),
+        $category->get_itemcatid()
+      )
+    ) {
+
+      echo json_encode([
+        "status" => "error",
+        "message" => "Category already exists."
+      ]);
+      exit;
+
+    }
 
     if (!empty($_POST["brand_list"])) {
       $category->set_brandList($_POST["brand_list"]);

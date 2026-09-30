@@ -237,6 +237,11 @@
                     <span>Material Category</span></a>
             </li> -->
             <li class="nav-item">
+                <a class="nav-link" href="MaterialStockdashboard.php">
+                    <i class="fas fa-tags"></i>
+                    <span>Material Issues</span></a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="material_Category.php">
                     <i class="fas fa-th-list"></i>
                     <span>Material Category</span></a>
@@ -320,6 +325,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

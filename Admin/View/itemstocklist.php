@@ -34,14 +34,294 @@ if(!hasActionPermission('inventory','stocklist')){
     exit;
 }
 ?>
+
+<style>
+/* =========================================================
+   ITEM STOCKS - PAGE ONLY RESPONSIVE FIXES
+   Existing design / Bootstrap structure preserved.
+   ========================================================= */
+
+html,
+body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ---------- Stock summary cards ---------- */
+.stock-summary-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.stock-summary-row > [class*="col-"] {
+    margin-bottom: 1rem;
+}
+
+.stock-summary-row .widget-stat {
+    height: 100%;
+    min-height: 150px;
+}
+
+.stock-summary-row .widget-stat h2 {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+/* ---------- Filter section ---------- */
+.stock-filter-form {
+    width: 100%;
+}
+
+.stock-filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.stock-filter-row > label {
+    margin-bottom: .5rem;
+}
+
+.stock-filter-row > .stock-field {
+    margin-bottom: .75rem;
+}
+
+/* ---------- Main table: only table scrolls ---------- */
+.stock-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: auto;
+}
+
+#itemStockTable {
+    min-width: 1050px;
+    width: 100%;
+}
+
+#itemStockTable th,
+#itemStockTable td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* ---------- Modal ---------- */
+#followupModal .modal-dialog {
+    position: absolute;
+    width: min(900px, calc(100vw - 20px));
+    max-width: none;
+    margin: 0;
+}
+
+#followupModal .modal-content {
+    width: 100%;
+    max-height: calc(100vh - 20px);
+    overflow: hidden;
+}
+
+#followupModal .modal-header {
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+}
+
+#followupModal .modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(100vh - 150px);
+}
+
+.followup-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+#followuptable {
+    min-width: 650px;
+    width: 100%;
+}
+
+#followuptable th,
+#followuptable td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+#followupModal textarea {
+    width: 100%;
+    max-width: 100%;
+    resize: vertical;
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 991.98px) {
+
+    .stock-filter-row > label {
+        text-align: left !important;
+    }
+
+    #itemStockTable {
+        min-width: 1050px;
+    }
+
+    #followupModal .modal-body {
+        max-height: calc(100vh - 135px);
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .stock-summary-row {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .stock-summary-row > [class*="col-"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+        padding-left: .5rem;
+        padding-right: .5rem;
+    }
+
+    .stock-summary-row .widget-stat h2 {
+        font-size: 40px !important;
+    }
+
+    /*
+     * Stack every filter control on phones.
+     * This prevents the 320px layout from being squeezed.
+     */
+    .stock-filter-row {
+        display: block;
+    }
+
+    .stock-filter-row > label,
+    .stock-filter-row > .stock-field {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        flex: none;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        text-align: left !important;
+    }
+
+    .stock-filter-row .input-group {
+        width: 100%;
+    }
+
+    .stock-filter-row select {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /*
+     * The complete table remains wide enough to be readable.
+     * Only this wrapper scrolls horizontally.
+     */
+    .stock-table-wrapper {
+        overflow-x: auto;
+        padding-bottom: 8px;
+    }
+
+    #itemStockTable {
+        min-width: 1050px;
+        width: 1050px;
+        table-layout: auto;
+    }
+
+    /* Modal uses almost the complete viewport width. */
+    #followupModal .modal-dialog {
+        width: calc(100vw - 12px);
+        max-width: none;
+    }
+
+    #followupModal .modal-content {
+        max-height: calc(100vh - 12px);
+    }
+
+    #followupModal .modal-body {
+        max-height: calc(100vh - 125px);
+        padding: .75rem;
+    }
+
+    .followup-table-wrapper {
+        overflow-x: auto;
+        padding-bottom: 6px;
+    }
+
+    #followuptable {
+        min-width: 650px;
+        width: 650px;
+    }
+
+    #followupModal .modal-footer {
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+
+    #followupModal .modal-footer .btn {
+        margin: 0;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .stock-summary-row .widget-stat h2 {
+        font-size: 34px !important;
+    }
+
+    .stock-table-wrapper {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /*
+     * 320px / 360px / 375px phones:
+     * no page-level horizontal scroll.
+     * User swipes the table itself.
+     */
+    #itemStockTable {
+        min-width: 1050px;
+        width: 1050px;
+    }
+
+    #followupModal .modal-dialog {
+        width: calc(100vw - 8px);
+    }
+
+    #followupModal .modal-body {
+        padding: .6rem;
+    }
+
+    #followuptable {
+        min-width: 650px;
+        width: 650px;
+    }
+
+    #followupModal .modal-footer {
+        padding: .6rem;
+    }
+}
+</style>
+<style>
+    .card-body #itemStockTable th{
+        font-weight: 500;
+    }
+</style>
 <h1 class="h3 mb-4 text-gray-800">Stock Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px 8px 0 0;">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Item Stock</h6>
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">Item Stock</h6>
             </div>
             <div class="col" align="right">
                 <!-- <span data-toggle=modal data-target=#itemcatModal>
@@ -52,7 +332,7 @@ if(!hasActionPermission('inventory','stocklist')){
         </div>
     </div>
     <div class="card-body">
-        <div class=row>
+        <div class="row stock-summary-row">
             <div class="col-md-4">
                 <div class="widget-stat card">
                     <div class="card-body">
@@ -97,9 +377,9 @@ if(!hasActionPermission('inventory','stocklist')){
 
         <div class="form-group">
             <div class="row">
-                <form>
+                <form class="stock-filter-form">
                     <div class="form-group">
-                        <div class="row">
+                        <div class="row stock-filter-row">
 
                             <label class="col-md-2 text-right">Brands <span class="text-danger">*</span></label>
                             <div class="col-md-3">
@@ -140,19 +420,20 @@ if(!hasActionPermission('inventory','stocklist')){
                 </form>
             </div>
         </div>
-        <table class="table table-bordered" id="lineItemTable" width="100%" cellspacing="0">
-            <thead>
+        <div class="stock-table-wrapper">
+            <table class="table table-bordered" id="itemStockTable" width="100%" cellspacing="0">
+            <thead align="center">
                 <tr>
                     <th style='display:none'>Item ID</th>
                     <th style='display:none'>POID</th>
-                    <th>Item Name</th>
-                    <th>PO Code</th>
+                    <th>Name</th>
+                    <th>PO ID</th>
                     <th>PO Type</th>
                     <th>Quantity Raised</th>
                     <th>Quantity Inwarded</th>
-                    <th>Total Value of Stock</th>
-                    <th>Net Rate of Item</th>
-                    <th>Latest Rate of Item</th>
+                    <th>Total Value</th>
+                    <th>Net Rate</th>
+                    <th>Inwarded Rate</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -206,21 +487,24 @@ if(!hasActionPermission('inventory','stocklist')){
                 }
                     ?>
             </tbody>
-        </table>
-        <div class="modal fade" id="followupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            </table>
+        </div>
+
+        <div class="modal fade draggable-modal" id="followupModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
             aria-hidden="true">
             <div class="modal-dialog modal-lg " role="document">
                 <form method="post" id="followup_form" enctype="multipart/form-data"
                     action="../Controller/issues_followupcontroller.php">
                     <div class="modal-content">
-                        <div class="modal-header">
+                        <div class="modal-header draggable-modal-header">
                             <h5 class="modal-title">Issue Details</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <table class="table table-bordered" id="followuptable" width="100%" cellspacing="0">
+                            <div class="followup-table-wrapper">
+                                <table class="table table-bordered" id="followuptable" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
                                         <th>
@@ -241,7 +525,8 @@ if(!hasActionPermission('inventory','stocklist')){
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
-                            </table>
+                                </table>
+                            </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-12">
@@ -309,26 +594,46 @@ $(document).ready(function() {
     });
 
     $('#brands').on('change', function() {
-        debugger;
-        var fetchsubcaturl = config.developmentPath +
-            "/Admin/Controller/item_categorycontroller.php/?brandId=" +
-            this.value;
-        $.getJSON(fetchsubcaturl, function(data) {
+    debugger;
+
+    var selectedBrandId = this.value;
+
+    // Clear previously loaded categories
+    $('#Category').empty();
+
+    // Reset sub category and item list because brand has changed
+    $('#subCategory').empty();
+    $('#item').empty();
+
+    // Add default category option
+    $('#Category').append(
+        '<option hidden disabled selected value>-- select an option --</option>'
+    );
+
+    var fetchsubcaturl = config.developmentPath +
+        "/Admin/Controller/item_categorycontroller.php/?brandId=" +
+        selectedBrandId;
+
+    $.getJSON(fetchsubcaturl, function(data) {
+
+        $.each(data, function(index, value) {
 
             $('#Category').append(
-                '<option hidden disabled selected value>-- select an option --</option>');
-            $.each(data, function(index, value) {
+                '<option value="' + value.itemcatid + '">' +
+                value.itemcatname +
+                '</option>'
+            );
 
-                $('#Category').append('<option value="' + value.itemcatid + '">' +
-                    value
-                    .itemcatname + '</option>');
-                $('#editedCategory').append('<option value="' + value.itemcatid +
-                    '">' +
-                    value
-                    .itemcatname + '</option>');
-            });
+            $('#editedCategory').append(
+                '<option value="' + value.itemcatid + '">' +
+                value.itemcatname +
+                '</option>'
+            );
+
         });
+
     });
+});
 
 
 
@@ -387,7 +692,7 @@ $(document).ready(function() {
         });
     }
 
-    $('#lineItemTable tbody').on('click', 'tr', function() {
+    $('#itemStockTable tbody').on('click', 'tr', function() {
         /* Get the row as a parent of the link that was clicked on */
         $('#followupItemId').val(this.cells[0].innerHTML);
         $('#followupPOID').val(this.cells[1].innerHTML);
@@ -461,5 +766,351 @@ $(document).ready(function() {
         });
     });
 
+
+    /* =========================================================
+       RESPONSIVE + DRAGGABLE BOOTSTRAP MODAL
+       Mouse + touch. Constrained to viewport.
+       ========================================================= */
+
+    function centerFollowupModal() {
+
+        var $modal = $('#followupModal');
+        var $dialog = $modal.find('.modal-dialog');
+
+        if (!$dialog.length) {
+            return;
+        }
+
+        var viewportWidth = $(window).width();
+        var viewportHeight = $(window).height();
+
+        var dialogWidth = $dialog.outerWidth();
+        var dialogHeight = $dialog.outerHeight();
+
+        var left = Math.max(4, (viewportWidth - dialogWidth) / 2);
+        var top = Math.max(4, (viewportHeight - dialogHeight) / 2);
+
+        $dialog.css({
+            left: left + 'px',
+            top: top + 'px',
+            transform: 'none'
+        });
+    }
+
+
+    $('#followupModal').on('shown.bs.modal', function () {
+
+        /*
+         * Wait one frame so Bootstrap has finished displaying
+         * the modal before calculating its dimensions.
+         */
+        requestAnimationFrame(function () {
+            centerFollowupModal();
+        });
+
+    });
+
+
+    $('#followupModal').on('hidden.bs.modal', function () {
+
+        /*
+         * Reset position so every new opening starts centered.
+         */
+        $(this).find('.modal-dialog').css({
+            left: '',
+            top: '',
+            transform: ''
+        });
+
+    });
+
+
+    /* ---------- Drag with mouse + touch ---------- */
+
+    (function () {
+
+        var $dialog = $('#followupModal .modal-dialog');
+        var $handle = $('#followupModal .draggable-modal-header');
+
+        var dragging = false;
+        var pointerId = null;
+
+        var startPointerX = 0;
+        var startPointerY = 0;
+
+        var startLeft = 0;
+        var startTop = 0;
+
+
+        function getBounds() {
+
+            var viewportWidth = $(window).width();
+            var viewportHeight = $(window).height();
+
+            var dialogWidth = $dialog.outerWidth();
+            var dialogHeight = $dialog.outerHeight();
+
+            return {
+                minLeft: 4,
+                maxLeft: Math.max(4, viewportWidth - dialogWidth - 4),
+                minTop: 4,
+                maxTop: Math.max(4, viewportHeight - dialogHeight - 4)
+            };
+
+        }
+
+
+        function startDrag(clientX, clientY, id) {
+
+            if (!$dialog.is(':visible')) {
+                return;
+            }
+
+            dragging = true;
+            pointerId = id;
+
+            startPointerX = clientX;
+            startPointerY = clientY;
+
+            startLeft = parseFloat($dialog.css('left'));
+
+            startTop = parseFloat($dialog.css('top'));
+
+            if (isNaN(startLeft)) {
+                startLeft = $dialog.offset().left;
+            }
+
+            if (isNaN(startTop)) {
+                startTop = $dialog.offset().top;
+            }
+
+            $dialog.css('transform', 'none');
+
+        }
+
+
+        function moveDrag(clientX, clientY) {
+
+            if (!dragging) {
+                return;
+            }
+
+            var bounds = getBounds();
+
+            var newLeft =
+                startLeft +
+                (clientX - startPointerX);
+
+            var newTop =
+                startTop +
+                (clientY - startPointerY);
+
+
+            newLeft = Math.max(
+                bounds.minLeft,
+                Math.min(bounds.maxLeft, newLeft)
+            );
+
+            newTop = Math.max(
+                bounds.minTop,
+                Math.min(bounds.maxTop, newTop)
+            );
+
+
+            $dialog.css({
+                left: newLeft + 'px',
+                top: newTop + 'px'
+            });
+
+        }
+
+
+        function stopDrag() {
+
+            dragging = false;
+            pointerId = null;
+
+        }
+
+
+        /*
+         * Pointer Events where supported.
+         */
+        if (window.PointerEvent) {
+
+            $handle.on('pointerdown', function (e) {
+
+                if (e.button !== undefined && e.button !== 0) {
+                    return;
+                }
+
+                startDrag(
+                    e.clientX,
+                    e.clientY,
+                    e.pointerId
+                );
+
+                try {
+                    this.setPointerCapture(e.pointerId);
+                } catch (ignore) {}
+
+                e.preventDefault();
+
+            });
+
+
+            $handle.on('pointermove', function (e) {
+
+                if (
+                    dragging &&
+                    pointerId === e.pointerId
+                ) {
+
+                    moveDrag(
+                        e.clientX,
+                        e.clientY
+                    );
+
+                    e.preventDefault();
+                }
+
+            });
+
+
+            $handle.on('pointerup pointercancel', function (e) {
+
+                if (
+                    pointerId === e.pointerId
+                ) {
+                    stopDrag();
+                }
+
+            });
+
+        } else {
+
+            /*
+             * Mouse fallback.
+             */
+            $handle.on('mousedown', function (e) {
+
+                startDrag(
+                    e.clientX,
+                    e.clientY,
+                    'mouse'
+                );
+
+                e.preventDefault();
+
+            });
+
+
+            $(document).on('mousemove.stockModalDrag', function (e) {
+
+                if (dragging) {
+                    moveDrag(
+                        e.clientX,
+                        e.clientY
+                    );
+                }
+
+            });
+
+
+            $(document).on('mouseup.stockModalDrag', function () {
+
+                stopDrag();
+
+            });
+
+
+            /*
+             * Touch fallback.
+             */
+            $handle.on('touchstart', function (e) {
+
+                var touch = e.originalEvent.touches[0];
+
+                if (!touch) {
+                    return;
+                }
+
+                startDrag(
+                    touch.clientX,
+                    touch.clientY,
+                    'touch'
+                );
+
+            });
+
+
+            $(document).on('touchmove.stockModalDrag', function (e) {
+
+                if (!dragging) {
+                    return;
+                }
+
+                var touch = e.originalEvent.touches[0];
+
+                if (touch) {
+
+                    moveDrag(
+                        touch.clientX,
+                        touch.clientY
+                    );
+
+                    e.preventDefault();
+                }
+
+            });
+
+
+            $(document).on('touchend.stockModalDrag', function () {
+
+                stopDrag();
+
+            });
+
+        }
+
+
+        /*
+         * Keep the modal inside the screen after resize/orientation.
+         */
+        $(window).on('resize.stockModalDrag orientationchange.stockModalDrag', function () {
+
+            if (!$('#followupModal').hasClass('show')) {
+                return;
+            }
+
+            setTimeout(function () {
+
+                var bounds = getBounds();
+
+                var currentLeft = parseFloat($dialog.css('left')) || 0;
+                var currentTop = parseFloat($dialog.css('top')) || 0;
+
+                currentLeft = Math.max(
+                    bounds.minLeft,
+                    Math.min(bounds.maxLeft, currentLeft)
+                );
+
+                currentTop = Math.max(
+                    bounds.minTop,
+                    Math.min(bounds.maxTop, currentTop)
+                );
+
+                $dialog.css({
+                    left: currentLeft + 'px',
+                    top: currentTop + 'px'
+                });
+
+            }, 100);
+
+        });
+
+    })();
+
 });
+
 </script>

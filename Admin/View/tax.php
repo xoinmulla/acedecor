@@ -7,18 +7,45 @@ require_once("../Utilities/permissionHelper.php");
 
 
 include('details.php');
- 
+
 ?>
 
+
 <!-- Page Heading -->
-<h1 class="h3 mb-4 text-gray-800">Tax Management</h1>
+<h1 class="h3 mb-4 text-gray-800">Inventory Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
+<style>
+    /* Keep existing modal size, but position it relative to the viewport */
+    .modal-dialog {
+        max-width: 400px;
+        width: 75%;
+        margin: 0 !important;
+    }
+
+    .modal-dialog.modal-positioned {
+        position: fixed !important;
+        margin: 0 !important;
+        transform: none !important;
+        z-index: 1051;
+    }
+
+    /* Small-screen safety without changing the existing page layout */
+    @media (max-width: 767.98px) {
+        .modal-dialog {
+            width: calc(100% - 20px) !important;
+            max-width: calc(100% - 20px) !important;
+        }
+    }
+    .card-body #tax_table th {
+        font-weight: 500;
+    }
+</style>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bolder;">Tax List
+                <h6 class="m-0 text-white" style="font-size: 1.2rem;">GST List
                 </h6>
             </div>
             <div class="col" align="right">
@@ -34,7 +61,7 @@ include('details.php');
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="tax_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th>GST %</th>
                         <th>SGST %</th>
@@ -48,10 +75,10 @@ include('details.php');
                     $taxlist = DBtax::getAll();
                     foreach ($taxlist as $tax) {
                         echo "<tr>
-                        <td>" . $tax->get_GST() . "</td>
-                        <td>" . $tax->get_SGST() . "</td>
-                        <td>" . $tax->get_CGST() . "</td>
-                        <td>" . $tax->get_IGST() . "</td>
+                        <td align='center'>" . $tax->get_GST() . "</td>
+                        <td align='center'>" . $tax->get_SGST() . "</td>
+                        <td align='center'>" . $tax->get_CGST() . "</td>
+                        <td align='center'>" . $tax->get_IGST() . "</td>
                         <td>
                         <div class='dropdown'>
                         <button class='btn btn-secondary dropdown-toggle' 
@@ -95,9 +122,9 @@ include('footer.php');
 ?>
 <div id="taxModal" class="modal fade">
     <div class="modal-dialog">
-        <form method="post" id="tax_form" action="../Controller/taxController.php">
+        <form method="post" id="tax_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Add Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -125,7 +152,7 @@ include('footer.php');
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="addTax" class="btn btn-success" value="Add" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -136,7 +163,7 @@ include('footer.php');
     <div class="modal-dialog">
         <form method="post" id="editedtax_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Edit Data</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -165,7 +192,7 @@ include('footer.php');
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="hidden" name="action" id="action" value="Add" />
                     <input type="submit" name="submit" id="editTax" class="btn btn-success" value="Save" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -176,7 +203,7 @@ include('footer.php');
     <div class="modal-dialog">
         <form method="POST" id="delete_user_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete User</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -189,7 +216,7 @@ include('footer.php');
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -198,9 +225,15 @@ include('footer.php');
 
 <script>
     $(document).ready(function () {
+        $('#taxModal').on('show.bs.modal', function () {
+
+            $('#taxModal #form_message').html('');
+
+        });
         $('#edittaxModal').on('show.bs.modal', function (e) {
             var rowid = $(e.relatedTarget).data('id');
             $('#editedTaxId').val(rowid);
+            $('#edittaxModal #form_message').html('');
 
             handleTaxFields($('#editedSGST'), $('#editedCGST'), $('#editedIGST'));
 
@@ -220,41 +253,131 @@ include('footer.php');
             handleTaxFields($('#editedSGST'), $('#editedCGST'), $('#editedIGST'));
 
         });
-        $('#addTax').click(function () {
-            debugger;
-            var IGST = $('#IGST').val();
-            if (IGST != "") {
+        $('#tax_form').submit(function (e) {
+
+            e.preventDefault();
+
+            if ($('#IGST').val() != "") {
                 $('#GST').val($('#IGST').val());
             } else {
-                $('#GST').val(parseInt($('#SGST').val()) + parseInt($('#SGST').val()));
-
+                $('#GST').val(
+                    parseFloat($('#SGST').val() || 0) +
+                    parseFloat($('#CGST').val() || 0)
+                );
             }
-        });
 
-        $('#editTax').click(function () {
-            var IGST = $('#editedIGST').val();
-            if (IGST != "") {
-                $('#editedGST').val($('#editedIGST').val());
-            } else {
-                $('#editedGST').val(parseInt($('#editedSGST').val()) + parseInt($('#editedSGST').val()));
-            }
-        });
-        $('#editedtax_form').submit(function (event) {
-            var urldata = config.developmentPath + "/Admin/Controller/taxController.php";
-            var formData = new FormData(this);
+            let formData = new FormData(this);
+
             $.ajax({
+
+                url: config.developmentPath + "/Admin/Controller/taxController.php",
+
                 type: "POST",
-                url: urldata,
+
                 data: formData,
+
                 processData: false,
-                contentType: false
-            }).done(function (data) {
-                console.log(data);
-            }).error(function (e) {
-                console.log(e)
+
+                contentType: false,
+
+                dataType: "json",
+
+                success: function (res) {
+
+                    if (res.status == "success") {
+
+                        $('#taxModal #form_message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+
+                        setTimeout(function () {
+
+                            location.reload();
+
+                        }, 1500);
+
+                    } else {
+
+                        $('#taxModal #form_message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+
+                    }
+
+                }
+
             });
-            $('#editbutton').dispose();
-            event.preventDefault();
+
+        });
+
+        $('#editedtax_form').submit(function (e) {
+
+            e.preventDefault();
+
+            if ($('#editedIGST').val() != "") {
+
+                $('#editedGST').val($('#editedIGST').val());
+
+            } else {
+
+                $('#editedGST').val(
+
+                    parseFloat($('#editedSGST').val() || 0) +
+
+                    parseFloat($('#editedCGST').val() || 0)
+
+                );
+
+            }
+
+            let formData = new FormData(this);
+
+            $.ajax({
+
+                url: config.developmentPath + "/Admin/Controller/taxController.php",
+
+                type: "POST",
+
+                data: formData,
+
+                processData: false,
+
+                contentType: false,
+
+                dataType: "json",
+
+                success: function (res) {
+
+                    if (res.status == "success") {
+
+                        $('#edittaxModal #form_message').html(
+
+                            `<div class="alert alert-success">${res.message}</div>`
+
+                        );
+
+                        setTimeout(function () {
+
+                            location.reload();
+
+                        }, 1500);
+
+                    }
+
+                    else {
+
+                        $('#edittaxModal #form_message').html(
+
+                            `<div class="alert alert-danger">${res.message}</div>`
+
+                        );
+
+                    }
+
+                }
+
+            });
+
         });
         $('#deleteTaxModal').on('show.bs.modal', function (e) {
             var rowid = $(e.relatedTarget).data('id');
@@ -266,13 +389,34 @@ include('footer.php');
             $.ajax({
                 url: config.developmentPath + "/Admin/Controller/taxController.php",
                 method: "POST",
+                dataType: "json",
                 data: {
                     id: $('#taxid').val(),
                     action: 'delete'
                 },
-                success: function (response) {
+                success: function (res) {
+
                     $('#deleteTaxModal').modal('hide');
-                    location.reload(); // simple and reliable
+
+                    if (res.status == "success") {
+
+                        $('#message').html(
+                            `<div class="alert alert-success">${res.message}</div>`
+                        );
+
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1500);
+
+                    }
+                    else {
+
+                        $('#message').html(
+                            `<div class="alert alert-danger">${res.message}</div>`
+                        );
+
+                    }
+
                 }
             });
         });
@@ -302,5 +446,61 @@ include('footer.php');
                 IGST.prop('disabled', true);
             }
         }
+
+        /*
+         * Keep every Tax modal centered horizontally and near the top
+         * of the browser viewport.
+         *
+         * Existing CRUD, AJAX, validation and tax calculation logic
+         * is intentionally untouched.
+         */
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            $dialog.addClass('modal-positioned');
+
+            // Calculate horizontal center from the viewport.
+            var dialogWidth = $dialog.outerWidth();
+            var windowWidth = $(window).width();
+            var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+            $dialog.css({
+                position: "fixed",
+                left: left + "px",
+                top: "20px",
+                margin: 0,
+                transform: "none"
+            });
+
+            // Preserve the existing draggable modal behavior.
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+        });
+
+        // Re-center an open modal when the viewport is resized.
+        $(window).on('resize', function () {
+            $('.modal.show').each(function () {
+                var $dialog = $(this).find('.modal-dialog');
+
+                if (!$dialog.hasClass("ui-draggable-dragging")) {
+                    var dialogWidth = $dialog.outerWidth();
+                    var windowWidth = $(window).width();
+                    var left = Math.max(10, (windowWidth - dialogWidth) / 2);
+
+                    $dialog.css({
+                        left: left + "px",
+                        top: "20px"
+                    });
+                }
+            });
+        });
     });
 </script>

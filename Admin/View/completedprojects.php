@@ -6,13 +6,44 @@ require_once("../DB Operations/projectOps.php");
 require_once("../Model/projectModel.php");
 ?>
 <h1 class="h3 mb-4 text-gray-800">Projects Management</h1>
+<style>
+    .modal-lg {
+        max-width: 800px;
+        width: 85%;
+    }
+
+    /* Scroll only the Project Info tab tables so the modal does not keep growing. */
+    .project-info-table-scroll {
+        max-height: 420px;
+        overflow-y: auto;
+        overflow-x: auto;
+        width: 100%;
+        border: 1px solid #dee2e6;
+    }
+
+    .project-info-table-scroll table {
+        margin-bottom: 0;
+        min-width: 800px;
+    }
+
+    .project-info-table-scroll thead th {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 2;
+    }
+
+    .card-body #projects_table th {
+        font-weight: 500;
+    }
+</style>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h5 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Completed
+                <h5 class="m-0" style="font-size: 1.2rem;">Completed
                     Projects List</h5>
             </div>
             <!-- <div class="col" align="right">
@@ -25,15 +56,15 @@ require_once("../Model/projectModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="projects_table" width="100%" cellspacing="0">
-                <thead>
+                <thead style="text-align:center">
                     <tr>
                         <th style=display:none>Project Id</th>
-                        <th>Project Code</th>
+                        <th>Project ID</th>
                         <th>Customer Name</th>
-                        <th>Customer Code</th>
+                        <th>Customer ID</th>
                         <th style=display:none>Quote Id</th>
-                        <th>Quote Code</th>
-                        <th style=display:none>Quote Type</th>
+                        <th>Quote ID</th>
+                        <!-- <th style=display:none>Quote Type</th> -->
                         <th style=display:none>Quote For</th>
                         <th style=display:none>Quote Amount</th>
                         <th style=display:none>Quantity</th>
@@ -49,17 +80,17 @@ require_once("../Model/projectModel.php");
                         ?>
                         <tr>
                             <td style="display:none"><?= $project->get_projectId() ?></td>
-                            <td><?= $project->get_projectCode() ?></td>
-                            <td><?= $project->get_custName() ?></td>
-                            <td><?= $project->get_custid() ?></td>
+                            <td align="center"><?= $project->get_projectCode() ?></td>
+                            <td align="left"><?= $project->get_custName() ?></td>
+                            <td align="center"><?= $project->get_custid() ?></td>
                             <td style="display:none"><?= $project->get_quoteid() ?></td>
-                            <td><?= $project->get_quotecode() ?></td>
-                            <td style="display:none"><?= $project->get_quoteType() ?></td>
+                            <td align="center"><?= $project->get_quotecode() ?></td>
+                            <!-- <td style="display:none"><?= $project->get_quoteType() ?></td> -->
                             <td style="display:none"><?= $project->getEnqCatName() ?></td>
                             <td style="display:none"><?= $project->get_quoteamt() ?></td>
                             <td style="display:none"><?= $project->getQuantity() ?></td>
                             <td style="display:none"><?= $project->getUnitName() ?></td>
-                            <td><?= $project->get_projectstatus() ?></td>
+                            <td align="center"><?= $project->get_projectstatus() ?></td>
 
                             <td>
                                 <div class="dropdown">
@@ -97,7 +128,8 @@ require_once("../Model/projectModel.php");
     <div class="modal-dialog">
         <form method="post" id="user_form" enctype="multipart/form-data" action="../Controller/projectContoller.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Add projects</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -105,7 +137,7 @@ require_once("../Model/projectModel.php");
                     <span id="form_message"></span>
                     <div class="form-group">
                         <div class="row">
-                            <label class="col-md-4 text-right">project Name <span class="text-danger">*</span></label>
+                            <label class="col-md-4 text-right">project Name : </label>
                             <div class="col-md-8">
                                 <input type="text" name="projectName" id="projectName" class="form-control" required
                                     data-parsley-pattern="/^[a-zA-Z\s]+$/" data-parsley-maxlength="150"
@@ -162,7 +194,8 @@ require_once("../Model/projectModel.php");
     <div class="modal-dialog modal-xl">
         <form method="post" id="project_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Edit projects</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -170,16 +203,16 @@ require_once("../Model/projectModel.php");
                     <span id="form_message"></span>
                     <div class="form-group">
                         <div class="row">
-                            <label class="col-md-2 text-right">Customer Name <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Customer Name : </label>
                             <div class="col-md-2">
                                 <p id="customerName" class=""></p>
                                 <input type="hidden" name="quoteid" id="quoteid" value="">
                             </div>
-                            <label class="col-md-2 text-right">Customer Id <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Customer Id : </label>
                             <div class="col-md-2">
                                 <p id="customerCode" class=""></p>
                             </div>
-                            <label class="col-md-2 text-right">Quote Id. <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Quote Id. : </label>
                             <div class="col-md-2">
                                 <p id="quoteCode" class=""></p>
                             </div>
@@ -189,17 +222,18 @@ require_once("../Model/projectModel.php");
                     <div class="form-group">
                         <div class="row">
 
-                            <label class="col-md-2 text-right">Quantity <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Quantity : </label>
                             <div class="col-md-2">
                                 <p id="quantity" class=""></p>
                             </div>
-                            <label class="col-md-2 text-right">unit <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">unit : </label>
                             <div class="col-md-2">
                                 <p id="Unit" class=""></p>
                             </div>
-                            <label class="col-md-2 text-right">Quote Type <span class="text-danger">*</span></label>
-                            <div class="col-md-2">
-                                <p id="quoteType" class=""></p>
+                            <label class="col-md-2 text-right">Quote For: </label>
+                            <div class="col-md-2 input-group">
+                                <p id="QuoteFor" class="pad"></p>
+
                             </div>
                         </div>
                     </div>
@@ -207,101 +241,113 @@ require_once("../Model/projectModel.php");
                     <div class="form-group">
                         <div class="row">
 
-                            <label class="col-md-2 text-right">Quote For<span class="text-danger">*</span></label>
-                            <div class="col-md-2 input-group">
-                                <p id="QuoteFor" class="pad"></p>
 
-                            </div>
 
-                            <!-- <label class="col-md-2 text-right">Total Amount<span class="text-danger">*</span></label>
+                            <!-- <label class="col-md-2 text-right">Total Amount: </label>
                             <div class="col-md-2 input-group">
                                 <p id="TotalAmount" class="pad"></p>
                                 <span class=""> <i class="fas fa-rupee-sign"></i></span>
                             </div> -->
 
-                            <label class="col-md-2 text-right">Quote Amount. <span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Quote Amount. : </label>
                             <div class="col-md-2 input-group">
                                 <p id="QuoteAmount" class="pad"></p>
                                 <span class=""> <i class="fas fa-rupee-sign"></i></span>
                             </div>
-                            <label class="col-md-2 text-right">Project Code<span class="text-danger">*</span></label>
+                            <label class="col-md-2 text-right">Project Code: </label>
                             <div class="col-md-2 input-group">
                                 <p id="projectcode" class=""></p>
+                            </div>
+                            <label class="col-md-2 text-right">Project Status: </label>
+                            <div class="col-md-2">
+                                <select name="projectStatus" id="editedprojectStatus" class="form-select">
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Pending">Pending</option>
+                                </select>
+                                <input type="hidden" name="projectId" id="projectId" value="">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="row">
 
-                            <label class="col-md-2 text-right"> Project Status<span class="text-danger">*</span></label>
-                            <div class="col-md-2">
-                                <select name="projectStatus" id="editedprojectStatus" class="form-select">
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Pending">Pending</option>
 
-                                </select>
-                                <input type="hidden" name="projectId" id="projectId" value="">
-                            </div>
-                            <label class="col-md-2 text-right">Progress Note<span class="text-danger">*</span></label>
-                            <div class="col-md-3">
-                                <textarea class="form-control" placeholder="Leave a note here" id="progressNote"
-                                    style="height: 100px" data-parsley-pattern="/^[a-zA-Z\s]+$/"
-                                    data-parsley-trigger="keyup" name="progressNote"></textarea>
-                            </div>
+
                         </div>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="itemlist-tab" data-bs-toggle="tab"
-                                    data-bs-target="#itemlist" type="button" role="tab" aria-controls="itemlist"
-                                    aria-selected="true"><b>Item List</b></button>
+                                <button class="nav-link active" id="ProjIssues-tab" data-toggle="tab"
+                                    data-target="#ProjIssues" type="button" role="tab" aria-controls="issues"
+                                    aria-selected="true">Issues</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="products-tab" data-bs-toggle="tab"
-                                    data-bs-target="#products" type="button" role="tab" aria-controls="products"
-                                    aria-selected="false"><b>Product List</b></button>
+                                <button class="nav-link" id="itemlist-tab" data-toggle="tab" data-target="#itemlist"
+                                    type="button" role="tab" aria-controls="itemlist" aria-selected="false">Item
+                                    List</button>
                             </li>
-                            <!-- <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="democlass-tab" data-bs-toggle="tab" data-bs-target="#democlass"
-                                type="button" role="tab" aria-controls="democlass" aria-selected="false"><b>Demo
-                                Class</b></button>
-                            </li> -->
-
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="material-tab" data-toggle="tab" data-target="#material"
+                                    type="button" role="tab" aria-controls="material" aria-selected="false">Material
+                                    List</button>
+                            </li>
                         </ul>
                     </div>
+                    <style>
+                        .tab-content th {
+                            font-weight: 500;
+                        }
+                    </style>
                     <div class="tab-content" id="myTabContent">
-                        <div class="tab-pane fade show active" id="itemlist" role="tabpanel"
-                            aria-labelledby="itemlist-tab">
-                            <table class="table table-bordered" id="editedlineItemTable" width="80%" cellspacing="0">
-                                <thead>
-                                    <tr>
+                        <!-- Issues -->
+                        <div class="tab-pane fade show active" id="ProjIssues" role="tabpanel"
+                            aria-labelledby="ProjIssues-tab">
+                            <div class="container">
+                                <div class="project-info-table-scroll">
+                                    <table class="table table-bordered" id="ProjectIssuesTable" width="80%"
+                                        cellspacing="0">
+                                        <thead style="text-align:center">
+                                            <tr>
+                                                <th>Issue Created By</th>
+                                                <th>Description</th>
+                                                <th>Contact Name</th>
+                                                <th>Contact Details</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
 
-                                        <th>Image</th>
-                                        <th>Item Code</th>
-                                        <th>Name</th>
-                                        <th>Brand</th>
-                                        <!-- <th>Description</th> -->
-                                        <th>Quantity</th>
-                                        <th>Unit</th>
-                                        <th>PO Status</th>
-                                        <th>Inward Status</th>
+                        <!-- Item List -->
+                        <div class="tab-pane fade" id="itemlist" role="tabpanel" aria-labelledby="itemlist-tab">
+                            <div class="project-info-table-scroll">
+                                <table class="table table-bordered" id="editedlineItemTable" width="80%"
+                                    cellspacing="0">
+                                    <thead style="text-align:center">
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Item Code</th>
+                                            <th>Name</th>
+                                            <th>Brand</th>
+                                            <th>Quantity</th>
+                                            <th>Unit</th>
+                                            <th>Available Qty</th>
+                                            <th>Allocated Qty</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-
-
-                                </tbody>
-                                <tfoot>
-
-                                </tfoot>
-                            </table>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot></tfoot>
+                                </table>
+                            </div>
 
                             <div class="form-group">
                                 <div class="row">
-
                                     <div class="col-md-8">
                                         <input type="hidden" name="createdby" id="editedcreatedby" class="form-control"
                                             required data-parsley-type="integer" data-parsley-minlength="10"
@@ -313,7 +359,6 @@ require_once("../Model/projectModel.php");
 
                             <div class="form-group">
                                 <div class="row">
-
                                     <div class="col-md-8">
                                         <input type="hidden" name="modifiedby" id="editedmodifiedby"
                                             class="form-control" required data-parsley-type="integer"
@@ -332,59 +377,29 @@ require_once("../Model/projectModel.php");
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="products" role="tabpanel" aria-labelledby="products-tab">
-                            <div class="form-group">
-                                <div class="row">
-                                    <table class="table table-bordered" id="editedlineItemTable" width="80%"
-                                        cellspacing="0">
-                                        <thead>
-                                            <tr>
 
-                                                <th>Name</th>
-                                                <th>Quantity</th>
-                                                <!-- <th>Status</th> -->
-                                                <!-- <th>TotalAmount</th>
-                                                <th>TotalPrice</th> -->
-                                            </tr>
-                                        </thead>
-                                        <tbody>
+                        <!-- Material List -->
+                        <div class="tab-pane fade" id="material" role="tabpanel" aria-labelledby="material-tab">
+                            <div class="project-info-table-scroll">
+                                <table class="table table-bordered" id="editedMaterialTable" width="80%"
+                                    cellspacing="0">
+                                    <thead style="text-align:center">
+                                        <tr>
+                                            <th>Image</th>
+                                            <th>Material Code</th>
+                                            <th>Material Name</th>
+                                            <th>Brand</th>
+                                            <th>Quantity</th>
+                                            <th>Unit</th>
+                                            <th>Available Qty</th>
+                                            <th>Allocated Qty</th>
 
-
-                                        </tbody>
-                                        <tfoot>
-
-                                        </tfoot>
-                                    </table>
-                                    <div class="col-md-8">
-                                        <input type="hidden" name="createdby" id="editedcreatedby" class="form-control"
-                                            required data-parsley-type="integer" data-parsley-minlength="10"
-                                            data-parsley-maxlength="12" data-parsley-trigger="keyup"
-                                            value="<?php echo $_SESSION['login_user']; ?>" />
-                                    </div>
-                                    <div class="modal-footer">
-                                        <input type="hidden" name="hidden_id" id="hidden_id" />
-                                        <input type="hidden" name="action" id="action" value="Add" />
-                                        <input type="submit" name="submit" id="editbutton" class="btn btn-success"
-                                            value="Save" />
-                                        <button type="button" class="btn btn-default"
-                                            data-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot></tfoot>
+                                </table>
                             </div>
-
-                            <div class="form-group">
-                                <div class="row">
-
-                                    <div class="col-md-8">
-                                        <input type="hidden" name="modifiedby" id="editedmodifiedby"
-                                            class="form-control" required data-parsley-type="integer"
-                                            data-parsley-minlength="10" data-parsley-maxlength="12"
-                                            data-parsley-trigger="keyup"
-                                            value="<?php echo $_SESSION['login_user']; ?>" />
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
         </form>
@@ -394,7 +409,8 @@ require_once("../Model/projectModel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_category_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Item Category</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -424,11 +440,14 @@ require_once("../Model/projectModel.php");
             $('#customerCode').text(this.cells[3].innerHTML);
             $('#quoteid').val(this.cells[4].innerHTML);
             $('#quoteCode').text(this.cells[5].innerHTML);
-            $('#quoteType').text(this.cells[6].innerHTML);
-            $('#QuoteFor').text(this.cells[7].innerHTML);
-            $('#QuoteAmount').text(this.cells[8].innerHTML);
-            $('#quantity').text(this.cells[9].innerHTML);
-            $('#Unit').text(this.cells[10].innerHTML);
+
+            // Quote Type is not present in the completed-project table,
+            // so the remaining hidden values start from cell 6.
+            $('#QuoteFor').text(this.cells[6].innerHTML);
+            $('#QuoteAmount').text(this.cells[7].innerHTML);
+            $('#quantity').text(this.cells[8].innerHTML);
+            $('#Unit').text(this.cells[9].innerHTML);
+            $('#editedprojectStatus').val(this.cells[10].innerHTML);
         });
 
         $('#editprojectModal').on('show.bs.modal', function (e) {
@@ -486,16 +505,15 @@ require_once("../Model/projectModel.php");
                         append($(document.createElement('td')).prop({
                             innerHTML: value.Units
                         }));
-
                     $('#editedlineItemTable tr:last').
                         append($(document.createElement('td')).prop({
-                            innerHTML: value.POStatus
+                            innerHTML: value.AvailableQty
                         }));
-
                     $('#editedlineItemTable tr:last').
                         append($(document.createElement('td')).prop({
-                            innerHTML: value.InwardStatus
+                            innerHTML: value.AllocatedQty
                         }));
+
                     sumTotalAmount = sumTotalAmount + parseFloat(value.totalAmount);
                     sumTotalPrice = sumTotalPrice + parseFloat(value.totalPrice);
                 });
@@ -520,10 +538,115 @@ require_once("../Model/projectModel.php");
             });
         });
 
+        // Load Material List for the selected completed project.
+        $('#editprojectModal').on('show.bs.modal', function () {
+            var projId = $('#projectId').val();
+            var materialUrl = config.developmentPath +
+                "/Admin/Controller/materialListController.php?projId=" + projId;
+
+            $.getJSON(materialUrl, function (data) {
+                $("#editedMaterialTable tbody").empty();
+
+                $.each(data, function (index, value) {
+                    $('#editedMaterialTable tbody')
+                        .append($(document.createElement('tr')).prop({
+                            id: value.lineItemId
+                        }));
+
+                    $('#editedMaterialTable tr:last').append(
+                        $('<td>').append(
+                            $('<img>').prop({
+                                src: "../img/materials/" + value.image,
+                                style: "width:100px;height:100px",
+                                class: "img-fluid"
+                            })
+                        )
+                    );
+
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.ItemCode
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Name
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Brand
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.itemquantity
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Units
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.AvailableQty
+                        })
+                    );
+                    $('#editedMaterialTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.AllocatedQty
+                        })
+                    );
+
+                });
+            });
+        });
+
+        // Load Issues for the selected completed project.
         $('#editprojectModal').on('show.bs.modal', function (e) {
             var rowid = $(e.relatedTarget).data('id');
             $('#projectId').val(rowid);
 
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/Project_IssuesController.php/?id=" + rowid;
+
+            $.getJSON(contactUrl, function (data) {
+                $("#ProjectIssuesTable tbody").empty();
+
+                $.each(data, function (index, value) {
+                    $('#ProjectIssuesTable tbody')
+                        .append($(document.createElement('tr')).prop({
+                            id: value.IssueId
+                        }));
+
+                    $('#ProjectIssuesTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Issue_createdby
+                        })
+                    );
+                    $('#ProjectIssuesTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Issue_Description
+                        })
+                    );
+                    $('#ProjectIssuesTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Issue_ContactName
+                        })
+                    );
+                    $('#ProjectIssuesTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Issue_ContactDetails
+                        })
+                    );
+                    $('#ProjectIssuesTable tr:last').append(
+                        $(document.createElement('td')).prop({
+                            innerHTML: value.Issue_createdon
+                        })
+                    );
+                });
+            });
         });
         var dataTable = $('#projects_table').DataTable({
 
@@ -575,6 +698,31 @@ require_once("../Model/projectModel.php");
                     }, 5000);
                 }
             });
+        });
+        $('.modal').on('shown.bs.modal', function () {
+
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            var offset = $dialog.offset();
+
+            $dialog.css({
+                margin: 0,
+                position: "fixed",
+                left: offset.left,
+                top: offset.top,
+                transform: "none"
+            });
+
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
         });
     });
 </script>

@@ -67,6 +67,7 @@ class DBproject
         S.Quantity as AllocatedQty,
         S.item_id as ItemId,
         S.item_stockid as StockId,
+        Q.tradePrice AS tradePrice,
 
         EC.enq_cat_name as EnqCatname
 
@@ -103,6 +104,7 @@ class DBproject
       $project->setQuantity($row['quantity']);
       $project->setUnitId($row['unitId']);
       $project->setUnitName($row['unitName']);
+      $project->set_tradePrice($row['tradePrice']);
 
       $project->setEnqCatName($row['EnqCatname']);
       $project->setCatId($row['enqCatId']);

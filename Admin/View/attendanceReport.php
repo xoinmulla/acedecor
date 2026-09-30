@@ -6,17 +6,41 @@ require_once("../DB Operations/attendanceReportOps.php");
 
 // ========== REPORT TYPE PARAMETERS (original) ==========
 $viewType = $_GET['type'] ?? 'monthly';
+
 $month = $_GET['month'] ?? date('Y-m');
+
 $year = $_GET['year'] ?? date('Y');
+
 $quarter = $_GET['quarter'] ?? 1;
 
+$fromDate = $_GET['fromDate'] ?? date('Y-m-d', strtotime('monday this week'));
+
+$toDate = $_GET['toDate'] ?? date('Y-m-d', strtotime('sunday this week'));
+
 // Fetch reports based on type (original logic)
-if ($viewType === 'monthly')
+if ($viewType == "monthly") {
+
     $reports = DBAttendanceReport::getReport($month);
-elseif ($viewType === 'quarterly')
-    $reports = DBAttendanceReport::getQuarterlyReport($year, $quarter);
-else
+
+} elseif ($viewType == "weekly") {
+
+    $reports = DBAttendanceReport::getWeeklyReport(
+        $fromDate,
+        $toDate
+    );
+
+} elseif ($viewType == "quarterly") {
+
+    $reports = DBAttendanceReport::getQuarterlyReport(
+        $year,
+        $quarter
+    );
+
+} else {
+
     $reports = DBAttendanceReport::getYearlyReport($year);
+
+}
 
 // ========== NEW: SEARCH, SORT, LIMIT ==========
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -78,7 +102,7 @@ $currentPage = max(1, min($currentPage, $totalPages));
 $startIndex = ($currentPage - 1) * $limit;
 $reportsPage = array_slice($reports, $startIndex, $limit);
 
-if(!hasActionPermission('employees','attendance_reports')){
+if (!hasActionPermission('employees', 'attendance_reports')) {
     header("Location: noaccess.php");
     exit;
 }
@@ -480,6 +504,12 @@ if(!hasActionPermission('employees','attendance_reports')){
         <!-- ========== TABS ========== -->
         <ul class="nav nav-tabs">
             <li class="nav-item">
+                <a class="nav-link <?= $viewType == 'weekly' ? 'active' : '' ?>"
+                    href="?type=weekly&fromDate=<?= $fromDate ?>&toDate=<?= $toDate ?>">
+                    Weekly
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link <?= $viewType === 'monthly' ? 'active' : '' ?>"
                     href="?type=monthly&month=<?= $month ?>&search=<?= urlencode($search) ?>&sort=<?= $sort ?>&order=<?= $order ?>&limit=<?= $limit ?>">Monthly</a>
             </li>
@@ -491,6 +521,7 @@ if(!hasActionPermission('employees','attendance_reports')){
                 <a class="nav-link <?= $viewType === 'yearly' ? 'active' : '' ?>"
                     href="?type=yearly&year=<?= $year ?>&search=<?= urlencode($search) ?>&sort=<?= $sort ?>&order=<?= $order ?>&limit=<?= $limit ?>">Yearly</a>
             </li>
+
         </ul>
 
         <!-- ========== FILTER FORMS (preserve search/sort/limit) ========== -->
@@ -530,7 +561,36 @@ if(!hasActionPermission('employees','attendance_reports')){
             <h5 class="text-secondary mb-3"><i class="far fa-calendar-alt me-2"></i>Quarter <?= $quarter ?> – <?= $year ?>
             </h5>
         <?php endif; ?>
+        <?php if ($viewType == "weekly"): ?>
 
+            <form method="POST" action="../Controller/attendanceReportController.php" class="filter-form">
+
+                <input type="hidden" name="type" value="weekly">
+
+                <input type="date" class="form-control" name="fromDate" value="<?= $fromDate ?>" required>
+
+                <input type="date" class="form-control" name="toDate" value="<?= $toDate ?>" required>
+
+                <button class="btn btn-primary">
+                    View Report
+                </button>
+
+            </form>
+
+            <h5 class="text-secondary mb-3">
+                <i class="far fa-calendar-alt me-2"></i>
+
+                Report From
+
+                <?= date('d M Y', strtotime($fromDate)) ?>
+
+                -
+
+                <?= date('d M Y', strtotime($toDate)) ?>
+
+            </h5>
+
+        <?php endif; ?>
         <?php if ($viewType === 'yearly'): ?>
             <form method="POST" action="../Controller/attendanceReportController.php" class="filter-form">
                 <input type="hidden" name="type" value="yearly">
@@ -561,8 +621,8 @@ if(!hasActionPermission('employees','attendance_reports')){
                 <input type="text" id="searchInput" placeholder="Search by employee name..."
                     value="<?= htmlspecialchars($search) ?>">
                 <?php if ($search !== ''): ?>
-                    <a href="?type=<?= $viewType ?>&month=<?= $month ?>&year=<?= $year ?>&quarter=<?= $quarter ?>&limit=<?= $limit ?>&sort=<?= $sort ?>&order=<?= $order ?>"
-                        class="btn btn-outline-secondary rounded-pill">Clear</a>
+                    <a href="?type=<?= $viewType ?>&month=<?= $month ?>&year=<?= $year ?>&quarter=<?= $quarter ?>&limit=<?= $limit ?>&sort=<?= $sort ?>&order=<?= $order ?>&fromDate=<?= $fromDate ?>&toDate=<?= $toDate ?>"
+                        class=" btn btn-outline-secondary rounded-pill">Clear</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -597,6 +657,10 @@ if(!hasActionPermission('employees','attendance_reports')){
                                 'month' => $month,
                                 'year' => $year,
                                 'quarter' => $quarter,
+
+                                'fromDate' => $fromDate,
+                                'toDate' => $toDate,
+
                                 'search' => $search,
                                 'limit' => $limit
                             ];
@@ -708,14 +772,27 @@ if(!hasActionPermission('employees','attendance_reports')){
                 <ul class="pagination justify-content-center flex-wrap">
                     <?php
                     $queryParams = [
+
                         'type' => $viewType,
+
                         'month' => $month,
+
                         'year' => $year,
+
                         'quarter' => $quarter,
+
+                        'fromDate' => $fromDate,
+
+                        'toDate' => $toDate,
+
                         'search' => $search,
+
                         'sort' => $sort,
+
                         'order' => $order,
+
                         'limit' => $limit
+
                     ];
                     $baseUrl = '?' . http_build_query($queryParams) . '&page=';
                     ?>

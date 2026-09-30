@@ -274,58 +274,14 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                 </li>
             <?php endif; ?>
             <!-- Nav Item - Dashboard -->
+            
+            <hr class="sidebar-divider">
+            
             <li class="nav-item">
                 <a class="nav-link" href="maindashboard.php">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Dashboard</span></a>
+                    <i class="fas fa-home"></i>
+                    <span>Home</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" href="enquiry.php">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Enquiries</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="channelpartnerDashboard.php">
-                    <i class="fas fa-hands-helping"></i>
-                    <span>Channel Partners</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="inventorydashboard.php">
-                    <i class="fas fa-percent"></i>
-                    <span>Inventory</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="employeeDashboard.php">
-                    <i class="fas fa-user-tie"></i>
-                    <span>Employees</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="customer.php">
-                    <i class="fas fa-user-astronaut"></i>
-                    <span>Customers</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="projectView.php">
-                    <i class="fab fa-product-hunt"></i>
-                    <span>Projects</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="POview.php">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Purchase Orders</span></a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="paymentdashboard.php">
-                    <i class="far fa-edit"></i>
-                    <span>Payments</span></a>
-            </li>
-            <!-- Sidebar Toggler (Sidebar) -->
-            <div class="text-center d-none d-md-inline">
-                <button class="rounded-circle border-0" id="sidebarToggle"></button>
-            </div>
 
         </ul>
         <!-- End of Sidebar -->
@@ -359,7 +315,7 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="user_profile_name"></span>
-                                <i class="fas fa-chevron-circle-down fa-lg"></i>
+                                <!--<i class="fas fa-chevron-circle-down fa-lg"></i>-->
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -374,6 +330,10 @@ require_once(__DIR__ . '/../Utilities/permissionHelper.php');
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div> -->
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

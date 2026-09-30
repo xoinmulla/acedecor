@@ -50,6 +50,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $details->set_itemmodifiedby(getPostValue("itemmodifiedby"));
     $details->set_itemid(getPostValue("itemid"));
 
+    if (DBitemdetails::isDuplicateItemForUpdate($details)) {
+
+      if ($isAjax) {
+        echo json_encode([
+          "status" => "error",
+          "message" => "❌ Item already exists with the same Name, Brand, Category and Subcategory."
+        ]);
+        exit();
+      }
+
+      die("Duplicate Item");
+    }
+    
+
     DBitemdetails::update($details);
 
     if ($isAjax) {

@@ -9,26 +9,67 @@ class DBitemsubcategory
   {
     $db = ConnectDb::getInstance();
     $connectionObj = $db->getConnection();
-    $sql = "SELECT * from item_subcategory where item_subcatName='" . $itemsubcatObj->get_itemsubcatname() . "'";
-    error_log($sql);
-    $result = $connectionObj->query($sql);
-    $count = mysqli_num_rows($result);
-    error_log($count);
-    if ($count < 1) {
-      $sql = "insert into item_subcategory (`item_catid`,`item_subcatName`, `item_subcatDescription`,`item_subcatCreatedby`,`item_subcatModifiedby`) 
-                values ('" . $itemsubcatObj->get_itemcatid() .
-        "','" . $itemsubcatObj->get_itemsubcatname() .
-        "','" . $itemsubcatObj->get_itemsubcatdescription() .
-        "','" . $itemsubcatObj->get_itemsubcatcreatedby() .
-        "','" . $itemsubcatObj->get_itemsubcatmodifiedby() . "')";
-      error_log($sql);
-      if ($connectionObj->query($sql) === true) {
-      } else {
-        echo "Error: " . $sql . "<br>" . $connectionObj->error;
-      }
-    } else {
-      echo ("SubCategory already exist");
+
+    if (
+      self::isSubCategoryExists(
+        $itemsubcatObj->get_itemsubcatname(),
+        $itemsubcatObj->get_itemcatid()
+      )
+    ) {
+      return [
+        "status" => "error",
+        "message" => "SubCategory already exists."
+      ];
     }
+
+    $sql = "INSERT INTO item_subcategory
+            (`item_catid`,
+            `item_subcatName`,
+            `item_subcatDescription`,
+            `item_subcatCreatedby`,
+            `item_subcatModifiedby`)
+            VALUES(
+            '" . $itemsubcatObj->get_itemcatid() . "',
+            '" . $itemsubcatObj->get_itemsubcatname() . "',
+            '" . $itemsubcatObj->get_itemsubcatdescription() . "',
+            '" . $itemsubcatObj->get_itemsubcatcreatedby() . "',
+            '" . $itemsubcatObj->get_itemsubcatmodifiedby() . "')";
+
+    if ($connectionObj->query($sql) === TRUE) {
+
+      return [
+        "status" => "success",
+        "message" => "SubCategory added successfully."
+      ];
+
+    } else {
+
+      return [
+        "status" => "error",
+        "message" => $connectionObj->error
+      ];
+    }
+  }
+
+  public static function isSubCategoryExists($name, $categoryId, $excludeId = 0)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $name = mysqli_real_escape_string($connectionObj, trim($name));
+
+    $sql = "SELECT item_subcatid
+            FROM item_subcategory
+            WHERE item_subcatName='$name'
+            AND item_catid='$categoryId'";
+
+    if ($excludeId > 0) {
+      $sql .= " AND item_subcatid != '$excludeId'";
+    }
+
+    $result = $connectionObj->query($sql);
+
+    return mysqli_num_rows($result) > 0;
   }
 
   public static function getallitemsubcategory()
@@ -146,5 +187,6 @@ ON subCat.item_catid = cat.item_catid
             </div>";
     }
   }
+
 
 }

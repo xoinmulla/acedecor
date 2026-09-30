@@ -16,6 +16,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $unit->set_ModifiedBy(Sanitization::test_input($_POST["modifiedby"]));
         $unit->set_unitId(Sanitization::test_input($_POST["unitId"]));
 
+        if (DBunit::isUnitExists($unit->get_unitName(), $unit->get_unitId())) {
+            echo json_encode([
+                "status" => "error",
+                "message" => "Unit name already exists."
+            ]);
+            exit;
+        }
+
         DBunit::update($unit);
 
         echo json_encode([
@@ -37,7 +45,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $unit->set_unitDescription(Sanitization::test_input($_POST["unitDescription"]));
     $unit->set_CreatedBy(Sanitization::test_input($_POST["createdby"]));
     $unit->set_ModifiedBy(Sanitization::test_input($_POST["modifiedby"]));
-
+    if (DBunit::isUnitExists($unit->get_unitName())) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Unit name already exists."
+        ]);
+        exit;
+    }
     DBunit::insert($unit);
 
     echo json_encode([
@@ -48,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 }
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-  echo DBunit::selectUnits();
+    echo DBunit::selectUnits();
 }
 exit;
 

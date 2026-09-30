@@ -38,20 +38,20 @@ class PurchaselineItem implements JsonSerializable
 
     private $InventoryPrice;
 
-    private $InventoryType;
+    private $inventoryType;
 
     private $Description;
 
 
 
-    public function setInventoryType($InventoryType)
-    {
-        $this->InventoryType = $InventoryType;
-    }
-
     public function getInventoryType()
     {
-        return $this->InventoryType;
+        return $this->inventoryType;
+    }
+
+    public function setInventoryType($inventoryType)
+    {
+        $this->inventoryType = $inventoryType;
     }
 
     public function setInventoryPrice($price)
@@ -230,7 +230,7 @@ class PurchaselineItem implements JsonSerializable
             'PPMRP' => $this->PPMRP,
             'RaisedQty' => $this->RaisedQty,
             'InventoryPrice' => $this->InventoryPrice,
-            'InventoryType' => $this->InventoryType,
+            'inventoryType' => $this->getInventoryType(),
         ];
     }
 

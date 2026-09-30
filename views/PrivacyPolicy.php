@@ -1,7 +1,7 @@
 <?php 
 require_once("navigation.php"); 
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/model/PrivacyPolicyModel.php";
-require_once $_SERVER['DOCUMENT_ROOT'] . "/acedecor/cmsadmin/dblayer/PrivacyPolicyOps.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/model/PrivacyPolicyModel.php";
+require_once $_SERVER['DOCUMENT_ROOT'] . "/cmsadmin/dblayer/PrivacyPolicyOps.php";
 ?>
 
 <style>

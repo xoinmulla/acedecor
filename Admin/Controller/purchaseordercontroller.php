@@ -19,9 +19,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     $purchase->set_supplier(Sanitization::test_input($value[0]["supplier"]));
-    $purchase->set_projectId(Sanitization::test_input($value[0]["project"]));
+    $purchase->set_projectId(
+      isset($value[0]["project"])
+      ? Sanitization::test_input($value[0]["project"])
+      : 0
+    );
     $purchase->set_itemid(Sanitization::test_input($value[0]["itemid"]));
-    $purchase->set_totalAmount(Sanitization::test_input($value[0]["totalAmount"]));
+    $purchase->set_totalAmount(
+      isset($value[0]["totalAmount"])
+      ? Sanitization::test_input($value[0]["totalAmount"])
+      : 0
+    );
     $purchase->set_itemquantity(Sanitization::test_input($value[0]["itemquantity"]));
 
     // $purchase->set_itemperpieceprice(Sanitization::test_input($value[0]["itemperpieceprice"]));
@@ -38,18 +46,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     error_log(print_r($value[0], true));
     $purchaseId = DBpurchase::insert($purchase);
     error_log($purchaseId);
-    foreach ($value as $key => $value) {
+    foreach ($value as $key => $row) {
+
       $purchaselineitem = new PurchaselineItem();
+
       $purchaselineitem->set_POID($purchaseId);
-      $purchaselineitem->set_itemid(Sanitization::test_input($value["itemid"]));
-      $purchaselineitem->set_supplierId(Sanitization::test_input($value["supplier"]));
-      $purchaselineitem->set_quantity(Sanitization::test_input($value["itemquantity"]));
-      $purchaselineitem->setInputName(Sanitization::test_input($value['selectedItemName']));
-      $purchaselineitem->setunitName(Sanitization::test_input($value["unitName"]));
+      $purchaselineitem->set_itemid(Sanitization::test_input($row["itemid"]));
+      $purchaselineitem->set_supplierId(Sanitization::test_input($row["supplier"]));
+      $purchaselineitem->set_quantity(Sanitization::test_input($row["itemquantity"]));
+      $purchaselineitem->setInputName(Sanitization::test_input($row["selectedItemName"]));
+
+      $purchaselineitem->setunitName(
+        isset($row["unitName"])
+        ? Sanitization::test_input($row["unitName"])
+        : ""
+      );
+
       DBPOLineItem::insert($purchaselineitem);
     }
     $supplier = new SupplierPayment();
-    $supplier->set_supplierId(Sanitization::test_input($value["supplier"]));
+    $supplier->set_supplierId(
+      Sanitization::test_input($value[0]["supplier"])
+    );
     $supplier->setPOID($purchaseId);
     error_log($purchaseId);
     $supplier->set_totalamt(0);
@@ -60,6 +78,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $supplier->set_paymentmode(0);
     $supplier->set_paymentdescription(0);
     DBsupplierpayment::insert($supplier);
+    echo json_encode([
+      "status" => true,
+      "message" => "Purchase Order Created"
+    ]);
+    exit;
 
   } elseif ($_POST["action"] == 'cancel') {
     DBpurchase::cancel($_POST["id"]);
@@ -72,15 +95,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $purchase->set_Id($_POST['id']);
     $purchase->set_supplier(Sanitization::test_input($_POST["supplier"]));
     $purchase->set_itemid(Sanitization::test_input($_POST["itemid"]));
-    $purchase->set_projectId(Sanitization::test_input($value[0]["project"]));
-    // $purchase->set_totalAmount(Sanitization::test_input($_POST["totalAmount"]));
+    $purchase->set_projectId(
+      isset($value[0]["project"])
+      ? Sanitization::test_input($value[0]["project"])
+      : 0
+    );    // $purchase->set_totalAmount(Sanitization::test_input($_POST["totalAmount"]));
     $purchase->set_itemquantity(Sanitization::test_input($_POST["itemquantity"]));
     $purchase->set_itemperpieceprice(Sanitization::test_input($_POST["itemperpieceprice"]));
     $purchase->set_purchaseddate(Sanitization::test_input($_POST["purchaseddate"]));
     DBpurchase::update($purchase);
   }
 }
-header("location:../Admin/View/POview.php");
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 

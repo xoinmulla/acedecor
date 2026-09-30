@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'add') {
 
-            DBEmployeePayment::insert($p);
+            $payment_id = DBEmployeePayment::insert($p);
 
             // 🔹 ALSO INSERT INTO EXPENSE TABLE
             require_once "../DB Operations/expenseOps.php";
@@ -65,7 +65,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $e->setPaymentType($p->getPaymentType());
             $e->setNotes('Employee Salary Payment');
 
-            DBExpense::insertEmployeeExpense($e);
+            $e->setPaymentId($payment_id); // 🔥 IMPORTANT
+            DBExpense::insert($e);
 
             echo json_encode(['status' => 'success']);
             exit;

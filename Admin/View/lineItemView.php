@@ -85,20 +85,20 @@ $id = $_GET['id'];
             <div class="row">
                 <div class="col">
                     <label>Total Amount :
-                        <i class="fas fa-rupee-sign"></i> <span id="displaySumTotalAmount"></span> 
+                        <i class="fas fa-rupee-sign"></i> <span id="displaySumTotalAmount"></span>
                     </label>
                 </div>
 
                 <div class="col">
                     <label>Total Value :
-                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalValue"></span> 
+                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalValue"></span>
 
                     </label>
                 </div>
 
                 <div class="col">
-                    <label>Total Price :
-                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalPrice"></span> 
+                    <label>Trade Price :
+                        <i class="fas fa-rupee-sign"></i> <span id="displaysumTotalPrice"></span>
 
                     </label>
                 </div>
@@ -112,7 +112,7 @@ $id = $_GET['id'];
                         <span><?php echo $quotationList->getDOQ() ?></span>
                     </label>
                 </div>
-                
+
                 <div class="col">
                     <label>Quote Value :
                         <span><i class="fas fa-rupee-sign"></i> <?php echo $quotationList->getQuoteValue() ?> </span>
@@ -158,7 +158,8 @@ $id = $_GET['id'];
                         <th style='display:none'>Company Discount</th>
                         <th style='display:none'>Company Price</th>
                         <th style='display:none'>Trade Price</th>
-
+                        <th style="display:none">Reference</th>
+                        <th style="display:none">Note</th>
 
                         <th>Action</th>
                     </tr>
@@ -170,8 +171,25 @@ $id = $_GET['id'];
                     $sumTotalPrice = 0;
                     $sumTotalValue = 0;
                     foreach ($ListItem as $Item) {
+                        // Decide image folder based on Input Type
+                        $imageFolder = (strtolower(trim($Item->get_inputType())) == "material")
+                            ? "../img/materials/"
+                            : "../img/items/";
+
+                        $imageName = $Item->getImage();
+
+                        // Optional placeholder if image doesn't exist
+                        $imagePath = $imageFolder . $imageName;
+
                         echo "<tr>
-                        <td>" . $Item->getImage() . "</td>
+<td>
+    <img src='" . $imagePath . "'
+         width='70'
+         height='70'
+         style='object-fit:cover;border-radius:6px;'
+         onerror=\"this.src='../img/no-image.png';\">
+</td>
+
                         <td>" . $Item->get_inputType() . "</td>
                         <td>" . $Item->getItemcode() . "</td>
                         <td>" . $Item->getName() . "</td>
@@ -194,6 +212,8 @@ $id = $_GET['id'];
                         <td style='display:none'>" . $Item->get_value() . "</td>
                         <td style='display:none'>" . $Item->get_companyDiscount() . "</td>
                         <td style='display:none'>" . $Item->get_companyPrice() . "</td>
+                        <td class='reference' style='display:none'>" . $Item->get_reference() . "</td>
+<td class='note' style='display:none'>" . $Item->get_note() . "</td>
                         <td style='display:none'>" . $Item->get_totalValue() . "</td> <!-- This acts as Trade Price -->
 
                         
@@ -387,6 +407,20 @@ $id = $_GET['id'];
                                 <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
                             </div>
                         </div>
+                        <br>
+                        <div class="form-group">
+                            <div class="row">
+                                <label class="col-md-3 text-right">Reference</label>
+                                <div class="col-md-3">
+                                    <input type="text" name="reference" id="addReference" class="form-control" />
+                                </div>
+
+                                <label class="col-md-3 text-right">Note</label>
+                                <div class="col-md-3">
+                                    <textarea name="note" id="addNote" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <div class="row">
@@ -537,7 +571,19 @@ $id = $_GET['id'];
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-3 text-right">Reference</label>
+                            <div class="col-md-3">
+                                <input type="text" name="reference" id="editReference" class="form-control">
+                            </div>
 
+                            <label class="col-md-3 text-right">Note</label>
+                            <div class="col-md-3">
+                                <textarea name="note" id="editNote" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <input type="hidden" id="hiddenTotalPrice" name="totalPrice">
                 <input type="hidden" id="hiddenTotalValue" name="totalValue">
@@ -545,7 +591,6 @@ $id = $_GET['id'];
                 <input type="hidden" id="hiddenGSTAmount" name="GSTAmount">
                 <input type="hidden" id="hiddenCompanyPrice" name="companyPrice">
                 <input type="hidden" id="hiddenValue" name="value">
-
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -668,6 +713,10 @@ $id = $_GET['id'];
             $('#editeditemCategory').val(row.cells[16].innerHTML.trim());   // Category Name
             $('#editeditemsubCategory').val(row.cells[17].innerHTML.trim()); // Sub Category
             $('#editedquoteId').val(row.cells[11].innerHTML.trim());        // QuoteId
+            let $row = $(e.relatedTarget).closest("tr");
+
+            $('#editReference').val($row.find('.reference').text().trim());
+            $('#editNote').val($row.find('.note').text().trim());
 
             // 🔹 Decide which DB call (item vs material)
             if (type.toLowerCase() === "item") {
@@ -699,12 +748,12 @@ $id = $_GET['id'];
 
             // 3️⃣ Trade Price (MATCHING REFERENCE MODAL)
 
-            let tradeTotal = companyTotal;   // ✅ default → same as company price
-
+            let tradeTotal = companyTotal;   // ✅ APPLY unitFactor ALWAYS
+            console.log("uFac:", uFac, "TradeTotal:", tradeTotal);
             if (tDis > 0) {
                 const discounted = mrp - (mrp * (tDis / 100));
                 const perPieceTrade = discounted + (discounted * (gst / 100));
-                tradeTotal = perPieceTrade * qty * uFac;
+                tradeTotal = perPieceTrade * qty * uFac;   // ✅ KEEP SAME
             }
 
             $('#editTradePrice').val(tradeTotal.toFixed(2));
@@ -743,6 +792,7 @@ $id = $_GET['id'];
                     const spu = parseFloat(r.spu || r.item_PackingUnit || 1);
                     const uFact = parseFloat(r.unitFactor || 1);
 
+                    $('#addunitFactor').val(uFact);
                     $('#additemppMRP').val(mrp.toFixed(2));
                     $('#addGST').val(gst.toFixed(2));
                     $('#addCompanyDiscount').val(cDisc.toFixed(2));
@@ -999,12 +1049,15 @@ $id = $_GET['id'];
             $('#addCompanyPrice').val(companyTotal.toFixed(2));
 
             // 3️⃣ Trade Price (total) - calculate based on MRP, trade discount and GST
-            let tradePricePerPiece = mrp;
+            let tradeTotal = companyBase * qty;
+            console.log("uFac:", uFac, "TradeTotal:", tradeTotal); // ✅ FIXED // ✅ DEFAULT SAME AS COMPANY PRICE
+            console.log("ADD MODAL uFac:", $('#addunitFactor').val());
             if (tDis > 0) {
                 const discounted = mrp - (mrp * (tDis / 100));
-                tradePricePerPiece = discounted + (discounted * (gst / 100));
+                const perPieceTrade = discounted + (discounted * (gst / 100));
+                tradeTotal = perPieceTrade * qty * uFac;
             }
-            const tradeTotal = tradePricePerPiece * qty;
+
             $('#addTradePrice').val(tradeTotal.toFixed(2));
 
             // 4️⃣ Total Value - use base value from database with SPU logic

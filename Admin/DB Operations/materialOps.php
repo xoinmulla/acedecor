@@ -391,7 +391,7 @@ GROUP BY M.Material_Id";
     $connectionObj = $db->getConnection();
     $sql = "SELECT M.Material_Id  AS MaterialId,
     M.Material_Name AS MaterialName,
-    M.Material_Description AS Material_Description,
+    M.Material_Description AS MaterialDescription,
     M.Category AS CategoryId,
     MC.material_catName AS CategoryName,
     M.SubCategory AS SubCategoryId,
@@ -428,6 +428,7 @@ GROUP BY M.Material_Id";
         $view = new Material_Details();
         $view->set_MaterialId($row['MaterialId']);
         $view->set_MaterialName($row['MaterialName']);
+        $view->set_MaterialDescription($row['MaterialDescription']);
         $view->set_MaterialPPMRP($row['PPMRP']);
         $view->set_MaterialGST($row['GST']);
         $view->set_MaterialCode($row['MaterialCode']);
@@ -792,5 +793,71 @@ GROUP BY M.Material_Id";
     return (int) $row['PendingQty'];
   }
 
+  public static function isDuplicateMaterial($materialName, $brand, $category, $subcategory)
+  {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare("
+        SELECT Material_Id
+        FROM material
+        WHERE
+            Material_Name = ?
+            AND Brand = ?
+            AND Category = ?
+            AND SubCategory = ?
+        LIMIT 1
+    ");
+
+    $stmt->bind_param(
+      "siii",
+      $materialName,
+      $brand,
+      $category,
+      $subcategory
+    );
+
+    $stmt->execute();
+    $stmt->store_result();
+
+    return ($stmt->num_rows > 0);
+  }
+
+  public static function isDuplicateMaterialForUpdate(
+    $materialId,
+    $materialName,
+    $brand,
+    $category,
+    $subcategory
+  ) {
+    $db = ConnectDb::getInstance();
+    $conn = $db->getConnection();
+
+    $stmt = $conn->prepare("
+        SELECT Material_Id
+        FROM material
+        WHERE
+            Material_Name = ?
+            AND Brand = ?
+            AND Category = ?
+            AND SubCategory = ?
+            AND Material_Id <> ?
+        LIMIT 1
+    ");
+
+    $stmt->bind_param(
+      "siiii",
+      $materialName,
+      $brand,
+      $category,
+      $subcategory,
+      $materialId
+    );
+
+    $stmt->execute();
+    $stmt->store_result();
+
+    return ($stmt->num_rows > 0);
+  }
 
 }

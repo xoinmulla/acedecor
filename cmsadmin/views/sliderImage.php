@@ -172,12 +172,12 @@ if (count($designList) > 0) {
           <!-- <div class="mb-3">
             <label class="form-label fw-semibold">Caption <span class="text-danger">*</span></label>
             <textarea name="designFileDescription" id="designFileDescription" class="form-control" placeholder="Enter caption..." style="text-transform:capitalize" required></textarea>
-          </div>
+          </div>-->
 
           <div class="mb-3">
             <label class="form-label fw-semibold">Alternate Text <span class="text-danger">*</span></label>
             <textarea name="alternateText" id="alternateText" class="form-control" placeholder="Describe the media for accessibility..." style="text-transform:capitalize" required></textarea>
-          </div> -->
+          </div>
 
           <!-- Hidden Fields -->
           <input type="hidden" name="postId" id="postId" value="<?php echo $_GET['postId']??0 ?>" />

@@ -1,6 +1,6 @@
 <?php
 require_once "dbconnection.php";
-require_once $_SERVER['DOCUMENT_ROOT'] ."/acedecor/cmsadmin/model/PrivacyPolicyModel.php";
+require_once $_SERVER['DOCUMENT_ROOT'] ."/cmsadmin/model/PrivacyPolicyModel.php";
 class DBPrivacy
 {
     public static function insert($PrivacyPolicyObj)

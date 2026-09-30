@@ -236,6 +236,8 @@
                     <i class="fas fa-layer-group"></i>
                     <span>Material Stock List</span></a>
             </li>
+            <br>
+            <hr class="sidebar-divider" style="background: #d1d5db;">
             <li class="nav-item">
                 <a class="nav-link" href="POview.php">
                     <i class="fas fa-backward"></i>
@@ -299,6 +301,10 @@
                                     Settings
                                 </a>
                                 <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="userManagement.php">
+                                    <i class="fas fa-users-cog fa-sm fa-fw mr-2 text-gray-400"></i>
+                                    User Management
+                                </a>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout

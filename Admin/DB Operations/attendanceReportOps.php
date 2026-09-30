@@ -8,7 +8,6 @@ class DBAttendanceReport
     {
         return ConnectDb::getInstance()->getConnection();
     }
-
     // ================= MONTHLY =================
     public static function getReport($month)
     {
@@ -70,7 +69,86 @@ class DBAttendanceReport
 
         return $reports;
     }
+    // ================= WEEKLY =================
+    public static function getWeeklyReport($fromDate, $toDate)
+    {
+        $conn = self::getConn();
+        $employees = $conn->query("SELECT id, name FROM employee")->fetch_all(MYSQLI_ASSOC);
 
+        $reports = [];
+
+        foreach ($employees as $emp) {
+
+            $stmt = $conn->prepare("
+            SELECT status, worked_hours, ot_hours
+            FROM attendance
+            WHERE emp_id = ?
+            AND date BETWEEN ? AND ?
+        ");
+
+            $stmt->bind_param(
+                "iss",
+                $emp['id'],
+                $fromDate,
+                $toDate
+            );
+
+            $stmt->execute();
+
+            $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+            $absent = 0;
+            $half = 0;
+            $full = 0;
+            $ot_hours = 0;
+            $one_five = 0;
+            $two = 0;
+            $hourly = 0;
+            $hourly_only = 0;
+
+            foreach ($rows as $r) {
+
+                if ($r['status'] == 'Absent')
+                    $absent++;
+                elseif ($r['status'] == 'Half-day')
+                    $half++;
+                elseif ($r['status'] == 'Present')
+                    $full++;
+
+                $ot_hours += (float) $r['ot_hours'];
+
+                $hourly += (float) $r['worked_hours'];
+
+                if ($r['status'] == 'Hourly') {
+                    $hourly_only += (float) $r['worked_hours'];
+                }
+
+                if ($r['worked_hours'] >= 12 && $r['worked_hours'] < 16)
+                    $one_five++;
+
+                if ($r['worked_hours'] >= 16)
+                    $two++;
+            }
+
+            $rep = new AttendanceReport();
+
+            $rep->emp_id = $emp['id'];
+            $rep->name = $emp['name'];
+
+            $rep->absent = $absent;
+            $rep->half_days = $half;
+            $rep->full_days = $full;
+            $rep->ot_hours = $ot_hours;
+            $rep->one_point_five_days = $one_five;
+            $rep->two_days = $two;
+            $rep->hourly_hours = $hourly;
+            $rep->hourly_only = $hourly_only;
+
+            $reports[] = $rep;
+        }
+
+        return $reports;
+    }
     // ================= QUARTERLY =================
     public static function getQuarterlyReport($year, $quarter)
     {
@@ -98,7 +176,6 @@ class DBAttendanceReport
 
         return array_values($final);
     }
-
     // ================= YEARLY =================
     public static function getYearlyReport($year)
     {

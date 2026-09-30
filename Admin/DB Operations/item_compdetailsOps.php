@@ -82,6 +82,23 @@ class DBitemcompdetails
 
     return $itemcompdetailslist;
   }
+  public static function getCompanyNameById($id)
+  {
+    $db = ConnectDb::getInstance();
+    $connectionObj = $db->getConnection();
+
+    $sql = "SELECT item_compName
+            FROM item_companydetails
+            WHERE item_compid = " . intval($id);
+
+    $result = $connectionObj->query($sql);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+      return $row['item_compName'];
+    }
+
+    return "";
+  }
 
   public static function update($detailsObj)
   {
@@ -154,8 +171,8 @@ class DBitemcompdetails
     }
   }
 
-public static function isSupplierUsedInPO($supplierId)
-{
+  public static function isSupplierUsedInPO($supplierId)
+  {
     $db = ConnectDb::getInstance();
     $conn = $db->getConnection();
 
@@ -168,7 +185,7 @@ public static function isSupplierUsedInPO($supplierId)
     $row = mysqli_fetch_assoc($result);
 
     return ($row['cnt'] > 0) ? 1 : 0;
-}
+  }
 
   public static function selectCompany()
   {

@@ -1,7 +1,7 @@
 <?php
 session_start();
 include('header.php');
-require_once("../dblayer/postOps.php");
+require_once"../dblayer/postOps.php";
 require_once "../dblayer/dbconnection.php";
 require_once "../dblayer/contentOps.php";
 
@@ -455,6 +455,7 @@ echo '</div>';
             isCategorySet = false;
             if (isCategorySet == false) {
                 $.getJSON(config.developmentPath + "/cmsadmin/controller/subcategoryController.php?", function(data) {
+                    debugger;
                     $.each(data, function(index, value) {
                         $('#subcategoryCheckBox').append($(document.createElement('div')).prop({
                             class: "form-check form-switch form-check-inline"

@@ -16,14 +16,36 @@ require_once("../Model/taskModel.php");
     }
     </style>
 </head> -->
+<style>
+    .card-body #tasks_table th {
+        font-weight: 500;
+    }
+
+    .modal-dialog {
+        max-width: 800px;
+        width: 75%;
+    }
+
+    thead thead td {
+        align-items: center;
+    }
+    .modal-body #followuptable th {
+        font-weight: 500;
+    }
+    /* Center Followed By and Date data in Follow Details modal */
+    #followuptable tbody td:nth-child(1),
+    #followuptable tbody td:nth-child(3) {
+        text-align: center;
+    }
+</style>
 <h1 class="h3 mb-4 text-gray-800">Project Management</h1>
 <!-- DataTales Example -->
 <span id="message"></span>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 text-white" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
         <div class="row">
             <div class="col">
-                <h6 class="m-0 font-weight-bold text-primary" style="font-size: 1.2rem; font-weight: bold;">Project
+                <h6 class="m-0" style="font-size: 1.2rem;">Project
                     Tasks</h6>
             </div>
             <div class="col" align="right">
@@ -37,7 +59,7 @@ require_once("../Model/taskModel.php");
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered" id="tasks_table" width="100%" cellspacing="0">
-                <thead>
+                <thead align="center">
                     <tr>
                         <th style=display:none>Task Id</th>
                         <th>Date</th>
@@ -56,12 +78,16 @@ require_once("../Model/taskModel.php");
                         ?>
                         <tr>
                             <td style="display:none"><?= $Task->get_TaskId() ?></td>
-                            <td><?= $Task->get_Date() ?></td>
+                            <td align="center"><?= $Task->get_Date() ?></td>
                             <td><?= $Task->get_TaskDescription() ?></td>
                             <td><?= $Task->get_ContactPerson() ?></td>
-                            <td><?= $Task->get_ContactNo() ?></td>
-                            <td></td>
-                            <td><?= $Task->get_Status() ?></td>
+                            <td align="center"><?= $Task->get_ContactNo() ?></td>
+
+                            <td class="task-followup" data-task-id="<?= $Task->get_TaskId() ?>">
+                                -
+                            </td>
+
+                            <td align="center"><?= $Task->get_Status() ?></td>
 
                             <td>
                                 <div class="dropdown">
@@ -107,7 +133,8 @@ require_once("../Model/taskModel.php");
     <div class="modal-dialog">
         <form method="post" id="user_form" enctype="multipart/form-data" action="../Controller/taskController.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Add Tasks</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -199,7 +226,7 @@ require_once("../Model/taskModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Add" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -213,7 +240,8 @@ require_once("../Model/taskModel.php");
         <form method="post" id="followup_form" enctype="multipart/form-data"
             action="../Controller/taskfollowupController.php">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h5 class="modal-title">Follow Details</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -221,11 +249,11 @@ require_once("../Model/taskModel.php");
                 </div>
                 <div class="modal-body">
                     <table class="table table-bordered" id="followuptable" width="100%" cellspacing="0">
-                        <thead>
+                        <thead align="center">
                             <tr>
                                 <th>
 
-                                    Follwed By
+                                    Followed By
 
                                 </th>
                                 <th>
@@ -271,7 +299,7 @@ require_once("../Model/taskModel.php");
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary" id="FollowupBtn">FollowUp</button>
                 </div>
             </div>
@@ -282,7 +310,8 @@ require_once("../Model/taskModel.php");
     <div class="modal-dialog">
         <form method="post" id="project_form">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">
                         <legend>Task Info</legend>
                     </h4>
@@ -375,7 +404,7 @@ require_once("../Model/taskModel.php");
                         <input type="hidden" name="hidden_id" id="hidden_id" />
                         <input type="hidden" name="action" id="action" value="Add" />
                         <input type="submit" name="submit" id="submit_button" class="btn btn-success" value="Save" />
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -387,7 +416,8 @@ require_once("../Model/taskModel.php");
     <div class="modal-dialog">
         <form method="POST" id="delete_task_form" enctype="multipart/form-data">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header text-white"
+                    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                     <h4 class="modal-title" id="modal_title">Delete Task</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
@@ -400,7 +430,7 @@ require_once("../Model/taskModel.php");
                 <div class="modal-footer">
                     <input type="hidden" name="hidden_id" id="hidden_id" />
                     <input type="submit" name="submit" id="deletebutton" class="btn btn-danger" value="Confirmed" />
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </form>
@@ -430,6 +460,41 @@ require_once("../Model/taskModel.php");
 
 
         var dataTable = $('#tasks_table').DataTable({
+        });
+
+        $('.task-followup').each(function () {
+
+            var followupCell = $(this);
+            var taskId = followupCell.data('task-id');
+
+            if (!taskId) {
+                return;
+            }
+
+            var contactUrl = config.developmentPath +
+                "/Admin/Controller/taskfollowupController.php/?id=" +
+                taskId;
+
+            $.getJSON(contactUrl, function (data) {
+
+                if (data && data.length > 0) {
+
+                    // First record is the latest because
+                    // task_followupOps.php sorts DESC
+                    followupCell.text(data[0].FollowUp_Comments);
+
+                } else {
+
+                    followupCell.text('-');
+
+                }
+
+            }).fail(function () {
+
+                followupCell.text('-');
+
+            });
+
         });
         var nEditing = null;
 
@@ -508,15 +573,15 @@ require_once("../Model/taskModel.php");
                         append($(document.createElement('tr')).prop({
 
                         }));
-
-                    $('#followuptable tr:last').
-                        append($(document.createElement('td')).prop({
-                            innerHTML: value.FollowUp_Comments
-                        }));
                     $('#followuptable tr:last').
                         append($(document.createElement('td')).prop({
                             innerHTML: value.FollowUp_createdBy
                         }));
+                    $('#followuptable tr:last').
+                        append($(document.createElement('td')).prop({
+                            innerHTML: value.FollowUp_Comments
+                        }));
+
                     $('#followuptable tr:last').
                         append($(document.createElement('td')).prop({
                             innerHTML: value.FollowUp_createdOn
@@ -524,6 +589,30 @@ require_once("../Model/taskModel.php");
                 });
             });
         });
+        $('.modal').on('shown.bs.modal', function () {
 
+            var $dialog = $(this).find('.modal-dialog');
+
+            if ($dialog.hasClass("ui-draggable")) {
+                $dialog.draggable("destroy");
+            }
+
+            var offset = $dialog.offset();
+
+            $dialog.css({
+                margin: 0,
+                position: "fixed",
+                left: offset.left,
+                top: offset.top,
+                transform: "none"
+            });
+
+            $dialog.draggable({
+                handle: ".modal-header",
+                containment: "window",
+                scroll: false
+            });
+
+        });
     });
 </script>

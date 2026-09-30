@@ -69,7 +69,7 @@ $userList = DBuser::getAllUsers();
                         <tr>
                             <th class="border-0 px-4 py-3 text-xs text-uppercase text-muted">User</th>
                             <th class="border-0 py-3 text-xs text-uppercase text-muted">Account Type</th>
-                            <th class="border-0 py-3 text-xs text-uppercase text-muted">Status</th>
+                            <!-- <th class="border-0 py-3 text-xs text-uppercase text-muted">Status</th> -->
                             <th class="border-0 py-3 text-xs text-uppercase text-muted text-right px-4">Actions</th>
                         </tr>
                     </thead>
@@ -77,7 +77,7 @@ $userList = DBuser::getAllUsers();
                         <?php foreach ($userList as $user):
                             $name = $user->get_username();
                             $email = $user->get_useremail();
-                            $status = $user->get_userstatus();
+                            // $status = $user->get_userstatus();
                             $type = $user->get_usertype();
                             $initial = strtoupper(substr($name, 0, 1));
                             ?>
@@ -94,12 +94,9 @@ $userList = DBuser::getAllUsers();
                                     </div>
                                 </td>
                                 <td class="align-middle">
-                                    <span
-                                        class="badge <?= $type === 'Admin' ? 'badge-soft-danger' : 'badge-soft-info' ?> px-3 py-2">
-                                        <?= $type ?>
-                                    </span>
+                                    <span class="badge badge-soft-info px-3 py-2"><?= $type ?></span>
                                 </td>
-                                <td class="align-middle">
+                                <!-- <td class="align-middle">
                                     <?php if (strtolower($status) == 'active'): ?>
                                         <span class="status-indicator status-online"></span> <small class="text-gray-600">Active
                                             Account</small>
@@ -107,7 +104,7 @@ $userList = DBuser::getAllUsers();
                                         <span class="status-indicator status-offline"></span> <small
                                             class="text-gray-600">Inactive</small>
                                     <?php endif; ?>
-                                </td>
+                                </td> -->
                                 <td class="text-right px-4 align-middle">
                                     <?php if ($type !== 'Admin'): ?>
                                         <div class="btn-group">
